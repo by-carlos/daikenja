@@ -128,10 +128,9 @@ Daikenja ships a default voice. A user's `writing_style` file **layers on top of
 it, and does not replace it**: the default applies except where the user's file
 says otherwise.
 
-Two rules are not overridable, because they are frozen decisions about all
-generated output rather than matters of taste:
+One rule is not overridable, because it is a frozen decision about all
+generated output rather than a matter of taste:
 
-- Never an em dash or en dash. Use `--` or parentheses.
 - Absolute dates, never relative ones.
 
 The default voice file itself is **not part of this contract**. It belongs to

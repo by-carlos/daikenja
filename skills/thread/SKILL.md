@@ -37,7 +37,7 @@ content.
 
 ## Step 2: summarize it
 
-Keep this to about 5 lines. Use `--` and parentheses, never an em dash.
+Keep this to about 5 lines.
 
 ```
 Thread: [channel or subject, and how many messages]

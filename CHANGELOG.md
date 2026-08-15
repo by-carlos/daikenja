@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removed the non-overridable "never an em dash or en dash" rule from the
+  default voice (`docs/voice.md`, `docs/config-contract.md`,
+  `templates/writing-style.md`, `skills/thread/SKILL.md`). Absolute dates
+  remain the only non-overridable rule. `docs/ledger-format.md`'s three-split
+  parser bound is unchanged; only its justification was reworded.
+
 ## [0.2.0] - 2026-08-15
 
 Initial public release.
