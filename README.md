@@ -125,6 +125,11 @@ restarting. Validate the manifest with:
 claude plugin validate .
 ```
 
+Installing this repo as a **local marketplace** is not a substitute for the
+above: it copies the tree into the plugin cache at install time rather than
+referencing it live, so edits go stale until you reinstall. Use
+`--plugin-dir .` for development.
+
 Layout:
 
 ```
