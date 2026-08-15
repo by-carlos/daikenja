@@ -56,7 +56,8 @@ guarantee a skill may depend on, per `ledger-format.md` § Ordering.
 
 From those lines, collect the IDs named, each with the verb it was recorded
 under (`+`, `~`, `resolved`, `superseded`, `-`). The same ID can appear on more
-than one line across the window; keep the most recent verb.
+than one line across the window; keep the most recent verb. Collect
+`+link`/`-link` entries the same way, keyed by label instead of ID.
 
 For every ID still resolvable, look up its **current** text in the Decisions
 or Open items section -- report what the entry says now, not a stale
@@ -64,6 +65,11 @@ snapshot. For an ID that no longer resolves (`-D-nnn` was the verb, or a
 hand-deletion left the Changelog naming something gone), report it as removed
 in one line and move on, per `ledger-format.md`'s rule that an unresolvable
 Changelog ID is reported, not an error.
+
+For every label still resolvable, look up its current target in the Context
+links section. For a label recorded with `-link` (or one that no longer
+appears in that section), report it as removed in one line and move on, same
+as an unresolvable ID.
 
 **No new lines found.** Say so and stop before proposing a checkpoint move --
 there is nothing to advance past that the user hasn't already seen, though a
@@ -86,6 +92,9 @@ Decisions
 Open items
 - O-001 (resolved) -- @sam -- Confirm the 30-day replica cost with finance. -> resolved 2026-08-14, see D-002
 - O-003 (new, @unassigned) -- Decide who is on call during the cutover window.
+
+Context links
+- Runbook (new) -- https://example.com/atlas/runbook
 ```
 
 Call out unowned new open items -- they are what `gaps` would also flag, and

@@ -203,11 +203,12 @@ This is a convenience index, not a source of truth. A link here may also appear
 inside an entry body, and that duplication is expected -- the entry says why the
 link mattered on a given date, the index says where to find things.
 
-Context links are **exempt from the Changelog**, because the Changelog names
-changes by ID and these lines have none. Adding or removing one is not recorded
-and `catchup` does not report it. Do not invent a token to record it with. If a
-link matters enough to be reported, it belongs in an entry body, which does have
-an ID.
+Context links carry no ID, but their writes are still recorded in the
+Changelog. Adding one appends `+link "<label>"`; removing one appends
+`-link "<label>"`, quoting the label because -- unlike an ID -- it may contain
+a comma and the Changelog summary field is comma-separated. There is no edit
+verb: a link's target cannot be updated in place, so changing one is a removal
+of the old label and an addition of the new one, in that order.
 
 ## Section: Changelog
 
@@ -221,7 +222,7 @@ One line per write, newest first:
 |---|---|
 | `<timestamp>` | `YYYY-MM-DDThh:mmZ`. UTC, minute precision. |
 | `<writer>` | The skill that wrote. `log`, or `log via <skill>` when another skill wrote through it. |
-| `<summary>` | Comma-separated changes, **by ID**, one verb each: `+D-009` (created), `~O-003` (edited), `resolved O-004`, `superseded D-002`, `-O-002` (deleted). |
+| `<summary>` | Comma-separated changes, **by ID**, one verb each: `+D-009` (created), `~O-003` (edited), `resolved O-004`, `superseded D-002`, `-O-002` (deleted), `+link "<label>"` (context link added), `-link "<label>"` (context link removed). |
 
 Split on ` -- ` **at most twice**. The summary is the last field, so it may
 contain `--` like any other body text.
@@ -236,8 +237,9 @@ It never has to diff the file.
 
 **The Changelog must be complete.** Every *change to an entry* -- a creation, an
 edit, a resolution, a supersession, a deletion -- appears in exactly one
-changelog line. Context links are the one exception, because they carry no ID;
-see [Section: Context links](#section-context-links).
+changelog line. Context link additions and removals are recorded the same way,
+by label instead of ID; see
+[Section: Context links](#section-context-links).
 This is per change, not per entry: an entry that is created and later resolved
 appears in two lines, one for each event. A change that happened without a line
 recording it is a bug, not a shortcut: `catchup` would never report it, and
