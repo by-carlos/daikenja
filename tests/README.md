@@ -15,6 +15,12 @@ can be re-run later against the same inputs.
   a misspelled section heading and an entry missing its owner field, plus a legal
   continuation line as a control. A skill must report all of it and write
   nothing.
+- [`fixtures/broken-supersession.md`](fixtures/broken-supersession.md) -- a
+  ledger with two mismatched supersession pairs (a body claiming `Supersedes`
+  with no matching tail, and a tail with no matching claim), plus a correctly
+  matched pair as a control. Exercises `decisions`' tail-is-authoritative
+  handling: it must report both mismatches, naming both IDs, and never repair
+  the ledger.
 
 Every fixture is synthetic: invented project, invented people, `example.com`
 links. Nothing in this directory may contain real work content, personal data or
