@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- Documented that a local-marketplace install copies the repo at install
+  time rather than referencing it live, and that `claude --plugin-dir .`
+  remains the loop to use for development.
+
 ### Changed
 
 - Removed the non-overridable "never an em dash or en dash" rule from the
