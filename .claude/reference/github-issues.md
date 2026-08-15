@@ -46,11 +46,18 @@ Apply the existing repo labels that fit. Check with `gh label list` first and do
 not invent new ones. At the time of writing the repo carries only the GitHub
 defaults, so `documentation`, `enhancement` and `bug` cover most cases.
 
-## Board status
+## Board fields
 
-**Leave the issue's board Status at its default.** Maintainers handle board
-placement, priority and sizing. Only a dedicated workflow tool or an explicit
-request from the maintainer may move an issue's Status.
+**Leave the issue's board Status at its default.** Only a dedicated workflow
+tool, or an explicit request from the maintainer, may move an issue's Status.
+
+The remaining board fields (priority, size, effort) are set by whoever files
+with board access, under the maintainer's own filing contract. That contract is
+deliberately not reproduced here, because it covers repos beyond this one.
+
+**If you are filing without board access, file the issue and stop there.** A
+body that stands on its own is the deliverable; the board fields are not your
+problem.
 
 ## Dates
 
