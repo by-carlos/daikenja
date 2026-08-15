@@ -25,7 +25,10 @@ Instructions for Claude Code and other agents working in this repo.
   2. Rename `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` and add the
      `[x.y.z]: https://github.com/by-carlos/daikenja/releases/tag/vx.y.z`
      link at the bottom.
-  3. Tag `vx.y.z` and cut the matching GitHub release.
+  3. Tag `vx.y.z` and cut the matching GitHub release, with the release notes
+     body set to that version's actual `CHANGELOG.md` entry content (copied
+     in, not a bare "see CHANGELOG.md" pointer) plus a link back to the file
+     for full history.
 - **Semver:** a `feat` in the batch means a **minor** bump; only
   `fix`/`docs`/`chore` means a **patch**. Pre-1.0, breaking changes go in a
   minor.
