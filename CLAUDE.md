@@ -13,6 +13,25 @@ Instructions for Claude Code and other agents working in this repo.
 - **Merging is never unilateral.** Propose the merge and wait for the
   maintainer's explicit OK.
 
+## Releasing
+
+- **Changelog as-you-go, under `## [Unreleased]`.** Add entries to
+  `CHANGELOG.md` under an `## [Unreleased]` heading as changes land. This
+  records *what* changed without declaring a version. Never write a
+  dated/versioned heading or bump the version file mid-batch -- that
+  recreates version drift.
+- **A release is one atomic change**, done all together (own commit/PR):
+  1. Bump `version` in `.claude-plugin/plugin.json` (semver).
+  2. Rename `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` and add the
+     `[x.y.z]: https://github.com/by-carlos/daikenja/releases/tag/vx.y.z`
+     link at the bottom.
+  3. Tag `vx.y.z` and cut the matching GitHub release.
+- **Semver:** a `feat` in the batch means a **minor** bump; only
+  `fix`/`docs`/`chore` means a **patch**. Pre-1.0, breaking changes go in a
+  minor.
+- **Tag per released version** (not per commit, not major-only) -- the
+  `CHANGELOG.md` release links assume a tag exists for each version.
+
 ## Filing issues
 
 Follow-up work goes to this repo's GitHub issues (`by-carlos/daikenja`).
