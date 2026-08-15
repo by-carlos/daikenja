@@ -10,9 +10,8 @@ it.
 
 **This layers on top of the Daikenja default voice, it does not replace it.**
 The default applies except where you say otherwise, so you only need to write
-down what is specific to you. Two rules you cannot override, because they apply
-to everything Daikenja generates: never an em dash or en dash (use `--` or
-parentheses), and always absolute dates.
+down what is specific to you. One rule you cannot override, because it applies
+to everything Daikenja generates: always absolute dates.
 
 Write in prose or bullets, whichever you prefer. Useful things to pin down:
 

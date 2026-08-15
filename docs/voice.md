@@ -6,11 +6,10 @@ default applies except where the user's file says otherwise, per
 `config-contract.md` § Voice and writing style. This document is the default
 itself. `compose` is its main consumer.
 
-Two rules here are **not overridable**, because they are frozen decisions about
-all generated output, not matters of taste. No `writing-style.md` entry can turn
-them off:
+One rule here is **not overridable**, because it is a frozen decision about
+all generated output, not a matter of taste. No `writing-style.md` entry can
+turn it off:
 
-- Never an em dash or en dash. Use `--` or parentheses.
 - Absolute dates, never relative ones ("by Tuesday 11 Aug", not "by next
   Tuesday"). Teams are in different time zones.
 

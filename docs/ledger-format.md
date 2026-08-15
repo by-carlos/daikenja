@@ -62,9 +62,10 @@ The separator is ` -- ` (space, two hyphens, space).
 anything else. What remains is four fields.
 
 **A parser splits on ` -- ` at most three times.** Everything after the third
-separator is the body, verbatim. This matters: Daikenja output uses `--` in
-place of an em dash, so bodies routinely contain `--`. Bounding the split at
-three is what keeps that safe.
+separator is the body, verbatim. This matters: the body is free text and can
+legitimately contain ` -- ` of its own (a parenthetical aside, a quoted
+range). Bounding the split at three consumes exactly the three separators
+between date, id, owner and body, and leaves anything past them alone.
 
 The body is the last field. The only thing that may follow it is a **tail**, and
 there are exactly two:
