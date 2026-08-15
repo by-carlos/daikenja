@@ -1,0 +1,6 @@
+# core.autocrlf is unreliable on this project's dev machine: a global
+# `false` overrides a system-level `true`, so git does not normalise line
+# endings on `git add` and whatever CRLF/LF mix lands in the working tree
+# gets committed verbatim. Pin normalization here instead, so correctness
+# doesn't depend on per-machine git config.
+* text=auto eol=lf
