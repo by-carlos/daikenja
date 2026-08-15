@@ -1,0 +1,53 @@
+# Daikenja configuration.
+#
+# Location: ~/.claude/daikenja/daikenja.yaml
+# Schema:   docs/config-contract.md in the Daikenja plugin.
+#
+# This file holds your profile and one entry per project Daikenja tracks.
+# Keep it here, not in the plugin directory -- plugin directories are
+# overwritten when the plugin updates.
+#
+# Only `name` is required. Delete any optional key you do not want.
+
+profile:
+  # Required. Your name, as it should appear on ledger entries you own.
+  name:
+
+  # Optional. Short scalars, a few words each. They give the skills enough
+  # context to write in your voice without you repeating yourself.
+  role:
+  org:
+  team:
+  domain:            # the subject matter you work in
+
+  # How much the skills explain themselves: direct | standard | guided
+  tone: standard
+
+  # Prose files, resolved relative to this file. Leave a key out if you have
+  # no such file -- Daikenja falls back to its default voice and says so.
+  writing_style: ./writing-style.md
+  personas: ./personas.md
+
+  # Optional. Your team's ways-of-working or norms document, as a path or URL.
+  # Absent by default. Setting it turns on the ROLE CHECK section of
+  # `self-review`, which is off until you do.
+  # norms_doc:
+
+  # How many days an open item may sit before `gaps` calls it stale.
+  # Measured from the date the item was raised.
+  stale_after_days: 21
+
+# One entry per project. The key is a label for you -- Daikenja never matches on
+# it. Matching is by `path`, longest prefix wins.
+projects: {}
+
+# Example of a filled entry. Copy it above, inside `projects:`, and drop the
+# leading "# " from each line.
+#
+# projects:
+#   atlas-migration:
+#     path: C:/GitHub/atlas          # required, absolute
+#     ledger: .daikenja/ledger.md     # optional, relative to path. This is the default.
+#     last_checkpoint:               # written by `catchup`, leave empty
+#     stale_after_days: 30           # optional, overrides the profile value
+#     norms_doc:                     # optional, overrides the profile value

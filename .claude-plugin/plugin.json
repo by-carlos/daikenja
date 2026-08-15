@@ -1,0 +1,21 @@
+{
+  "name": "daikenja",
+  "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. Claude Code only -- it reads user config from ~/.claude/daikenja/ and writes a ledger inside the project, neither of which exists on claude.ai or in Cowork.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Carlos",
+    "url": "https://github.com/by-carlos"
+  },
+  "homepage": "https://github.com/by-carlos/daikenja",
+  "repository": "https://github.com/by-carlos/daikenja",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "skills",
+    "writing",
+    "messaging",
+    "ledger",
+    "decision-log",
+    "project-memory"
+  ]
+}
