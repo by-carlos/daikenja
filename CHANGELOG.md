@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Context-link additions and removals now emit a Changelog line
+  (`+link "<label>"` / `-link "<label>"`) and are reported by `catchup`,
+  closing the one gap where a ledger change was invisible to it
+  (`docs/ledger-format.md`, `skills/log/SKILL.md`, `skills/catchup/SKILL.md`).
+
 ### Documentation
 
 - Documented that a local-marketplace install copies the repo at install

@@ -241,9 +241,10 @@ Changelog is invisible to `catchup`, which reads changelog lines and never diffs
 the file. When one run touches several entries, they all go on that run's single
 line.
 
-Context links are the exception: they carry no ID, so they are not recorded. Do
-not invent a token for them. If a run only adds a link, it writes no Changelog
-line at all.
+Context links carry no ID, so they are recorded by label instead: `+link
+"<label>"` for an addition, `-link "<label>"` for a removal. A run that only
+touches links still writes a Changelog line -- it just names links instead of
+IDs.
 
 Then confirm in one or two lines: what was written, where, and the IDs.
 
