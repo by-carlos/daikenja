@@ -29,11 +29,29 @@ Instructions for Claude Code and other agents working in this repo.
      body set to that version's actual `CHANGELOG.md` entry content (copied
      in, not a bare "see CHANGELOG.md" pointer) plus a link back to the file
      for full history.
+  4. Fast-forward the `release` branch to that tag and push it:
+     `git push origin vx.y.z:release`. This is the actual distribution step --
+     the marketplace entry in `by-carlos/claude-plugins` points at `release`,
+     not `main`, so nothing reaches installers until this push happens.
 - **Semver:** a `feat` in the batch means a **minor** bump; only
   `fix`/`docs`/`chore` means a **patch**. Pre-1.0, breaking changes go in a
   minor.
 - **Tag per released version** (not per commit, not major-only) -- the
   `CHANGELOG.md` release links assume a tag exists for each version.
+
+## Distribution and branch protection
+
+- **`main` is the working branch, `release` is what users get.** The
+  marketplace entry in `by-carlos/claude-plugins` points its plugin source at
+  Daikenja's `release` branch, which only ever advances by the fast-forward
+  push in step 4 above. A merge to `main` never reaches installers on its own.
+- **Both branches are protected on GitHub**, not just documented here:
+  `main` requires a pull request and a passing `gitleaks` check (enforced for
+  admins too, so there is no direct-push bypass); `release` blocks force
+  pushes and deletion so it can only move forward. Do not attempt to relax
+  either from an agent session -- that is a settings change outside this
+  repo's working tree and needs the maintainer's explicit sign-off, per the
+  global risk-labeling rule.
 
 ## Filing issues
 
