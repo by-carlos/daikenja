@@ -12,8 +12,8 @@ disable-model-invocation: true
 
 The skill every other Daikenja skill assumes has already run. It writes
 `daikenja.yaml`, nothing else -- `personas.md` and `writing-style.md` get a
-blank starting copy if the user has none, but the user owns their content from
-that point on.
+blank starting copy if the user has none, and this skill never writes a word of
+their content afterwards.
 
 **Slash-only on purpose.** This skill asks personal questions and writes files
 outside the project. Nothing about "help me get started" or "set up my config"
@@ -114,6 +114,14 @@ For each of `personas.md` and `writing-style.md`:
   already exists, not touched") and move on. This holds even if the existing
   file is still the untouched template -- existence is the only test, per the
   stage contract. Never inspect or overwrite user prose.
+
+**This skill owns creation, not content.** The rule above is unchanged and
+stays exactly as it is: copy if absent, existence is the only test. What sits
+next to it is that `personas.md` now has a content writer --
+`/daikenja:remember-persona`, which appends an entry for a person the user has
+described, and is the only way content reaches that file from Daikenja. The two
+are different acts on the same file, so neither constrains the other. See
+`docs/config-contract.md` § Who writes what.
 
 ## Step 5: register the current project
 
