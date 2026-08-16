@@ -396,15 +396,48 @@ D10 exists, since that skill is its natural home.
 
 ## 13. Verification
 
-There is no test runner; `tests/fixtures/` is exercised by hand through the
-skills, per the repo's own convention. Acceptance for this work:
+There is no test runner. `tests/fixtures/` is exercised by hand through the
+skills, per the repo's own convention.
+
+### 13.1 Fixture runs require `claude --plugin-dir .`
+
+**A normal session cannot exercise a working-tree skill change at all.** The
+`Skill` tool resolves Daikenja from the installed plugin cache
+(`~/.claude/plugins/cache/<marketplace>/daikenja/<version>/`), and a
+local-marketplace install *copies* the repo at install time rather than
+referencing it live -- a fact this repo already documents. Edits in the working
+tree are invisible to that copy.
+
+This is not theoretical. PR 1 attempted to verify D8 by running `compose`
+against `tests/fixtures/sample-drafts-preflight.md` before and after the
+change. Both runs loaded a skill still reporting `version: 3` with the
+pre-extraction Step 2 body, so neither exercised the edit and the comparison
+produced no signal in either direction.
+
+**Any acceptance run not made under `claude --plugin-dir .` is testing the last
+released copy, not the change under test.** Treat a fixture result obtained any
+other way as void rather than as a pass.
+
+### 13.2 Text-only changes are proven textually, not by running anything
+
+A skill *is* its instruction file. A change that moves or rewords instructions
+without altering what the skill decides is proven behaviour-neutral by a
+verbatim diff against the pre-change text -- a stronger proof than comparing
+two runs of a generative skill, whose output varies between runs regardless.
+This is how D8 was actually accepted in PR 1, after the fixture route produced
+nothing.
+
+Reserve fixture runs for changes that alter what a skill decides.
+
+### 13.3 Acceptance criteria
 
 1. A draft with a stated content gap produces a question, never an invented
    fact, on every fixture run.
 2. A draft whose only problems are wording exits after cycle 1 with no
    questions.
-3. A persona conflict is disclosed in the report rather than silently resolved.
-4. With dispatch disabled, the same fixtures produce the same *classification*
-   of findings via the in-context path.
-5. `compose`'s output on an existing fixture is unchanged after the D8
-   extraction -- the refactor is behaviour-neutral.
+3. A conflict between two real recipients is reported rather than resolved,
+   per § 7.4 case 3. An archetype-versus-archetype conflict is not.
+4. With dispatch unavailable, the same fixtures produce the same
+   *classification* of findings through the in-context fallback (§ 7.5).
+5. A learned persona is appended to `personas.md` without altering any entry
+   the user wrote by hand (§ 8).
