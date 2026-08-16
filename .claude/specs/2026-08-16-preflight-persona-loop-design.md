@@ -79,7 +79,6 @@ names.
 | **The machine reader** | Machine processing | Sarcasm and irony flattened to literal, rhetorical questions answered literally, "that thing we discussed" with no antecedent, multiple asks where an agent picks one |
 | **The person being asked to do the work** | Self-interest | Unclear ownership, being volunteered, unrealistic timing |
 | **The dissenter** *(inference-only, never pinned)* | Persuasion | Unaddressed objections, assumptions stated as settled |
-| **The non-native English reader** | Readability | Long sentences, idioms, uncommon words with a common alternative |
 
 Two checks run **in the main context, always, and are never dispatched** --
 they are properties of the text rather than a different reader, so a separate
@@ -90,9 +89,27 @@ head adds nothing:
   drafts the user's messages, so an always-on drafting tool warrants an
   always-on counterweight. Its findings are always wording-type, so it can
   never add to the questions list.
-- **Non-native English readability.** Applied as a check even though the same
-  lens exists as an archetype, because `compose`'s stated purpose is landing
-  well with a non-native audience.
+- **Non-native English readability.** Long sentences, idioms, uncommon words
+  with a common alternative, culturally-specific references. Always on because
+  `compose`'s stated purpose is landing well with a non-native audience.
+
+**Non-native English is deliberately a check and not an archetype.** The one
+thing a dispatched non-native reader would add over a text scan is
+*misreading* -- extracting the wrong meaning rather than finding a sentence
+hard -- and that failure mode is already covered from two directions by the
+machine reader (literal versus intended) and the subtext reader (said versus
+received). What remains after subtracting those is text properties, which need
+no separate head.
+
+The term stays **"non-native English"** rather than "international reader",
+matching the two places the repo has already settled on it: `doc-review`'s
+checklist item and `compose`'s own description. A third term for one concept
+is drift.
+
+**Known limitation of both checks:** they run in the main context, which has
+read the draft, the thread and the surrounding conversation, so they know what
+the message *means* and are weak judges of whether the words alone carry it.
+The dispatched busy reader partially mitigates this, since it reads cold.
 
 ## 6. Persona resolution
 
