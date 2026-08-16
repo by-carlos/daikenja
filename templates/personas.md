@@ -6,7 +6,14 @@ a vendor.
 
 Copy this file to `~/.claude/daikenja/personas.md` and fill it in. Point at it
 from `daikenja.yaml` with `profile.personas`. Nothing here ships with the
-plugin -- it is yours, it stays on your machine, and Daikenja never edits it.
+plugin -- it is yours and it stays on your machine.
+
+**Daikenja may add to this file.** When you describe someone while working on a
+message, `/daikenja:remember-persona` appends a section for them and tells you
+afterwards what it wrote. It records only what you actually said, never a guess
+at the rest, and every entry it adds carries the date it was recorded so you can
+spot it. A section you wrote yourself is never rewritten without the change
+being shown to you first. Anything it adds is yours to edit or delete.
 
 Write in prose. There is no schema. One section per persona works well, and
 what matters is what changes how you write to them: what they already know,

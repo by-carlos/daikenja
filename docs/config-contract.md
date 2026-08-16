@@ -143,13 +143,27 @@ that `compose` does not have to invent one.
 |---|---|---|
 | `daikenja.yaml` -- everything except `last_checkpoint` | `setup-user` | Only on user approval. |
 | `daikenja.yaml` -- `last_checkpoint` | `catchup` | Proposes advancing it after reporting; writes on approval. |
-| `personas.md`, `writing-style.md` | the user, by hand | Daikenja reads them and never edits them. |
+| `personas.md` -- creating the file | `setup-user` | Copies the blank template if and only if no file exists. It never inspects or overwrites content. |
+| `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
+| `writing-style.md` | the user, by hand | Daikenja reads it and never edits it. |
 | `<project>/.daikenja/ledger.md` | `log`, and only `log` | `meeting-review` writes through `log`. Every other skill reads. |
 
 **The single-writer rule governs the ledger, not `daikenja.yaml`.** This
 distinction matters: `catchup`'s job is to report a delta and move the
 checkpoint, so it must be able to write that one key. It still never touches
 ledger content.
+
+**`personas.md` has two writers doing two different acts, not one job split in
+two.** `setup-user` owns *creation*: existence is its only test, and a file that
+is already there is left alone whatever is in it. `remember-persona` owns every
+*content* write, and appending an entry is the only way content reaches the file
+from Daikenja. Because the acts do not overlap, the ledger's stricter
+single-writer rule does not transfer here unchanged.
+
+A learned entry is written without asking and reported afterwards, which is
+deliberate: an append is additive and reversible, and the report names the file
+and shows the exact entry so it can be edited or deleted. That licence covers
+new people only. Prose the user wrote by hand is never rewritten silently.
 
 `setup-user` writes a fresh configuration by asking the user. It does not
 migrate, import, or convert anything from a previous Daikenja or from any
@@ -169,7 +183,7 @@ One rule covers the common cases:
 | Valid YAML, missing optional key | Treat as absent, degrade for that key alone with one notice, and continue. One missing optional key never fails a run. |
 | Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. |
-| A pointed-at prose file is missing | One notice naming the path, then continue without it. |
+| A pointed-at prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`, whose whole task is writing `personas.md` -- a missing file is the task itself, so it stops and names `setup-user`. |
 | `norms_doc` absent | Not an error. `self-review` skips ROLE CHECK silently -- this is the documented default. |
 
 Notices are one line and they name the file. "No `writing-style.md` at
