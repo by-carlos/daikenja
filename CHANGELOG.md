@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `/daikenja:remember-persona`, the single owner of content writes to
+  `~/.claude/daikenja/personas.md`. It records what the user says about a
+  person they write to, appending a section for a new person without asking
+  and reporting it afterwards, and proposing rather than silently applying any
+  change to prose the user wrote by hand. It records only what the user
+  actually stated -- never a trait inferred from a draft, a thread or a role --
+  and it never creates the file, which stays `setup-user`'s job
+  (`skills/remember-persona/SKILL.md`).
 - `tests/check-invariants.py`, a script enforcing the invariants every v2
   build stage checked by hand: `claude plugin validate .` exits clean, and
   every `skills/*/SKILL.md` frontmatter block parses as YAML with a `name`
@@ -29,6 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/rewrite-rules.md`, so `preflight` can apply the same contract. No
   behaviour change to `compose` (`skills/compose/SKILL.md`,
   `docs/rewrite-rules.md`).
+- `docs/config-contract.md`'s who-writes-what table now splits `personas.md`
+  into creation, which stays `setup-user`'s and is unchanged, and content,
+  which belongs to `remember-persona`. It previously stated that Daikenja
+  never edits the file. `skills/setup-user/SKILL.md` carries the matching
+  boundary note, and `templates/personas.md` now tells new users that Daikenja
+  may append entries and how to spot them.
 
 ### Documentation
 
