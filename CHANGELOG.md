@@ -24,8 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   time rather than referencing it live, and that `claude --plugin-dir .`
   remains the loop to use for development.
 - `docs/README.md` now indexes all six contracts in `docs/`. It previously
-  listed two of them and carried a "Still to land" section naming three
-  files that already ship.
+  listed two, omitted `reading.md` and `substance-checks.md` entirely, and
+  still carried a "Still to land" section for `voice.md`, which already
+  ships.
 
 ### Changed
 
