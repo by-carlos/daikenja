@@ -46,12 +46,14 @@ Instructions for Claude Code and other agents working in this repo.
   Daikenja's `release` branch, which only ever advances by the fast-forward
   push in step 4 above. A merge to `main` never reaches installers on its own.
 - **Both branches are protected on GitHub**, not just documented here:
-  `main` requires a pull request and a passing `gitleaks` check (enforced for
-  admins too, so there is no direct-push bypass); `release` blocks force
-  pushes and deletion so it can only move forward. Do not attempt to relax
-  either from an agent session -- that is a settings change outside this
-  repo's working tree and needs the maintainer's explicit sign-off, per the
-  global risk-labeling rule.
+  `main` requires a pull request, the maintainer's Code Owner approval, and
+  passing `gitleaks` and `validate` checks. Repository admins can bypass its
+  rules so the maintainer can merge owner-authored PRs, which GitHub does not
+  allow them to self-approve. `release` permits normal updates only by
+  `@by-carlos`; force pushes and deletion are blocked without bypass so it can
+  only move forward. Do not attempt to relax either from an agent session --
+  that is a settings change outside this repo's working tree and needs the
+  maintainer's explicit sign-off, per the global risk-labeling rule.
 
 ## Filing issues
 
