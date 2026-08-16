@@ -40,7 +40,7 @@ iteration is already in the metaphor.
 | D4 | One subagent per persona, dispatched in parallel | Genuine isolation: no persona sees another's critique, so nobody defers. Chosen over in-context sequential passes with the portability cost understood and accepted. |
 | D5 | Cap 4 dispatched archetypes; the busy reader is pinned; inference picks the rest | Length and a buried ask are failure modes on essentially every message regardless of audience. |
 | D6 | Named personas have their own quota, separate from the archetype cap | A named person is a delta on an archetype, not a substitute for one. Naming someone must not cost a lens. |
-| D7 | Conflicts resolve in favour of the primary recipient, disclosed in the report | The message has one actual addressee; other lenses are secondary readers. |
+| D7 | Satisfy both where possible. Archetype conflicts resolve silently toward the real audience; conflicts between two actual recipients are reported, never resolved | There is no "primary recipient" -- multi-recipient messages are the norm, so arbitrating toward one addressee arbitrates toward a fiction. |
 | D8 | `compose` Step 2's rewrite rules extract to `docs/rewrite-rules.md` | Two consumers, one contract -- exactly what the S6 decision did to create `substance-checks.md`. |
 | D9 | Report depth keys off the existing `profile.tone` | `config-contract.md` already defines `tone` as "how much the skills explain themselves". No new config key. |
 | D10 | A new writer skill owns every `personas.md` write; `preflight` and `compose` route through it | Mirrors the ledger's single-writer rule, where only `log` writes and `meeting-review` writes through it. |
@@ -208,9 +208,27 @@ so it stays in the one place that has read `docs/rewrite-rules.md`,
 
 ### 7.4 Conflicts
 
-Two personas wanting opposite things resolve **in favour of the primary
-recipient** (D7), and the trade-off is stated in one line in the report so the
-user can reverse it.
+**There is no "primary recipient" to arbitrate toward.** Work messages
+routinely go to several people at once, so a rule that picks one addressee is
+picking a fiction. Conflicts resolve in three steps:
+
+1. **Try to satisfy both.** Most conflicts are false ones -- length can usually
+   come out somewhere other than the constraint the fact-checker wants kept.
+   A satisfied-both fix is applied like any other wording fix and needs no
+   disclosure.
+2. **Archetype versus archetype**, where neither is a real addressee: resolve
+   silently toward whichever real audience the message actually has.
+   Archetypes are proxies for readers, not readers, and a proxy does not
+   outrank a person.
+3. **Recipient versus recipient**, where both are people the message is
+   genuinely addressed to and no fix serves both: **report it and resolve
+   nothing.** An irreconcilable conflict between two real recipients is a
+   finding in its own right -- it usually means the message is serving two
+   audiences and wants splitting, or that one audience needs a separate note.
+   Say that, rather than quietly picking a winner.
+
+Case 3 is reported alongside the content questions in § 9, since like them it
+is something only the user can settle.
 
 ### 7.5 No dispatch available
 
