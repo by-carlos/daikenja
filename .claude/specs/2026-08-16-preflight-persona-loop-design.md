@@ -1,7 +1,8 @@
 # Design: preflight as a persona review loop
 
 **Date:** 16 Aug 2026
-**Status:** approved design, not yet implemented
+**Status:** approved design, partly implemented. PR 1 of § 10.3 landed 16 Aug
+2026 (#30), PR 2 landed 16 Aug 2026 (#33). PR 3 is outstanding.
 **Affects:** `skills/preflight`, `skills/compose`, `docs/`, `templates/personas.md`, one new skill
 
 ---
