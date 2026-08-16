@@ -1,8 +1,16 @@
 # tests/
 
-Fixtures the skills are exercised against. Nothing here is read at runtime, and
-no skill points at this directory -- it exists so a stage's acceptance checks
-can be re-run later against the same inputs.
+Fixtures the skills are exercised against, plus one script. Nothing here is
+read at runtime, and no skill points at this directory -- it exists so a
+stage's acceptance checks can be re-run later against the same inputs.
+
+- [`check-invariants.py`](check-invariants.py) -- enforces the invariants
+  every v2 build stage checked by hand: `claude plugin validate .` exits
+  clean, and every `skills/*/SKILL.md` frontmatter block parses as YAML with
+  a `name` matching its directory and a `description`. Requires `pyyaml`
+  (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
+  `python tests/check-invariants.py`; CI runs it on every push and pull
+  request via `.github/workflows/ci.yml`.
 
 - [`fixtures/sample-thread.md`](fixtures/sample-thread.md) -- a thread with one
   agreed decision, one proposal nobody agreed to, and two unresolved items.
