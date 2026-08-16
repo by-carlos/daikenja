@@ -3,7 +3,7 @@ name: compose
 description: Rewrites or drafts a work message (Slack, Teams, email) so it stays clear, calm and easy to read for a non-native English audience, without changing the ask, the stance or the confidence level. Returns one balanced message, then offers a firmer or softer version on request. Use this whenever the user pastes a draft message, asks for help replying to a colleague, asks to "make this sound better", "tone this down", "make this sound better before I send it", or has just finished the /daikenja:thread skill and is ready to draft -- even a plain "go ahead" or "draft it" once that skill's intent block exists.
 metadata:
   owner: Carlos
-  version: 3
+  version: 4
   pairs-with: thread
 ---
 
@@ -19,6 +19,8 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice. Always applies,
   layered under the user's own `writing-style.md` if one exists.
+- `${CLAUDE_PLUGIN_ROOT}/docs/rewrite-rules.md` -- the rules that bound every
+  rewrite. This skill applies them; it does not restate them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` -- the six substance checks
   this skill runs as a silent pre-flight when the goal is a request.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- how `writing_style` and
@@ -54,28 +56,12 @@ Otherwise, proceed.
 
 ## Step 2: rules you cannot break
 
-Keep the meaning identical. Meaning includes: the core message, the ask or
-decision, who it is addressed to, constraints, timing, owners, how serious or
-blocking it is, and how certain the user is ("I think" vs "I know").
+Apply `${CLAUDE_PLUGIN_ROOT}/docs/rewrite-rules.md` in full. That document is
+the contract; this skill does not restate it.
 
-Never:
-
-- Change the stance, the priority, or the confidence level.
-- Add facts, promises, commitments, deadlines, owners or scope.
-- Add `@mentions`, `@here` or `@channel` that were not already there.
-- Change numbers, dates, owners or scope.
-
-Copy these across untouched: `@mentions`, `#channels`, links, ticket IDs, file
-paths, error messages, logs, code blocks, quoted text, and any pasted lines that
-start with `>`. Only surrounding spacing and punctuation may change.
-
-**Prior conversation context has a hard boundary.** Earlier turns in this
-session may inform framing, tone, audience, and what the reader can be assumed
-to already know. They may never become propositional content: no fact, name,
-number, date, commitment or characterization enters the draft unless it is in
-the pasted draft, the intent block, or the thread itself. This is not an
-exemption from the rule above -- if something from prior context belongs in the
-message, name it as a question in `Comment` instead of writing it in.
+A rule that cannot be honoured is named in the `Comment` block, per that
+document's reporting section. Never break one silently, and never invent the
+missing piece to avoid the problem.
 
 ## Step 3: clean it up
 
