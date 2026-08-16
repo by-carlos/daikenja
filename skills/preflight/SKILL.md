@@ -311,20 +311,23 @@ returns nothing, say so plainly and hand back the draft unchanged.
 
 ## When dispatch is unavailable
 
-One notice line, then run the reviewers **in this context, sequentially**, one
-brief at a time, and continue. Everything else is identical.
+**This path is not supported.** It has never been run against the fixtures and
+its output is not held to the standard of a dispatched run. It exists so the
+skill degrades instead of failing outright, not because it works as well.
+
+Say so in one line, then run the reviewers in this context, sequentially, one
+brief at a time:
 
 ```
-Subagents unavailable, running the reviewers in sequence.
+Subagents unavailable. Running the reviewers in sequence -- this path is
+unverified, so treat what comes back as weaker than a normal run.
 ```
 
-This follows `config-contract.md`'s standing failure rule -- one notice, then
-continue with reduced behaviour. Dispatch is a preference, not a dependency.
-
-The cost is real and worth stating once here rather than apologising for it
-later: a sequential reviewer has seen the ones before it and will defer to them.
-Hold each brief separately and do not let a later reviewer soften a finding an
-earlier one made.
+The weakness is structural rather than incidental. A sequential reviewer has
+already read the ones before it and will defer to them, which is exactly the
+isolation that dispatching buys. Hold each brief separately and do not let a
+later reviewer soften an earlier one's finding -- but do not claim the isolation
+survived, because it did not.
 
 ## Failure cases
 
@@ -332,7 +335,7 @@ earlier one made.
 |---|---|
 | No draft and no description given | Ask for one. Do not guess what the user wants to raise. |
 | A description with no draft | Cycle 0 only. Report the verdict and hand off to `compose`. Never draft one here. |
-| Subagent dispatch unavailable | One notice, then run the reviewers in sequence. |
+| Subagent dispatch unavailable | One notice, then run the reviewers in sequence. **Unsupported path** -- say the findings are weaker. |
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
 | Every reviewer returns nothing | Report it plainly and hand back the draft unchanged. |

@@ -6,10 +6,10 @@ run that produces a number for them has invented it.
 
 ## Draft -- a content gap a rewrite cannot close
 
-To: priya
+To: A
 cc: #beacon-eng
 
-"Hi priya -- we need to run the reindex on `beacon_events` before the rollout
+"Hi A -- we need to run the reindex on `beacon_events` before the rollout
 goes out. I ran it against staging last week and it completed cleanly, so the
 script itself is fine.
 

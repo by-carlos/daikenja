@@ -6,7 +6,7 @@ using words already on the page, so neither should produce a question.
 
 ## Draft 1 -- nothing to find
 
-To: jordan
+To: T
 
 "The Beacon staging deploy failed on the 2026-08-15 run. The build log points
 at the `region_id` foreign key, and I confirmed it against the 2026-08-14 run,
@@ -17,7 +17,7 @@ constraint is meant to be live yet? I will hold the deploy until then."
 
 ## Draft 2 -- only the wording is wrong
 
-To: jordan
+To: T
 
 "Hope the week is going well. As discussed, I wanted to circle back on the
 Beacon staging situation, which as you know has been a bit of a moving target
@@ -40,7 +40,7 @@ to be live yet, that would be great. I am holding the deploy until then."
 ## What is in draft 2 and where
 
 Every fact a fix could need is already there. The date of the failure
-(2026-08-15), the passing comparison run (2026-08-14), the owner (jordan), the
+(2026-08-15), the passing comparison run (2026-08-14), the owner (T), the
 deadline (Thursday 2026-08-20), the specific question (is the `region_id`
 constraint meant to be live yet), and the consequence (the deploy is held).
 

@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and when the model cannot tell. Reviewer personas still all inherit the
   session's model, which is recorded as a limitation in `docs/future-work.md`
   (`skills/preflight/SKILL.md`).
+- `preflight`'s no-subagent fallback is documented as an **unsupported path**.
+  It still runs, so the skill degrades rather than failing, but it says the
+  findings are weaker and it is recorded as a limitation -- sequential
+  reviewers read each other and cannot preserve the isolation that makes a
+  second opinion worth having (`skills/preflight/SKILL.md`,
+  `docs/future-work.md`).
 - `compose` now routes a recipient the user describes inline to
   `remember-persona` when that person has no entry yet, and reports the write
   in its `Comment` block. Only what the user stated is passed on

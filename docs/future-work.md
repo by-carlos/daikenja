@@ -33,6 +33,14 @@ suspended to do it.
 almost always content, which no further cycle can fix. A draft with deep
 problems gets two passes and a list of questions, not convergence.
 
+**Running the reviewers without subagents is not supported.** When dispatch is
+unavailable `preflight` falls back to reading each brief in sequence in its own
+context, so the skill degrades instead of failing. That path has never been run
+against the fixtures, and it cannot preserve the isolation that makes a second
+opinion worth having -- a sequential reviewer has read the ones before it and
+defers to them. It says so when it happens. Treat what it returns as weaker
+than a dispatched run.
+
 **Every reviewer runs on the session's model.** A skill cannot declare a model,
 so the personas `preflight` dispatches all inherit whatever the session is set
 to. There is no way to run a persona that simulates a fast, careless reader on a
