@@ -7,32 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **Pull requests now require maintainer approval.** Every tracked path is owned
-  by `@by-carlos`, allowing contributions while ensuring the maintainer's review
-  is required before changes merge.
-- **Required CI jobs now use the shared names `gitleaks` and `validate`.** The
-  existing plugin and skill invariant checks are unchanged; only their public
-  GitHub job context is normalized.
-- **The five project-scoped skills now carry a `project-` prefix**: `log` ->
-  `project-log`, `summary` -> `project-summary`, `catchup` -> `project-catchup`,
-  `decisions` -> `project-decisions`, `gaps` -> `project-gaps`. The other eight
-  skills already carried their scope in their names and are unchanged. This is a
-  rename and documentation sweep only -- no skill's behaviour, failure branches
-  or output shape changed. Landing now, ahead of the repo going public, costs one
-  sweep instead of breaking other users' muscle memory later
-  (`skills/project-log/SKILL.md`, `skills/project-summary/SKILL.md`,
-  `skills/project-catchup/SKILL.md`, `skills/project-decisions/SKILL.md`,
-  `skills/project-gaps/SKILL.md`, and every skill and doc that names one).
-  `docs/ledger-format.md`'s `<writer>` field now documents `project-log` as the
-  current writer name, noting that ledgers written before 0.3.0 name it `log`
-  instead; the field grammar itself is unchanged. `templates/ledger.md` reflects
-  the new name for ledgers scaffolded from now on -- existing ledgers keep
-  whatever wording they already have, since templates are copied once and never
-  edited afterwards. `tests/fixtures/sample-ledger.md` gained one Changelog line
-  written by `project-log` alongside its existing `log` lines, so the fixture
-  exercises reading both the pre- and post-rename writer name.
+## [0.3.0] - 2026-08-17
 
 ### Added
 
@@ -72,6 +47,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pull requests now require maintainer approval.** Every tracked path is owned
+  by `@by-carlos`, allowing contributions while ensuring the maintainer's review
+  is required before changes merge.
+- **Required CI jobs now use the shared names `gitleaks` and `validate`.** The
+  existing plugin and skill invariant checks are unchanged; only their public
+  GitHub job context is normalized.
+- **The five project-scoped skills now carry a `project-` prefix**: `log` ->
+  `project-log`, `summary` -> `project-summary`, `catchup` -> `project-catchup`,
+  `decisions` -> `project-decisions`, `gaps` -> `project-gaps`. The other eight
+  skills already carried their scope in their names and are unchanged. This is a
+  rename and documentation sweep only -- no skill's behaviour, failure branches
+  or output shape changed. Landing now, ahead of the repo going public, costs one
+  sweep instead of breaking other users' muscle memory later
+  (`skills/project-log/SKILL.md`, `skills/project-summary/SKILL.md`,
+  `skills/project-catchup/SKILL.md`, `skills/project-decisions/SKILL.md`,
+  `skills/project-gaps/SKILL.md`, and every skill and doc that names one).
+  `docs/ledger-format.md`'s `<writer>` field now documents `project-log` as the
+  current writer name, noting that ledgers written before 0.3.0 name it `log`
+  instead; the field grammar itself is unchanged. `templates/ledger.md` reflects
+  the new name for ledgers scaffolded from now on -- existing ledgers keep
+  whatever wording they already have, since templates are copied once and never
+  edited afterwards. `tests/fixtures/sample-ledger.md` gained one Changelog line
+  written by `project-log` alongside its existing `log` lines, so the fixture
+  exercises reading both the pre- and post-rename writer name.
 - `/daikenja:preflight` is now a bounded review loop instead of a one-shot
   verdict. It runs the six substance checks, dispatches reviewer personas as
   isolated subagents, applies the wording fixes they raise, re-checks once,
@@ -133,6 +132,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   append entries and how to spot them, and `README.md`'s "Where your data
   lives" table no longer credits `personas.md` to the user alone.
 
+- Removed the non-overridable "never an em dash or en dash" rule from the
+  default voice (`docs/voice.md`, `docs/config-contract.md`,
+  `templates/writing-style.md`, `skills/thread/SKILL.md`). Absolute dates
+  remain the only non-overridable rule. `docs/ledger-format.md`'s three-split
+  parser bound is unchanged; only its justification was reworded.
+
 ### Documentation
 
 - Documented that a local-marketplace install copies the repo at install
@@ -149,14 +154,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to mean only that no `writing-style.md` can disable the rule -- it does not
   rank the rule against other contracts. Neither file's behaviour changes;
   this writes down precedence that was previously resolved only by inference.
-
-### Changed
-
-- Removed the non-overridable "never an em dash or en dash" rule from the
-  default voice (`docs/voice.md`, `docs/config-contract.md`,
-  `templates/writing-style.md`, `skills/thread/SKILL.md`). Absolute dates
-  remain the only non-overridable rule. `docs/ledger-format.md`'s three-split
-  parser bound is unchanged; only its justification was reworded.
 
 ## [0.2.0] - 2026-08-15
 
@@ -176,5 +173,6 @@ Initial public release.
   `personas.md`, `writing-style.md`) copied out to a user's machine on setup.
 - `tests/fixtures/` synthetic inputs the skills are exercised against by hand.
 
-[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.3.0
 [0.2.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.2.0
