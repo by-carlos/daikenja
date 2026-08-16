@@ -19,6 +19,12 @@ stage's acceptance checks can be re-run later against the same inputs.
 - [`fixtures/sample-thread-followup.md`](fixtures/sample-thread-followup.md) --
   the same conversation with two later messages. Logging it after the first
   fixture must update entries in place instead of appending near copies.
+- [`fixtures/sample-ledger.md`](fixtures/sample-ledger.md) -- a complete,
+  well-formed beacon-project ledger: four decisions with one supersession
+  pair (`D-002`/`D-004`), four open items with one resolved, one context
+  link, and a changelog accounting for every write. The healthy-ledger
+  control fixture; its `D-003` schema-freeze decision is what
+  `sample-drafts-preflight.md`'s third draft checks against.
 - [`fixtures/malformed-ledger.md`](fixtures/malformed-ledger.md) -- a ledger with
   a misspelled section heading and an entry missing its owner field, plus a legal
   continuation line as a control. A skill must report all of it and write
@@ -29,6 +35,73 @@ stage's acceptance checks can be re-run later against the same inputs.
   matched pair as a control. Exercises `decisions`' tail-is-authoritative
   handling: it must report both mismatches, naming both IDs, and never repair
   the ledger.
+
+### `meeting-review`
+
+- [`fixtures/sample-transcript.md`](fixtures/sample-transcript.md) -- a
+  22-minute Harbor rollout-sync transcript, continuing the story from
+  `sample-thread.md`. Layers transcript mess (three speaker labels for one
+  person, a repeated point, a side conversation, an inaudible passage) on top
+  of the classification cases: one real decision, one restated-not-new
+  decision, one parked suggestion, an owned action item, an unowned one, and
+  an unresolved question. Exercises the `meeting-review` classifier against
+  both at once.
+
+### `thread` and `compose`
+
+- [`fixtures/sample-reply-thread.md`](fixtures/sample-reply-thread.md) -- a
+  four-message thread where jordan pushes for a Friday cutover and riley
+  pushes back citing an unfinished validation step and a runbook link,
+  ending before riley's reply is drafted. Exercises the `thread` ->
+  `compose` handoff: the runbook link must survive into the drafted reply
+  untouched.
+
+### `preflight`
+
+- [`fixtures/sample-drafts-preflight.md`](fixtures/sample-drafts-preflight.md)
+  -- three drafts for `preflight`'s verdict: one with full context, a named
+  owner and a dated ask that should pass; one with no context and no
+  specific ask; and one asking a question already settled by
+  `sample-ledger.md`'s `D-003` schema-freeze decision. Exercises the
+  verdict, not the wording, including the check against a supplied ledger.
+
+### `doc-review`
+
+- [`fixtures/doc-review-clean.md`](fixtures/doc-review-clean.md) -- the
+  Beacon rollout runbook: a dated rollout rule, a rollback trigger with a
+  named owner, and named ownership for every remaining responsibility. The
+  clean control paired with `doc-review-problems.md`, built to pass
+  `doc-review`'s checklist without findings.
+- [`fixtures/doc-review-problems.md`](fixtures/doc-review-problems.md) --
+  the Harbor rollout runbook, seeded with one issue per `doc-review` check:
+  an undefined term (`GKR`), an undated rollback rule, an unowned task
+  (customer comms), a "Fast path" section that flatly contradicts the
+  rollout rule stated above it, and a closing note claiming the doc "still
+  applies today" for a 2024 cutover with nothing to support that. Exercises
+  the full checklist in one document.
+
+### `self-review`
+
+- [`fixtures/self-review-norms.md`](fixtures/self-review-norms.md) -- a
+  synthetic Quill-team norms document covering direct-question answering,
+  stating what has been verified, not committing another team's dates,
+  reply-time expectations when someone is blocked, and incident ownership.
+  Used to turn on `self-review`'s ROLE CHECK by pointing `norms_doc` at this
+  file.
+- [`fixtures/self-review-thread.md`](fixtures/self-review-thread.md) -- a
+  14-message thread where the invoker (`carlos`) makes mistakes at all
+  three severity tiers, including one that misleads a colleague into
+  acting on a wrong fact (calling a reindex idempotent when it silently
+  duplicates rows), with enough mistakes in total to exercise the findings
+  cap and the parked remainder.
+- [`fixtures/self-review-thread-colleague.md`](fixtures/self-review-thread-colleague.md)
+  -- a 9-message thread where a colleague (`dev`) behaves badly throughout
+  -- public blame, sarcasm aimed at a person, dismissing a stated
+  constraint twice -- while the invoker (`carlos`) handles it well until
+  the final message, where he accepts a date he had just called
+  unachievable without saying what would be dropped to hit it. Exercises
+  `self-review`'s third-party check: findings must land on the invoker
+  alone, never on `dev`.
 
 Every fixture is synthetic: invented project, invented people, `example.com`
 links. Nothing in this directory may contain real work content, personal data or
