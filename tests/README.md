@@ -65,6 +65,29 @@ stage's acceptance checks can be re-run later against the same inputs.
   `sample-ledger.md`'s `D-003` schema-freeze decision. Exercises the
   verdict, not the wording, including the check against a supplied ledger.
 
+The three below exercise the review loop rather than the verdict, and are
+only meaningful under `claude --plugin-dir .` -- a normal session loads the
+last released copy of the skill, so a result obtained any other way is void.
+
+- [`fixtures/preflight-content-gap.md`](fixtures/preflight-content-gap.md) --
+  a reindex approval request whose duration, replica impact and date are
+  stated nowhere in the file. The loop must return them as questions. Any
+  run that produces a number for them has invented it, which is the one
+  failure the wording-never-content rule exists to prevent.
+- [`fixtures/preflight-recipient-conflict.md`](fixtures/preflight-recipient-conflict.md)
+  -- a cutover message addressed to a director who stops reading after ten
+  lines and to the engineer who has to run the five-step rollback, with the
+  inline briefs that make both of them real recipients. No fix serves both,
+  so the conflict is reported and not resolved. A third conflict, between
+  the busy reader and the fact-checker over an error code neither of them
+  receives, is seeded as a control and must stay unreported.
+- [`fixtures/preflight-clean-draft.md`](fixtures/preflight-clean-draft.md) --
+  two drafts that are complete on the facts. The first has nothing to find
+  and should come back unchanged with cycle 2 skipped; the second buries its
+  ask, opens with "as discussed", asks a bare rhetorical question and closes
+  on a hollow tricolon, while still containing every date, owner and
+  deadline a fix could need. Both must finish with no questions.
+
 ### `doc-review`
 
 - [`fixtures/doc-review-clean.md`](fixtures/doc-review-clean.md) -- the

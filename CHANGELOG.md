@@ -17,6 +17,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   actually stated -- never a trait inferred from a draft, a thread or a role --
   and it never creates the file, which stays `setup-user`'s job
   (`skills/remember-persona/SKILL.md`).
+- `docs/reviewer-personas.md`, the fixed roster of nine reviewer archetypes
+  `preflight` dispatches, the two checks it always runs in its own context
+  (the AI-tell check and non-native English readability), and the critique
+  contract every finding comes back in. Archetypes are reading behaviours
+  rather than people, which is what lets a named recipient layer on top of one
+  instead of competing with it. The roster changes only by pull request.
+- `docs/future-work.md`, recording what the shipped design does not do -- no
+  group-level personas, no user-defined archetypes, no persona onboarding by
+  sampling past messages, and the two-cycle ceiling on the review loop.
+  Written as limitations of current behaviour, not as a roadmap.
+- Three `preflight` fixtures covering the cases the review loop can be
+  falsified on: a draft whose missing facts appear nowhere in the file, a
+  draft with two real recipients no single fix serves, and two drafts that
+  are complete on the facts (`tests/fixtures/preflight-content-gap.md`,
+  `tests/fixtures/preflight-recipient-conflict.md`,
+  `tests/fixtures/preflight-clean-draft.md`).
 - `tests/check-invariants.py`, a script enforcing the invariants every v2
   build stage checked by hand: `claude plugin validate .` exits clean, and
   every `skills/*/SKILL.md` frontmatter block parses as YAML with a `name`
@@ -29,6 +45,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `/daikenja:preflight` is now a bounded review loop instead of a one-shot
+  verdict. It runs the six substance checks, dispatches reviewer personas as
+  isolated subagents, applies the wording fixes they raise, re-checks once,
+  and returns a revised draft plus the facts only the user can supply. The
+  loop may change wording and never content: every proposed fix is tested
+  against the draft in the main context, and one that needs a fact the draft
+  does not contain is reclassified as a question rather than written in. The
+  rewrite step is never delegated. Reviewer selection caps at four archetypes
+  plus two named recipients, the busy reader is always dispatched, and a
+  conflict between two real recipients is reported rather than resolved. With
+  subagents unavailable the reviewers run in sequence after one notice
+  (`skills/preflight/SKILL.md`).
+- `preflight` now says so in one line when it can tell it is not running on
+  Opus, before it does anything else. Its adjudication step is what stops the
+  loop inventing content, and that judgment is the part most sensitive to
+  model strength. The notice never blocks, and it stays silent both on Opus
+  and when the model cannot tell. Reviewer personas still all inherit the
+  session's model, which is recorded as a limitation in `docs/future-work.md`
+  (`skills/preflight/SKILL.md`).
+- `preflight`'s no-subagent fallback is documented as an **unsupported path**.
+  It still runs, so the skill degrades rather than failing, but it says the
+  findings are weaker and it is recorded as a limitation -- sequential
+  reviewers read each other and cannot preserve the isolation that makes a
+  second opinion worth having (`skills/preflight/SKILL.md`,
+  `docs/future-work.md`).
+- `preflight`'s cycle 2 re-dispatch is no longer skippable on cost. An
+  acceptance run talked itself out of re-dispatching because "re-spawning five
+  agents adds cost, not signal", which is the unchecked self-assessment cycle 2
+  exists to prevent -- the reviewer raised the finding and is the one who says
+  whether the fix landed (`skills/preflight/SKILL.md`).
+- Neither `preflight` nor `remember-persona` will record a persona described in
+  material that says it is synthetic. Running the acceptance fixtures used to
+  offer to write invented people into the user's real `personas.md`
+  (`skills/preflight/SKILL.md`, `skills/remember-persona/SKILL.md`).
+- `remember-persona` now matches the format the personas file already uses
+  rather than imposing the template's, appends after the last entry instead of
+  at the end of the file so trailing sections stay last, and no longer repeats
+  what the file says about anyone other than the person being recorded. All
+  three were found by watching it do the right thing while the skill text said
+  otherwise (`skills/remember-persona/SKILL.md`).
+- `compose` now routes a recipient the user describes inline to
+  `remember-persona` when that person has no entry yet, and reports the write
+  in its `Comment` block. Only what the user stated is passed on
+  (`skills/compose/SKILL.md`).
 - Context-link additions and removals now emit a Changelog line
   (`+link "<label>"` / `-link "<label>"`) and are reported by `catchup`,
   closing the one gap where a ledger change was invisible to it

@@ -3,7 +3,7 @@ name: compose
 description: Rewrites or drafts a work message (Slack, Teams, email) so it stays clear, calm and easy to read for a non-native English audience, without changing the ask, the stance or the confidence level. Returns one balanced message, then offers a firmer or softer version on request. Use this whenever the user pastes a draft message, asks for help replying to a colleague, asks to "make this sound better", "tone this down", "make this sound better before I send it", or has just finished the /daikenja:thread skill and is ready to draft -- even a plain "go ahead" or "draft it" once that skill's intent block exists.
 metadata:
   owner: Carlos
-  version: 4
+  version: 5
   pairs-with: thread
 ---
 
@@ -102,6 +102,17 @@ to be. If the file is absent, empty, or the recipient does not match any entry,
 proceed silently -- this is optional input, not a configuration requirement,
 and gets no notice either way.
 
+**If the user described a recipient inline and that person has no entry**, route
+what they said to `/daikenja:remember-persona`, which is the only skill that
+writes persona content. Pass on what the user actually stated and nothing
+inferred from the draft or the thread -- "M challenges every technical claim" is
+material, M having challenged one in a pasted thread is not.
+
+That write is silent and comes back as one line to add to the `Comment` block
+(`Learned: added M to ~/.claude/daikenja/personas.md.`). A missing `personas.md`
+also comes back as one line, and drafting continues either way. Never write the
+file from here.
+
 ## Step 6: substance pre-flight (requests only)
 
 If the goal is `request` (from the intent block's `Goal`, or from what Step 1
@@ -146,6 +157,7 @@ Want this firmer or softer instead?
 Include a **Comment** only when one of these applies. Keep it under 150 words:
 
 - A substance check failed (Step 6).
+- A persona was learned (Step 5). One line, reporting the write after the fact.
 - The meaning could still be misread because context is missing.
 - There is HR, legal, security or escalation risk. If the source material
   contained an insult or an accusation, a Comment is **required** -- explain the
