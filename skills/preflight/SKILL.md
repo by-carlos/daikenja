@@ -70,7 +70,7 @@ or decide something, or just informing them?"
 ## Step 3: cycle 0 -- the substance checks
 
 Run all six checks from `docs/substance-checks.md` against the draft. Report
-every check, pass or fail, per Step 9's depth rule.
+every check, pass or fail, per Step 10's depth rule.
 
 For check 6, **already answered**, only check material this skill can actually
 see:
@@ -89,7 +89,7 @@ reported alongside the other five.
 
 **A failing check does not stop the loop.** It is a content gap by definition --
 the missing piece is a fact only the user has -- so it joins the questions list
-in Step 9 and the loop carries on. Never invent the missing piece to turn a fail
+in Step 10 and the loop carries on. Never invent the missing piece to turn a fail
 into a pass.
 
 ## Step 4: select the reviewers
@@ -204,8 +204,8 @@ fiction. In order:
    that one audience needs a separate note. Say that, rather than quietly
    picking a winner.
 
-Case 3 is reported alongside the content questions in Step 9, because like them
-it is something only the user can settle.
+Case 3 is reported alongside the content questions in Step 10, because like
+them it is something only the user can settle.
 
 ## Step 7: rewrite -- never dispatched
 
@@ -235,7 +235,18 @@ revised draft. They confirm resolved or restate.
 remains is almost always content, which no further cycle can fix. Collect it and
 report it once rather than bouncing back at the user three separate times.
 
-## Step 9: report
+## Step 9: learned personas
+
+If the user described someone inline who has no entry in `personas.md`, route
+that description to `/daikenja:remember-persona`, which is the only skill that
+writes persona content. Pass on what the user actually said and nothing
+inferred from the draft.
+
+The write is silent, and it is reported afterwards as the one-line `Learned:`
+line in Step 10. A missing `personas.md` comes back as one line from that skill
+and this one carries on -- it never blocks a review.
+
+## Step 10: report
 
 Verdict first, deliverable second, evidence third:
 
@@ -272,17 +283,6 @@ goes`. Nothing else.
 
 **A clean draft produces a short report, not a padded one.** If every reviewer
 returns nothing, say so plainly and hand back the draft unchanged.
-
-## Step 10: learned personas
-
-If the user described someone inline who has no entry in `personas.md`, route
-that description to `/daikenja:remember-persona`, which is the only skill that
-writes persona content. Pass on what the user actually said and nothing
-inferred from the draft.
-
-The write is silent and reported afterwards as the one-line `Learned:` line
-above. A missing `personas.md` comes back as one line from that skill and this
-one carries on -- it never blocks a review.
 
 ## When dispatch is unavailable
 
