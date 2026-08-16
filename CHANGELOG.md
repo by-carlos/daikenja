@@ -41,8 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   into creation, which stays `setup-user`'s and is unchanged, and content,
   which belongs to `remember-persona`. It previously stated that Daikenja
   never edits the file. `skills/setup-user/SKILL.md` carries the matching
-  boundary note, and `templates/personas.md` now tells new users that Daikenja
-  may append entries and how to spot them.
+  boundary note, `templates/personas.md` now tells new users that Daikenja may
+  append entries and how to spot them, and `README.md`'s "Where your data
+  lives" table no longer credits `personas.md` to the user alone.
 
 ### Documentation
 

@@ -94,7 +94,7 @@ and get overwritten on update.
 | What | Where | Written by |
 |---|---|---|
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user`, plus `catchup` for the `last_checkpoint` key only |
-| Your notes on the people you work with | `~/.claude/daikenja/personas.md` | you |
+| Your notes on the people you work with | `~/.claude/daikenja/personas.md` | you, plus `remember-persona` for people you describe to it |
 | How you write | `~/.claude/daikenja/writing-style.md` | you |
 | A project's decision ledger | `<project>/.daikenja/ledger.md` | `log` only |
 
