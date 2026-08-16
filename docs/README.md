@@ -14,5 +14,6 @@ redefines one. When a contract changes, it changes here and the skills follow.
   `config-contract.md`.
 - [`substance-checks.md`](substance-checks.md) -- the six checks a request has
   to pass, shared by `compose` and `preflight`.
-- [`rewrite-rules.md`](rewrite-rules.md) -- the rules that bound any rewrite of
-  a user's message, shared by `compose` and `preflight`.
+- [`rewrite-rules.md`](rewrite-rules.md) -- the rules that bound any rewrite
+  of a user's message. Applied by `compose`; `preflight` will read it too
+  once its review loop ships.

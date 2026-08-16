@@ -4,8 +4,9 @@ The rules that bound any rewrite of a user's message. Written once and shared
 by two consumers, the same way `substance-checks.md` is:
 
 - **`compose`** applies them to every draft it writes or rewrites.
-- **`preflight`** applies them to every wording fix it takes from a reviewer
-  persona inside its review loop.
+- **`preflight`** will apply them to every wording fix it takes from a
+  reviewer persona, once its review loop ships. It does not read this
+  document yet.
 
 Neither skill restates these rules in its own body. Both point here.
 
@@ -46,6 +47,6 @@ silently broken, and the missing piece is never invented to avoid the problem.
 What changes between consumers is only where it is reported:
 
 - **`compose`:** name it in the `Comment` block, in one line.
-- **`preflight`:** it becomes a content finding on the "Needs you" list, since
-  a rewrite that cannot be made without adding a fact is by definition not a
-  wording fix.
+- **`preflight`:** once its review loop ships, it becomes a content finding
+  rather than a wording fix, since a rewrite that cannot be made without
+  adding a fact is by definition not a wording change.
