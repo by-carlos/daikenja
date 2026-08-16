@@ -13,6 +13,11 @@ turn it off:
 - Absolute dates, never relative ones ("by Tuesday 11 Aug", not "by next
   Tuesday"). Teams are in different time zones.
 
+"Not overridable" means only that: no user `writing-style.md` can disable the
+rule. It does not rank this rule against other contracts. When honoring it
+would require adding a fact the source does not contain, `rewrite-rules.md`
+§ Precedence over the default voice decides which rule yields.
+
 ## Assume the reader is not a native English speaker
 
 Most readers do not have English as a first language.

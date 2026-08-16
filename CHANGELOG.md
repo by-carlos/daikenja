@@ -114,6 +114,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   listed two, omitted `reading.md` and `substance-checks.md` entirely, and
   still carried a "Still to land" section for `voice.md`, which already
   ships.
+- `docs/rewrite-rules.md` states that its no-invention rule outranks every
+  rule in `docs/voice.md`, including the one marked non-overridable: a voice
+  rule satisfiable only by adding a fact the source lacks is reported as
+  unhonorable, not silently broken. `docs/voice.md` scopes "non-overridable"
+  to mean only that no `writing-style.md` can disable the rule -- it does not
+  rank the rule against other contracts. Neither file's behaviour changes;
+  this writes down precedence that was previously resolved only by inference.
 
 ### Changed
 
