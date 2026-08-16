@@ -3,7 +3,7 @@ name: remember-persona
 description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:log) and not for creating the file in the first place (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
   writes: ~/.claude/daikenja/personas.md
 ---
 
@@ -58,6 +58,16 @@ Never mine a draft, a thread or a transcript for traits. The user stating "M
 challenges every technical claim" is material. M having challenged a claim in a
 pasted thread is not.
 
+**Material that says it is synthetic is not material.** Acceptance fixtures,
+worked examples and anything else that announces itself as invented describe
+people who do not exist, and this file is a record of real colleagues. Write
+nothing, say so in one line, and do not ask the user to confirm -- the file said
+it plainly enough:
+
+```
+That description comes from a test fixture, so I have not recorded it.
+```
+
 ## Step 2: resolve the file
 
 Follow `config-contract.md` § Resolution order.
@@ -97,10 +107,22 @@ Mention it once in the report.
 
 Read nothing else out of the file and change nothing you were not asked to.
 
+**What you read here stays here.** Reading the whole file is necessary to place
+an entry and to spot an existing one. Repeating what it says about anyone else
+is not: no summarising other people's entries, no listing who is already in
+there, no reasoning out loud about how they compare. These are the user's
+private notes on real colleagues, and they have a way of being read over a
+shoulder. Say a match exists or does not, and nothing about the neighbours.
+
 ## Step 4: build the entry
 
-Use the shape the template already establishes -- an H2 with the person's name,
-then short prose under bold field labels:
+**Match the format the file already uses.** Read how the existing entries are
+written -- the heading level, whether the name carries a role after it, whether
+the fields are bold labels or bullets -- and write the new entry the same way.
+**The file is the authority on its own format**, and a user who has settled on a
+shape has settled it for a reason.
+
+The shape below is the fallback, for a file that has no entries yet to copy:
 
 ```markdown
 ## Sarah
@@ -133,10 +155,14 @@ recalled from memory, and never a relative date.
 
 ## Step 5: write
 
-**New person, no existing entry.** Append the section at the end of the file,
-after the last existing content. Write it without asking. Touch nothing else --
-no reordering, no reformatting, no tidying, and no normalizing a line a human
-wrote by hand.
+**New person, no existing entry.** Append the section **at the end of the
+entries, immediately after the last persona section -- not at the end of the
+file.** A file may carry trailing sections that have to stay last: standing
+drafting rules, notes to self, a template block. Dropping a person underneath
+those breaks the file's own structure.
+
+Write it without asking. Touch nothing else -- no reordering, no reformatting,
+no tidying, and no normalizing a line a human wrote by hand.
 
 **Existing entry, and the user said something new about them.** Do not write.
 Show the exact addition and the exact line it would sit after, and wait:
@@ -193,6 +219,9 @@ missing thing is the task itself.
 | `profile.personas` does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the entry somewhere else. |
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
+| The description came from a fixture or worked example | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |
+| The file's entries use a different format from the template | Match the file, not the template. It is the authority on its own format. |
+| The file has trailing sections after the entries | Append after the last entry, above those sections. Never at the very end. |
 | The description is evaluative ("he is useless") | Record the behaviour underneath it if the user stated one, and say in one line what you wrote instead. If there is no behaviour under it, write nothing and ask what they do. |
 | The person already has an entry | Propose, never write silently. See Step 5. |
 | The file still holds the shipped template placeholder | Leave it alone. Append below it and note it once in the report. |

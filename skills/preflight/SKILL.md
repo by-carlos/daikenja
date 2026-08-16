@@ -256,6 +256,13 @@ revised draft. They confirm resolved or restate.
 - **Zero wording findings in cycle 1 skips cycle 2 entirely.** There is nothing
   to re-read.
 
+**If cycle 2 runs at all, it runs as a dispatch. Cost is not a reason to skip
+it.** Judging in this context that a fix "plainly resolves" a reviewer's finding
+is the exact unchecked self-assessment cycle 2 exists to prevent -- the reviewer
+raised it, the reviewer has not seen the revision, and the reviewer is the one
+who says whether it landed. Spawning fewer agents is not a saving if what you
+bought was the confirmation.
+
 **The loop stops here. Two cycles, no exceptions.** After the first rewrite what
 remains is almost always content, which no further cycle can fix. Collect it and
 report it once rather than bouncing back at the user three separate times.
@@ -266,6 +273,11 @@ If the user described someone inline who has no entry in `personas.md`, route
 that description to `/daikenja:remember-persona`, which is the only skill that
 writes persona content. Pass on what the user actually said and nothing
 inferred from the draft.
+
+**Never route a person out of material that says it is synthetic.** Acceptance
+fixtures and worked examples describe invented people, and writing them into the
+user's real file pollutes it with people who do not exist. Skip the routing
+silently and say so in one line in the report.
 
 The write is silent, and it is reported afterwards as the one-line `Learned:`
 line in Step 10. A missing `personas.md` comes back as one line from that skill

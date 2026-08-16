@@ -4,6 +4,11 @@ Not real work content.
 Neither draft is missing a fact. Every fix either draft needs can be written
 using words already on the page, so neither should produce a question.
 
+Draft 1 should return **no findings at all**, which skips cycle 2. It routes the
+question by ownership without the phrasing reading as blame -- an earlier version
+opened the ask with "You own the migration --" and the tone-sensitive reader
+caught it, so the draft was never the clean control it claimed to be.
+
 ## Draft 1 -- nothing to find
 
 To: T
@@ -12,8 +17,9 @@ To: T
 at the `region_id` foreign key, and I confirmed it against the 2026-08-14 run,
 which passed with the same script.
 
-You own the migration -- can you tell me by Thursday 2026-08-20 whether the
-constraint is meant to be live yet? I will hold the deploy until then."
+The constraint is part of your migration, so you are the person to ask -- can
+you tell me by Thursday 2026-08-20 whether it is meant to be live yet? I will
+hold the deploy until then."
 
 ## Draft 2 -- only the wording is wrong
 

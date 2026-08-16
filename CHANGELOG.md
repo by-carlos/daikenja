@@ -70,6 +70,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reviewers read each other and cannot preserve the isolation that makes a
   second opinion worth having (`skills/preflight/SKILL.md`,
   `docs/future-work.md`).
+- `preflight`'s cycle 2 re-dispatch is no longer skippable on cost. An
+  acceptance run talked itself out of re-dispatching because "re-spawning five
+  agents adds cost, not signal", which is the unchecked self-assessment cycle 2
+  exists to prevent -- the reviewer raised the finding and is the one who says
+  whether the fix landed (`skills/preflight/SKILL.md`).
+- Neither `preflight` nor `remember-persona` will record a persona described in
+  material that says it is synthetic. Running the acceptance fixtures used to
+  offer to write invented people into the user's real `personas.md`
+  (`skills/preflight/SKILL.md`, `skills/remember-persona/SKILL.md`).
+- `remember-persona` now matches the format the personas file already uses
+  rather than imposing the template's, appends after the last entry instead of
+  at the end of the file so trailing sections stay last, and no longer repeats
+  what the file says about anyone other than the person being recorded. All
+  three were found by watching it do the right thing while the skill text said
+  otherwise (`skills/remember-persona/SKILL.md`).
 - `compose` now routes a recipient the user describes inline to
   `remember-persona` when that person has no entry yet, and reports the write
   in its `Comment` block. Only what the user stated is passed on
