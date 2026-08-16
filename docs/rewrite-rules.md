@@ -39,6 +39,17 @@ itself.
 This is not an exemption from the rules above. If something from prior context
 belongs in the message, it is reported as a question, never written in.
 
+## Precedence over the default voice
+
+This document's no-invention rule outranks every rule in `docs/voice.md`,
+including the one `voice.md` marks non-overridable. That marking means a
+user's `writing-style.md` cannot switch the rule off -- it says nothing about
+how the rule ranks against this document. When a voice rule can be satisfied
+only by adding a fact the source does not contain, it is not honored: it is
+reported as unhonorable per the section below, and the source wording stands
+unchanged. This holds for any voice rule that collides this way, not only the
+absolute-dates one.
+
 ## How a violation is reported
 
 A rule that would have to be broken to satisfy some other goal is never
