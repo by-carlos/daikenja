@@ -217,9 +217,8 @@ place that has read `docs/rewrite-rules.md`, `docs/voice.md` and the user's own
 - Apply `docs/rewrite-rules.md` in full. The ask, the stance, the confidence
   level, the owners, the timing and how blocking it is all survive untouched.
 - Apply `docs/voice.md`, layered under the user's `writing_style` file if one
-  resolves (`profile.personas` and `profile.writing_style` per
-  `config-contract.md`). A missing `writing-style.md` gets one notice, then the
-  default voice alone.
+  resolves (`profile.writing_style` per `config-contract.md`). A missing
+  `writing-style.md` gets one notice, then the default voice alone.
 - A rule that cannot be honoured is named in the report, never broken silently.
 
 ## Step 8: cycle 2 -- re-check once

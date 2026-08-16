@@ -13,7 +13,7 @@ you have not approved.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Twelve skills ship today.
+**Status:** in active development. Thirteen skills ship today.
 
 ## Claude Code only
 
@@ -41,7 +41,7 @@ configuration into `~/.claude/daikenja/`.
 
 ## Skills
 
-Twelve skills, grouped by what they do.
+Thirteen skills, grouped by what they do.
 
 **Writing a reply**
 
@@ -51,8 +51,14 @@ Twelve skills, grouped by what they do.
 - `/daikenja:compose` -- rewrites or drafts a work message (Slack, Teams, email)
   so it stays clear, calm and easy to read, without changing the ask, the
   stance or the confidence level.
-- `/daikenja:preflight` -- decides whether a message is worth sending as it
-  stands, before any rewriting happens.
+- `/daikenja:preflight` -- challenges a draft before it goes out. It runs the
+  substance checks, puts the draft in front of reviewers who each read it for
+  a different failure mode, fixes the wording problems they raise, and hands
+  back a revised draft plus the facts only you can supply. It changes wording
+  and never content.
+- `/daikenja:remember-persona` -- records what you say about a person you write
+  to, so later messages are written for that reader. The only skill that writes
+  persona content.
 
 **Writing the ledger**
 
