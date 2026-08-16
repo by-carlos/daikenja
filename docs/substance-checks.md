@@ -56,7 +56,7 @@ pasted draft and the goal is not obvious (see `skills/compose/SKILL.md` Step
 
 Never silently fix a fail by inventing the missing piece -- that would add
 content the sender never stated, which both consumers are separately forbidden
-from doing (`compose` Step 2; `preflight`'s own no-invention rule).
+from doing (`docs/rewrite-rules.md`; `preflight`'s own no-invention rule).
 
 - **`compose`:** name the failing check by number and a one-line reason in
   `Comment`. Example: "Comment: options considered -- the message asks which

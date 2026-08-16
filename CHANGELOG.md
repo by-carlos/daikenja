@@ -25,12 +25,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`+link "<label>"` / `-link "<label>"`) and are reported by `catchup`,
   closing the one gap where a ledger change was invisible to it
   (`docs/ledger-format.md`, `skills/log/SKILL.md`, `skills/catchup/SKILL.md`).
+- `compose`'s rewrite rules moved out of the skill into a shared
+  `docs/rewrite-rules.md`, so `preflight` can apply the same contract. No
+  behaviour change to `compose` (`skills/compose/SKILL.md`,
+  `docs/rewrite-rules.md`).
 
 ### Documentation
 
 - Documented that a local-marketplace install copies the repo at install
   time rather than referencing it live, and that `claude --plugin-dir .`
   remains the loop to use for development.
+- `docs/README.md` now indexes all six contracts in `docs/`. It previously
+  listed two, omitted `reading.md` and `substance-checks.md` entirely, and
+  still carried a "Still to land" section for `voice.md`, which already
+  ships.
 
 ### Changed
 
