@@ -57,6 +57,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   conflict between two real recipients is reported rather than resolved. With
   subagents unavailable the reviewers run in sequence after one notice
   (`skills/preflight/SKILL.md`).
+- `preflight` now says so in one line when it can tell it is not running on
+  Opus, before it does anything else. Its adjudication step is what stops the
+  loop inventing content, and that judgment is the part most sensitive to
+  model strength. The notice never blocks, and it stays silent both on Opus
+  and when the model cannot tell. Reviewer personas still all inherit the
+  session's model, which is recorded as a limitation in `docs/future-work.md`
+  (`skills/preflight/SKILL.md`).
 - `compose` now routes a recipient the user describes inline to
   `remember-persona` when that person has no entry yet, and reports the write
   in its `Comment` block. Only what the user stated is passed on

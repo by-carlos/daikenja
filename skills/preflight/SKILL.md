@@ -25,6 +25,31 @@ Anything a reviewer raises that cannot be fixed from material already in the
 draft becomes a question back to the user. It never becomes an invented
 sentence. This skill has no send action.
 
+## The model this runs on
+
+Check this first, before Step 0.
+
+The safety hinge is Step 6, where every proposed wording fix is tested against
+the draft and one that needs an absent fact is reclassified instead of applied.
+That judgment is the whole difference between a loop that revises and a loop
+that invents, and it is materially better on Opus.
+
+**If you can tell you are not running on Opus, say this in one line, then
+carry on:**
+
+```
+Running on <model>. This loop's adjudication step is materially better on Opus
+-- `/model opus` and re-run if this message matters.
+```
+
+**This never blocks**, per `config-contract.md`'s standing rule -- one notice
+line, then continue with reduced behaviour. A weaker model still runs the whole
+loop. It is just likelier to let an invented fact through Step 6, which is the
+one error the user cannot see by reading the output.
+
+**Say nothing when you are on Opus, and say nothing when you cannot tell.** A
+hedged nag on every run is worse than no notice at all.
+
 ## Step 0: read the shared docs
 
 Read these before doing anything. Do not work from memory of them.

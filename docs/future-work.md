@@ -33,6 +33,12 @@ suspended to do it.
 almost always content, which no further cycle can fix. A draft with deep
 problems gets two passes and a list of questions, not convergence.
 
+**Every reviewer runs on the session's model.** A skill cannot declare a model,
+so the personas `preflight` dispatches all inherit whatever the session is set
+to. There is no way to run a persona that simulates a fast, careless reader on a
+cheaper model than one that simulates a forensic one. `preflight` notices when
+it is not on Opus and says so in one line, which is the whole of the mitigation.
+
 **The two always-on checks read with full context.** The AI-tell check and the
 non-native English check run in `preflight`'s own context, which has already
 read the draft, the thread and the conversation around it. They know what the
