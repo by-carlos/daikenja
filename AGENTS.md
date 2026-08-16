@@ -22,10 +22,13 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
   merge to `main` never reaches installers on its own.
 - **Never push directly to `main`, and never merge unilaterally** — work on a
   branch, open a PR, propose the merge and wait for the maintainer's explicit OK.
-- **Both branches are protected on GitHub**, enforced for admins too. **Do not
-  attempt to relax either from an agent session** — that is a settings change
-  outside the working tree and needs the maintainer's explicit sign-off under
-  the global risk-labeling rule.
+- **Both branches are protected on GitHub.** `main` requires the maintainer's
+  review and passing CI, with an admin bypass for owner-authored PRs because
+  GitHub forbids self-approval. `release` permits normal updates only by
+  `@by-carlos`; nobody can force-push or delete it. **Do not attempt to relax
+  either from an agent session** — that is a settings change outside the
+  working tree and needs the maintainer's explicit sign-off under the global
+  risk-labeling rule.
 - **`skills/` ships to users; `.claude/` is for people working on this repo.
   Never put contributor-facing instructions in `skills/`** — it would ship them
   to every Daikenja user.

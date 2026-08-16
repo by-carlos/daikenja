@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Pull requests now require maintainer approval.** Every tracked path is owned
+  by `@by-carlos`, allowing contributions while ensuring the maintainer's review
+  is required before changes merge.
+
 ### Added
 
 - `/daikenja:remember-persona`, the single owner of content writes to
