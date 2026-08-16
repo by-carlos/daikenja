@@ -1,7 +1,7 @@
 # Fixture: sample thread, second pass
 
-Synthetic, same invented project as `sample-thread.md`. Used by the `log` skill's
-idempotence check.
+Synthetic, same invented project as `sample-thread.md`. Used by the
+`project-log` skill's idempotence check.
 
 This is the same conversation re-pasted with two later messages appended. Logging
 it after `sample-thread.md` must update the existing entries rather than append

@@ -1,6 +1,6 @@
 ---
-name: catchup
-description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. Use when the user says "catch me up", "what changed since I last looked", "what's new", "what did I miss", or "bring me up to speed" -- personal, delta-shaped asks about a project they already know. Not for a first look at a project (that is /daikenja:summary) or a lookup of one specific decision (that is /daikenja:decisions). This is the only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content.
+name: project-catchup
+description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. Use when the user says "catch me up", "what changed since I last looked", "what's new", "what did I miss", or "bring me up to speed" -- personal, delta-shaped asks about a project they already know. Not for a first look at a project (that is /daikenja:project-summary) or a lookup of one specific decision (that is /daikenja:project-decisions). This is the only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content.
 metadata:
   owner: Carlos
   version: 1
@@ -97,8 +97,8 @@ Context links
 - Runbook (new) -- https://example.com/atlas/runbook
 ```
 
-Call out unowned new open items -- they are what `gaps` would also flag, and
-the user is seeing them for the first time.
+Call out unowned new open items -- they are what `project-gaps` would also
+flag, and the user is seeing them for the first time.
 
 ## Step 5: propose and write the checkpoint
 
@@ -128,6 +128,6 @@ the ledger; this carve-out is `last_checkpoint` alone, per
 |---|---|
 | `daikenja.yaml` absent | Treat as a first run against ledger defaults. Note that no checkpoint can be written until `/daikenja:setup-user` runs and this project is registered. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
-| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:log`. |
+| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A Changelog ID resolves to no entry | One line saying so, then continue with the rest of the delta. |
 | Project unregistered | Show the delta from the ledger on disk (it still resolves per "ledger on disk wins"), but say the checkpoint cannot be saved until the project is registered. |

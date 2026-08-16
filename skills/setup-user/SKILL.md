@@ -142,7 +142,7 @@ way.
 
   Leave `ledger`, `last_checkpoint`, `stale_after_days` and `norms_doc` unset --
   they default per `docs/config-contract.md` and get written by the skills that
-  actually need them (`log`, `catchup`).
+  actually need them (`project-log`, `project-catchup`).
 
 ## Step 6: report tool availability
 
@@ -156,9 +156,9 @@ Tools available this session:
   will need pasted text/links instead"
 ```
 
-At minimum cover: a link-fetching capability (`thread`, `log` follow a pasted
-link), and any chat connector (Slack, email, Teams) if one is present. This is
-informational -- it never blocks the rest of setup.
+At minimum cover: a link-fetching capability (`thread`, `project-log` follow a
+pasted link), and any chat connector (Slack, email, Teams) if one is present.
+This is informational -- it never blocks the rest of setup.
 
 ## Step 7: confirm
 

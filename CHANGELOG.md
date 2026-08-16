@@ -15,6 +15,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Required CI jobs now use the shared names `gitleaks` and `validate`.** The
   existing plugin and skill invariant checks are unchanged; only their public
   GitHub job context is normalized.
+- **The five project-scoped skills now carry a `project-` prefix**: `log` ->
+  `project-log`, `summary` -> `project-summary`, `catchup` -> `project-catchup`,
+  `decisions` -> `project-decisions`, `gaps` -> `project-gaps`. The other eight
+  skills already carried their scope in their names and are unchanged. This is a
+  rename and documentation sweep only -- no skill's behaviour, failure branches
+  or output shape changed. Landing now, ahead of the repo going public, costs one
+  sweep instead of breaking other users' muscle memory later
+  (`skills/project-log/SKILL.md`, `skills/project-summary/SKILL.md`,
+  `skills/project-catchup/SKILL.md`, `skills/project-decisions/SKILL.md`,
+  `skills/project-gaps/SKILL.md`, and every skill and doc that names one).
+  `docs/ledger-format.md`'s `<writer>` field now documents `project-log` as the
+  current writer name, noting that ledgers written before 0.3.0 name it `log`
+  instead; the field grammar itself is unchanged. `templates/ledger.md` reflects
+  the new name for ledgers scaffolded from now on -- existing ledgers keep
+  whatever wording they already have, since templates are copied once and never
+  edited afterwards. `tests/fixtures/sample-ledger.md` gained one Changelog line
+  written by `project-log` alongside its existing `log` lines, so the fixture
+  exercises reading both the pre- and post-rename writer name.
 
 ### Added
 
@@ -99,9 +117,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in its `Comment` block. Only what the user stated is passed on
   (`skills/compose/SKILL.md`).
 - Context-link additions and removals now emit a Changelog line
-  (`+link "<label>"` / `-link "<label>"`) and are reported by `catchup`,
+  (`+link "<label>"` / `-link "<label>"`) and are reported by `project-catchup`,
   closing the one gap where a ledger change was invisible to it
-  (`docs/ledger-format.md`, `skills/log/SKILL.md`, `skills/catchup/SKILL.md`).
+  (`docs/ledger-format.md`, `skills/project-log/SKILL.md`,
+  `skills/project-catchup/SKILL.md`).
 - `compose`'s rewrite rules moved out of the skill into a shared
   `docs/rewrite-rules.md`, so `preflight` can apply the same contract. No
   behaviour change to `compose` (`skills/compose/SKILL.md`,

@@ -62,24 +62,24 @@ Thirteen skills, grouped by what they do.
 
 **Writing the ledger**
 
-- `/daikenja:log` -- records decisions and open items in a project's ledger.
-  The only skill that writes ledger content; every other skill reads it.
+- `/daikenja:project-log` -- records decisions and open items in a project's
+  ledger. The only skill that writes ledger content; every other skill reads it.
 
 **Reading the ledger**
 
-- `/daikenja:catchup` -- reports what changed in a project's ledger since you
-  last checked, then advances the checkpoint on approval.
-- `/daikenja:summary` -- gives a full-state overview of a project's ledger,
-  written for someone with no prior context.
-- `/daikenja:decisions` -- looks up what was decided about a specific topic,
-  including its supersession history.
-- `/daikenja:gaps` -- audits a project's ledger for open items with no owner or
-  that have sat too long.
+- `/daikenja:project-catchup` -- reports what changed in a project's ledger
+  since you last checked, then advances the checkpoint on approval.
+- `/daikenja:project-summary` -- gives a full-state overview of a project's
+  ledger, written for someone with no prior context.
+- `/daikenja:project-decisions` -- looks up what was decided about a specific
+  topic, including its supersession history.
+- `/daikenja:project-gaps` -- audits a project's ledger for open items with no
+  owner or that have sat too long.
 
 **Reviewing things**
 
 - `/daikenja:meeting-review` -- turns a meeting transcript into proposed ledger
-  entries, then hands them to `/daikenja:log` for your approval.
+  entries, then hands them to `/daikenja:project-log` for your approval.
 - `/daikenja:doc-review` -- reviews a document against a fixed checklist before
   it is published or shared.
 - `/daikenja:self-review` -- reviews how you handled a thread you took part in,
@@ -99,20 +99,20 @@ and get overwritten on update.
 
 | What | Where | Written by |
 |---|---|---|
-| Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user`, plus `catchup` for the `last_checkpoint` key only |
+| Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user`, plus `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md` | you, plus `remember-persona` for people you describe to it |
 | How you write | `~/.claude/daikenja/writing-style.md` | you |
-| A project's decision ledger | `<project>/.daikenja/ledger.md` | `log` only |
+| A project's decision ledger | `<project>/.daikenja/ledger.md` | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
 your directories; the copies are the live files.
 
 Two rules the skills follow:
 
-- **One writer for the ledger.** Only the `log` skill writes ledger content.
-  `catchup` writes one config key, `last_checkpoint`, because reporting a delta
-  and moving the checkpoint is its job -- it never touches the ledger itself.
-  Every other skill only reads.
+- **One writer for the ledger.** Only the `project-log` skill writes ledger
+  content. `project-catchup` writes one config key, `last_checkpoint`, because
+  reporting a delta and moving the checkpoint is its job -- it never touches
+  the ledger itself. Every other skill only reads.
 - **You approve first.** A skill proposes a ledger entry, you confirm, then it
   writes.
 

@@ -1,5 +1,5 @@
 ---
-name: log
+name: project-log
 description: Records decisions and open items in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. It proposes entries and writes nothing without approval.
 metadata:
   owner: Carlos
@@ -26,7 +26,7 @@ name the line, and stop. Repair is a separate write and needs its own approval.
 
 **Never write the ledger from any other skill.** Another skill that needs an
 entry runs this one. The Changelog then records the writer as
-`log via <skill>`.
+`project-log via <skill>`.
 
 ## Step 0: read the contracts
 
@@ -150,8 +150,8 @@ The owner is `@` plus one token, no spaces, lowercase.
 - The user owns what the user says is theirs. Use the first token of
   `profile.name` from the config.
 - Nobody identifiable means `@unassigned`. Write it out; never leave the field
-  empty. An unowned decision is normal. An unowned open item is what `gaps`
-  reports.
+  empty. An unowned decision is normal. An unowned open item is what
+  `project-gaps` reports.
 
 Never merge two people's positions into one entry.
 
@@ -183,7 +183,7 @@ Open items -- resolve O-003
 - [x] 2026-08-09 -- O-003 -- @carlos -- <body> -> resolved 2026-08-14, see D-006
 
 Changelog
-- 2026-08-14T16:40Z -- log -- +D-006, resolved O-003
+- 2026-08-14T16:40Z -- project-log -- +D-006, resolved O-003
 
 Questions before I write:
 - <anything you could not classify, one line each>
@@ -230,16 +230,17 @@ purpose and this skill restores nothing.
 
 ## Step 8: append the Changelog line and confirm
 
-One line per `log` run, at the top of the Changelog, naming every change by ID
-with one verb each. The verb set and the field grammar are in
+One line per `project-log` run, at the top of the Changelog, naming every
+change by ID with one verb each. The verb set and the field grammar are in
 `ledger-format.md` § Section: Changelog.
 
-The writer field is `log`, or `log via <skill>` when another skill ran this one.
+The writer field is `project-log`, or `project-log via <skill>` when another
+skill ran this one.
 
 Every change to an entry gets recorded. A write that does not appear in the
-Changelog is invisible to `catchup`, which reads changelog lines and never diffs
-the file. When one run touches several entries, they all go on that run's single
-line.
+Changelog is invisible to `project-catchup`, which reads changelog lines and
+never diffs the file. When one run touches several entries, they all go on
+that run's single line.
 
 Context links carry no ID, so they are recorded by label instead: `+link
 "<label>"` for an addition, `-link "<label>"` for a removal. A run that only
@@ -272,8 +273,9 @@ missing thing is the task itself.
 ## What this skill does not do
 
 - It does not summarize a thread for reading. That is `/daikenja:thread`.
-- It does not report what changed since last time. That is `/daikenja:catchup`.
+- It does not report what changed since last time. That is
+  `/daikenja:project-catchup`.
 - It does not write `daikenja.yaml`. That is `/daikenja:setup-user`, except for
-  `last_checkpoint`, which `catchup` owns.
+  `last_checkpoint`, which `project-catchup` owns.
 - It does not archive, prune or trim anything on a schedule. Old resolved items
   stay until a human asks for them to go.

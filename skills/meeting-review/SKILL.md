@@ -1,22 +1,22 @@
 ---
 name: meeting-review
-description: Turns a meeting transcript into proposed ledger entries -- decisions actually made, action items with owners and dates, and questions left unresolved. Use when the user says "review this meeting", "what came out of this call", "turn this transcript into actions", or pastes a transcript, meeting notes or a recording link and asks what was decided or who owes what. This skill writes nothing itself. It classifies, then hands the entries to the /daikenja:log skill, which shows the exact lines and waits for approval. Not for a chat thread (that is /daikenja:thread) and not for coaching on how the user handled the meeting (that is /daikenja:self-review).
+description: Turns a meeting transcript into proposed ledger entries -- decisions actually made, action items with owners and dates, and questions left unresolved. Use when the user says "review this meeting", "what came out of this call", "turn this transcript into actions", or pastes a transcript, meeting notes or a recording link and asks what was decided or who owes what. This skill writes nothing itself. It classifies, then hands the entries to the /daikenja:project-log skill, which shows the exact lines and waits for approval. Not for a chat thread (that is /daikenja:thread) and not for coaching on how the user handled the meeting (that is /daikenja:self-review).
 metadata:
   owner: Carlos
   version: 1
-  writes-through: log
+  writes-through: project-log
 ---
 
 # Meeting review
 
 A transcript goes in. What was actually settled, who owes what, and what is
-still open comes out. The ledger write goes through `log`.
+still open comes out. The ledger write goes through `project-log`.
 
 ## Hard rules
 
-**Never write the ledger.** `log` is the only skill that writes ledger content.
-This one classifies and hands over. The Changelog then records the writer as
-`log via meeting-review`.
+**Never write the ledger.** `project-log` is the only skill that writes ledger
+content. This one classifies and hands over. The Changelog then records the
+writer as `project-log via meeting-review`.
 
 **Never promote a suggestion to a decision.** A meeting is full of half-formed
 ideas. Something is settled when it was closed out loud and nobody objected.
@@ -99,7 +99,7 @@ said, absolute, never relative.
 
 **An unowned action item** is a concrete task that nobody picked up. It is still
 a real open item. The owner is `@unassigned`, written out. That is exactly what
-`gaps` looks for.
+`project-gaps` looks for.
 
 **An open question** was raised and not answered by the end of the meeting.
 
@@ -112,9 +112,9 @@ When you cannot tell, ask. One line, one question. Do not resolve the ambiguity
 yourself and do not log both readings.
 
 Where these land in the ledger: decisions go to the Decisions section, action
-items and open questions both go to Open items. `log` owns the line shape, the
-IDs and the dates. See `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` if you need
-the detail, and never format entries yourself.
+items and open questions both go to Open items. `project-log` owns the line
+shape, the IDs and the dates. See `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md`
+if you need the detail, and never format entries yourself.
 
 ## Step 4: attribute
 
@@ -177,25 +177,26 @@ decision is the failure this skill exists to prevent. **Discussion is capped at
 5**, listed by one-line title, matching the parked treatment `doc-review` and
 `self-review` use. If there are more, name the count.
 
-## Step 6: hand off to `log`
+## Step 6: hand off to `project-log`
 
 Close the report with the offer, and stop:
 
 ```
-Log these to the ledger? I will run /daikenja:log with the entries above. It
-shows the exact lines and waits for your approval before anything is written.
+Log these to the ledger? I will run /daikenja:project-log with the entries
+above. It shows the exact lines and waits for your approval before anything
+is written.
 ```
 
-On a go-ahead, run `/daikenja:log` and give it the classified entries, their
-owners and their anchors. From there `log` does its own job -- resolving the
-project and the ledger, allocating IDs, checking for duplicates, showing the
-exact lines, waiting for approval, and writing. The Changelog writer is
-`log via meeting-review`.
+On a go-ahead, run `/daikenja:project-log` and give it the classified entries,
+their owners and their anchors. From there `project-log` does its own job --
+resolving the project and the ledger, allocating IDs, checking for
+duplicates, showing the exact lines, waiting for approval, and writing. The
+Changelog writer is `project-log via meeting-review`.
 
 Do not duplicate any of that here. Do not resolve the ledger path, do not
-allocate IDs, do not format entry lines, and do not ask for approval on `log`'s
-behalf. If the project is unregistered or the ledger does not exist yet, `log`
-handles it.
+allocate IDs, do not format entry lines, and do not ask for approval on
+`project-log`'s behalf. If the project is unregistered or the ledger does not
+exist yet, `project-log` handles it.
 
 If the user declines, write nothing and say nothing was written. The report
 stands on its own.
@@ -216,14 +217,16 @@ missing thing is the task itself.
 | A name is not in `personas.md` | Not an error. Use the transcript's label and note it once at the end. |
 | `personas.md` or `daikenja.yaml` missing | One notice, then continue. Neither is needed to read a transcript. |
 | Nothing was settled | Say so and propose nothing. A meeting with no decisions is a normal meeting. |
-| User asks you to write the ledger directly | Decline per the hard rule. Run `/daikenja:log`. |
+| User asks you to write the ledger directly | Decline per the hard rule. Run `/daikenja:project-log`. |
 | User asks who was at fault or how someone performed | Decline. Report positions and quotes only. `/daikenja:self-review` coaches the user on their own moves, nobody else's. |
 
 ## What this skill does not do
 
 - It does not summarize a Slack or email thread. That is `/daikenja:thread`.
-- It does not write the ledger. That is `/daikenja:log`, which this skill runs.
+- It does not write the ledger. That is `/daikenja:project-log`, which this
+  skill runs.
 - It does not draft the follow-up message. That is `/daikenja:compose`.
 - It does not review how the user handled the meeting. That is
   `/daikenja:self-review`.
-- It does not report what changed since last time. That is `/daikenja:catchup`.
+- It does not report what changed since last time. That is
+  `/daikenja:project-catchup`.

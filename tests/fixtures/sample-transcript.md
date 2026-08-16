@@ -3,9 +3,9 @@
 Synthetic. Invented project, invented people, invented links. Nothing here comes
 from real work. Used by the `meeting-review` skill's acceptance checks.
 
-It continues the Harbor rate limiter story used by the `log` fixtures, and it is
-built to exercise the classification rules and the transcript mess at the same
-time:
+It continues the Harbor rate limiter story used by the `project-log` fixtures,
+and it is built to exercise the classification rules and the transcript mess
+at the same time:
 
 - one real decision, closed out loud (the start date moves to 2026-08-19)
 - one decision the meeting only restates, which is not a new decision (the

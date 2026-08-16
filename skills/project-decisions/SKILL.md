@@ -1,6 +1,6 @@
 ---
-name: decisions
-description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not the whole project. Not for a full project overview (that is /daikenja:summary) or a delta since last time (that is /daikenja:catchup). Read-only; writes nothing.
+name: project-decisions
+description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not the whole project. Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). Read-only; writes nothing.
 metadata:
   owner: Carlos
   version: 1
@@ -87,6 +87,6 @@ an open item by ID in its body, surface that link as-is -- do not go fetch it.
 |---|---|
 | `daikenja.yaml` absent | One notice, continue on ledger defaults. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
-| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:log`. |
+| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | Supersession marked on only one of two entries | Report the mismatch, naming both IDs. The tail is authoritative; do not repair it. |
 | No decision matches the query | Say so. Offer the closest match, named as a guess, if one exists. |

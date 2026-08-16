@@ -42,7 +42,7 @@ projects:
   <project-key>:
     path: <absolute path>             # required
     ledger: .daikenja/ledger.md        # optional, relative to path
-    last_checkpoint: 2026-08-14T09:12Z  # optional, written by catchup
+    last_checkpoint: 2026-08-14T09:12Z  # optional, written by project-catchup
     stale_after_days: <int>           # optional, overrides the profile value
     norms_doc: <path or url>          # optional, overrides the profile value
 ```
@@ -66,13 +66,13 @@ does not resolve is treated as an absent key, with a notice.
 `self-review`'s ROLE CHECK section needs. It is absent by default, and that
 section ships off. Configuring it is what turns the section on.
 
-**`stale_after_days`** is how long an open item may sit before `gaps` calls it
+**`stale_after_days`** is how long an open item may sit before `project-gaps` calls it
 stale. It measures age from the entry's date field, which is when the item was
 raised -- not when it was last touched. Daikenja does not track last-touched,
 and "this has been open five weeks" is the signal worth having. Default 21 days.
 
 **`last_checkpoint`** is `YYYY-MM-DDThh:mmZ`, UTC, minute precision -- the same
-timestamp format the ledger's Changelog uses. It marks how far `catchup` has
+timestamp format the ledger's Changelog uses. It marks how far `project-catchup` has
 already reported.
 
 **The `<project-key>` is a human label and is never used for matching.** Call it
@@ -97,21 +97,21 @@ in:
 3. Take the **longest matching prefix**. Nested projects therefore resolve to
    the innermost one.
 4. No match means the project is unregistered. Read skills say so in one line
-   and stop. `log` offers to register it.
+   and stop. `project-log` offers to register it.
 
 ### Finding the ledger
 
 1. The matched project's `ledger:` key, resolved relative to its `path`.
 2. Otherwise `.daikenja/ledger.md` under the project root.
-3. If the file does not exist, `log` scaffolds it from
+3. If the file does not exist, `project-log` scaffolds it from
    [`../templates/ledger.md`](../templates/ledger.md) after the user approves.
    Read skills do not scaffold; they report that no ledger exists and name the
    skill that creates one.
 
 **A ledger found on disk wins over the config.** If `.daikenja/ledger.md` exists
-but no `projects:` entry matches, the ledger is used and `log` offers to add the
-missing entry on its next write. The file on disk is the fact; the config is the
-index.
+but no `projects:` entry matches, the ledger is used and `project-log` offers to
+add the missing entry on its next write. The file on disk is the fact; the config
+is the index.
 
 ### Precedence
 
@@ -142,14 +142,14 @@ that `compose` does not have to invent one.
 | File | Written by | Notes |
 |---|---|---|
 | `daikenja.yaml` -- everything except `last_checkpoint` | `setup-user` | Only on user approval. |
-| `daikenja.yaml` -- `last_checkpoint` | `catchup` | Proposes advancing it after reporting; writes on approval. |
+| `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
 | `personas.md` -- creating the file | `setup-user` | Copies the blank template if and only if no file exists. It never inspects or overwrites content. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` | the user, by hand | Daikenja reads it and never edits it. |
-| `<project>/.daikenja/ledger.md` | `log`, and only `log` | `meeting-review` writes through `log`. Every other skill reads. |
+| `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
 
 **The single-writer rule governs the ledger, not `daikenja.yaml`.** This
-distinction matters: `catchup`'s job is to report a delta and move the
+distinction matters: `project-catchup`'s job is to report a delta and move the
 checkpoint, so it must be able to write that one key. It still never touches
 ledger content.
 
@@ -226,8 +226,8 @@ Resolving from `C:\GitHub\atlas\services\ingest`:
 2. `c:/github/atlas` is a prefix; `c:/github/billing-api` is not.
 3. Longest match is `atlas-migration`.
 4. It has no `ledger:` key, so the ledger is `C:/GitHub/atlas/.daikenja/ledger.md`.
-5. It has no `stale_after_days`, so `gaps` uses the profile's 21 days and says
-   so.
+5. It has no `stale_after_days`, so `project-gaps` uses the profile's 21 days
+   and says so.
 6. It has no `norms_doc` and neither does the profile, so `self-review` skips
    ROLE CHECK.
 
@@ -240,7 +240,7 @@ profile:
   name: Carlos
 ```
 
-With that file alone, `compose` works with the default voice, `log` scaffolds
-and writes `.daikenja/ledger.md` in whatever project it runs in and offers to
-register it, `gaps` uses the 21-day default, and `self-review` runs without
-ROLE CHECK.
+With that file alone, `compose` works with the default voice, `project-log`
+scaffolds and writes `.daikenja/ledger.md` in whatever project it runs in and
+offers to register it, `project-gaps` uses the 21-day default, and
+`self-review` runs without ROLE CHECK.

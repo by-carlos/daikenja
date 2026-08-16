@@ -1,6 +1,6 @@
 ---
 name: remember-persona
-description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:log) and not for creating the file in the first place (that is /daikenja:setup-user).
+description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for creating the file in the first place (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
   version: 2
@@ -234,8 +234,8 @@ missing thing is the task itself.
 - It does not create `personas.md`. That is `/daikenja:setup-user`, and its
   create-if-absent rule is untouched by this skill.
 - It does not write `daikenja.yaml`. That is `/daikenja:setup-user`, except for
-  `last_checkpoint`, which `catchup` owns.
-- It does not record project decisions or open items. That is `/daikenja:log`,
-  which writes the ledger and never touches this file.
+  `last_checkpoint`, which `project-catchup` owns.
+- It does not record project decisions or open items. That is
+  `/daikenja:project-log`, which writes the ledger and never touches this file.
 - It does not build a persona by reading past messages, threads or transcripts.
   Only what the user states is recorded.

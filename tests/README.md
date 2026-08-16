@@ -14,17 +14,19 @@ stage's acceptance checks can be re-run later against the same inputs.
 
 - [`fixtures/sample-thread.md`](fixtures/sample-thread.md) -- a thread with one
   agreed decision, one proposal nobody agreed to, and two unresolved items.
-  Exercises the `log` classifier, including its refusal to log a parked
-  suggestion as a decision.
+  Exercises the `project-log` classifier, including its refusal to log a
+  parked suggestion as a decision.
 - [`fixtures/sample-thread-followup.md`](fixtures/sample-thread-followup.md) --
   the same conversation with two later messages. Logging it after the first
   fixture must update entries in place instead of appending near copies.
 - [`fixtures/sample-ledger.md`](fixtures/sample-ledger.md) -- a complete,
   well-formed beacon-project ledger: four decisions with one supersession
-  pair (`D-002`/`D-004`), four open items with one resolved, one context
-  link, and a changelog accounting for every write. The healthy-ledger
-  control fixture; its `D-003` schema-freeze decision is what
-  `sample-drafts-preflight.md`'s third draft checks against.
+  pair (`D-002`/`D-004`), five open items with one resolved, one context
+  link, and a changelog accounting for every write, including one entry
+  written by `project-log` so the fixture covers both the pre- and
+  post-rename writer name. The healthy-ledger control fixture; its `D-003`
+  schema-freeze decision is what `sample-drafts-preflight.md`'s third draft
+  checks against.
 - [`fixtures/malformed-ledger.md`](fixtures/malformed-ledger.md) -- a ledger with
   a misspelled section heading and an entry missing its owner field, plus a legal
   continuation line as a control. A skill must report all of it and write
@@ -32,7 +34,7 @@ stage's acceptance checks can be re-run later against the same inputs.
 - [`fixtures/broken-supersession.md`](fixtures/broken-supersession.md) -- a
   ledger with two mismatched supersession pairs (a body claiming `Supersedes`
   with no matching tail, and a tail with no matching claim), plus a correctly
-  matched pair as a control. Exercises `decisions`' tail-is-authoritative
+  matched pair as a control. Exercises `project-decisions`' tail-is-authoritative
   handling: it must report both mismatches, naming both IDs, and never repair
   the ledger.
 

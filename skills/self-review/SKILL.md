@@ -337,7 +337,7 @@ missing thing is the task itself.
 - It does not review anyone but the invoker.
 - It does not summarize the thread. That is `/daikenja:thread`.
 - It does not extract decisions or action items. That is `/daikenja:meeting-review`
-  for a transcript, `/daikenja:log` for a ledger write.
+  for a transcript, `/daikenja:project-log` for a ledger write.
 - It does not review a document. That is `/daikenja:doc-review`.
 - It does not check a draft before sending. That is `/daikenja:preflight`.
 - It does not draft or rewrite a message. That is `/daikenja:compose`.
