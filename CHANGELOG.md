@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `tests/check-invariants.py`, a script enforcing the invariants every v2
+  build stage checked by hand: `claude plugin validate .` exits clean, and
+  every `skills/*/SKILL.md` frontmatter block parses as YAML with a `name`
+  matching its directory and a `description`, catching the unquoted `": "`
+  trap that silently drops a skill's frontmatter at load time. Wired into
+  CI via `.github/workflows/ci.yml` (renamed from `gitleaks.yml`, which now
+  also runs this check as a second job) on push and pull request. The em
+  dash / en dash scan this issue originally specified is omitted: the rule
+  it would enforce was already removed.
+
 ### Changed
 
 - Context-link additions and removals now emit a Changelog line

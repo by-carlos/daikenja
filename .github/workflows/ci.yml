@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    container:
+      image: zricethezav/gitleaks:latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks detect
+        run: |
+          gitleaks detect \
+            --source . \
+            --baseline-path .gitleaks-baseline.json \
+            --redact \
+            --exit-code 1 \
+            --verbose
+
+  invariants:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: install dependencies
+        run: |
+          pip install pyyaml
+          npm install -g @anthropic-ai/claude-code
+      - name: run invariant checks
+        run: python tests/check-invariants.py
