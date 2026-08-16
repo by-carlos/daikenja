@@ -4,7 +4,8 @@
 Daikenja ledger. Format spec: docs/ledger-format.md in the Daikenja plugin.
 
 Newest entries go directly under their heading, in every section.
-Only the `log` skill writes this file. Every other Daikenja skill reads it.
+Only the `project-log` skill writes this file. Every other Daikenja skill
+reads it.
 
 Entry shape, Decisions and Open items:
   <marker><date> -- <id> -- <owner> -- <body>
@@ -31,5 +32,5 @@ Two tails may follow a body:
 
 ## Changelog
 
-<!-- - YYYY-MM-DDThh:mmZ -- log -- +D-001, +O-001, resolved O-002 -->
+<!-- - YYYY-MM-DDThh:mmZ -- project-log -- +D-001, +O-001, resolved O-002 -->
 <!-- Verbs: +created, ~edited, resolved, superseded, -deleted. Every change gets a line. -->

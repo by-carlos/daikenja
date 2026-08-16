@@ -3,7 +3,7 @@
 <!--
 Fixture: deliberately broken ledger. Synthetic content.
 
-Two defects, both of which `log` must report rather than write over:
+Two defects, both of which `project-log` must report rather than write over:
 
 1. The `## Changelog` heading is misspelled `## Change log`, so a required
    section is missing by exact-heading lookup.

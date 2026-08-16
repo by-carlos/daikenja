@@ -1,6 +1,6 @@
 ---
-name: gaps
-description: Audits a project's Daikenja ledger for open items with no owner or that have sat too long. Use when the user says "what's still open", "what needs an owner", "what's stale", "what's falling through the cracks", "audit the open items", or "what should we be worried about". Not for a full project overview (that is /daikenja:summary) or a delta since last time (that is /daikenja:catchup). An unowned decision is never reported here -- only Open items are in scope. Read-only; writes nothing.
+name: project-gaps
+description: Audits a project's Daikenja ledger for open items with no owner or that have sat too long. Use when the user says "what's still open", "what needs an owner", "what's stale", "what's falling through the cracks", "audit the open items", or "what should we be worried about". Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). An unowned decision is never reported here -- only Open items are in scope. Read-only; writes nothing.
 metadata:
   owner: Carlos
   version: 1
@@ -78,6 +78,6 @@ No gaps. Every open item in <project> has an owner and is within 21 days.
 |---|---|
 | `daikenja.yaml` absent | One notice, continue on the 21-day default. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
-| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:log`. |
+| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A line inside Open items does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |
 | A decision has no owner | Not a gap. Do not report it; this skill's scope is Open items only. |

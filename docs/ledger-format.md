@@ -221,7 +221,7 @@ One line per write, newest first:
 | Field | Rule |
 |---|---|
 | `<timestamp>` | `YYYY-MM-DDThh:mmZ`. UTC, minute precision. |
-| `<writer>` | The skill that wrote. `log`, or `log via <skill>` when another skill wrote through it. |
+| `<writer>` | The skill that wrote. `project-log`, or `project-log via <skill>` when another skill wrote through it. Ledgers written before 0.3.0 name the writer `log` instead. |
 | `<summary>` | Comma-separated changes, **by ID**, one verb each: `+D-009` (created), `~O-003` (edited), `resolved O-004`, `superseded D-002`, `-O-002` (deleted), `+link "<label>"` (context link added), `-link "<label>"` (context link removed). |
 
 Split on ` -- ` **at most twice**. The summary is the last field, so it may

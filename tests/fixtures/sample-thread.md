@@ -1,7 +1,7 @@
 # Fixture: sample thread
 
 Synthetic. Invented project, invented people, invented links. Nothing here comes
-from real work. Used by the `log` skill's acceptance checks.
+from real work. Used by the `project-log` skill's acceptance checks.
 
 The thread is built to exercise the classification rules: one clear decision, one
 proposal nobody agreed to, one open question, one task with no owner, and one

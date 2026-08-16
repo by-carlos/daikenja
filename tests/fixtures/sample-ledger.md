@@ -10,6 +10,7 @@
 
 ## Open items
 
+- [ ] 2026-08-15 -- O-005 -- @priya -- Confirm the canary region for the rollout.
 - [ ] 2026-08-14 -- O-004 -- @unassigned -- Decide who is on call during the region rollout.
 - [ ] 2026-07-01 -- O-003 -- @priya -- Write the rollback runbook for a single region.
 - [ ] 2026-06-20 -- O-002 -- @unassigned -- Agree the success criteria for calling the rollout done.
@@ -21,6 +22,7 @@
 
 ## Changelog
 
+- 2026-08-15T09:00Z -- project-log -- +O-005
 - 2026-08-14T09:00Z -- log -- +O-004
 - 2026-08-13T09:00Z -- log -- +D-004, superseded D-002
 - 2026-08-10T09:00Z -- log -- +D-003

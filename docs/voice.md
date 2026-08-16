@@ -39,7 +39,7 @@ Most readers do not have English as a first language.
 
 Over roughly 300 words, summarize the message and offer to expand it, rather
 than sending the long version by default. This rule is about messages, not
-about ledger entries -- it does not apply to anything `log` writes.
+about ledger entries -- it does not apply to anything `project-log` writes.
 
 ## Humor
 

@@ -1,7 +1,8 @@
 # Reading a ledger
 
-Shared mechanism for the four read skills: `catchup`, `summary`, `decisions`,
-`gaps`. All four resolve config, find a ledger, and parse it the same way.
+Shared mechanism for the four read skills: `project-catchup`, `project-summary`,
+`project-decisions`, `project-gaps`. All four resolve config, find a ledger, and
+parse it the same way.
 They differ only in what they filter for and how they format the result. This
 document is that shared mechanism, written once so it cannot drift four ways.
 
@@ -22,7 +23,7 @@ order.
 - **Present and valid.** Match the current directory against every
   `projects:` entry's `path`, normalized (forward slashes, no trailing slash,
   case-insensitive) and longest-prefix-wins. No match means the project is
-  unregistered: say so in one line and name `/daikenja:log` as the skill that
+  unregistered: say so in one line and name `/daikenja:project-log` as the skill that
   offers to register it, then continue -- an unregistered project still has a
   ledger to read if one exists on disk.
 
@@ -36,7 +37,7 @@ order.
 If the file does not exist, a read skill does **not** scaffold it. Report:
 
 ```
-No ledger at <path>. Run /daikenja:log to create one.
+No ledger at <path>. Run /daikenja:project-log to create one.
 ```
 
 and stop. Reading is not the skill that creates the file.
@@ -53,13 +54,13 @@ Parse every Decisions and Open items entry into its four fields (date, id,
 owner, body) plus tail, per `ledger-format.md` § Entry grammar. Parse the
 Changelog into (timestamp, writer, summary) per § Section: Changelog.
 
-**Never rewrite the file.** Only `log` writes. A read skill that finds a
+**Never rewrite the file.** Only `project-log` writes. A read skill that finds a
 malformed line reports it in its output and moves on; it does not fix it, even
 when the fix is obvious.
 
 ## Step D: resolve the staleness threshold
 
-Needed only by `gaps`, but the resolution order is shared with everything else
+Needed only by `project-gaps`, but the resolution order is shared with everything else
 that reads config: the matched project's `stale_after_days`, otherwise the
 profile's, otherwise 21. State which was used whenever the answer changes the
 output, per `config-contract.md` § Precedence.
@@ -71,7 +72,7 @@ Use these exact shapes so the four skills read as one system:
 ```
 Daikenja is not configured -- run /daikenja:setup-user.
 This project is not in daikenja.yaml. Using the ledger at <path> anyway.
-No ledger at <path>. Run /daikenja:log to create one.
+No ledger at <path>. Run /daikenja:project-log to create one.
 Line <n>: <what is wrong>. Skipped.
 Using this project's <N>-day staleness threshold.
 ```
@@ -80,7 +81,7 @@ Using this project's <N>-day staleness threshold.
 
 | Skill | Filter | Output |
 |---|---|---|
-| `catchup` | Changelog lines newer than `last_checkpoint` | delta by ID, then proposes advancing the checkpoint |
-| `summary` | everything | oriented overview, no assumed context |
-| `decisions` | Decisions section, matched against a query | dated entries with links |
-| `gaps` | Open items with `- [ ] ` and (`@unassigned` or older than the staleness threshold) | audit list |
+| `project-catchup` | Changelog lines newer than `last_checkpoint` | delta by ID, then proposes advancing the checkpoint |
+| `project-summary` | everything | oriented overview, no assumed context |
+| `project-decisions` | Decisions section, matched against a query | dated entries with links |
+| `project-gaps` | Open items with `- [ ] ` and (`@unassigned` or older than the staleness threshold) | audit list |
