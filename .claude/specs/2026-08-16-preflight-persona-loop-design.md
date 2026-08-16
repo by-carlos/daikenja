@@ -265,6 +265,28 @@ or deleted.
 states `personas.md` is "written by the user, by hand" and that Daikenja "never
 edits it". That row must be updated deliberately as part of this work.
 
+### 8.1 The `setup-user` boundary
+
+"One writer" was never strictly true. `setup-user` already writes
+`personas.md`: its frontmatter declares it and its Step 4 copies the blank
+template when the file is absent. The split, which `config-contract.md` must
+state rather than imply:
+
+- **`setup-user` owns creation.** It copies the blank template if and only if
+  no file exists, and its existing rule stands untouched -- existence is the
+  only test, and it never inspects or overwrites user prose.
+- **The new skill owns every content write.** Appending a learned entry is the
+  only way content reaches the file from Daikenja.
+
+These are different acts on the same file, not two writers competing for one
+job, which is why the ledger's stricter single-writer rule does not transfer
+unchanged.
+
+The new skill's **name is deliberately left open** until implementation, when
+its description has to be drafted anyway and nothing downstream depends on the
+choice. Candidates considered: `learn-persona`, `persona-log`,
+`remember-persona`.
+
 ## 9. Output
 
 Verdict first, deliverable second, evidence third:
@@ -294,18 +316,51 @@ reasoning behind each fix. `standard` sits between.
 
 ## 10. Files touched
 
+### 10.1 Skills
+
+| Skill | Change |
+|---|---|
+| `skills/preflight/SKILL.md` | **Rewritten.** Name unchanged. Version 1 → 2, description rewritten for triggering. |
+| `skills/compose/SKILL.md` | **Modified.** Version 3 → 4. Step 2 replaced by a pointer to `docs/rewrite-rules.md`; learned-persona handoff added. |
+| `skills/<persona-writer>/SKILL.md` | **New.** Owns every content write to `personas.md`. Name settled at implementation (§ 8.1). |
+| `skills/setup-user/SKILL.md` | **Boundary note only.** Its create-if-absent behaviour is unchanged; the note records that content writes now belong elsewhere (§ 8.1). |
+| `skills/meeting-review/SKILL.md` | **None.** Reads `personas.md`, never writes it. Its "not a roster" rule stays true under learned entries. |
+| `thread`, `log`, `catchup`, `decisions`, `gaps`, `summary`, `doc-review`, `self-review` | **None.** No contact with this work. |
+
+**No renames.** `preflight` keeps its name; no existing skill moves.
+
+### 10.2 Other files
+
 | Path | Change |
 |---|---|
-| `skills/preflight/SKILL.md` | Rewritten. Version 1 → 2. Description rewritten for triggering. |
-| `skills/compose/SKILL.md` | Step 2 replaced by a pointer to `docs/rewrite-rules.md`; learned-persona handoff added. Version 3 → 4. |
 | `docs/rewrite-rules.md` | **New.** Extracted verbatim from `compose` Step 2. |
-| `docs/reviewer-personas.md` | **New.** The archetype roster in § 5. |
-| `docs/config-contract.md` | Who-writes-what table updated for `personas.md` (§ 8). |
-| `skills/<persona-writer>/SKILL.md` | **New.** Sole writer of `personas.md`. Name TBD at implementation. |
-| `templates/personas.md` | Note that Daikenja may now append entries. |
+| `docs/reviewer-personas.md` | **New.** The archetype roster in § 5. Nine briefs, each written well enough to drive a subagent. |
 | `docs/future-work.md` | **New.** See § 12. |
-| `tests/fixtures/` | Fixtures for the loop: a draft with a content gap, a draft with a persona conflict, a clean draft that exits after cycle 1. |
+| `docs/config-contract.md` | Who-writes-what table updated for `personas.md` (§ 8, § 8.1). |
+| `templates/personas.md` | Note that Daikenja may now append entries. |
+| `README.md` | Skill list: the `preflight` bullet rewritten, one bullet added. |
+| `tests/fixtures/` | A draft with a content gap, a draft with a recipient-versus-recipient conflict, a clean draft that exits after cycle 1. |
 | `CHANGELOG.md` | Entries under `## [Unreleased]`. A `feat` in the batch means a minor bump at release. |
+
+### 10.3 Sequencing -- three pull requests
+
+The work splits along dependency lines into three independently reviewable
+PRs, each roughly one to two sessions. This is deliberately *not* run as a
+`staged-rollout` `.plan/`: the PR is already the natural stage boundary, and
+this spec is already the persistent plan, so a `.plan/` folder would track the
+same work twice alongside the repo's existing branch → PR → `CHANGELOG`
+`[Unreleased]` flow.
+
+| PR | Contents | Depends on |
+|---|---|---|
+| **1** | `docs/rewrite-rules.md` extraction and the `compose` refactor | -- |
+| **2** | The persona writer skill, the `config-contract.md` change, the `setup-user` boundary, `templates/personas.md` | -- |
+| **3** | `docs/reviewer-personas.md`, the `preflight` rewrite, learned-persona wiring, fixtures, `README.md`, `docs/future-work.md` | 1, 2 |
+
+PR 1 is behaviour-neutral and shippable on its own. **If PR 3 proves larger
+than a single session once planned in detail, escalate that stage alone to
+`staged-rollout`** -- upgrading the path mid-task is the sanctioned direction,
+and starting light costs nothing if it turns out to be enough.
 
 ## 11. Failure cases
 
