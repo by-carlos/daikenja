@@ -29,9 +29,11 @@ profile:
   # in Google Drive. Leave a key out if you have no such prose; Daikenja falls
   # back to its default voice and says so.
   #
-  # A Drive pointer names the file, never a link or an ID, and only works for a
-  # file `/daikenja:setup-user` created for you -- Daikenja cannot see anything
-  # else in your Drive. Run that skill to set one up rather than typing one in.
+  # A Drive pointer names the file, never a link or an ID, and never a path:
+  # the file lives in a `daikenja` folder that `/daikenja:setup-user` creates,
+  # so `drive:personas.md` is the whole value. It only works for a file that
+  # skill created -- Daikenja cannot see anything else in your Drive. Run it to
+  # set one up rather than typing a pointer in by hand.
   writing_style: ./writing-style.md
   personas: ./personas.md
 
