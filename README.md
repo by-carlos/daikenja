@@ -100,8 +100,8 @@ and get overwritten on update.
 | What | Where | Written by |
 |---|---|---|
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user`, plus `project-catchup` for the `last_checkpoint` key only |
-| Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or a Google Drive file `setup-user` makes for you | you, plus `remember-persona` for people you describe to it |
-| How you write | `~/.claude/daikenja/writing-style.md`, or a Google Drive file `setup-user` makes for you | you |
+| Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
+| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you |
 | A project's decision ledger | `<project>/.daikenja/ledger.md` | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
@@ -115,6 +115,10 @@ Google's own connector, under your own account, so nothing goes through the
 plugin author. The two settings are independent: keeping personal notes on
 colleagues local while sharing a writing style is a normal setup. The ledger
 does not move -- it stays in the project, where git already versions it.
+
+Everything Daikenja puts in Drive goes in **one `daikenja` folder** it creates
+for you, mirroring `~/.claude/daikenja/` on your machine. Nothing is left loose
+at the top level of your Drive.
 
 Two things are worth knowing before you choose Drive. **`setup-user` has to
 create the file**: the connector only shows Claude the files it created itself,

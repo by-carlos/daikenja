@@ -34,21 +34,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/config-contract.md` § Resolving `writing_style` and `personas`, and
   the five skills that touch these keys defer to it. The ledger does not move
   -- it stays in the project, and `docs/ledger-format.md` is untouched (#41).
-- A Drive pointer names the **file**, never a URL or an ID, and resolves by
-  searching the files Daikenja created for that exact name. Every write mints
-  a new file ID, so a stored ID would be stale the first time the user's prose
-  changed. Two files sharing the name does not resolve either: that state means
-  an earlier write was interrupted, and choosing between the copies is the
-  user's call (#41).
-- `/daikenja:setup-user` is the only skill that creates the Drive file, and now
-  has to be: the connector shows Claude only the files it created itself, so a
-  document already in the user's Drive cannot be pointed at however it is
-  shared. It proposes a name, refuses to create a second file under a name
-  already in use, writes the shipped template, confirms the file reads back,
-  and only then writes the pointer (#41).
+- Everything Daikenja stores in Drive lives in **one `daikenja` folder**,
+  created by `/daikenja:setup-user`, mirroring `~/.claude/daikenja/` on the
+  user's machine. Nothing is left loose at the top level of a Drive (#41).
+- A Drive pointer names the **file**, never a URL, an ID or a path, and
+  resolves by searching that folder for the exact name. The folder is fixed, so
+  it stays out of the pointer: `drive:personas.md` is the whole value. Every
+  write mints a new file ID, so a stored ID would be stale the first time the
+  user's prose changed. Two files sharing the name does not resolve, and
+  neither does a missing or duplicated folder: those states mean an earlier
+  write was interrupted, and choosing between the copies is the user's call
+  (#41).
+- `/daikenja:setup-user` is the only skill that creates the `daikenja` folder or
+  a Drive file, and now has to be: the connector shows Claude only the files it
+  created itself, so a document already in the user's Drive cannot be pointed at
+  however it is shared. It creates the folder if it is absent, stops rather than
+  choosing when two carry that name, proposes a file name, refuses to create a
+  second file under a name already in use, writes the shipped template, confirms
+  the file reads back, and only then writes the pointer (#41).
 - `/daikenja:remember-persona` now says how a Drive write works: download,
   splice the entry into the downloaded bytes, create a new file under the same
-  name, confirm it reads back, and only then trash the old one. The connector
+  name in the same folder, confirm it reads back, and only then trash the old
+  one. A replacement created outside the folder would hold everything and stop
+  resolving, which is worse than a failed write. The connector
   has no content-update tool, so a write is a replacement. **Never trash
   first** -- a create that fails after a successful trash destroys prose that
   cannot be recovered. What is written is always the downloaded bytes plus the

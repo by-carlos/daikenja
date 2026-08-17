@@ -206,9 +206,11 @@ those breaks the file's own structure.
 connector cannot update a file's content, so the write follows
 `config-contract.md` § Writing replaces the file: download, splice the entry
 into the downloaded bytes at the same position, create a new file with the same
-name, read it back to confirm, and only then trash the old one. **Never trash
-first** -- a create that fails after the old file is gone destroys prose that
-cannot be recovered.
+name **in the same `daikenja` folder**, read it back to confirm, and only then
+trash the old one. **Never trash first** -- a create that fails after the old
+file is gone destroys prose that cannot be recovered. A replacement created
+outside the folder is worse than a failed write: it holds everything and no
+longer resolves.
 
 **Splice, never regenerate.** What gets written is exactly what was downloaded
 plus this one entry. Everything else -- hand-written sections, the template

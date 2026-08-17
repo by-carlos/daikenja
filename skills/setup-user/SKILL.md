@@ -4,7 +4,7 @@ description: One-time (and re-runnable) setup for Daikenja. Checks that the sess
 metadata:
   owner: Carlos
   version: 3
-  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a Google Drive file for either of those two only if the user asks
+  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
@@ -123,8 +123,8 @@ of a local file (`docs/config-contract.md` § Resolving `writing_style` and
 
 ```
 Both of these live on this machine. If you want them reachable from another
-machine, either one can live in Google Drive instead -- say so and I will
-create it. Otherwise we are done here.
+machine, either one can live in Google Drive instead, in a `daikenja` folder I
+create for you -- say so and I will set it up. Otherwise we are done here.
 ```
 
 - **The user says nothing, or says no.** Local files, exactly as above. This is
@@ -156,20 +156,32 @@ I can only see Drive files I created myself, so I cannot point at that one.
 I can create a new file and you can paste your prose into it.
 ```
 
-For each key the user chose:
+**First, the `daikenja` folder.** Everything Daikenja puts in Drive lives in one
+folder, per `docs/config-contract.md` § One folder, always. Search the files
+Daikenja created for a folder named `daikenja`, using the contract's explicit
+page size.
 
-1. **Propose the name** -- `daikenja-personas.md` or
-   `daikenja-writing-style.md`. The user may pick another. The name is the
-   pointer, so a distinctive one is worth having.
-2. **Check the name is free**, following the contract's resolution rule --
-   including its explicit page size, without which a duplicate does not show up.
-   If a file already exists, **do not create a second**. Two files with one name
-   is the ambiguous state the contract refuses to resolve. Say it exists and
-   offer to point the key at it as it stands, or to use a different name. This
-   is what keeps a second run of this skill from breaking a working setup.
+- **Exactly one.** Use it.
+- **None.** Create it, and say so.
+- **More than one.** **Stop** before creating anything. Name both and ask which
+  to keep. Creating a file into one of two folders picks a winner the user did
+  not choose, and the pointer would then resolve by luck.
+
+Then, for each key the user chose:
+
+1. **Propose the name** -- `personas.md` or `writing-style.md`, matching the
+   local file names. The user may pick another. The name is the pointer.
+2. **Check the name is free** *inside that folder*, following the contract's
+   resolution rule -- including its explicit page size, without which a
+   duplicate does not show up. If a file already exists, **do not create a
+   second**. Two files with one name is the ambiguous state the contract refuses
+   to resolve. Say it exists and offer to point the key at it as it stands, or
+   to use a different name. This is what keeps a second run of this skill from
+   breaking a working setup.
 3. **Create the file** with the shipped template
-   (`${CLAUDE_PLUGIN_ROOT}/templates/<name>`) as its content, with conversion to
-   Google document types disabled, per the contract.
+   (`${CLAUDE_PLUGIN_ROOT}/templates/<name>`) as its content, **inside the
+   `daikenja` folder**, with conversion to Google document types disabled, per
+   the contract.
 4. **Read it back** with the connector's file-download tool and confirm the
    content arrived. Never the natural-language extraction tool, per the config
    contract.
@@ -256,5 +268,6 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | An existing config holds a `drive:` pointer that does not resolve | One notice naming the file and the reason, then continue with the rest of setup. Never rewrite the key back to a local path to make the error go away -- that is the user's choice to reverse, not this skill's. |
 | The user asks for Drive and the connector is not in the session | One notice, then finish on local files. **Never stop.** No part of setup depends on a Google account. |
 | The user asks to point at a Drive file they already have | One line saying only files Daikenja created are visible, then offer to create a new one. Never write a pointer at a file this skill did not create -- it can never resolve. |
-| A file with the proposed name already exists | Do not create a second one. Offer the existing file or a different name. |
-| Creating the Drive file fails, or the read-back in step 4 is empty | Leave the pointer on the local file, name the error, and continue. Never leave a key pointing at a file that was not confirmed. |
+| A file with the proposed name already exists in the folder | Do not create a second one. Offer the existing file or a different name. |
+| More than one `daikenja` folder exists | **Stop** before creating anything. Name both and ask which to keep. Never pick one. |
+| Creating the folder or the Drive file fails, or the read-back in step 4 is empty | Leave the pointer on the local file, name the error, and continue. Never leave a key pointing at a file that was not confirmed. A folder created with no file in it is harmless and can stay. |

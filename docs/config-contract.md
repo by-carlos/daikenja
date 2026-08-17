@@ -22,7 +22,15 @@ version. The plugin ships templates; the filled copies live in the path above.
 
 `daikenja.yaml` is always at that one path. The two prose files are only the
 default: `writing_style` and `personas` are pointers, and a pointer may name a
-file somewhere else or a file in Google Drive. See
+file somewhere else or a file in Google Drive. A pointer that names a Drive file
+resolves inside one folder, which mirrors the local layout:
+
+```
+daikenja/personas.md       in the user's own Google Drive
+daikenja/writing-style.md  same folder, created by setup-user
+```
+
+See
 [Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas).
 
 `setup-user` is the only skill that creates or edits configuration keys. The one
@@ -131,7 +139,7 @@ one of them:
 |---|---|---|
 | Relative path | `./personas.md` | That path, relative to `daikenja.yaml`'s own directory. |
 | Absolute path | `C:/Users/you/notes/personas.md` | That path. |
-| Drive file name | `drive:daikenja-personas.md` | The Google Drive file with exactly that name, among the files Daikenja itself created. |
+| Drive file name | `drive:personas.md` | The file with exactly that name in Daikenja's own `daikenja` folder in Google Drive. |
 
 A value starting `drive:` is a Drive pointer. Anything else is a path. What
 follows `drive:` is a **file name** -- not a path, not a URL, and not a file ID.
@@ -169,11 +177,29 @@ widely it is shared. One rule follows and it is not negotiable: **there is no
 or the key stays on a local path. A pointer typed by hand at a file Daikenja did
 not create will never resolve.
 
-**Resolution searches by name.** Search the files Daikenja created for the exact
-name in the pointer.
+##### One folder, always
+
+Daikenja's Drive files live in a single folder named **`daikenja`**, created by
+`setup-user` in the user's own Drive. This mirrors `~/.claude/daikenja/`
+locally, and it is fixed for the same reason that path is: one location, always,
+with no search path to reason about. Nothing Daikenja writes to Drive is left
+loose at the top level.
+
+**The folder is not part of the pointer.** A pointer stays a bare file name --
+`drive:personas.md`, never `drive:daikenja/personas.md`. The folder is implied
+because it is fixed, and writing it into the value would make a pointer a path
+again, which is exactly what the name-only rule exists to avoid.
+
+**Resolution searches by name, inside that folder.** First find the `daikenja`
+folder among the files Daikenja created, then search it for the exact name in
+the pointer. Both searches follow the paging rule below, and the folder obeys
+the same match rules as a file: exactly one `daikenja` folder resolves, none or
+several does not.
 
 - **Exactly one match.** That file is the target.
-- **No match.** The pointer does not resolve.
+- **No match.** The pointer does not resolve. So does a missing folder: if the
+  folder is gone, there is nothing to search and the pointer fails as a whole
+  rather than falling back to a top-level search.
 - **More than one match.** The pointer does not resolve. Two files sharing a
   name means an earlier write was interrupted between its create and its trash
   step. Which copy to keep is the user's call and never a guess.
@@ -209,10 +235,15 @@ and the parent folder only. A write is therefore a replacement, in this order:
 1. Download the current content.
 2. Build the new full content in memory, as the downloaded content with the
    change spliced into it.
-3. Create a new file with the same name and that content, **with conversion to
-   Google's own document types disabled**.
+3. Create a new file with the same name and that content, **in the `daikenja`
+   folder**, and **with conversion to Google's own document types disabled**.
 4. Download the new file back and confirm it holds what was written.
 5. Only then move the old file to the trash.
+
+**The replacement goes in the same folder as the file it replaces.** A create
+that omits the parent lands at the top level instead, where a folder-scoped
+resolution will not find it. Trashing the old file at step 5 would then strand
+the user's prose: the new file exists, holds everything, and no longer resolves.
 
 **Disabling the conversion is not optional.** Measured 17 August 2026: a
 203-byte Markdown upload without that flag was stored as a Google Doc and came
@@ -244,8 +275,9 @@ change that; see [Who writes what](#who-writes-what).
 follows nothing out of it -- no folders, no linked documents, no second file.
 
 **A configured Drive pointer that fails is a stop, not a degrade.** If the
-connector is not in the session, the name does not resolve to exactly one file,
-or the download comes back empty, the run stops and names the file. This is the
+connector is not in the session, the `daikenja` folder is missing or duplicated,
+the name does not resolve to exactly one file inside it, or the download comes
+back empty, the run stops and names the file. This is the
 one place a pointer's form changes the behavior.
 
 The reason is that none of those failures can be told apart from "this user has
@@ -301,9 +333,10 @@ one, through the replacement sequence in
 [Writing replaces the file](#writing-replaces-the-file). Two rules follow from
 the fact that Daikenja can only see Drive files it created itself:
 
-- **`setup-user` is the only skill that creates a Drive file**, and only when
-  the user chooses Drive during setup and the connector is present. It writes
-  the blank template into the new file and puts that file's name in the pointer.
+- **`setup-user` is the only skill that creates a Drive file or the `daikenja`
+  folder**, and only when the user chooses Drive during setup and the connector
+  is present. It creates the folder if it is not already there, writes the blank
+  template into a new file inside it, and puts that file's name in the pointer.
   This is not a convention about tidiness. A file Daikenja did not create cannot
   be seen at all, so creating it is the only way one can exist to point at.
 - **`remember-persona` does not create Drive files, and never redirects a
@@ -355,7 +388,7 @@ One rule covers the common cases:
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. |
 | `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. |
 | A pointed-at local prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
-| A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, no file carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per Who writes what). |
+| A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, the `daikenja` folder is missing or duplicated, no file in it carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per Who writes what). |
 | `norms_doc` absent | Not an error. `self-review` skips ROLE CHECK silently -- this is the documented default. |
 
 Notices are one line and they name the file. "No `writing-style.md` at
