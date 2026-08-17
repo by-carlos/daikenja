@@ -32,6 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/config-contract.md` § Resolving `writing_style` and `personas`, and
   the five skills that touch these keys defer to it. The ledger does not move
   -- it stays in the project, and `docs/ledger-format.md` is untouched (#41).
+- `/daikenja:remember-persona` now says how to place an entry on a Notion page:
+  a search-and-replace anchored on the last persona section, never a plain
+  append. Notion can insert only at the very start or the very end of a page,
+  and the very end is where the entry must not go when the file carries
+  trailing sections. Verified against a live page (#41).
 
 ### Changed
 

@@ -155,9 +155,16 @@ A Notion pointer is reached through Notion's official remote MCP server at
 own Notion account. Daikenja holds no Notion credential and stores nothing on
 anyone else's infrastructure.
 
-- **Reading** fetches the page and treats its body as the same markdown prose
-  the local file would have held. The page's own title and Notion properties are
-  not part of the content.
+- **Reading** fetches the page body and reads it as the same prose the local
+  file would have held. The page's own title and Notion properties are not part
+  of the content.
+- **The round-trip is faithful in content, not byte-identical.** Notion returns
+  its own Markdown variant: headings, `**bold**` and paragraphs survive
+  unchanged, but blank lines between blocks are stripped, and a set of
+  characters is escaped. Nothing Daikenja reads depends on that whitespace, so
+  the prose means the same thing either way -- but a skill matching against the
+  page's text must match what the fetch actually returned, never what it
+  believes it wrote earlier.
 - **Writing** updates that page. Only `remember-persona` writes prose content,
   and the pointer's form does not change that; see
   [Who writes what](#who-writes-what).

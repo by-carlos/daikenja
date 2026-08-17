@@ -195,6 +195,16 @@ file.** A file may carry trailing sections that have to stay last: standing
 drafting rules, notes to self, a template block. Dropping a person underneath
 those breaks the file's own structure.
 
+**On a Notion page, that placement needs a search-and-replace, not an append.**
+Notion's update tool can insert only at the very start or the very end of a
+page, and the very end is exactly where the entry must not go. Anchor on the
+last line of the last persona section instead, and replace that line with itself
+plus the new entry -- the same "after the entries, above the trailing sections"
+result. Match the anchor against the text the fetch returned, per the config
+contract's note on the round-trip. Never replace the page's whole content to
+achieve this: a full-content replace can delete subpages, and it puts prose the
+user wrote by hand at risk for the sake of an append.
+
 Write it without asking. Touch nothing else -- no reordering, no reformatting,
 no tidying, and no normalizing a line a human wrote by hand.
 
@@ -270,7 +280,7 @@ missing thing is the task itself.
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
 | The description came from a fixture or worked example | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |
 | The file's entries use a different format from the template | Match the file, not the template. It is the authority on its own format. |
-| The file has trailing sections after the entries | Append after the last entry, above those sections. Never at the very end. |
+| The file has trailing sections after the entries | Append after the last entry, above those sections. Never at the very end. On a Notion page this means a search-and-replace anchored on the last entry, per Step 5 -- an append lands in the wrong place. |
 | The description is evaluative ("he is useless") | Record the behaviour underneath it if the user stated one, and say in one line what you wrote instead. If there is no behaviour under it, write nothing and ask what they do. |
 | The person already has an entry | Propose, never write silently. See Step 5. |
 | The file still holds the shipped template placeholder | Leave it alone. Append below it and note it once in the report. |
