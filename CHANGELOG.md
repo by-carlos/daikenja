@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-17
+
 ### Added
 
 - A plausibility check in `project-log` Step 3 before it offers to scaffold a
@@ -263,6 +265,7 @@ Initial public release.
   `personas.md`, `writing-style.md`) copied out to a user's machine on setup.
 - `tests/fixtures/` synthetic inputs the skills are exercised against by hand.
 
-[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.4.0
 [0.3.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.3.0
 [0.2.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.2.0
