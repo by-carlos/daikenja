@@ -83,13 +83,18 @@ length, word choice, absolute dates, the two non-overridable rules.
 
 Read the user's `writing_style` prose. Resolve the pointer per
 `config-contract.md` § Resolving `writing_style` and `personas` -- it may name a
-local file or a Notion page, and the default is
+local file or a Google Drive file, and the default is
 `~/.claude/daikenja/writing-style.md`. Whatever it resolves to layers on top of
 `docs/voice.md`; it never replaces it.
 
-- **Pointer does not resolve.** One notice, then continue on `docs/voice.md`
-  alone: "No writing style at `<pointer>`, composing with the default voice."
-  Name the pointer the config actually holds, so the user knows what to fix.
+- **A local pointer does not resolve.** One notice, then continue on
+  `docs/voice.md` alone: "No writing-style.md at `<path>`, composing with the
+  default voice." Name the path the config actually resolved to, so the user
+  knows what to fix.
+- **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
+  the file, per `config-contract.md` § Failure behavior. Do not compose. The
+  user asked for their own voice and it was not available, and drafting in the
+  default voice would look like it had been applied.
 - **Resolves, but the content is still the blank shipped template.** No notice.
   Zero overrides on top of the default voice is a valid configured state, not
   something to flag or apologize for.
@@ -99,12 +104,14 @@ local file or a Notion page, and the default is
 ## Step 5: personas (optional)
 
 If `profile.personas` resolves -- per `config-contract.md` § Resolving
-`writing_style` and `personas`, so a local file or a Notion page, default
+`writing_style` and `personas`, so a local file or a Google Drive file, default
 `~/.claude/daikenja/personas.md` -- and the message names a recipient who
 matches an entry in it, use that entry's guidance on length, formality and how
-direct to be. If the pointer does not resolve, the content is empty, or the
-recipient does not match any entry, proceed silently -- this is optional input,
-not a configuration requirement, and gets no notice either way.
+direct to be. A local pointer that does not resolve, an empty local file, or a
+recipient who matches no entry all proceed silently -- this is optional input,
+not a configuration requirement, and gets no notice either way. A `drive:`
+pointer that does not resolve or reads back empty is the exception: that stops
+the run per `config-contract.md` § Failure behavior, and is not silent.
 
 **If the user described a recipient inline and that person has no entry**, route
 what they said to `/daikenja:remember-persona`, which is the only skill that
@@ -113,9 +120,10 @@ inferred from the draft or the thread -- "M challenges every technical claim" is
 material, M having challenged one in a pasted thread is not.
 
 That write is silent and comes back as one line to add to the `Comment` block
-(`Learned: added M to ~/.claude/daikenja/personas.md.`). An unresolvable
-`personas` pointer also comes back as one line, and drafting continues either
-way. Never write the personas prose from here.
+(`Learned: added M to ~/.claude/daikenja/personas.md.`). An unresolvable local
+`personas` pointer also comes back as one line, and drafting continues. An
+unresolvable `drive:` pointer stops the run there, per Step 5. Never write the
+personas prose from here.
 
 ## Step 6: substance pre-flight (requests only)
 

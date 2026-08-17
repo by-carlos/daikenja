@@ -134,12 +134,14 @@ transcript names people the config does not cover, note it once at the end of
 the report, in one line, and carry on.
 
 `personas.md` here means whatever `profile.personas` resolves to -- a local file
-or a Notion page, per `config-contract.md` § Resolving `writing_style` and
-`personas`. Nothing in this skill changes with the form of the pointer.
+or a Google Drive file, per `config-contract.md` § Resolving `writing_style` and
+`personas`. Nothing in this skill changes with the form of the pointer except
+what happens when it fails.
 
-If the `personas` pointer does not resolve, or `daikenja.yaml` is missing
+If a local `personas` pointer does not resolve, or `daikenja.yaml` is missing
 entirely, that is one notice line and the review still runs. Neither is needed
-to read a transcript.
+to read a transcript. A `drive:` pointer that does not resolve or reads back
+empty stops the run instead, per `config-contract.md` § Failure behavior.
 
 ## Step 5: report
 

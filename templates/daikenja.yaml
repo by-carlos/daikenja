@@ -24,10 +24,14 @@ profile:
   tone: standard
 
   # Where your prose lives. Each of these is a pointer: a path relative to this
-  # file, an absolute path, or a Notion page URL if you want it reachable from
+  # file, an absolute path, or `drive:<file name>` if you want it reachable from
   # another machine. The two are independent -- one can be local and the other
-  # in Notion. Leave a key out if you have no such prose; Daikenja falls back to
-  # its default voice and says so.
+  # in Google Drive. Leave a key out if you have no such prose; Daikenja falls
+  # back to its default voice and says so.
+  #
+  # A Drive pointer names the file, never a link or an ID, and only works for a
+  # file `/daikenja:setup-user` created for you -- Daikenja cannot see anything
+  # else in your Drive. Run that skill to set one up rather than typing one in.
   writing_style: ./writing-style.md
   personas: ./personas.md
 

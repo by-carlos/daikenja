@@ -13,8 +13,8 @@ starting points.
   [`../docs/ledger-format.md`](../docs/ledger-format.md).
 - [`personas.md`](personas.md) and [`writing-style.md`](writing-style.md) -- the
   prose templates a user fills in and points at from `daikenja.yaml`. The
-  pointer may name a local file or a Notion page; `setup-user` writes the same
-  template into whichever the user chose. See
+  pointer may name a local file or a Google Drive file; `setup-user` writes the
+  same template into whichever the user chose. See
   [`../docs/config-contract.md`](../docs/config-contract.md) § Resolving
   `writing_style` and `personas`.
 

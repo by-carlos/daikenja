@@ -20,23 +20,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   resolved ledger path in a `Ledger: <path>` line before its answer, success
   or failure, so `project-catchup`, `project-summary`, `project-decisions` and
   `project-gaps` all state their scope without four copies of the rule (#47).
-- `profile.writing_style` and `profile.personas` may now name a **Notion page
-  URL** as well as a relative or an absolute path. The prose is read and
-  written through Notion's official remote MCP server under the user's own
-  account, which makes a persona file or a writing style reachable from a
-  machine other than the one that wrote it. The two keys resolve
-  independently, so personal notes on colleagues can stay local while a
-  writing style is shared. Local files remain the default: a user who never
-  mentions Notion sees no change, and `/daikenja:setup-user` offers the option
-  once and completes without a Notion account. The rule lives in
+- `profile.writing_style` and `profile.personas` may now name a **Google Drive
+  file**, written `drive:<file name>`, as well as a relative or an absolute
+  path. The prose is read and written through the Google Drive connector under
+  the user's own account, which makes a persona file or a writing style
+  reachable from a machine other than the one that wrote it -- the grant spans
+  surfaces, so a file created in Claude Code is readable from claude.ai. The
+  two keys resolve independently, so personal notes on colleagues can stay
+  local while a writing style is shared. Local files remain the default: a
+  user who never mentions Drive sees no change, and `/daikenja:setup-user`
+  offers the option once and completes without a Google account. Drive is the
+  only remote store; a pointer is a path or it is `drive:`. The rule lives in
   `docs/config-contract.md` § Resolving `writing_style` and `personas`, and
   the five skills that touch these keys defer to it. The ledger does not move
   -- it stays in the project, and `docs/ledger-format.md` is untouched (#41).
-- `/daikenja:remember-persona` now says how to place an entry on a Notion page:
-  a search-and-replace anchored on the last persona section, never a plain
-  append. Notion can insert only at the very start or the very end of a page,
-  and the very end is where the entry must not go when the file carries
-  trailing sections. Verified against a live page (#41).
+- A Drive pointer names the **file**, never a URL or an ID, and resolves by
+  searching the files Daikenja created for that exact name. Every write mints
+  a new file ID, so a stored ID would be stale the first time the user's prose
+  changed. Two files sharing the name does not resolve either: that state means
+  an earlier write was interrupted, and choosing between the copies is the
+  user's call (#41).
+- `/daikenja:setup-user` is the only skill that creates the Drive file, and now
+  has to be: the connector shows Claude only the files it created itself, so a
+  document already in the user's Drive cannot be pointed at however it is
+  shared. It proposes a name, refuses to create a second file under a name
+  already in use, writes the shipped template, confirms the file reads back,
+  and only then writes the pointer (#41).
+- `/daikenja:remember-persona` now says how a Drive write works: download,
+  splice the entry into the downloaded bytes, create a new file under the same
+  name, confirm it reads back, and only then trash the old one. The connector
+  has no content-update tool, so a write is a replacement. **Never trash
+  first** -- a create that fails after a successful trash destroys prose that
+  cannot be recovered. What is written is always the downloaded bytes plus the
+  one entry, never a regenerated file (#41).
 
 ### Changed
 
@@ -50,8 +66,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The plugin description in `.claude-plugin/plugin.json` no longer says that
   everything Daikenja reads lives under `~/.claude/daikenja/`. The
   configuration file still does; the persona and writing-style prose it points
-  at may now live in Notion. The Claude Code and Cowork restrictions are
+  at may now live in Google Drive. The Claude Code and Cowork restrictions are
   unchanged (#41).
+- **A configured pointer that fails is no longer treated as an unconfigured
+  one.** `docs/config-contract.md` § Failure behavior now separates the two:
+  a key the user never set still degrades with one notice, but a `drive:`
+  pointer that cannot be resolved -- connector absent, no file or several files
+  under that name, or a download that comes back empty -- stops the skill and
+  names the file. The reason is measured: the connector's
+  `read_file_content` returned an empty string for a 171-byte Markdown file
+  that `download_file_content` returned byte-exact (17 August 2026), and an
+  empty read cannot be told apart from prose the user never wrote. Continuing
+  would mean drafting in the default voice while the user believed their own
+  style had been applied. Local paths keep the older behavior, because a
+  missing local file is a fact that can be established (#41).
 
 ## [0.3.0] - 2026-08-17
 

@@ -156,8 +156,9 @@ an index, not a roster to sweep. This is what stops a large org from exploding
 the reviewer count.
 
 `personas.md` below means whatever `profile.personas` resolves to -- a local
-file or a Notion page, per `config-contract.md` § Resolving `writing_style` and
-`personas`. Nothing in this skill changes with the form of the pointer.
+file or a Google Drive file, per `config-contract.md` § Resolving
+`writing_style` and `personas`. Nothing in this skill changes with the form of
+the pointer except what happens when it fails.
 
 For each addressee, assemble a brief per `docs/reviewer-personas.md` § How a
 brief is assembled -- the archetype they embody, plus their `personas.md` entry
@@ -166,8 +167,12 @@ the file; the file wins over the archetype.
 
 - **Named, with nothing known about them.** Not in `personas.md`, nothing said
   inline. Archetypes only. Silent, not an error.
-- **The `personas` pointer does not resolve.** Silent. The `Reviewers:` line already names what
-  ran, which makes a notice redundant.
+- **A local `personas` pointer does not resolve.** Silent. The `Reviewers:` line
+  already names what ran, which makes a notice redundant.
+- **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
+  the file, per `config-contract.md` § Failure behavior. This one is not silent:
+  reviewing without the personas the user configured would look like reviewing
+  with them.
 - **More addressees than slots.** Direct addressees beat cc'd. Name who was
   dropped in the report.
 
@@ -247,8 +252,10 @@ writing style.
   level, the owners, the timing and how blocking it is all survive untouched.
 - Apply `docs/voice.md`, layered under the user's `writing_style` prose if the
   pointer resolves (`profile.writing_style`, per `config-contract.md`
-  § Resolving `writing_style` and `personas` -- a local file or a Notion page).
-  A pointer that does not resolve gets one notice, then the default voice alone.
+  § Resolving `writing_style` and `personas` -- a local file or a Google Drive
+  file). A local pointer that does not resolve gets one notice, then the default
+  voice alone; a `drive:` pointer that fails stops the run, per that document's
+  § Failure behavior.
 - A rule that cannot be honoured is named in the report, never broken silently.
 
 ## Step 8: cycle 2 -- re-check once
