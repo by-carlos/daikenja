@@ -143,7 +143,7 @@ that `compose` does not have to invent one.
 |---|---|---|
 | `daikenja.yaml` -- everything except `last_checkpoint` | `setup-user` | Only on user approval. |
 | `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
-| `personas.md` -- creating the file | `setup-user` | Copies the blank template if and only if no file exists. It never inspects or overwrites content. |
+| `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` | the user, by hand | Daikenja reads it and never edits it. |
 | `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
@@ -154,11 +154,16 @@ checkpoint, so it must be able to write that one key. It still never touches
 ledger content.
 
 **`personas.md` has two writers doing two different acts, not one job split in
-two.** `setup-user` owns *creation*: existence is its only test, and a file that
-is already there is left alone whatever is in it. `remember-persona` owns every
-*content* write, and appending an entry is the only way content reaches the file
-from Daikenja. Because the acts do not overlap, the ledger's stricter
-single-writer rule does not transfer here unchanged.
+two.** `setup-user` owns *creation* as a standing rule -- existence is its only
+test, and a file that is already there is left alone whatever is in it.
+`remember-persona` owns every *content* write, and appending an entry is the
+only way content reaches the file from Daikenja; because a content write needs
+the file to exist, it also scaffolds the same template on absence rather than
+stopping to wait for `setup-user`. Creation is now something both skills can
+do, but the split that matters is unchanged: `setup-user` never writes
+content, and `remember-persona` never inspects or overwrites content on an
+existing file. That is the boundary the ledger's stricter single-writer rule
+does not transfer here unchanged.
 
 A learned entry is written without asking and reported afterwards, which is
 deliberate: an append is additive and reversible, and the report names the file
@@ -183,7 +188,7 @@ One rule covers the common cases:
 | Valid YAML, missing optional key | Treat as absent, degrade for that key alone with one notice, and continue. One missing optional key never fails a run. |
 | Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. |
-| A pointed-at prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`, whose whole task is writing `personas.md` -- a missing file is the task itself, so it stops and names `setup-user`. |
+| A pointed-at prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
 | `norms_doc` absent | Not an error. `self-review` skips ROLE CHECK silently -- this is the documented default. |
 
 Notices are one line and they name the file. "No `writing-style.md` at
