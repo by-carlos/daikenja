@@ -85,7 +85,37 @@ Registration is optional. Never block a ledger write on it.
 
 ## Step 3: scaffold the ledger when it is missing
 
-If the ledger file does not exist, say so plainly before doing anything else:
+If the ledger file does not exist, check first whether this directory is
+plausibly a project. Nothing about a missing ledger says it is -- the current
+directory could just as easily be the user's home directory or a scratch
+folder they happened to be in.
+
+**Refuse outright** when the current directory is the user's home directory
+(the real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do
+not scaffold, and do not fold this into the Step 5 proposal -- there is
+nothing to propose:
+
+```
+Won't create a ledger in <path> -- that's your home directory, not a project.
+Run this from the project you mean to log.
+```
+
+**Otherwise, if the directory is neither a VCS root** (no `.git`) **nor
+already holds a `.daikenja/`**, it still is not obviously a project. Ask,
+naming the exact absolute path, before doing anything else -- this
+confirmation is separate from the Step 5 write approval, because it settles
+whether a ledger belongs here at all, not what goes in it:
+
+```
+<path> doesn't look like a project (no .git, no .daikenja/). Create a ledger
+there anyway?
+```
+
+Wait for a yes before continuing. A no ends the run here; say nothing was
+written.
+
+**Otherwise** (a VCS root, or a directory that already has `.daikenja/`), say
+so plainly before doing anything else:
 
 ```
 No ledger at <path>. I will create one from the Daikenja template.
@@ -262,6 +292,8 @@ missing thing is the task itself.
 |---|---|
 | `daikenja.yaml` absent | One notice, then continue on the defaults (`.daikenja/ledger.md`, owner `@unassigned` unless the user names one). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
+| Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. |
+| Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. |
 | Project unregistered | One line, offer the `setup-user` block from Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
 | Ledger missing a required H2 section | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |

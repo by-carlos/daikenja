@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A plausibility check in `project-log` Step 3 before it offers to scaffold a
+  ledger: refuses outright in the user's home directory or `~/.claude`, and
+  requires a path-naming confirmation, separate from the Step 5 write
+  approval, anywhere else that is neither a VCS root nor already has a
+  `.daikenja/`. Closes the gap where `/daikenja:meeting-review`, run from a
+  directory that is not a project, ended in an ordinary-looking approval to
+  scaffold a ledger nobody meant to create (#47).
+- `docs/reading.md` § Step B now requires every read skill to name the
+  resolved ledger path in a `Ledger: <path>` line before its answer, success
+  or failure, so `project-catchup`, `project-summary`, `project-decisions` and
+  `project-gaps` all state their scope without four copies of the rule (#47).
+
 ## [0.3.0] - 2026-08-17
 
 ### Added
