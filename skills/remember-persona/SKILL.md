@@ -1,10 +1,10 @@
 ---
 name: remember-persona
-description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
+description: Records what the user says about a person they write to, in their own personas file (by default ~/.claude/daikenja/personas.md, or a Notion page if that is where they keep it), so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
-  version: 3
-  writes: ~/.claude/daikenja/personas.md
+  version: 4
+  writes: whatever profile.personas resolves to (default ~/.claude/daikenja/personas.md)
 ---
 
 # Remember persona
@@ -12,6 +12,10 @@ metadata:
 `personas.md` is the user's own prose about the people they write to. Other
 skills read it so a note to a director does not read like a note to a vendor.
 This skill is the only thing that writes content into it.
+
+Throughout this skill, `personas.md` means whatever `profile.personas` resolves
+to -- a local file by default, or a Notion page. Step 2 is where the two differ;
+everything else is the same work on the same prose.
 
 ## Hard rules
 
@@ -30,13 +34,21 @@ someone with no entry is additive and reversible, so it is written without
 asking and reported after. Changing prose the user wrote by hand is a different
 act -- it is **proposed**, shown in full, and written only on approval.
 
-**Scaffold, never hand-build.** If `personas.md` does not exist when this skill
-has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
+**Scaffold, never hand-build.** If the personas file does not exist when this
+skill has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
 verbatim and write the entry into the copy, the same way `project-log`
 scaffolds a missing ledger. `setup-user`'s create-if-absent rule is untouched:
 it still copies the same template on its own run, and copying the template
 twice is idempotent. What changes is that this skill no longer stops and waits
 for `setup-user` to have run first.
+
+**Scaffolding covers local files only, and a write is never redirected.** When
+`profile.personas` points at a Notion page, this skill appends to that page and
+never creates one -- `setup-user` is the only skill that creates a Notion page,
+per `config-contract.md` § Who writes what. If a Notion pointer does not
+resolve, write nothing, say so, and keep the entry in the conversation so the
+user can retry once the page is reachable. Never fall back to the local default:
+that would split the user's notes across two stores without telling them.
 
 **Never write the personas file from any other skill.** A skill that needs an
 entry recorded runs this one.
@@ -79,10 +91,21 @@ Follow `config-contract.md` § Resolution order.
 1. Read `~/.claude/daikenja/daikenja.yaml`. Malformed YAML is fatal -- report
    the first line that does not parse and stop. Never rewrite a file you cannot
    parse.
-2. Resolve `profile.personas`, relative to `daikenja.yaml`'s own directory. An
-   absolute path is also accepted. Default `~/.claude/daikenja/personas.md`.
+2. Resolve `profile.personas` per `config-contract.md` § Resolving
+   `writing_style` and `personas`. It may name a local file or a Notion page.
+   Default `~/.claude/daikenja/personas.md`.
 
-**If the file does not exist, scaffold it.** Say so plainly before doing
+**A Notion pointer that resolves** is read and appended to exactly like a local
+file -- everything from Step 3 on is the same work on the page's body. **A
+Notion pointer that does not resolve** ends the run: one notice naming the page,
+the entry shown in full so the user still has it, and nothing written anywhere.
+
+```
+Your personas are at <page URL>, and I cannot reach it right now. I have not
+written anything. Here is the entry, so you can keep it or ask me again later:
+```
+
+**If a local file does not exist, scaffold it.** Say so plainly before doing
 anything else, mirroring `project-log` Step 3:
 
 ```
@@ -237,10 +260,12 @@ missing thing is the task itself.
 
 | Situation | What to do |
 |---|---|
-| `personas.md` does not exist | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
+| The personas file does not exist | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
+| `profile.personas` names a Notion page that resolves | Append to the page. Same work as a local file, same report. |
+| `profile.personas` names a Notion page that cannot be reached | Write nothing, anywhere. One notice naming the page, then show the entry so the user keeps it. Never scaffold a page and never fall back to the local default. |
 | `daikenja.yaml` absent | One notice, then continue on the default path (`~/.claude/daikenja/personas.md`). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| `profile.personas` does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
+| `profile.personas` names a path that does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the entry somewhere else. |
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
 | The description came from a fixture or worked example | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |

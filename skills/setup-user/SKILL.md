@@ -1,10 +1,10 @@
 ---
 name: setup-user
-description: One-time (and re-runnable) setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there, registers the current project, and reports which connected tools the other skills can use. Run explicitly with /daikenja:setup-user -- it never fires on its own.
+description: One-time (and re-runnable) setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or puts them in a Notion page if you ask), registers the current project, and reports which connected tools the other skills can use. Run explicitly with /daikenja:setup-user -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 1
-  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent)
+  version: 2
+  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a Notion page for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
@@ -115,6 +115,38 @@ For each of `personas.md` and `writing-style.md`:
   file is still the untouched template -- existence is the only test, per the
   stage contract. Never inspect or overwrite user prose.
 
+### Offering Notion, without ever requiring it
+
+These two keys are pointers, and a pointer may name a Notion page instead of a
+local file (`docs/config-contract.md` § Resolving `writing_style` and
+`personas`). That is worth one sentence at the end of this step and no more:
+
+```
+Both of these live on this machine. If you want them reachable from another
+machine, either one can live in a Notion page instead -- say so and I will set
+it up. Otherwise we are done here.
+```
+
+- **The user says nothing, or says no.** Local files, exactly as above. This is
+  the default and the end of it. Ask once and never press. A run where the
+  config already points somewhere the user chose skips the offer entirely.
+- **The user wants Notion and the connector is in the session.** For each key
+  they chose: create one ordinary Notion page, write the shipped template into
+  it, and set that key to the new page's URL. The local copy, if one already
+  exists, is left exactly where it is -- this skill never deletes a user's prose.
+  Say which key now points where.
+- **The user wants Notion and the connector is not in the session.** One line
+  naming what is missing, then finish setup on local files. **Never stop here**
+  and never make setup conditional on a Notion account:
+
+  ```
+  The Notion connector is not available in this session, so I have left both
+  on local files. Connect it and re-run this skill when you want to move them.
+  ```
+
+This skill is the only one that creates a Notion page. `remember-persona`
+appends to a page it is pointed at and never creates one.
+
 **This skill owns creation, not content.** The rule above is unchanged and
 stays exactly as it is: copy if absent, existence is the only test. What sits
 next to it is that `personas.md` now has a content writer --
@@ -189,3 +221,5 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | User skips `name` | **Stop** before writing `daikenja.yaml`. Say the config is incomplete and ask again next run. |
 | `~/.claude/daikenja/` cannot be created (permissions, etc.) | **Stop.** Name the path and the error. |
 | A pointed-at prose file path in an existing config does not resolve | One notice naming the path, then continue -- this is `setup-user` reporting the same failure mode every reading skill uses, not something it repairs. |
+| The user asks for Notion and the connector is not in the session | One notice, then finish on local files. **Never stop.** No part of setup depends on a Notion account. |
+| Creating the Notion page fails partway | Leave the pointer on the local file, name the error, and continue. Never leave a key pointing at a page that was not created. |
