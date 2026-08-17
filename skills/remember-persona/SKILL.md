@@ -1,10 +1,10 @@
 ---
 name: remember-persona
-description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
+description: Records what the user says about a person they write to, in their own personas file (by default ~/.claude/daikenja/personas.md, or a Google Drive file if that is where they keep it), so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
-  version: 3
-  writes: ~/.claude/daikenja/personas.md
+  version: 5
+  writes: whatever profile.personas resolves to (default ~/.claude/daikenja/personas.md)
 ---
 
 # Remember persona
@@ -12,6 +12,10 @@ metadata:
 `personas.md` is the user's own prose about the people they write to. Other
 skills read it so a note to a director does not read like a note to a vendor.
 This skill is the only thing that writes content into it.
+
+Throughout this skill, `personas.md` means whatever `profile.personas` resolves
+to -- a local file by default, or a Google Drive file. Step 2 and Step 5 are
+where the two differ; everything else is the same work on the same prose.
 
 ## Hard rules
 
@@ -30,13 +34,21 @@ someone with no entry is additive and reversible, so it is written without
 asking and reported after. Changing prose the user wrote by hand is a different
 act -- it is **proposed**, shown in full, and written only on approval.
 
-**Scaffold, never hand-build.** If `personas.md` does not exist when this skill
-has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
+**Scaffold, never hand-build.** If the personas file does not exist when this
+skill has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
 verbatim and write the entry into the copy, the same way `project-log`
 scaffolds a missing ledger. `setup-user`'s create-if-absent rule is untouched:
 it still copies the same template on its own run, and copying the template
 twice is idempotent. What changes is that this skill no longer stops and waits
 for `setup-user` to have run first.
+
+**Scaffolding covers local files only, and a write is never redirected.** When
+`profile.personas` points at a Google Drive file, this skill writes to that file
+and never creates one -- `setup-user` is the only skill that creates a Drive
+file, per `config-contract.md` § Who writes what. If a Drive pointer does not
+resolve, write nothing, say so, and keep the entry in the conversation so the
+user can retry once the file is reachable. Never fall back to the local default:
+that would split the user's notes across two stores without telling them.
 
 **Never write the personas file from any other skill.** A skill that needs an
 entry recorded runs this one.
@@ -79,10 +91,28 @@ Follow `config-contract.md` § Resolution order.
 1. Read `~/.claude/daikenja/daikenja.yaml`. Malformed YAML is fatal -- report
    the first line that does not parse and stop. Never rewrite a file you cannot
    parse.
-2. Resolve `profile.personas`, relative to `daikenja.yaml`'s own directory. An
-   absolute path is also accepted. Default `~/.claude/daikenja/personas.md`.
+2. Resolve `profile.personas` per `config-contract.md` § Resolving
+   `writing_style` and `personas`. It may name a local file or a Drive file.
+   Default `~/.claude/daikenja/personas.md`.
 
-**If the file does not exist, scaffold it.** Say so plainly before doing
+**A Drive pointer that resolves** is read with the connector's file-download
+tool -- never the natural-language extraction tool -- and everything from Step 3
+on is the same work on the same prose. Step 5 is where the write itself differs.
+
+**A Drive pointer that does not resolve** ends the run: one notice naming the
+file and the reason, the entry shown in full so the user still has it, and
+nothing written anywhere. **A download that comes back empty is this same
+case**, not an empty personas file. An empty read cannot be told apart from a
+file with no entries, and writing on that assumption would replace the user's
+prose with a file containing one persona:
+
+```
+Your personas are in Drive as <name>, and I cannot read it right now
+(<reason>). I have not written anything. Here is the entry, so you can keep it
+or ask me again later:
+```
+
+**If a local file does not exist, scaffold it.** Say so plainly before doing
 anything else, mirroring `project-log` Step 3:
 
 ```
@@ -172,6 +202,20 @@ file.** A file may carry trailing sections that have to stay last: standing
 drafting rules, notes to self, a template block. Dropping a person underneath
 those breaks the file's own structure.
 
+**In Drive, the placement is the same and the write is a replacement.** The
+connector cannot update a file's content, so the write follows
+`config-contract.md` § Writing replaces the file: download, splice the entry
+into the downloaded bytes at the same position, create a new file with the same
+name, read it back to confirm, and only then trash the old one. **Never trash
+first** -- a create that fails after the old file is gone destroys prose that
+cannot be recovered.
+
+**Splice, never regenerate.** What gets written is exactly what was downloaded
+plus this one entry. Everything else -- hand-written sections, the template
+placeholder, spacing, trailing notes -- is carried across untouched. This skill
+already never reformats a local file, and a whole-file replace makes that rule
+load-bearing rather than merely polite.
+
 Write it without asking. Touch nothing else -- no reordering, no reformatting,
 no tidying, and no normalizing a line a human wrote by hand.
 
@@ -237,15 +281,19 @@ missing thing is the task itself.
 
 | Situation | What to do |
 |---|---|
-| `personas.md` does not exist | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
+| The personas file does not exist | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
+| `profile.personas` names a Drive file that resolves | Write to it by replacement, per Step 5. Same prose work as a local file, same report. |
+| `profile.personas` names a Drive file that cannot be reached, or whose download is empty | Write nothing, anywhere. One notice naming the file and the reason, then show the entry so the user keeps it. Never create a Drive file and never fall back to the local default. |
+| More than one Drive file carries the pointer's name | **Stop.** Name both and say an earlier write was probably interrupted. Never guess which is current -- picking wrong loses whichever entries are in the other one. |
+| The Drive replacement fails after the new file was created | The old file is still there and untouched. Say both files now carry the name, name the one just written, and stop. Never trash the old file to tidy up an unverified write. |
 | `daikenja.yaml` absent | One notice, then continue on the default path (`~/.claude/daikenja/personas.md`). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| `profile.personas` does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
+| `profile.personas` names a path that does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the entry somewhere else. |
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
 | The description came from a fixture or worked example | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |
 | The file's entries use a different format from the template | Match the file, not the template. It is the authority on its own format. |
-| The file has trailing sections after the entries | Append after the last entry, above those sections. Never at the very end. |
+| The file has trailing sections after the entries | Append after the last entry, above those sections. Never at the very end. Placement is the same in Drive, where the whole file is rewritten from the bytes just downloaded, per Step 5. |
 | The description is evaluative ("he is useless") | Record the behaviour underneath it if the user stated one, and say in one line what you wrote instead. If there is no behaviour under it, write nothing and ask what they do. |
 | The person already has an entry | Propose, never write silently. See Step 5. |
 | The file still holds the shipped template placeholder | Leave it alone. Append below it and note it once in the report. |

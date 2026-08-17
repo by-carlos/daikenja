@@ -1,10 +1,10 @@
 ---
 name: setup-user
-description: One-time (and re-runnable) setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there, registers the current project, and reports which connected tools the other skills can use. Run explicitly with /daikenja:setup-user -- it never fires on its own.
+description: One-time (and re-runnable) setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or creates them in Google Drive if you ask), registers the current project, and reports which connected tools the other skills can use. Run explicitly with /daikenja:setup-user -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 1
-  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent)
+  version: 3
+  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a Google Drive file for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
@@ -115,6 +115,70 @@ For each of `personas.md` and `writing-style.md`:
   file is still the untouched template -- existence is the only test, per the
   stage contract. Never inspect or overwrite user prose.
 
+### Offering Google Drive, without ever requiring it
+
+These two keys are pointers, and a pointer may name a Google Drive file instead
+of a local file (`docs/config-contract.md` § Resolving `writing_style` and
+`personas`). That is worth one sentence at the end of this step and no more:
+
+```
+Both of these live on this machine. If you want them reachable from another
+machine, either one can live in Google Drive instead -- say so and I will
+create it. Otherwise we are done here.
+```
+
+- **The user says nothing, or says no.** Local files, exactly as above. This is
+  the default and the end of it. Ask once and never press. A run where the
+  config already points somewhere the user chose skips the offer entirely.
+- **The user wants Drive and the connector is in the session.** For each key
+  they chose, follow *Creating the Drive file* below. The local copy, if one
+  already exists, is left exactly where it is -- this skill never deletes a
+  user's prose. Say which key now points where.
+- **The user wants Drive and the connector is not in the session.** One line
+  naming what is missing, then finish setup on local files. **Never stop here**
+  and never make setup conditional on a Google account:
+
+  ```
+  The Google Drive connector is not available in this session, so I have left
+  both on local files. Connect it and re-run this skill when you want to move
+  them.
+  ```
+
+#### Creating the Drive file
+
+**Creating it is the only way it can exist.** Daikenja can see only the Drive
+files it created itself, so there is no "point at the file I already have"
+option to offer, and none should be implied. Say this plainly if the user asks
+to use a document they already keep in Drive:
+
+```
+I can only see Drive files I created myself, so I cannot point at that one.
+I can create a new file and you can paste your prose into it.
+```
+
+For each key the user chose:
+
+1. **Propose the name** -- `daikenja-personas.md` or
+   `daikenja-writing-style.md`. The user may pick another. The name is the
+   pointer, so a distinctive one is worth having.
+2. **Check the name is free**, following the contract's resolution rule --
+   including its explicit page size, without which a duplicate does not show up.
+   If a file already exists, **do not create a second**. Two files with one name
+   is the ambiguous state the contract refuses to resolve. Say it exists and
+   offer to point the key at it as it stands, or to use a different name. This
+   is what keeps a second run of this skill from breaking a working setup.
+3. **Create the file** with the shipped template
+   (`${CLAUDE_PLUGIN_ROOT}/templates/<name>`) as its content, with conversion to
+   Google document types disabled, per the contract.
+4. **Read it back** with the connector's file-download tool and confirm the
+   content arrived. Never the natural-language extraction tool, per the config
+   contract.
+5. **Only then set the key** to `drive:<name>`. A pointer is written after the
+   file is confirmed, never before.
+
+This skill is the only one that creates a Drive file. `remember-persona` writes
+to a file it is pointed at and never creates one.
+
 **This skill owns creation, not content.** The rule above is unchanged and
 stays exactly as it is: copy if absent, existence is the only test. What sits
 next to it is that `personas.md` now has a content writer --
@@ -188,4 +252,9 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | `daikenja.yaml` exists but is malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
 | User skips `name` | **Stop** before writing `daikenja.yaml`. Say the config is incomplete and ask again next run. |
 | `~/.claude/daikenja/` cannot be created (permissions, etc.) | **Stop.** Name the path and the error. |
-| A pointed-at prose file path in an existing config does not resolve | One notice naming the path, then continue -- this is `setup-user` reporting the same failure mode every reading skill uses, not something it repairs. |
+| A pointed-at local prose file path in an existing config does not resolve | One notice naming the path, then continue -- this is `setup-user` reporting the same failure mode every reading skill uses, not something it repairs. |
+| An existing config holds a `drive:` pointer that does not resolve | One notice naming the file and the reason, then continue with the rest of setup. Never rewrite the key back to a local path to make the error go away -- that is the user's choice to reverse, not this skill's. |
+| The user asks for Drive and the connector is not in the session | One notice, then finish on local files. **Never stop.** No part of setup depends on a Google account. |
+| The user asks to point at a Drive file they already have | One line saying only files Daikenja created are visible, then offer to create a new one. Never write a pointer at a file this skill did not create -- it can never resolve. |
+| A file with the proposed name already exists | Do not create a second one. Offer the existing file or a different name. |
+| Creating the Drive file fails, or the read-back in step 4 is empty | Leave the pointer on the local file, name the error, and continue. Never leave a key pointing at a file that was not confirmed. |

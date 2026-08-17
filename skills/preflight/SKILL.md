@@ -155,6 +155,11 @@ Naming a person must never cost a lens.
 an index, not a roster to sweep. This is what stops a large org from exploding
 the reviewer count.
 
+`personas.md` below means whatever `profile.personas` resolves to -- a local
+file or a Google Drive file, per `config-contract.md` § Resolving
+`writing_style` and `personas`. Nothing in this skill changes with the form of
+the pointer except what happens when it fails.
+
 For each addressee, assemble a brief per `docs/reviewer-personas.md` § How a
 brief is assembled -- the archetype they embody, plus their `personas.md` entry
 if one matches, plus whatever the user said inline this run. Inline wins over
@@ -162,8 +167,12 @@ the file; the file wins over the archetype.
 
 - **Named, with nothing known about them.** Not in `personas.md`, nothing said
   inline. Archetypes only. Silent, not an error.
-- **`personas.md` absent.** Silent. The `Reviewers:` line already names what
-  ran, which makes a notice redundant.
+- **A local `personas` pointer does not resolve.** Silent. The `Reviewers:` line
+  already names what ran, which makes a notice redundant.
+- **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
+  the file, per `config-contract.md` § Failure behavior. This one is not silent:
+  reviewing without the personas the user configured would look like reviewing
+  with them.
 - **More addressees than slots.** Direct addressees beat cc'd. Name who was
   dropped in the report.
 
@@ -237,13 +246,16 @@ them it is something only the user can settle.
 Apply the accepted wording fixes here, in this context. **The rewrite step is
 never delegated.** Rewriting is where invention happens, so it stays in the one
 place that has read `docs/rewrite-rules.md`, `docs/voice.md` and the user's own
-`writing-style.md`.
+writing style.
 
 - Apply `docs/rewrite-rules.md` in full. The ask, the stance, the confidence
   level, the owners, the timing and how blocking it is all survive untouched.
-- Apply `docs/voice.md`, layered under the user's `writing_style` file if one
-  resolves (`profile.writing_style` per `config-contract.md`). A missing
-  `writing-style.md` gets one notice, then the default voice alone.
+- Apply `docs/voice.md`, layered under the user's `writing_style` prose if the
+  pointer resolves (`profile.writing_style`, per `config-contract.md`
+  § Resolving `writing_style` and `personas` -- a local file or a Google Drive
+  file). A local pointer that does not resolve gets one notice, then the default
+  voice alone; a `drive:` pointer that fails stops the run, per that document's
+  § Failure behavior.
 - A rule that cannot be honoured is named in the report, never broken silently.
 
 ## Step 8: cycle 2 -- re-check once
@@ -351,7 +363,7 @@ survived, because it did not.
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
 | Every reviewer returns nothing | Report it plainly and hand back the draft unchanged. |
-| `personas.md` absent | Silent. Archetypes only. |
+| The `personas` pointer does not resolve | Silent. Archetypes only. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-contract.md`. |
 | No ledger at the resolved path | Not fatal. Report "already answered" as not checked and continue. |

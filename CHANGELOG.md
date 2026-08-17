@@ -20,6 +20,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   resolved ledger path in a `Ledger: <path>` line before its answer, success
   or failure, so `project-catchup`, `project-summary`, `project-decisions` and
   `project-gaps` all state their scope without four copies of the rule (#47).
+- `profile.writing_style` and `profile.personas` may now name a **Google Drive
+  file**, written `drive:<file name>`, as well as a relative or an absolute
+  path. The prose is read and written through the Google Drive connector under
+  the user's own account, which makes a persona file or a writing style
+  reachable from a machine other than the one that wrote it -- the grant spans
+  surfaces, so a file created in Claude Code is readable from claude.ai. The
+  two keys resolve independently, so personal notes on colleagues can stay
+  local while a writing style is shared. Local files remain the default: a
+  user who never mentions Drive sees no change, and `/daikenja:setup-user`
+  offers the option once and completes without a Google account. Drive is the
+  only remote store; a pointer is a path or it is `drive:`. The rule lives in
+  `docs/config-contract.md` § Resolving `writing_style` and `personas`, and
+  the five skills that touch these keys defer to it. The ledger does not move
+  -- it stays in the project, and `docs/ledger-format.md` is untouched (#41).
+- A Drive pointer names the **file**, never a URL or an ID, and resolves by
+  searching the files Daikenja created for that exact name. Every write mints
+  a new file ID, so a stored ID would be stale the first time the user's prose
+  changed. Two files sharing the name does not resolve either: that state means
+  an earlier write was interrupted, and choosing between the copies is the
+  user's call (#41).
+- `/daikenja:setup-user` is the only skill that creates the Drive file, and now
+  has to be: the connector shows Claude only the files it created itself, so a
+  document already in the user's Drive cannot be pointed at however it is
+  shared. It proposes a name, refuses to create a second file under a name
+  already in use, writes the shipped template, confirms the file reads back,
+  and only then writes the pointer (#41).
+- `/daikenja:remember-persona` now says how a Drive write works: download,
+  splice the entry into the downloaded bytes, create a new file under the same
+  name, confirm it reads back, and only then trash the old one. The connector
+  has no content-update tool, so a write is a replacement. **Never trash
+  first** -- a create that fails after a successful trash destroys prose that
+  cannot be recovered. What is written is always the downloaded bytes plus the
+  one entry, never a regenerated file (#41).
+- Reads always use the connector's `download_file_content`, never
+  `read_file_content`. Measured 17 August 2026 against the same 171-byte
+  Markdown file: the former returned it byte-exact, the latter returned a lossy
+  rendering with Markdown syntax backslash-escaped (`\#`, `\- \[ \]`,
+  `\[link\]`) and hard-break spaces added. Splicing an entry into that text and
+  writing it back would permanently corrupt hand-written prose (#41).
+- Drive writes disable conversion to Google's own document types. Measured
+  17 August 2026: a 203-byte Markdown upload without that flag was stored as a
+  Google Doc and read back at 205 bytes with trailing hard-break spaces added;
+  with the flag it read back byte-identical (#41).
+- Resolving a Drive pointer passes an explicit page size and reads every page.
+  Measured 17 August 2026: the search tool's default page size is one, so a
+  name carried by two files returned only the older one, and the duplicate
+  appeared only once the page size was set. Left as-is, the duplicate check
+  would have missed exactly the case it exists to catch and resolved to the
+  stale copy (#41).
 
 ### Changed
 
@@ -30,6 +79,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   mirroring how `/daikenja:project-log` scaffolds a missing ledger.
   `setup-user`'s own create-if-absent rule is unchanged, and it still never
   writes persona content (#35).
+- The plugin description in `.claude-plugin/plugin.json` no longer says that
+  everything Daikenja reads lives under `~/.claude/daikenja/`. The
+  configuration file still does; the persona and writing-style prose it points
+  at may now live in Google Drive. The Claude Code and Cowork restrictions are
+  unchanged (#41).
+- **A configured pointer that fails is no longer treated as an unconfigured
+  one.** `docs/config-contract.md` § Failure behavior now separates the two:
+  a key the user never set still degrades with one notice, but a `drive:`
+  pointer that cannot be resolved -- connector absent, no file or several files
+  under that name, or a download that comes back empty -- stops the skill and
+  names the file. None of those can be told apart from prose the user never
+  wrote, so continuing would mean drafting in the default voice while the user
+  believed their own style had been applied. An empty download counts as a
+  failure deliberately: treating it as an empty file costs a persona write that
+  replaces the user's prose with a file holding one entry, and treating it as a
+  failure costs one run. Local paths keep the older behavior, because a missing
+  local file is a fact that can be established (#41).
 
 ## [0.3.0] - 2026-08-17
 

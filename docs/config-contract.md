@@ -20,6 +20,11 @@ at a glance, not because anything deserializes it.
 overwritten on update, so anything a user filled in there is lost on the next
 version. The plugin ships templates; the filled copies live in the path above.
 
+`daikenja.yaml` is always at that one path. The two prose files are only the
+default: `writing_style` and `personas` are pointers, and a pointer may name a
+file somewhere else or a file in Google Drive. See
+[Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas).
+
 `setup-user` is the only skill that creates or edits configuration keys. The one
 exception is `last_checkpoint`; see [Who writes what](#who-writes-what).
 
@@ -33,8 +38,8 @@ profile:
   team: <string>              # optional
   domain: <string>            # optional, the subject matter you work in
   tone: standard              # direct | standard | guided. Default: standard
-  writing_style: ./writing-style.md   # optional, path relative to this file
-  personas: ./personas.md             # optional, path relative to this file
+  writing_style: ./writing-style.md   # optional, pointer. Default: local path
+  personas: ./personas.md             # optional, pointer. Default: local path
   norms_doc: <path or url>            # optional, absent by default
   stale_after_days: 21                # optional. Default: 21
 
@@ -58,9 +63,12 @@ you are is one too many.
 **`tone`** sets how much the skills explain themselves. `direct` is terse,
 `guided` walks through its reasoning, `standard` is the middle and the default.
 
-**`writing_style` and `personas`** are paths, resolved relative to
-`daikenja.yaml`'s own directory. An absolute path is also accepted. A path that
-does not resolve is treated as an absent key, with a notice.
+**`writing_style` and `personas`** are **pointers**, not fixed paths. A pointer
+may be a relative path, an absolute path, or a Google Drive file name. The three
+forms, and what happens when one does not resolve, are in
+[Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas),
+which is the only place the rule is stated -- skills defer to it rather than
+restating the branches.
 
 **`norms_doc`** is the team norms or ways-of-working document that
 `self-review`'s ROLE CHECK section needs. It is absent by default, and that
@@ -113,6 +121,143 @@ but no `projects:` entry matches, the ledger is used and `project-log` offers to
 add the missing entry on its next write. The file on disk is the fact; the config
 is the index.
 
+### Resolving `writing_style` and `personas`
+
+These two keys are pointers. A pointer says where the prose lives; it does not
+say which skill may write it. Three forms are legal, and a pointer is exactly
+one of them:
+
+| Form | Example | Resolves to |
+|---|---|---|
+| Relative path | `./personas.md` | That path, relative to `daikenja.yaml`'s own directory. |
+| Absolute path | `C:/Users/you/notes/personas.md` | That path. |
+| Drive file name | `drive:daikenja-personas.md` | The Google Drive file with exactly that name, among the files Daikenja itself created. |
+
+A value starting `drive:` is a Drive pointer. Anything else is a path. What
+follows `drive:` is a **file name** -- not a path, not a URL, and not a file ID.
+The reason is in [Writing replaces the file](#writing-replaces-the-file): every
+write creates a new file with a new ID, so a stored ID is wrong the first time
+the user's prose changes. The name is the only handle that survives a write.
+
+**Local paths are the default and stay the default.** The shipped template
+points both keys at local files, and a user who never mentions Drive sees
+exactly the behavior described everywhere else in this document. Drive buys one
+thing: reaching these settings from a machine or a session other than the one
+that wrote them. The connector's grant spans surfaces, so a file created in a
+Claude Code session is readable from claude.ai and the other way round
+(verified 17 August 2026).
+
+**The two keys resolve independently.** Pointing `writing_style` at a Drive file
+while `personas` stays on a local file is a normal configuration, not a
+half-migrated one. Persona notes are about real colleagues, and keeping them
+local while sharing a writing style is a reasonable thing to want.
+
+**Drive is the only remote store.** There is no second backend and no plugin
+setting that selects one. A pointer is a path or it is `drive:`.
+
+#### Reading and writing a Drive pointer
+
+A Drive pointer is reached through the Google Drive connector, in the user's own
+session under their own Google account. Daikenja holds no Google credential and
+stores nothing on anyone else's infrastructure.
+
+**Daikenja can only see files it created.** The connector's access covers the
+files the app itself created and nothing else. A document the user uploads,
+writes in Drive by hand, or has shared with them is invisible here, however
+widely it is shared. One rule follows and it is not negotiable: **there is no
+"point at a file you already have" path.** Either `setup-user` creates the file,
+or the key stays on a local path. A pointer typed by hand at a file Daikenja did
+not create will never resolve.
+
+**Resolution searches by name.** Search the files Daikenja created for the exact
+name in the pointer.
+
+- **Exactly one match.** That file is the target.
+- **No match.** The pointer does not resolve.
+- **More than one match.** The pointer does not resolve. Two files sharing a
+  name means an earlier write was interrupted between its create and its trash
+  step. Which copy to keep is the user's call and never a guess.
+
+**Pass an explicit page size and read every page.** The search tool's default
+page size is **one**. Measured 17 August 2026: a name carried by two files
+returned only the older one under the default, and the duplicate appeared only
+once `pageSize` was set explicitly. Counting matches from a default-sized first
+page therefore misses duplicates and resolves silently to the stale copy --
+which is the exact outcome the "more than one match" rule exists to prevent, and
+after an interrupted write it is the copy missing the user's newest entry. A
+page token comes back even when there is only one match, so its presence never
+means "more results"; page until the response is empty.
+
+**Reading downloads the file's bytes.** Use the connector's file-download tool
+(`download_file_content`), never its content-reading or natural-language
+extraction tool (`read_file_content`).
+
+Measured 17 August 2026, both tools against the same 171-byte Markdown file:
+`download_file_content` returned it byte-exact, while `read_file_content`
+returned a lossy rendering -- Markdown syntax backslash-escaped (`\#`,
+`\- \[ \]`, `\[link\]`) and trailing hard-break spaces added. **That text is not
+the file.** Reading it would misreport the user's prose, and splicing an entry
+into it and writing it back, per the sequence below, would permanently corrupt
+prose the user wrote by hand. The extraction tool is built to describe a
+document to a reader, not to round-trip one.
+
+##### Writing replaces the file
+
+The connector cannot update a file's content. Its update tool changes the title
+and the parent folder only. A write is therefore a replacement, in this order:
+
+1. Download the current content.
+2. Build the new full content in memory, as the downloaded content with the
+   change spliced into it.
+3. Create a new file with the same name and that content, **with conversion to
+   Google's own document types disabled**.
+4. Download the new file back and confirm it holds what was written.
+5. Only then move the old file to the trash.
+
+**Disabling the conversion is not optional.** Measured 17 August 2026: a
+203-byte Markdown upload without that flag was stored as a Google Doc and came
+back from step 4 at 205 bytes, with trailing hard-break spaces added. The same
+upload with the flag set came back byte-identical. Prose that gains characters
+on every write is corrupted by degrees, and step 4 is what catches it -- a
+read-back that does not match what was written fails the write.
+
+**Never trash first.** A create that fails after a successful trash destroys
+prose the user cannot get back. If any step before 5 fails, the old file is
+still there and still the one the name resolves to: report the failure and write
+nothing further.
+
+**Splice, never regenerate.** The content written in step 2 is the bytes that
+came back in step 1 with the change made to them. Never rebuild the file from
+memory of what it said. A whole-file replace over prose the user wrote by hand
+has no undo, and the only thing keeping it safe is that everything except the
+change is carried across untouched.
+
+Between steps 3 and 5 two files carry the name. A run that dies there leaves the
+ambiguous state above, and the next resolution stops rather than guessing. That
+is the intended outcome: the user deletes the older copy and the name resolves
+again.
+
+Only `remember-persona` writes prose content, and the pointer's form does not
+change that; see [Who writes what](#who-writes-what).
+
+**The pointer names one ordinary file.** Daikenja reads the file it resolved and
+follows nothing out of it -- no folders, no linked documents, no second file.
+
+**A configured Drive pointer that fails is a stop, not a degrade.** If the
+connector is not in the session, the name does not resolve to exactly one file,
+or the download comes back empty, the run stops and names the file. This is the
+one place a pointer's form changes the behavior.
+
+The reason is that none of those failures can be told apart from "this user has
+no personas recorded." Continuing would mean drafting in the default voice while
+the user believes their own style was applied, and saying nothing about it. **An
+empty download is included deliberately, and it is the cautious call**: a read
+that returns nothing is either a genuinely empty file or a failed read, and
+nothing available here distinguishes them. Treating it as an empty file costs a
+`remember-persona` write that replaces the user's prose with a file holding one
+entry. Treating it as a failure costs one run. See
+[Failure behavior](#failure-behavior). There is no offline cache.
+
 ### Precedence
 
 **Project overrides global, key by key.** A project supplying
@@ -124,9 +269,10 @@ One clause is enough: "using this project's 30-day staleness threshold."
 
 ## Voice and writing style
 
-Daikenja ships a default voice. A user's `writing_style` file **layers on top of
-it, and does not replace it**: the default applies except where the user's file
-says otherwise.
+Daikenja ships a default voice. A user's `writing_style` prose **layers on top
+of it, and does not replace it**: the default applies except where the user's
+own prose says otherwise. This holds wherever that prose lives -- the layering
+rule is about content, not about storage.
 
 One rule is not overridable, because it is a frozen decision about all
 generated output rather than a matter of taste:
@@ -147,6 +293,25 @@ that `compose` does not have to invent one.
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` | the user, by hand | Daikenja reads it and never edits it. |
 | `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
+
+**The table names the local defaults, and who may write does not change with
+where the prose lives.** When `personas` or `writing_style` points at a Drive
+file, the same skill writes the same content to that file instead of to a local
+one, through the replacement sequence in
+[Writing replaces the file](#writing-replaces-the-file). Two rules follow from
+the fact that Daikenja can only see Drive files it created itself:
+
+- **`setup-user` is the only skill that creates a Drive file**, and only when
+  the user chooses Drive during setup and the connector is present. It writes
+  the blank template into the new file and puts that file's name in the pointer.
+  This is not a convention about tidiness. A file Daikenja did not create cannot
+  be seen at all, so creating it is the only way one can exist to point at.
+- **`remember-persona` does not create Drive files, and never redirects a
+  write.** Its scaffold-on-absence rule covers local files only. If `personas`
+  is a Drive pointer that does not resolve, it writes nothing, says so, and
+  keeps the entry in the conversation. Falling back to the local default would
+  split the user's notes across two stores without telling them, which is worse
+  than not writing.
 
 **The single-writer rule governs the ledger, not `daikenja.yaml`.** This
 distinction matters: `project-catchup`'s job is to report a delta and move the
@@ -188,12 +353,22 @@ One rule covers the common cases:
 | Valid YAML, missing optional key | Treat as absent, degrade for that key alone with one notice, and continue. One missing optional key never fails a run. |
 | Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. |
-| A pointed-at prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
+| `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. |
+| A pointed-at local prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
+| A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, no file carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per Who writes what). |
 | `norms_doc` absent | Not an error. `self-review` skips ROLE CHECK silently -- this is the documented default. |
 
 Notices are one line and they name the file. "No `writing-style.md` at
 `~/.claude/daikenja/writing-style.md`, composing with the default voice" tells
 the user what to fix. "Config incomplete" does not.
+
+**Not configured and configured-but-broken are different situations.** A key the
+user never set means they did not ask for that behavior, so continuing without
+it is right. A `drive:` pointer means they did ask, and the request failed. The
+two rows above keep them apart on purpose. Local paths keep the older, softer
+handling because a missing local file is a fact you can establish: the path is
+there or it is not, and an empty file is a file the user emptied. Drive gives no
+such certainty, which is why only that form stops.
 
 ## Worked example
 

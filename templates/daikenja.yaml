@@ -23,8 +23,15 @@ profile:
   # How much the skills explain themselves: direct | standard | guided
   tone: standard
 
-  # Prose files, resolved relative to this file. Leave a key out if you have
-  # no such file -- Daikenja falls back to its default voice and says so.
+  # Where your prose lives. Each of these is a pointer: a path relative to this
+  # file, an absolute path, or `drive:<file name>` if you want it reachable from
+  # another machine. The two are independent -- one can be local and the other
+  # in Google Drive. Leave a key out if you have no such prose; Daikenja falls
+  # back to its default voice and says so.
+  #
+  # A Drive pointer names the file, never a link or an ID, and only works for a
+  # file `/daikenja:setup-user` created for you -- Daikenja cannot see anything
+  # else in your Drive. Run that skill to set one up rather than typing one in.
   writing_style: ./writing-style.md
   personas: ./personas.md
 

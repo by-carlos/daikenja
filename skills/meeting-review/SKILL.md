@@ -133,8 +133,15 @@ and never invent a role, a team or a handle for someone you do not know. If the
 transcript names people the config does not cover, note it once at the end of
 the report, in one line, and carry on.
 
-If `personas.md` or `daikenja.yaml` is missing entirely, that is one notice line
-and the review still runs. Neither file is needed to read a transcript.
+`personas.md` here means whatever `profile.personas` resolves to -- a local file
+or a Google Drive file, per `config-contract.md` § Resolving `writing_style` and
+`personas`. Nothing in this skill changes with the form of the pointer except
+what happens when it fails.
+
+If a local `personas` pointer does not resolve, or `daikenja.yaml` is missing
+entirely, that is one notice line and the review still runs. Neither is needed
+to read a transcript. A `drive:` pointer that does not resolve or reads back
+empty stops the run instead, per `config-contract.md` § Failure behavior.
 
 ## Step 5: report
 
@@ -215,7 +222,7 @@ missing thing is the task itself.
 | Garbled or inaudible passages | Treat as ambiguous. Do not reconstruct. Say which candidate is affected. |
 | Two labels might be the same person | Keep them separate and ask. Never merge two people. |
 | A name is not in `personas.md` | Not an error. Use the transcript's label and note it once at the end. |
-| `personas.md` or `daikenja.yaml` missing | One notice, then continue. Neither is needed to read a transcript. |
+| The `personas` pointer does not resolve, or `daikenja.yaml` is missing | One notice, then continue. Neither is needed to read a transcript. |
 | Nothing was settled | Say so and propose nothing. A meeting with no decisions is a normal meeting. |
 | User asks you to write the ledger directly | Decline per the hard rule. Run `/daikenja:project-log`. |
 | User asks who was at fault or how someone performed | Decline. Report positions and quotes only. `/daikenja:self-review` coaches the user on their own moves, nobody else's. |

@@ -18,7 +18,7 @@ user says otherwise.
 Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice. Always applies,
-  layered under the user's own `writing-style.md` if one exists.
+  layered under the user's own writing style if `writing_style` resolves.
 - `${CLAUDE_PLUGIN_ROOT}/docs/rewrite-rules.md` -- the rules that bound every
   rewrite. This skill applies them; it does not restate them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` -- the six substance checks
@@ -81,26 +81,37 @@ length, word choice, absolute dates, the two non-overridable rules.
 
 ## Step 4: voice
 
-Read the user's `writing_style` file, resolved per `config-contract.md`
-(`profile.writing_style`, default `~/.claude/daikenja/writing-style.md`). It
-layers on top of `docs/voice.md`; it never replaces it.
+Read the user's `writing_style` prose. Resolve the pointer per
+`config-contract.md` § Resolving `writing_style` and `personas` -- it may name a
+local file or a Google Drive file, and the default is
+`~/.claude/daikenja/writing-style.md`. Whatever it resolves to layers on top of
+`docs/voice.md`; it never replaces it.
 
-- **File missing.** One notice, then continue on `docs/voice.md` alone: "No
-  writing-style.md at `<path>`, composing with the default voice."
-- **File present but still the blank shipped template.** No notice. Zero
-  overrides on top of the default voice is a valid configured state, not
+- **A local pointer does not resolve.** One notice, then continue on
+  `docs/voice.md` alone: "No writing-style.md at `<path>`, composing with the
+  default voice." Name the path the config actually resolved to, so the user
+  knows what to fix.
+- **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
+  the file, per `config-contract.md` § Failure behavior. Do not compose. The
+  user asked for their own voice and it was not available, and drafting in the
+  default voice would look like it had been applied.
+- **Resolves, but the content is still the blank shipped template.** No notice.
+  Zero overrides on top of the default voice is a valid configured state, not
   something to flag or apologize for.
-- **File present with content.** Apply it on top of the default voice. State
-  once, briefly, if something in it changed how you wrote this message.
+- **Resolves with content.** Apply it on top of the default voice. State once,
+  briefly, if something in it changed how you wrote this message.
 
 ## Step 5: personas (optional)
 
-If `profile.personas` resolves to a file (default
-`~/.claude/daikenja/personas.md`) and the message names a recipient who matches
-an entry in it, use that entry's guidance on length, formality and how direct
-to be. If the file is absent, empty, or the recipient does not match any entry,
-proceed silently -- this is optional input, not a configuration requirement,
-and gets no notice either way.
+If `profile.personas` resolves -- per `config-contract.md` § Resolving
+`writing_style` and `personas`, so a local file or a Google Drive file, default
+`~/.claude/daikenja/personas.md` -- and the message names a recipient who
+matches an entry in it, use that entry's guidance on length, formality and how
+direct to be. A local pointer that does not resolve, an empty local file, or a
+recipient who matches no entry all proceed silently -- this is optional input,
+not a configuration requirement, and gets no notice either way. A `drive:`
+pointer that does not resolve or reads back empty is the exception: that stops
+the run per `config-contract.md` § Failure behavior, and is not silent.
 
 **If the user described a recipient inline and that person has no entry**, route
 what they said to `/daikenja:remember-persona`, which is the only skill that
@@ -109,9 +120,10 @@ inferred from the draft or the thread -- "M challenges every technical claim" is
 material, M having challenged one in a pasted thread is not.
 
 That write is silent and comes back as one line to add to the `Comment` block
-(`Learned: added M to ~/.claude/daikenja/personas.md.`). A missing `personas.md`
-also comes back as one line, and drafting continues either way. Never write the
-file from here.
+(`Learned: added M to ~/.claude/daikenja/personas.md.`). An unresolvable local
+`personas` pointer also comes back as one line, and drafting continues. An
+unresolvable `drive:` pointer stops the run there, per Step 5. Never write the
+personas prose from here.
 
 ## Step 6: substance pre-flight (requests only)
 
