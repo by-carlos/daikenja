@@ -21,6 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or failure, so `project-catchup`, `project-summary`, `project-decisions` and
   `project-gaps` all state their scope without four copies of the rule (#47).
 
+### Changed
+
+- `/daikenja:remember-persona` no longer hard-stops on a first run before
+  `/daikenja:setup-user` has created `~/.claude/daikenja/personas.md`. When it
+  has an entry to write and the file is missing, it now scaffolds it from
+  `templates/personas.md` itself and reports the scaffold alongside the entry,
+  mirroring how `/daikenja:project-log` scaffolds a missing ledger.
+  `setup-user`'s own create-if-absent rule is unchanged, and it still never
+  writes persona content (#35).
+
 ## [0.3.0] - 2026-08-17
 
 ### Added

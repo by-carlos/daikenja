@@ -1,9 +1,9 @@
 ---
 name: remember-persona
-description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for creating the file in the first place (that is /daikenja:setup-user).
+description: Records what the user says about a person they write to, in their own personas file at ~/.claude/daikenja/personas.md, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
-  version: 2
+  version: 3
   writes: ~/.claude/daikenja/personas.md
 ---
 
@@ -30,9 +30,13 @@ someone with no entry is additive and reversible, so it is written without
 asking and reported after. Changing prose the user wrote by hand is a different
 act -- it is **proposed**, shown in full, and written only on approval.
 
-**Never create the file.** Creating `personas.md` belongs to `setup-user`. This
-skill writes content into a file that already exists and does nothing else to
-it.
+**Scaffold, never hand-build.** If `personas.md` does not exist when this skill
+has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
+verbatim and write the entry into the copy, the same way `project-log`
+scaffolds a missing ledger. `setup-user`'s create-if-absent rule is untouched:
+it still copies the same template on its own run, and copying the template
+twice is idempotent. What changes is that this skill no longer stops and waits
+for `setup-user` to have run first.
 
 **Never write the personas file from any other skill.** A skill that needs an
 entry recorded runs this one.
@@ -78,17 +82,24 @@ Follow `config-contract.md` § Resolution order.
 2. Resolve `profile.personas`, relative to `daikenja.yaml`'s own directory. An
    absolute path is also accepted. Default `~/.claude/daikenja/personas.md`.
 
-**The file must already exist.** If it does not, stop and name the skill that
-creates it:
+**If the file does not exist, scaffold it.** Say so plainly before doing
+anything else, mirroring `project-log` Step 3:
 
 ```
-No personas.md at <path>. /daikenja:setup-user creates it from the template.
-Nothing was written.
+No personas.md at <path>. I will create one from the Daikenja template.
 ```
 
-When this skill was **routed to from another skill**, that notice goes back to
-the caller as one line and the caller carries on with its own job. A missing
-personas file never blocks a draft.
+Create the parent directory if needed, copy
+`${CLAUDE_PLUGIN_ROOT}/templates/personas.md` to `<path>` verbatim, and change
+nothing else in the template -- the placeholder block stays, per Step 3's rule
+for it. Scaffolding is silent and reported the same way an append is (Step 6):
+it needs no approval of its own, and the report in Step 6 names both the
+scaffold and the entry in the same message.
+
+This never blocks a draft: whether the file already existed or was just
+scaffolded, the entry gets written either way. When this skill was **routed to
+from another skill**, the scaffold-and-write happens the same way, and the
+report goes back to the caller as one line.
 
 ## Step 3: read what is already there
 
@@ -198,6 +209,19 @@ Learned: added S to ~/.claude/daikenja/personas.md.
   **How to write to them.** Short. Lead with the ask.
 ```
 
+When the file did not exist and this skill scaffolded it, the report says both
+in one message:
+
+```
+Created ~/.claude/daikenja/personas.md from the template, then learned: added
+S to it.
+
+  ## S
+
+  **Who they are.** Director of platform engineering.
+  **How to write to them.** Short. Lead with the ask.
+```
+
 When this skill ran inside another skill's work, that report is one line in the
 caller's own output rather than a block of its own -- `Learned: added S to
 ~/.claude/daikenja/personas.md.` The user can open the file to see the entry.
@@ -213,7 +237,7 @@ missing thing is the task itself.
 
 | Situation | What to do |
 |---|---|
-| `personas.md` does not exist | **Stop.** One line naming the path and `/daikenja:setup-user`. Nothing written. Routed callers get the line and carry on. |
+| `personas.md` does not exist | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
 | `daikenja.yaml` absent | One notice, then continue on the default path (`~/.claude/daikenja/personas.md`). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
 | `profile.personas` does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
@@ -231,8 +255,9 @@ missing thing is the task itself.
 
 - It does not read `personas.md` on anyone's behalf. The skills that need a
   persona read it themselves.
-- It does not create `personas.md`. That is `/daikenja:setup-user`, and its
-  create-if-absent rule is untouched by this skill.
+- It does not inspect or overwrite `personas.md` when the file already exists.
+  Scaffolding only happens on absence, the same test `setup-user` uses, and
+  `setup-user`'s own create-if-absent rule is untouched by this skill.
 - It does not write `daikenja.yaml`. That is `/daikenja:setup-user`, except for
   `last_checkpoint`, which `project-catchup` owns.
 - It does not record project decisions or open items. That is
