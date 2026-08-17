@@ -59,6 +59,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rendering with Markdown syntax backslash-escaped (`\#`, `\- \[ \]`,
   `\[link\]`) and hard-break spaces added. Splicing an entry into that text and
   writing it back would permanently corrupt hand-written prose (#41).
+- Drive writes disable conversion to Google's own document types. Measured
+  17 August 2026: a 203-byte Markdown upload without that flag was stored as a
+  Google Doc and read back at 205 bytes with trailing hard-break spaces added;
+  with the flag it read back byte-identical (#41).
+- Resolving a Drive pointer passes an explicit page size and reads every page.
+  Measured 17 August 2026: the search tool's default page size is one, so a
+  name carried by two files returned only the older one, and the duplicate
+  appeared only once the page size was set. Left as-is, the duplicate check
+  would have missed exactly the case it exists to catch and resolved to the
+  stale copy (#41).
 
 ### Changed
 

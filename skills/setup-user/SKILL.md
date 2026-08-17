@@ -161,13 +161,15 @@ For each key the user chose:
 1. **Propose the name** -- `daikenja-personas.md` or
    `daikenja-writing-style.md`. The user may pick another. The name is the
    pointer, so a distinctive one is worth having.
-2. **Check the name is free.** Search the files Daikenja created for that exact
-   name. If one already exists, **do not create a second**. Two files with one
-   name is the ambiguous state the contract refuses to resolve. Say it exists
-   and offer to point the key at it as it stands, or to use a different name.
-   This is what keeps a second run of this skill from breaking a working setup.
+2. **Check the name is free**, following the contract's resolution rule --
+   including its explicit page size, without which a duplicate does not show up.
+   If a file already exists, **do not create a second**. Two files with one name
+   is the ambiguous state the contract refuses to resolve. Say it exists and
+   offer to point the key at it as it stands, or to use a different name. This
+   is what keeps a second run of this skill from breaking a working setup.
 3. **Create the file** with the shipped template
-   (`${CLAUDE_PLUGIN_ROOT}/templates/<name>`) as its content.
+   (`${CLAUDE_PLUGIN_ROOT}/templates/<name>`) as its content, with conversion to
+   Google document types disabled, per the contract.
 4. **Read it back** with the connector's file-download tool and confirm the
    content arrived. Never the natural-language extraction tool, per the config
    contract.

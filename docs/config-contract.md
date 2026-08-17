@@ -178,6 +178,16 @@ name in the pointer.
   name means an earlier write was interrupted between its create and its trash
   step. Which copy to keep is the user's call and never a guess.
 
+**Pass an explicit page size and read every page.** The search tool's default
+page size is **one**. Measured 17 August 2026: a name carried by two files
+returned only the older one under the default, and the duplicate appeared only
+once `pageSize` was set explicitly. Counting matches from a default-sized first
+page therefore misses duplicates and resolves silently to the stale copy --
+which is the exact outcome the "more than one match" rule exists to prevent, and
+after an interrupted write it is the copy missing the user's newest entry. A
+page token comes back even when there is only one match, so its presence never
+means "more results"; page until the response is empty.
+
 **Reading downloads the file's bytes.** Use the connector's file-download tool
 (`download_file_content`), never its content-reading or natural-language
 extraction tool (`read_file_content`).
@@ -199,9 +209,17 @@ and the parent folder only. A write is therefore a replacement, in this order:
 1. Download the current content.
 2. Build the new full content in memory, as the downloaded content with the
    change spliced into it.
-3. Create a new file with the same name and that content.
+3. Create a new file with the same name and that content, **with conversion to
+   Google's own document types disabled**.
 4. Download the new file back and confirm it holds what was written.
 5. Only then move the old file to the trash.
+
+**Disabling the conversion is not optional.** Measured 17 August 2026: a
+203-byte Markdown upload without that flag was stored as a Google Doc and came
+back from step 4 at 205 bytes, with trailing hard-break spaces added. The same
+upload with the flag set came back byte-identical. Prose that gains characters
+on every write is corrupted by degrees, and step 4 is what catches it -- a
+read-back that does not match what was written fails the write.
 
 **Never trash first.** A create that fails after a successful trash destroys
 prose the user cannot get back. If any step before 5 fails, the old file is
