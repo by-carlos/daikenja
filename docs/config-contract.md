@@ -20,6 +20,11 @@ at a glance, not because anything deserializes it.
 overwritten on update, so anything a user filled in there is lost on the next
 version. The plugin ships templates; the filled copies live in the path above.
 
+`daikenja.yaml` is always at that one path. The two prose files are only the
+default: `writing_style` and `personas` are pointers, and a pointer may name a
+file somewhere else or a Notion page. See
+[Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas).
+
 `setup-user` is the only skill that creates or edits configuration keys. The one
 exception is `last_checkpoint`; see [Who writes what](#who-writes-what).
 
@@ -33,8 +38,8 @@ profile:
   team: <string>              # optional
   domain: <string>            # optional, the subject matter you work in
   tone: standard              # direct | standard | guided. Default: standard
-  writing_style: ./writing-style.md   # optional, path relative to this file
-  personas: ./personas.md             # optional, path relative to this file
+  writing_style: ./writing-style.md   # optional, pointer. Default: local path
+  personas: ./personas.md             # optional, pointer. Default: local path
   norms_doc: <path or url>            # optional, absent by default
   stale_after_days: 21                # optional. Default: 21
 
@@ -58,9 +63,13 @@ you are is one too many.
 **`tone`** sets how much the skills explain themselves. `direct` is terse,
 `guided` walks through its reasoning, `standard` is the middle and the default.
 
-**`writing_style` and `personas`** are paths, resolved relative to
-`daikenja.yaml`'s own directory. An absolute path is also accepted. A path that
-does not resolve is treated as an absent key, with a notice.
+**`writing_style` and `personas`** are **pointers**, not fixed paths. A pointer
+may be a relative path, an absolute path, or a Notion page URL. A pointer that
+does not resolve is treated as an absent key, with a notice. The three forms and
+what each one means are in
+[Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas),
+which is the only place the rule is stated -- skills defer to it rather than
+restating the branches.
 
 **`norms_doc`** is the team norms or ways-of-working document that
 `self-review`'s ROLE CHECK section needs. It is absent by default, and that
@@ -113,6 +122,56 @@ but no `projects:` entry matches, the ledger is used and `project-log` offers to
 add the missing entry on its next write. The file on disk is the fact; the config
 is the index.
 
+### Resolving `writing_style` and `personas`
+
+These two keys are pointers. A pointer says where the prose lives; it does not
+say which skill may write it. Three forms are legal, and a pointer is exactly
+one of them:
+
+| Form | Example | Resolves to |
+|---|---|---|
+| Relative path | `./personas.md` | That path, relative to `daikenja.yaml`'s own directory. |
+| Absolute path | `C:/Users/you/notes/personas.md` | That path. |
+| Notion page URL | `https://www.notion.so/Personas-24f1c0e3...` | That Notion page, read through the Notion connector. |
+
+A value starting `https://` on a `notion.so` or `notion.site` host is a Notion
+pointer. Anything else is a path.
+
+**Local paths are the default and stay the default.** The shipped template
+points both keys at local files, and a user who never mentions Notion sees
+exactly the behavior described everywhere else in this document. Notion buys one
+thing: reaching these settings from a machine or a session other than the one
+that wrote them.
+
+**The two keys resolve independently.** Pointing `writing_style` at a Notion
+page while `personas` stays on a local file is a normal configuration, not a
+half-migrated one. Persona notes are about real colleagues, and keeping them
+local while sharing a writing style is a reasonable thing to want.
+
+#### Reading and writing a Notion pointer
+
+A Notion pointer is reached through Notion's official remote MCP server at
+`https://mcp.notion.com/mcp`, connected in the user's own session under their
+own Notion account. Daikenja holds no Notion credential and stores nothing on
+anyone else's infrastructure.
+
+- **Reading** fetches the page and treats its body as the same markdown prose
+  the local file would have held. The page's own title and Notion properties are
+  not part of the content.
+- **Writing** updates that page. Only `remember-persona` writes prose content,
+  and the pointer's form does not change that; see
+  [Who writes what](#who-writes-what).
+- **The page is one ordinary page**, not a database, a view, or a tree of
+  subpages. Daikenja reads the page it was pointed at and follows nothing out of
+  it.
+
+**No connector, no resolution.** If the Notion connector is not available in the
+session, or the page cannot be reached -- offline, deleted, permission
+withdrawn -- the pointer does not resolve. That is the same failure the contract
+already defines for a path that does not resolve: an absent key, one notice
+naming the pointer, then continue. There is no new failure mode and no offline
+cache.
+
 ### Precedence
 
 **Project overrides global, key by key.** A project supplying
@@ -124,9 +183,10 @@ One clause is enough: "using this project's 30-day staleness threshold."
 
 ## Voice and writing style
 
-Daikenja ships a default voice. A user's `writing_style` file **layers on top of
-it, and does not replace it**: the default applies except where the user's file
-says otherwise.
+Daikenja ships a default voice. A user's `writing_style` prose **layers on top
+of it, and does not replace it**: the default applies except where the user's
+own prose says otherwise. This holds wherever that prose lives -- the layering
+rule is about content, not about storage.
 
 One rule is not overridable, because it is a frozen decision about all
 generated output rather than a matter of taste:
@@ -147,6 +207,22 @@ that `compose` does not have to invent one.
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` | the user, by hand | Daikenja reads it and never edits it. |
 | `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
+
+**The table names the local defaults, and who may write does not change with
+where the prose lives.** When `personas` or `writing_style` points at a Notion
+page, the same skill writes the same content to that page instead of to a file.
+Two rules follow from the fact that a Notion page cannot be created from
+nothing the way a local file can:
+
+- **`setup-user` is the only skill that creates a Notion page**, and only when
+  the user chooses Notion during setup and the connector is present. It writes
+  the blank template into the new page and puts that page's URL in the pointer.
+- **`remember-persona` does not create Notion pages, and never redirects a
+  write.** Its scaffold-on-absence rule covers local files only. If `personas`
+  is a Notion pointer that does not resolve, it writes nothing, says so, and
+  keeps the entry in the conversation. Falling back to the local default would
+  split the user's notes across two stores without telling them, which is worse
+  than not writing.
 
 **The single-writer rule governs the ledger, not `daikenja.yaml`.** This
 distinction matters: `project-catchup`'s job is to report a delta and move the
@@ -189,6 +265,8 @@ One rule covers the common cases:
 | Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. |
 | A pointed-at prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
+| A pointer names a Notion page and the connector is not in the session | Treat the key as absent. One notice naming the page and saying the Notion connector is not connected, then continue. Never fall back to a local file. |
+| A pointer names a Notion page that cannot be reached | Same: absent key, one notice naming the page. Offline, deleted and permission-withdrawn are one case, because from here they look alike. Read skills continue reduced; `remember-persona` writes nothing and holds the entry (per Who writes what). |
 | `norms_doc` absent | Not an error. `self-review` skips ROLE CHECK silently -- this is the documented default. |
 
 Notices are one line and they name the file. "No `writing-style.md` at
