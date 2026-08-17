@@ -180,10 +180,16 @@ name in the pointer.
 
 **Reading downloads the file's bytes.** Use the connector's file-download tool
 (`download_file_content`), never its content-reading or natural-language
-extraction tool. Measured 17 August 2026: `read_file_content` returned an empty
-string for a 171-byte Markdown file that `download_file_content` returned
-byte-exact. An empty return is indistinguishable from an empty file, which is
-the exact failure the stop rule below exists to catch.
+extraction tool (`read_file_content`).
+
+Measured 17 August 2026, both tools against the same 171-byte Markdown file:
+`download_file_content` returned it byte-exact, while `read_file_content`
+returned a lossy rendering -- Markdown syntax backslash-escaped (`\#`,
+`\- \[ \]`, `\[link\]`) and trailing hard-break spaces added. **That text is not
+the file.** Reading it would misreport the user's prose, and splicing an entry
+into it and writing it back, per the sequence below, would permanently corrupt
+prose the user wrote by hand. The extraction tool is built to describe a
+document to a reader, not to round-trip one.
 
 ##### Writing replaces the file
 
@@ -220,12 +226,18 @@ change that; see [Who writes what](#who-writes-what).
 follows nothing out of it -- no folders, no linked documents, no second file.
 
 **A configured Drive pointer that fails is a stop, not a degrade.** If the
-connector is not in the session, the name does not resolve, or the download
-comes back empty, the run stops and names the file. This is the one place a
-pointer's form changes the behavior, and the reason is the measurement above: an
-empty read looks exactly like "this user has no personas recorded." Continuing
-would mean drafting in the default voice while the user believes their own style
-was applied, and saying nothing about it. See
+connector is not in the session, the name does not resolve to exactly one file,
+or the download comes back empty, the run stops and names the file. This is the
+one place a pointer's form changes the behavior.
+
+The reason is that none of those failures can be told apart from "this user has
+no personas recorded." Continuing would mean drafting in the default voice while
+the user believes their own style was applied, and saying nothing about it. **An
+empty download is included deliberately, and it is the cautious call**: a read
+that returns nothing is either a genuinely empty file or a failed read, and
+nothing available here distinguishes them. Treating it as an empty file costs a
+`remember-persona` write that replaces the user's prose with a file holding one
+entry. Treating it as a failure costs one run. See
 [Failure behavior](#failure-behavior). There is no offline cache.
 
 ### Precedence

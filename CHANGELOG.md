@@ -53,6 +53,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   first** -- a create that fails after a successful trash destroys prose that
   cannot be recovered. What is written is always the downloaded bytes plus the
   one entry, never a regenerated file (#41).
+- Reads always use the connector's `download_file_content`, never
+  `read_file_content`. Measured 17 August 2026 against the same 171-byte
+  Markdown file: the former returned it byte-exact, the latter returned a lossy
+  rendering with Markdown syntax backslash-escaped (`\#`, `\- \[ \]`,
+  `\[link\]`) and hard-break spaces added. Splicing an entry into that text and
+  writing it back would permanently corrupt hand-written prose (#41).
 
 ### Changed
 
@@ -73,13 +79,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a key the user never set still degrades with one notice, but a `drive:`
   pointer that cannot be resolved -- connector absent, no file or several files
   under that name, or a download that comes back empty -- stops the skill and
-  names the file. The reason is measured: the connector's
-  `read_file_content` returned an empty string for a 171-byte Markdown file
-  that `download_file_content` returned byte-exact (17 August 2026), and an
-  empty read cannot be told apart from prose the user never wrote. Continuing
-  would mean drafting in the default voice while the user believed their own
-  style had been applied. Local paths keep the older behavior, because a
-  missing local file is a fact that can be established (#41).
+  names the file. None of those can be told apart from prose the user never
+  wrote, so continuing would mean drafting in the default voice while the user
+  believed their own style had been applied. An empty download counts as a
+  failure deliberately: treating it as an empty file costs a persona write that
+  replaces the user's prose with a file holding one entry, and treating it as a
+  failure costs one run. Local paths keep the older behavior, because a missing
+  local file is a fact that can be established (#41).
 
 ## [0.3.0] - 2026-08-17
 
