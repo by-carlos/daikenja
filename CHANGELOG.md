@@ -20,6 +20,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   resolved ledger path in a `Ledger: <path>` line before its answer, success
   or failure, so `project-catchup`, `project-summary`, `project-decisions` and
   `project-gaps` all state their scope without four copies of the rule (#47).
+- `profile.writing_style` and `profile.personas` may now name a **Notion page
+  URL** as well as a relative or an absolute path. The prose is read and
+  written through Notion's official remote MCP server under the user's own
+  account, which makes a persona file or a writing style reachable from a
+  machine other than the one that wrote it. The two keys resolve
+  independently, so personal notes on colleagues can stay local while a
+  writing style is shared. Local files remain the default: a user who never
+  mentions Notion sees no change, and `/daikenja:setup-user` offers the option
+  once and completes without a Notion account. The rule lives in
+  `docs/config-contract.md` § Resolving `writing_style` and `personas`, and
+  the five skills that touch these keys defer to it. The ledger does not move
+  -- it stays in the project, and `docs/ledger-format.md` is untouched (#41).
 
 ### Changed
 
@@ -30,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   mirroring how `/daikenja:project-log` scaffolds a missing ledger.
   `setup-user`'s own create-if-absent rule is unchanged, and it still never
   writes persona content (#35).
+- The plugin description in `.claude-plugin/plugin.json` no longer says that
+  everything Daikenja reads lives under `~/.claude/daikenja/`. The
+  configuration file still does; the persona and writing-style prose it points
+  at may now live in Notion. The Claude Code and Cowork restrictions are
+  unchanged (#41).
 
 ## [0.3.0] - 2026-08-17
 

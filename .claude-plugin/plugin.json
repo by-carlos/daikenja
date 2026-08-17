@@ -1,6 +1,6 @@
 {
   "name": "daikenja",
-  "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. Claude Code only -- it reads user config from ~/.claude/daikenja/ and writes a ledger inside the project, neither of which exists on claude.ai or in Cowork.",
+  "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. Claude Code only -- it reads its configuration from ~/.claude/daikenja/ and writes a ledger inside the project, neither of which exists on claude.ai or in Cowork. Your persona notes and writing style can optionally live in a Notion page instead of a local file.",
   "version": "0.3.0",
   "author": {
     "name": "Carlos",

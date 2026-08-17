@@ -100,12 +100,21 @@ and get overwritten on update.
 | What | Where | Written by |
 |---|---|---|
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user`, plus `project-catchup` for the `last_checkpoint` key only |
-| Your notes on the people you work with | `~/.claude/daikenja/personas.md` | you, plus `remember-persona` for people you describe to it |
-| How you write | `~/.claude/daikenja/writing-style.md` | you |
+| Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or a Notion page you choose | you, plus `remember-persona` for people you describe to it |
+| How you write | `~/.claude/daikenja/writing-style.md`, or a Notion page you choose | you |
 | A project's decision ledger | `<project>/.daikenja/ledger.md` | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
 your directories; the copies are the live files.
+
+**Local files are the default, and Notion is opt-in.** If you want your persona
+notes or your writing style reachable from another machine, either one can live
+in a Notion page instead -- `setup-user` offers this once, works fine without
+it, and never asks you to sign up for anything. Notion is reached through
+Notion's own connector, under your own account, so nothing goes through the
+plugin author. The two settings are independent: keeping personal notes on
+colleagues local while sharing a writing style is a normal setup. The ledger
+does not move -- it stays in the project, where git already versions it.
 
 Two rules the skills follow:
 

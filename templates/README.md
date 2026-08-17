@@ -12,6 +12,10 @@ starting points.
   project's `.daikenja/`, with `{{PROJECT}}` replaced by the project name. Format:
   [`../docs/ledger-format.md`](../docs/ledger-format.md).
 - [`personas.md`](personas.md) and [`writing-style.md`](writing-style.md) -- the
-  prose templates a user fills in and points at from `daikenja.yaml`.
+  prose templates a user fills in and points at from `daikenja.yaml`. The
+  pointer may name a local file or a Notion page; `setup-user` writes the same
+  template into whichever the user chose. See
+  [`../docs/config-contract.md`](../docs/config-contract.md) § Resolving
+  `writing_style` and `personas`.
 
 Nothing in this directory may contain personal or organization data.

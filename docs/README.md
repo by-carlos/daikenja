@@ -6,7 +6,8 @@ redefines one. When a contract changes, it changes here and the skills follow.
 - [`ledger-format.md`](ledger-format.md) -- the ledger file layout, the entry
   line shape, and how skills read it.
 - [`config-contract.md`](config-contract.md) -- the `daikenja.yaml` schema, the
-  lookup order, precedence, and failure behavior.
+  lookup order, how the `writing_style` and `personas` pointers resolve,
+  precedence, and failure behavior.
 - [`reading.md`](reading.md) -- the shared read mechanism for `project-catchup`,
   `project-summary`, `project-decisions` and `project-gaps`: resolve config,
   find the ledger, parse it.
