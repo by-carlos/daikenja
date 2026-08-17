@@ -34,13 +34,22 @@ order.
 3. **A ledger found on disk wins over the config.** Check the resolved path
    even when the project did not match.
 
+**Name the resolved path before the answer**, every time, success or failure
+-- one line, so someone who ran a read skill from the wrong directory can
+tell which project's ledger they are looking at without digging:
+
+```
+Ledger: <path>
+```
+
 If the file does not exist, a read skill does **not** scaffold it. Report:
 
 ```
 No ledger at <path>. Run /daikenja:project-log to create one.
 ```
 
-and stop. Reading is not the skill that creates the file.
+and stop -- this notice already names the path, so the `Ledger:` line above
+is not repeated. Reading is not the skill that creates the file.
 
 ## Step C: read and parse
 
@@ -70,6 +79,7 @@ output, per `config-contract.md` § Precedence.
 Use these exact shapes so the four skills read as one system:
 
 ```
+Ledger: <path>
 Daikenja is not configured -- run /daikenja:setup-user.
 This project is not in daikenja.yaml. Using the ledger at <path> anyway.
 No ledger at <path>. Run /daikenja:project-log to create one.
