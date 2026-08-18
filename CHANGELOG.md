@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   filing, and naming the two things the scrub deliberately does not cover --
   Daikenja's own config paths and the synthetic test fixtures (#15).
 
+### Changed
+
+- `docs/voice.md` now carries a **substitution floor**: a replacement only
+  counts when it is at least as natural as what it replaced, so an idiom with
+  no better plain form stays. The idiom rule read as a blanket ban, which is
+  what turned "I do not want to kick it off without a heads up" into the
+  stiffer "without telling you first". `a heads up`, `a rabbit hole` and
+  `catch up` are named as examples that stay, and `docs/reviewer-personas.md`
+  binds the non-native readability check to the same floor so `preflight` does
+  not flag them (#40).
+
 ## [0.4.0] - 2026-08-17
 
 ### Added

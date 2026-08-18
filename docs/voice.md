@@ -27,13 +27,37 @@ Most readers do not have English as a first language.
 - Avoid phrasal verbs when a single verb works ("submit", not "put in";
   "postpone", not "push out").
 - No idioms, no sports or war metaphors, no cultural references, no jokes that
-  need context.
+  need context. The idiom half has a floor -- see below.
 - No sarcasm, no British-style understatement, no double negatives ("not
   unlikely").
 - Active voice with a named owner. "Daniel will update the pipeline", not "the
   pipeline will be updated".
 - Spell out an acronym the first time unless it is standard in that channel.
 - International (US) English. Neutral, no regional slang or idiom.
+
+## The substitution floor
+
+Every rule above replaces one wording with another. A replacement only counts
+when it is at least as natural as what it replaced. If the plain alternative is
+stiffer, longer, or reads as machine-written, keep the original -- including
+when the original is an idiom.
+
+This applies hardest to the idiom rule, which reads as a blanket ban and is not
+one. An idiom that costs a non-native reader nothing, and that has no plain
+form a person would actually write, stays. Three that stay:
+
+- **a heads up.** "Telling you first" is stiffer and reads as machine-written.
+- **a rabbit hole.** The plain forms ("an unproductive tangent") are longer and
+  more formal than the message needs.
+- **catch up.** A phrasal verb, and still the normal way to say it.
+
+What the rule does ban is the idiom a reader cannot decode from its words --
+"bite the bullet", "a ballpark figure", "put it on the back burner". Those
+block a non-native reader and have a plain replacement that is genuinely
+better, which is what makes them different.
+
+The floor is a default-voice rule like the rest of this document, not the
+frozen kind: a user's `writing-style.md` may narrow it.
 
 ## Length
 
