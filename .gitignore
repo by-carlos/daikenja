@@ -35,3 +35,7 @@ desktop.ini
 # its own nested .gitignore; this stops docs/superpowers/ from being committed.
 .superpowers/
 docs/superpowers/
+
+# Generated claude.ai upload zips. Rebuild with
+# scripts/build-claude-ai-skills.py -- docs/ is the source of truth.
+dist/
