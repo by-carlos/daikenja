@@ -21,6 +21,30 @@ a comment. Only a durable fact about how the plugin works earns a repo change,
 edited into the document that already owns it. This repo documents what Daikenja
 **is**, never what was proposed.
 
+## This repo is public
+
+**An issue body is published the moment it is filed**, and stays indexed even if
+it is edited or deleted afterwards. Editing removes it from the rendered page,
+not from the record. Treat every filing as one-way.
+
+**Scrub before filing.** No hostnames, LAN IPs or subnets, container or VM
+names, personal filesystem paths, email addresses, tokens, or raw log and
+console pastes. Redact to generic placeholders -- `<host>`, `10.x.x.x`,
+`/path/to/repo` -- and keep the reproduction abstract enough to stand on its
+own. Name the repo (`by-carlos/daikenja`), never the checkout directory it
+happens to sit in on one machine.
+
+Two things are deliberately *not* covered by this rule, because they are part of
+what Daikenja documents rather than facts about anyone's machine: the plugin's
+own config paths (`~/.claude/daikenja/…`, a project's `.daikenja/`), and the
+invented projects and people in `tests/fixtures/`.
+
+**Show the rendered body and get an explicit OK before filing -- every time.**
+This gate is not waived by a general "capture these" from the maintainer, and
+not by the filing being obviously routine. Public is a one-way door.
+
+The same rules apply to pull request bodies, review comments and issue comments.
+
 ## Body format
 
 Every issue carries these three sections, in this order.

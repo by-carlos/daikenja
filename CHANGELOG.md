@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `CONTRIBUTING.md` and `SECURITY.md`, both written for a public repository:
+  how to file an issue and open a pull request, the conventions that are easy
+  to trip over (voice, ledger format, templates, fixtures), and a private
+  disclosure route through GitHub security advisories with an explicit scope
+  statement for a plugin that has no server (#15).
+- A "This repo is public" section in `.claude/reference/github-issues.md`
+  covering the scrub rule and the rendered-body-plus-explicit-OK gate before
+  filing, and naming the two things the scrub deliberately does not cover --
+  Daikenja's own config paths and the synthetic test fixtures (#15).
+
 ## [0.4.0] - 2026-08-17
 
 ### Added
