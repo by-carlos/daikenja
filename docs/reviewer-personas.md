@@ -239,6 +239,10 @@ two deep, idioms, phrasal verbs where a plain verb exists, uncommon words with a
 common alternative, and culturally-specific references. This is always on
 because landing well with a non-native audience is `compose`'s stated purpose.
 
+It is bound by `voice.md` § The substitution floor. An idiom or a phrasal verb
+is a finding only when the plain replacement is at least as natural; "a heads
+up" and the rest of the phrases named there are not findings.
+
 The term is **"non-native English"**, matching `doc-review`'s checklist and
 `compose`'s own description. A third term for one concept is drift.
 
