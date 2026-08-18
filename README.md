@@ -22,7 +22,9 @@ gap.
 
 Two things make it Claude Code specific:
 
-- It reads your configuration from `~/.claude/daikenja/` on your own machine.
+- It reads `daikenja.yaml` from `~/.claude/daikenja/` on your own machine.
+  (Persona notes and writing style can optionally live in Google Drive, but
+  the config file itself does not.)
 - It writes a ledger into the project you are working in.
 
 Neither a home directory nor a project working tree exists in a browser session.
