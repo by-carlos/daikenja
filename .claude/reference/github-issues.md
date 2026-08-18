@@ -47,20 +47,39 @@ The same rules apply to pull request bodies, review comments and issue comments.
 
 ## Body format
 
-Every issue carries these three sections, in this order.
+**The issue form is the source of truth, not this section.**
+`.github/ISSUE_TEMPLATE/follow-up.yml` defines the sections and the constraint
+on each one. Read it before filing and fill every field it names, whether you
+are filing through the web form or building a body for `gh issue create`. The
+summary below is orientation only; where the two disagree, the form wins.
 
-**1. Context.** What was observed, when, and the evidence: file paths with line
+Four sections, in this order.
+
+**1. In plain terms.** What is wrong or wanted, who it affects, and what happens
+today, in three to five sentences. **No file paths, line numbers, function or
+skill names, or issue numbers** -- those belong in Context. The ban is what
+makes the section work: with the identifiers gone, the only thing left to write
+is behaviour and consequence, which is what a reader needs months later. If it
+reads like a shorter Context, it has failed.
+
+**2. Context.** What was observed, when, and the evidence: file paths with line
 numbers, command output, dates. Write it so it still makes sense months later to
 someone who was not in the session.
 
-**2. Options.** The candidate approaches with a recommendation, not just a
+**3. Options.** The candidate approaches with a recommendation, not just a
 problem statement. Say which one you would pick and why, and name any option you
 rejected and what rules it out.
 
-**3. AI prompt.** A self-contained blockquote that a fresh session can act on
+**4. AI prompt.** A self-contained blockquote that a fresh session can act on
 cold. Name the paths, the goal, the binding constraints, what NOT to touch, and
 how to verify. This is the deliverable: it is what turns the issue back into
 work.
+
+**`gh issue create` does not apply the form.** GitHub enforces templates only in
+the web UI, so `--body` and `--body-file` bypass it silently. An agent filing
+from the CLI has to reproduce the sections by hand, as `### <label>` headings
+matching the form's labels, so that CLI-filed and web-filed issues read the
+same.
 
 Cross-reference related issues by number so a chain of follow-ups stays linked.
 
