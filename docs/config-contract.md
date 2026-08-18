@@ -306,14 +306,21 @@ of it, and does not replace it**: the default applies except where the user's
 own prose says otherwise. This holds wherever that prose lives -- the layering
 rule is about content, not about storage.
 
-One rule is not overridable, because it is a frozen decision about all
-generated output rather than a matter of taste:
+The default voice sorts its own rules into two tiers, and layering respects
+them:
 
-- Absolute dates, never relative ones.
+- **Fixed.** A user's prose cannot turn these off. They are frozen decisions
+  about all generated output rather than matters of taste. Absolute dates are
+  one of them.
+- **Defaults.** A user's prose may narrow or replace these.
 
-The default voice file itself is **not part of this contract**. It belongs to
-`compose`, its main consumer. This document fixes only the layering rule, so
-that `compose` does not have to invent one.
+A line in a user's prose that contradicts a Fixed rule is not an override and
+has no effect.
+
+Which rule sits in which tier is the voice file's call, not this document's, and
+the file itself is **not part of this contract**. It belongs to `compose`, its
+main consumer. This document fixes only the layering rule and the fact that the
+two tiers exist, so that `compose` does not have to invent either.
 
 ## Who writes what
 

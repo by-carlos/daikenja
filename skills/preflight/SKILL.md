@@ -251,7 +251,9 @@ writing style.
 - Apply `docs/rewrite-rules.md` in full. The ask, the stance, the confidence
   level, the owners, the timing and how blocking it is all survive untouched.
 - Apply `docs/voice.md`, layered under the user's `writing_style` prose if the
-  pointer resolves (`profile.writing_style`, per `config-contract.md`
+  pointer resolves -- that prose reaches the file's `## Defaults` tier only, and
+  a line contradicting a `## Fixed` rule is not applied
+  (`profile.writing_style`, per `config-contract.md`
   § Resolving `writing_style` and `personas` -- a local file or a Google Drive
   file). A local pointer that does not resolve gets one notice, then the default
   voice alone; a `drive:` pointer that fails stops the run, per that document's

@@ -10,8 +10,14 @@ it.
 
 **This layers on top of the Daikenja default voice, it does not replace it.**
 The default applies except where you say otherwise, so you only need to write
-down what is specific to you. One rule you cannot override, because it applies
-to everything Daikenja generates: always absolute dates.
+down what is specific to you.
+
+Part of the default voice you cannot override. It is the part marked `## Fixed`,
+and it covers absolute dates, the rules that keep a message readable for someone
+whose first language is not English, and a short list of things Daikenja will
+not write at all. Everything marked `## Defaults` -- message length, humor, how
+far to push a plain-word substitution -- is yours to change. Anything you write
+below that contradicts a Fixed rule has no effect.
 
 Write in prose or bullets, whichever you prefer. Useful things to pin down:
 
