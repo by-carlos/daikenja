@@ -313,6 +313,7 @@ Needs you
 Reviewers: busy reader (always on), the executive (the ask lands with a
 director), S (named in the draft)
 
+Reviewed: dispatched, each reviewer reading cold.
 Applied: 4 wording fixes across 2 cycles.
 Conflict: R needs the rollback detail kept and M needs this under ten lines.
 No fix serves both -- this may want to be two messages.
@@ -321,6 +322,28 @@ Learned: added S to ~/.claude/daikenja/personas.md.
 
 The verdict line is `ready to send` or `needs <n> facts from you before it
 goes`. Nothing else.
+
+### The `Reviewed:` line is mandatory
+
+**Every report carries it, on every run, whichever way the reviewers ran.** It
+is not a warning that appears when something is wrong -- it is a statement of
+how this particular run was produced, and it is written last, from what
+actually happened, never from what was supposed to happen.
+
+| How the reviewers ran | The exact line |
+|---|---|
+| Dispatched | `Reviewed: dispatched, each reviewer reading cold.` |
+| In this context | `Reviewed: in sequence in this context -- no dispatch available, so the reviewers are not independent and each one had read the ones before it. Treat this as weaker than a dispatched run.` |
+
+Stating it unconditionally is the point. A notice that only appears when
+dispatch is missing asks this skill to notice an absence, and an absence is the
+one thing it reliably fails to notice -- so the run that most needs the warning
+is the run least likely to print it.
+
+**When the reviewers ran in this context, cycle 2 confirmed nothing.** Say
+`re-read once in the same context`, never `confirmed`. A reviewer that never
+read the revision independently cannot confirm a fix landed, and a report that
+says it did has invented the one thing the second cycle exists to buy.
 
 **Depth keys off `profile.tone`**, per `config-contract.md`:
 
@@ -335,17 +358,15 @@ returns nothing, say so plainly and hand back the draft unchanged.
 
 ## When dispatch is unavailable
 
-**This path is not supported.** It has never been run against the fixtures and
-its output is not held to the standard of a dispatched run. It exists so the
-skill degrades instead of failing outright, not because it works as well.
+**This path is weaker than a dispatched run, and it is the only path on
+claude.ai**, where nothing dispatches. It was run against the `preflight`
+fixtures on 19 August 2026 and found the planted content gaps and the
+unresolvable recipient conflict, so it is no longer untested -- but what it
+cannot produce is isolation, and no amount of testing changes that.
 
-Say so in one line, then run the reviewers in this context, sequentially, one
-brief at a time:
-
-```
-Subagents unavailable. Running the reviewers in sequence -- this path is
-unverified, so treat what comes back as weaker than a normal run.
-```
+Run the reviewers in this context, sequentially, one brief at a time, and
+report it in the mandatory `Reviewed:` line of Step 10. That line, not a
+notice raised here, is what tells the user which run they got.
 
 The weakness is structural rather than incidental. A sequential reviewer has
 already read the ones before it and will defer to them, which is exactly the
@@ -359,7 +380,7 @@ survived, because it did not.
 |---|---|
 | No draft and no description given | Ask for one. Do not guess what the user wants to raise. |
 | A description with no draft | Cycle 0 only. Report the verdict and hand off to `compose`. Never draft one here. |
-| Subagent dispatch unavailable | One notice, then run the reviewers in sequence. **Unsupported path** -- say the findings are weaker. |
+| Subagent dispatch unavailable | Run the reviewers in sequence and say so in the mandatory `Reviewed:` line. Cycle 2 re-reads, it never **confirms**. |
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
 | Every reviewer returns nothing | Report it plainly and hand back the draft unchanged. |

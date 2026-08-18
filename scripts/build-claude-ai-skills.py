@@ -44,6 +44,43 @@ SHIPPED = ["compose", "doc-review", "preflight", "self-review", "thread"]
 # A `docs/<name>.md` mention anywhere in the file, in prose or in a link.
 DOC_REF = re.compile(r"docs/([a-z0-9-]+\.md)")
 
+LIMITATIONS_URL = "https://github.com/by-carlos/daikenja/blob/main/docs/future-work.md"
+
+# Stated as fact in the shipped copy rather than detected at runtime. A skill
+# asked to notice that a capability is missing is being asked to notice an
+# absence, which is exactly what it fails to do -- so the surface is written
+# into the file that only ever runs on that surface.
+SURFACE_NOTE = f"""> **This is the claude.ai build of a Daikenja skill.** Settings come from the
+> `daikenja` folder in your Google Drive, and there is no project ledger here --
+> the ledger skills run only in Claude Code. Known limitations:
+> <{LIMITATIONS_URL}>
+"""
+
+DISPATCH_NOTE = """>
+> **Reviewers do not run as subagents here.** claude.ai has no dispatch, so
+> every reviewer runs in this one context and each has read the ones before it.
+> They are a checklist read carefully, not independent second opinions, and a
+> run in Claude Code is meaningfully stronger. Say so in the `Reviewed:` line,
+> and never write that cycle 2 *confirmed* anything.
+"""
+
+# Skills whose behaviour actually changes without dispatch.
+DISPATCHES = {"preflight"}
+
+
+def add_surface_note(text, skill):
+    """Insert the surface preamble directly below the frontmatter block."""
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        return None
+    for index in range(1, len(lines)):
+        if lines[index].strip() == "---":
+            note = SURFACE_NOTE
+            if skill in DISPATCHES:
+                note += DISPATCH_NOTE
+            return "".join(lines[: index + 1]) + "\n" + note + "".join(lines[index + 1 :])
+    return None
+
 
 def referenced_docs(text):
     """The doc file names a body of text mentions, as a set."""
@@ -83,6 +120,11 @@ def build(skill):
             f"{skill}: SKILL.md still references CLAUDE_PLUGIN_ROOT outside "
             "docs/ after rewriting, which cannot resolve on claude.ai"
         )
+
+    shipped = add_surface_note(shipped, skill)
+    if shipped is None:
+        return f"{skill}: SKILL.md has no frontmatter block to insert the surface note below"
+
     (dest / "SKILL.md").write_text(shipped, encoding="utf-8", newline="\n")
 
     carried = []
