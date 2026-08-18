@@ -14,6 +14,12 @@ Which documents a skill gets is read out of the skill itself: every
 a fixed point. Nothing here lists dependencies by hand, so adding a reference
 to a SKILL.md is the whole of the change.
 
+One thing is rewritten on the way out. A skill points at its documents with
+`${CLAUDE_PLUGIN_ROOT}/docs/<name>.md`, which Claude Code expands to the
+installed plugin directory. claude.ai has no such variable and would read the
+path literally, so the generated copy drops the prefix and points at the
+`docs/` folder sitting beside it. The skill under `skills/` is never touched.
+
 Usage:  python scripts/build-claude-ai-skills.py
 Output: dist/claude-ai/<skill>/  and  dist/claude-ai/<skill>.zip
 """
@@ -68,10 +74,16 @@ def build(skill):
         shutil.rmtree(dest)
     dest.mkdir(parents=True)
 
-    # SKILL.md ships byte-identical to the one Claude Code loads. Keeping the
-    # docs/ prefix intact is what lets it: every reference resolves unchanged
-    # against the copy sitting beside it.
-    shutil.copyfile(src, dest / "SKILL.md")
+    # Point the document references at the copies placed beside SKILL.md.
+    # Claude Code expands ${CLAUDE_PLUGIN_ROOT}; claude.ai does not, and would
+    # read the unexpanded path as a literal file name.
+    shipped = text.replace("${CLAUDE_PLUGIN_ROOT}/docs/", "docs/")
+    if "CLAUDE_PLUGIN_ROOT" in shipped:
+        return (
+            f"{skill}: SKILL.md still references CLAUDE_PLUGIN_ROOT outside "
+            "docs/ after rewriting, which cannot resolve on claude.ai"
+        )
+    (dest / "SKILL.md").write_text(shipped, encoding="utf-8", newline="\n")
 
     carried = []
     for name in resolve_docs(text):
