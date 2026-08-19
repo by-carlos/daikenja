@@ -94,11 +94,20 @@ opinion worth having -- a sequential reviewer has read the ones before it and
 defers to them. It says so when it happens. Treat what it returns as weaker
 than a dispatched run.
 
-**Every reviewer runs on the session's model.** A skill cannot declare a model,
-so the personas `preflight` dispatches all inherit whatever the session is set
-to. There is no way to run a persona that simulates a fast, careless reader on a
-cheaper model than one that simulates a forensic one. `preflight` notices when
-it is not on Opus and says so in one line, which is the whole of the mitigation.
+**A reviewer's model tier cannot be changed.** Each archetype is dispatched on
+the tier written against it in [`reviewer-personas.md`](reviewer-personas.md) --
+`haiku` for the two that simulate a degraded reader, `sonnet` for the three with
+one preoccupation, `opus` for the four that simulate a sharper-than-normal one.
+That table is fixed and changes only by pull request, the same as the roster.
+A `personas.md` entry sets no tier, and a named addressee inherits the tier of
+the archetype it embodies. Setting `CLAUDE_CODE_SUBAGENT_MODEL` pins every
+reviewer to one model and overrides all of it, which is Claude Code's own
+precedence rather than something Daikenja offers.
+
+**The tiers only exist where subagents do.** Where nothing dispatches --
+claude.ai -- every reviewer reads in `preflight`'s own context on the session's
+model, so the busy reader is no longer weaker than the rest and the risk reader
+is no longer stronger. The `Reviewed:` line reports that the run went that way.
 
 **The two always-on checks read with full context.** The AI-tell check and the
 non-native English check run in `preflight`'s own context, which has already
