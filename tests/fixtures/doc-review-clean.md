@@ -12,17 +12,17 @@ at a time so a bad region can be paused without affecting the rest.
 
 Traffic in a new region ramps in three steps: 5%, then 25%, then 100%, each
 held for at least one day before moving to the next step. This rule was set on
-2026-07-20 by @priya and applies to every region rollout.
+2026-07-20 by @diablo and applies to every region rollout.
 
 ## Rollback
 
-@sam owns the rollback trigger: if p99 latency stays above 400ms for 10
+@benimaru owns the rollback trigger: if p99 latency stays above 400ms for 10
 minutes, or the error rate goes above 0.5%, the on-call engineer pulls the
 rollout for that region. No meeting is needed to make that call.
 
 ## Ownership
 
-@priya owns the rollout schedule. @sam owns the rollback trigger and runbook.
+@diablo owns the rollout schedule. @benimaru owns the rollback trigger and runbook.
 The on-call engineer, on a weekly rotation published in the team calendar,
 owns paging during an active rollout.
 

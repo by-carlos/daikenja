@@ -16,7 +16,7 @@ must never be reported as malformed.
 ## Decisions
 
 - 2026-08-14 -- D-002 -- Ramp the rollout over three days.
-- 2026-08-12 -- D-001 -- @priya -- Harbor replaces the per-service limiter.
+- 2026-08-12 -- D-001 -- @diablo -- Harbor replaces the per-service limiter.
 
 ## Open items
 

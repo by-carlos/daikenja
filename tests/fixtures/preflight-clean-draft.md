@@ -11,7 +11,7 @@ caught it, so the draft was never the clean control it claimed to be.
 
 ## Draft 1 -- nothing to find
 
-To: T
+To: Geld
 
 "The Beacon staging deploy failed on the 2026-08-15 run. The build log points
 at the `region_id` foreign key, and I confirmed it against the 2026-08-14 run,
@@ -23,7 +23,7 @@ hold the deploy until then."
 
 ## Draft 2 -- only the wording is wrong
 
-To: T
+To: Geld
 
 "Hope the week is going well. As discussed, I wanted to circle back on the
 Beacon staging situation, which as you know has been a bit of a moving target
@@ -46,7 +46,7 @@ to be live yet, that would be great. I am holding the deploy until then."
 ## What is in draft 2 and where
 
 Every fact a fix could need is already there. The date of the failure
-(2026-08-15), the passing comparison run (2026-08-14), the owner (T), the
+(2026-08-15), the passing comparison run (2026-08-14), the owner (Geld), the
 deadline (Thursday 2026-08-20), the specific question (is the `region_id`
 constraint meant to be live yet), and the consequence (the deploy is held).
 

@@ -146,6 +146,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   re-reads in the sequential mode and never confirms. `README.md` and
   `.claude-plugin/plugin.json` drop the flat "Claude Code only" claim for the
   split between the two halves (#42).
+- `tests/fixtures/`'s invented people are renamed to a single convention --
+  no more real-looking first names next to bare initials. `tests/README.md`
+  now states the rule: names come from *That Time I Got Reincarnated as a
+  Slime* (《告。》 diablo, benimaru, and friends), not initials or names that
+  read as specific individuals. The two load-bearing quirks survive intact:
+  `sample-transcript.md`'s three-label trap for one speaker, and the
+  `D-003` cross-reference between `sample-ledger.md` and
+  `sample-drafts-preflight.md` (#39).
+- `.github/workflows/ci.yml` pins every third-party `uses:` reference
+  (`actions/checkout`, `actions/setup-python`, `actions/setup-node`) to its
+  current release commit SHA instead of a mutable tag, so a repointed tag
+  upstream can no longer change what CI runs silently (#22).
 
 ### Fixed
 

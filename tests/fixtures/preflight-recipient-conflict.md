@@ -7,15 +7,15 @@ reported.
 
 ## What the user says at invocation
 
-"This goes to both M and R. M is the director who signs off on the slip -- she
+"This goes to both Milim and Gabiru. Milim is the director who signs off on the slip -- she
 reads the first three lines, wants the decision and what it costs, and has told
-me before that anything past ten lines gets left for later. R owns the rollback
+me before that anything past ten lines gets left for later. Gabiru owns the rollback
 and has to run it. He has said more than once that a rollback instruction he
 cannot follow line by line is worse than none."
 
 ## Draft -- cutover call for the Harbor rollout
 
-To: M, R
+To: Milim, Gabiru
 
 "Short version -- I want to move the Harbor cutover from Thursday
 2026-08-20 to Tuesday 2026-08-25. It costs us five days on the rollout plan
@@ -33,16 +33,16 @@ recorded at drain time, then bring the shard back and check row counts against
 the pre-cutover figure. Step 4 is the one that timed out, and until we know why,
 running the cutover means accepting a rollback we have not proven.
 
-M -- can you approve the move to the 25th? R -- can you confirm the replay
+Milim -- can you approve the move to the 25th? Gabiru -- can you confirm the replay
 offset is recorded automatically or whether that is a manual step?"
 
 ## The three conflicts
 
-**M versus R, and no fix serves both.** M needs this under ten lines. R needs
-the five rollback steps kept in order. Cutting the rollback detail serves M and
-breaks R; keeping it serves R and loses M. Both are real addressees.
+**Milim versus Gabiru, and no fix serves both.** Milim needs this under ten lines. Gabiru needs
+the five rollback steps kept in order. Cutting the rollback detail serves Milim and
+breaks Gabiru; keeping it serves Gabiru and loses Milim. Both are real addressees.
 
-**M versus R, again, on the ask.** M is asked to approve and R is asked a
+**Milim versus Gabiru, again, on the ask.** Milim is asked to approve and Gabiru is asked a
 factual question, in the same closing line. Neither can tell at a glance which
 half is theirs.
 
