@@ -23,12 +23,12 @@ reports the two mismatches above is not also flagging a pair that is fine.
 
 ## Decisions
 
-- 2026-08-15 -- D-006 -- @sam -- Supersedes D-003. Deploy the ingest worker as three replicas, not one.
-- 2026-08-14 -- D-005 -- @sam -- Retry failed ingest jobs up to five times. -> superseded by D-004
-- 2026-08-13 -- D-004 -- @priya -- Retry failed ingest jobs up to three times.
-- 2026-08-12 -- D-003 -- @priya -- Deploy the ingest worker as a single replica.
-- 2026-08-10 -- D-002 -- @sam -- Supersedes D-001. Store ingest checkpoints in the database, not a local file.
-- 2026-08-08 -- D-001 -- @sam -- Store ingest checkpoints in a local file. -> superseded by D-002
+- 2026-08-15 -- D-006 -- @benimaru -- Supersedes D-003. Deploy the ingest worker as three replicas, not one.
+- 2026-08-14 -- D-005 -- @benimaru -- Retry failed ingest jobs up to five times. -> superseded by D-004
+- 2026-08-13 -- D-004 -- @diablo -- Retry failed ingest jobs up to three times.
+- 2026-08-12 -- D-003 -- @diablo -- Deploy the ingest worker as a single replica.
+- 2026-08-10 -- D-002 -- @benimaru -- Supersedes D-001. Store ingest checkpoints in the database, not a local file.
+- 2026-08-08 -- D-001 -- @benimaru -- Store ingest checkpoints in a local file. -> superseded by D-002
 
 ## Open items
 

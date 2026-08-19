@@ -52,9 +52,9 @@ stage's acceptance checks can be re-run later against the same inputs.
 ### `thread` and `compose`
 
 - [`fixtures/sample-reply-thread.md`](fixtures/sample-reply-thread.md) -- a
-  four-message thread where jordan pushes for a Friday cutover and riley
+  four-message thread where hakurou pushes for a Friday cutover and rigurd
   pushes back citing an unfinished validation step and a runbook link,
-  ending before riley's reply is drafted. Exercises the `thread` ->
+  ending before rigurd's reply is drafted. Exercises the `thread` ->
   `compose` handoff: the runbook link must survive into the drafted reply
   untouched.
 
@@ -114,20 +114,27 @@ last released copy of the skill, so a result obtained any other way is void.
   Used to turn on `self-review`'s ROLE CHECK by pointing `norms_doc` at this
   file.
 - [`fixtures/self-review-thread.md`](fixtures/self-review-thread.md) -- a
-  14-message thread where the invoker (`carlos`) makes mistakes at all
+  14-message thread where the invoker (`rimuru`) makes mistakes at all
   three severity tiers, including one that misleads a colleague into
   acting on a wrong fact (calling a reindex idempotent when it silently
   duplicates rows), with enough mistakes in total to exercise the findings
   cap and the parked remainder.
 - [`fixtures/self-review-thread-colleague.md`](fixtures/self-review-thread-colleague.md)
-  -- a 9-message thread where a colleague (`dev`) behaves badly throughout
+  -- a 9-message thread where a colleague (`gobta`) behaves badly throughout
   -- public blame, sarcasm aimed at a person, dismissing a stated
-  constraint twice -- while the invoker (`carlos`) handles it well until
+  constraint twice -- while the invoker (`rimuru`) handles it well until
   the final message, where he accepts a date he had just called
   unachievable without saying what would be dropped to hit it. Exercises
   `self-review`'s third-party check: findings must land on the invoker
-  alone, never on `dev`.
+  alone, never on `gobta`.
 
 Every fixture is synthetic: invented project, invented people, `example.com`
 links. Nothing in this directory may contain real work content, personal data or
 organization data.
+
+Invented people are named from *That Time I Got Reincarnated as a Slime*
+(lowercase, e.g. `diablo`, `benimaru`), never real-looking first names or
+bare initials -- both read as specific individuals, and a fixed source keeps
+the next fixture from inventing its own convention. `sample-transcript.md`'s
+three-label trap (`Diablo` / `diablo` / `D`) stays a single person's name in
+different cases, not three different characters.
