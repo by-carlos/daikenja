@@ -20,6 +20,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   recipe. No skill behaviour changes -- `project-catchup`'s failure table and
   `project-summary` Step 4 already implement the continue path (#75).
 
+### Changed
+
+- `docs/voice.md` § Assume the reader is not a native English speaker split its
+  last bullet, "International (US) English. Neutral, no regional slang or
+  idiom.", into two Fixed rules: neutral English with no regional slang or
+  idiom, and holding to one spelling variant consistently within a message
+  (never "organize" next to "colour"). Which variant to use is a new
+  `## Defaults` rule, § Spelling variant, whose shipped default flips from US
+  to Commonwealth/British spelling, on the reasoning that a non-native reader
+  was more likely taught Commonwealth spelling than US -- the same premise the
+  surrounding Fixed block already rests on. Unlike the other Defaults rules
+  audited in #28, this one is replaceable outright rather than narrowing-only,
+  since a user writing to a US audience has an equally legitimate claim on US
+  spelling. `templates/writing-style.md` now prompts the user to name their
+  variant (#66).
+
 ### Added
 
 - `CONTRIBUTING.md` and `SECURITY.md`, both written for a public repository:

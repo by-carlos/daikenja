@@ -48,7 +48,10 @@ premise rather than a preference, which is why the whole block is Fixed.
 - Active voice with a named owner. "Daniel will update the pipeline", not "the
   pipeline will be updated".
 - Spell out an acronym the first time unless it is standard in that channel.
-- International (US) English. Neutral, no regional slang or idiom.
+- Neutral English. No regional slang or idiom.
+- One spelling variant, held the same way through the whole message -- never
+  "organize" next to "colour". Which variant is a Defaults choice; see
+  § Spelling variant.
 
 ### No profanity, and no slurs
 
@@ -106,6 +109,22 @@ one. A user's `writing-style.md` may tighten it -- keep fewer of these
 exceptions, or none -- and a tighter floor only makes the Fixed rule stricter.
 It may not loosen the floor, because that would license idioms the Fixed rule
 bans, and no Defaults rule reaches that far.
+
+### Spelling variant
+
+Commonwealth/British spelling by default -- `-ise`, `-our`, `-re`, and plain
+British rather than Oxford `-ize`. The reader block this pairs with assumes a
+reader whose first language is not English, and that reader was more likely
+taught Commonwealth spelling than US.
+
+This is a taste rule, not a comprehension rule -- anyone who reads English
+reads both variants -- so it sits here rather than in Fixed. What is Fixed is
+holding to one variant through a message; see the reader block's spelling
+bullet.
+
+Replaceable outright, not narrowing-only: a user writing to a US audience has
+as legitimate a claim on US spelling as the shipped default has on
+Commonwealth. `writing-style.md` may name US spelling, or any other variant.
 
 ### Length
 
