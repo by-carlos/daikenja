@@ -39,7 +39,9 @@ OUT_DIR = REPO_ROOT / "dist" / "claude-ai"
 # ledger, which lives in a project working tree and has no claude.ai equivalent,
 # so they are deliberately absent. setup-user's whole job is creating
 # ~/.claude/daikenja/, which does not exist there either -- and it is what makes
-# the Drive folder the others read. See docs/future-work.md.
+# the Drive folder the others read. setup-project is absent for both reasons at
+# once: it writes that config and seeds a ledger in a working tree. See
+# docs/future-work.md.
 SHIPPED = ["compose", "doc-review", "preflight", "remember-persona", "self-review", "thread"]
 
 # A `docs/<name>.md` mention anywhere in the file, in prose or in a link.

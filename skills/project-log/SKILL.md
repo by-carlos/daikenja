@@ -69,16 +69,12 @@ Follow `config-contract.md` § Resolution order exactly. In short:
 **A ledger on disk wins over the config.** If `.daikenja/ledger.md` exists but
 no project matches, use it and carry on.
 
-**When the project is unregistered**, say so in one line and offer to register
-it. You do not write `daikenja.yaml` -- `setup-user` owns that file. Show the
-block the user needs and name the skill that adds it:
+**When the project is unregistered**, say so in one line and name the skill that
+registers it. You do not write `daikenja.yaml` yourself:
 
 ```
 This project is not in daikenja.yaml. The ledger still works. To register it,
-run /daikenja:setup-user and add:
-
-  <project-key>:
-    path: <absolute path>
+run /daikenja:setup-project -- it adds the entry for this directory.
 ```
 
 Registration is optional. Never block a ledger write on it.
@@ -189,6 +185,14 @@ Never merge two people's positions into one entry.
 
 For each candidate, look for an entry that already records the same fact.
 
+**Same subject is not the same fact.** A standing rule and a project decision
+stay separate entries even when they read alike -- "scripts are never run by
+hand against production" is a policy that holds across projects, and "build the
+reload as a pipeline rather than a manual script" is one project's call. Merging
+them loses which one a later reader is bound by. The test is what would have to
+change for the entry to stop being true: if the answers differ, they are two
+facts.
+
 - **The same fact, already there.** Propose an edit to that entry, by ID. Do not
   append a near copy.
 - **A decision that replaces an older one.** Propose a supersession, and mark it
@@ -294,7 +298,7 @@ missing thing is the task itself.
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
 | Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. |
 | Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. |
-| Project unregistered | One line, offer the `setup-user` block from Step 2, then carry on with the ledger. |
+| Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
 | Ledger missing a required H2 section | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
@@ -307,7 +311,8 @@ missing thing is the task itself.
 - It does not summarize a thread for reading. That is `/daikenja:thread`.
 - It does not report what changed since last time. That is
   `/daikenja:project-catchup`.
-- It does not write `daikenja.yaml`. That is `/daikenja:setup-user`, except for
-  `last_checkpoint`, which `project-catchup` owns.
+- It does not write `daikenja.yaml`. `/daikenja:setup-user` owns the `profile:`
+  block, `/daikenja:setup-project` owns a project's `projects:` entry, and
+  `last_checkpoint` belongs to `project-catchup`.
 - It does not archive, prune or trim anything on a schedule. Old resolved items
   stay until a human asks for them to go.

@@ -128,6 +128,22 @@ last released copy of the skill, so a result obtained any other way is void.
   `self-review`'s third-party check: findings must land on the invoker
   alone, never on `dev`.
 
+### `setup-project`
+
+- [`fixtures/setup-project-seed.md`](fixtures/setup-project-seed.md) -- a
+  `daikenja.yaml` with one unrelated project registered, an invented
+  `quill-gateway` repository that already keeps four decision records and a
+  three-question register, and three walks over it: a first registration under
+  a key that differs from the directory name, a re-registration of the same
+  path that must leave that key alone, and a seed run the user only partly
+  approves. The sources are seeded with one decision, one suggestion nobody
+  agreed to, one open item whose date exists nowhere, a superseded record the
+  user asks to drop while keeping its replacement, a standing team policy that
+  reads like one of the project decisions without being the same fact, and a
+  Confluence space no connector can reach. Exercises the tranche flow, the restate-before-proposing
+  rule against a user who replies about something else, and the refusal to
+  invent a date.
+
 Every fixture is synthetic: invented project, invented people, `example.com`
 links. Nothing in this directory may contain real work content, personal data or
 organization data.
