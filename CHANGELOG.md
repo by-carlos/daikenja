@@ -293,6 +293,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   verdict, the original draft and the evidence lines, with no rewrite and none
   offered as an alternative. The anchor rule is unchanged and no draft is
   special-cased (#78).
+- `preflight` no longer starts cold when it runs a second time on a revision
+  of a draft it already reported on in the same conversation. A live session
+  on 19-20 August 2026 saw run one end `needs 3 facts`, the user answer all
+  three with explicit directions, and run two end `needs 3 facts` again --
+  all new items, with nothing said about which earlier questions were now
+  settled, so the two runs never visibly converged. Step 1 now collects the
+  user's directions given since the earlier report and states each as
+  settled in one line, never re-raised; Step 10 reports that via a new
+  `Settled since last run:` line, and when a second consecutive run still
+  ends `needs facts`, states whether the remaining set is finite and names
+  all of it. The existing two-cycle structure inside a run is untouched, and
+  this is distinct from #78, which bars weak findings within a single run
+  rather than convergence across runs. Exercised by
+  `tests/fixtures/preflight-rerun.md` (#101).
 
 ## [0.4.0] - 2026-08-17
 
