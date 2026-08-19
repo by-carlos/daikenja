@@ -27,6 +27,8 @@ Write in prose or bullets, whichever you prefer. Useful things to pin down:
 - How you soften or sharpen a request.
 - Whether you use bullets or paragraphs by default.
 - Anything you have been told about your writing, good or bad.
+- Which spelling variant you write in -- Commonwealth/British is the shipped
+  default; say so here if you want US spelling instead.
 
 Delete everything below this line once you have written your own.
 
