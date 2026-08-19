@@ -5,6 +5,42 @@ are facts about current behaviour, not a roadmap -- nothing here is promised,
 scheduled, or in progress. A limitation leaves this file only when the
 behaviour actually changes.
 
+## On claude.ai
+
+The writing skills -- `compose`, `doc-review`, `preflight`, `self-review` and
+`thread` -- are uploaded there as five separate zips built by
+`scripts/build-claude-ai-skills.py`. Everything below was measured on
+19 August 2026 across six runs against the `preflight` fixtures.
+
+**Nothing dispatches.** claude.ai has no subagents, so `preflight`'s reviewers
+all run in one context and each has read the ones before it. That path finds
+planted content gaps and the unresolvable recipient conflict, and it invents no
+facts, but it cannot produce the isolation that makes a second opinion worth
+having. Every report says which way it ran in its `Reviewed:` line, and cycle 2
+re-reads rather than confirming.
+
+**A skill is not reliably picked up from the description alone.** A long pasted
+draft opening with "Poke holes in this before I send" was answered without the
+skill loading at all. Naming it -- "use the preflight skill on this" -- loaded
+it every time. This is about how the request is phrased, not about which skill.
+
+**There is no ledger, so `preflight`'s sixth check never passes.** It reports
+"already answered" as not checked rather than as a pass, which is the same
+honest gap it reports in Claude Code when no ledger is configured.
+
+**`remember-persona` and `setup-user` are not shipped there.** Nothing writes a
+persona entry on claude.ai, and a run that would have learned one says so and
+carries on. Creating the Drive folder and the files in it is `setup-user`'s job
+and happens in Claude Code.
+
+**Skills do not sync between surfaces.** An upload to claude.ai is per user and
+per skill, is not shared across an organization, and does not reach Claude Code
+or the API. A change to a skill here means re-uploading the zip by hand. This
+is Anthropic's design, not something Daikenja can package around.
+
+**Code execution must be enabled** on the account, on a Pro, Max, Team or
+Enterprise plan. Without it a custom skill does not load at all.
+
 ## Reviewer personas
 
 **Group-level personas are not supported.** `personas.md` is read as individual

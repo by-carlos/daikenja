@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The writing skills -- `compose`, `doc-review`, `preflight`, `self-review` and
+  `thread` -- can now be run on claude.ai. `scripts/build-claude-ai-skills.py`
+  builds one upload zip per skill into `dist/`, carrying the documents each one
+  reads and resolving their paths for a surface that has no
+  `${CLAUDE_PLUGIN_ROOT}`. Settings come from the `daikenja` folder in Google
+  Drive, so nothing needs uploading or keeping in sync. The `project-*` skills
+  and `meeting-review` stay Claude Code only by design -- they need the ledger,
+  and Claude Code remains the source of truth (#42).
+- `docs/future-work.md` records what claude.ai cannot do, measured on
+  19 August 2026: no reviewer dispatch, no ledger, no persona writing, no
+  syncing between surfaces, and skills that need to be named rather than
+  triggered by description on a long pasted draft (#42).
+
 - `CONTRIBUTING.md` and `SECURITY.md`, both written for a public repository:
   how to file an issue and open a pull request, the conventions that are easy
   to trip over (voice, ledger format, templates, fixtures), and a private
@@ -29,6 +42,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `catch up` are named as examples that stay, and `docs/reviewer-personas.md`
   binds the non-native readability check to the same floor so `preflight` does
   not flag them (#40).
+- `preflight` now states how the reviewers actually ran, on every report, in a
+  mandatory `Reviewed:` line. It previously raised a notice only when dispatch
+  was unavailable, which asked it to notice an absence -- across four runs the
+  notice appeared twice, and one of the silent runs claimed a fix was
+  "confirmed cycle 2" when no reviewer had read the revision. Cycle 2 now
+  re-reads in the sequential mode and never confirms. `README.md` and
+  `.claude-plugin/plugin.json` drop the flat "Claude Code only" claim for the
+  split between the two halves (#42).
 
 ## [0.4.0] - 2026-08-17
 
