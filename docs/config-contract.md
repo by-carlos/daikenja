@@ -338,7 +338,8 @@ two tiers exist, so that `compose` does not have to invent either.
 | `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
 | `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
-| `writing-style.md` | the user, by hand | Daikenja reads it and never edits it. |
+| `writing-style.md` -- creating the file | `setup-user` on absence | Copies the blank template if and only if no file exists, and never inspects content. Same rule as `personas.md`. |
+| `writing-style.md` -- content | the user by hand, and `learn-voice` on approval | `learn-voice` derives a proposal from writing samples the user supplies, shows the exact content it would write -- as a diff whenever the file already holds anything -- and writes only what the user approves. Nothing else edits it. |
 | `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
 
 **The table names the local defaults, and who may write does not change with
@@ -382,6 +383,16 @@ A learned entry is written without asking and reported afterwards, which is
 deliberate: an append is additive and reversible, and the report names the file
 and shows the exact entry so it can be edited or deleted. That licence covers
 new people only. Prose the user wrote by hand is never rewritten silently.
+
+**`writing-style.md` splits the same way, and its content writer asks every
+time.** `setup-user` owns creation on the same existence-only test, and
+`learn-voice` owns every content write. The two prose files differ only in what
+buys the write: an appended persona is additive, so it is silent and reported
+afterwards, while a derived writing style replaces the whole file and is
+therefore proposed in full, diffed against whatever is already there, and
+written only on approval. Neither skill may write the other's file, and
+`setup-user`'s never-inspect rule is unchanged -- `learn-voice` reads the file
+under its own contract, to show the user what would change.
 
 `setup-user` writes a fresh configuration by asking the user. It does not
 migrate, import, or convert anything from a previous Daikenja or from any
