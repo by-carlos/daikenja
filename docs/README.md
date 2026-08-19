@@ -15,6 +15,10 @@ redefines one. When a contract changes, it changes here and the skills follow.
   which a user cannot switch off, and `Defaults`, which a user's own
   `writing-style.md` layers on top of. The layering contract is fixed in
   `config-contract.md`.
+- [`response-format.md`](response-format.md) -- how a skill reports to the
+  user in the conversation: answer first, findings itemised, entries named
+  topic-first with the ID in parentheses, `profile.tone` scaling narration,
+  and a one-line report for a clean result.
 - [`substance-checks.md`](substance-checks.md) -- the six checks a request has
   to pass, shared by `compose` and `preflight`.
 - [`rewrite-rules.md`](rewrite-rules.md) -- the rules that bound any rewrite
