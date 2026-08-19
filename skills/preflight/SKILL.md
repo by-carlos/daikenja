@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
 metadata:
   owner: Carlos
-  version: 2
+  version: 3
   pairs-with: compose
 ---
 
@@ -25,7 +25,7 @@ Anything a reviewer raises that cannot be fixed from material already in the
 draft becomes a question back to the user. It never becomes an invented
 sentence. This skill has no send action.
 
-## The model this runs on
+## The model this context runs on
 
 Check this first, before Step 0.
 
@@ -50,14 +50,20 @@ one error the user cannot see by reading the output.
 **Say nothing when you are on Opus, and say nothing when you cannot tell.** A
 hedged nag on every run is worse than no notice at all.
 
+**This is about `preflight`'s own context, not the reviewers.** Each reviewer
+is dispatched on the model tier its archetype carries, per
+`docs/reviewer-personas.md` § What each reviewer runs on, whatever this context
+is running on. A weak busy reader is the intended behaviour; a weak adjudicator
+is not.
+
 ## Step 0: read the shared docs
 
 Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` -- the six checks in cycle 0.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reviewer-personas.md` -- the reviewer roster, the
-  two always-on checks, and the critique contract. This skill selects from that
-  roster and never invents a reviewer.
+  two always-on checks, the model tier each reviewer runs on, and the critique
+  contract. This skill selects from that roster and never invents a reviewer.
 - `${CLAUDE_PLUGIN_ROOT}/docs/rewrite-rules.md` -- the rules that bound every
   wording fix this skill applies.
 - `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice every rewrite is
@@ -190,6 +196,22 @@ would anchor it onto ground already covered.
 Isolation is the point. A reviewer that can see another reviewer's critique
 defers to it, and the second opinion stops being one.
 
+**Dispatch each reviewer on the model tier its archetype carries**, from
+`docs/reviewer-personas.md` § What each reviewer runs on. Pass the tier as the
+subagent's model at dispatch, as the family alias that table gives -- `haiku`,
+`sonnet` or `opus`, never a versioned model ID. A named addressee takes the
+tier of the archetype it embodies.
+
+**Do not raise or lower a tier to match the session.** The tiers are what each
+persona simulates, not a budget. The busy reader is *meant* to be weaker than
+the session -- a strong model asked to skim reads properly and then reports what
+a skimmer would have missed, which is a different signal -- and the risk reader
+is meant to be strong whatever the session is set to.
+
+If the dispatch available to you takes no model, dispatch anyway and say
+nothing. The tier is a preference, not a dependency, per `config-contract.md`'s
+standing rule: continue with reduced behaviour rather than stopping.
+
 At the same time, in this context, run the two checks that never dispatch --
 the AI-tell check and non-native English readability, both defined in
 `docs/reviewer-personas.md`.
@@ -262,8 +284,9 @@ writing style.
 
 ## Step 8: cycle 2 -- re-check once
 
-**Re-dispatch only the reviewers that raised something in cycle 1**, against the
-revised draft. They confirm resolved or restate.
+**Re-dispatch only the reviewers that raised something in cycle 1**, each on the
+same model tier it ran on then, against the revised draft. They confirm
+resolved or restate.
 
 - New wording findings are adjudicated and applied the same way.
 - New content findings join the questions list.
@@ -370,6 +393,12 @@ Run the reviewers in this context, sequentially, one brief at a time, and
 report it in the mandatory `Reviewed:` line of Step 10. That line, not a
 notice raised here, is what tells the user which run they got.
 
+**No dispatch means no model tiers either.** Every reviewer reads in this
+context on whatever the session is set to, so the busy reader is no longer
+weaker than the rest and the risk reader is no longer stronger. Nothing extra
+is said about it -- the `Reviewed:` line already reports that the run went this
+way, and the tiers are part of what that line is admitting was not available.
+
 The weakness is structural rather than incidental. A sequential reviewer has
 already read the ones before it and will defer to them, which is exactly the
 isolation that dispatching buys. Hold each brief separately and do not let a
@@ -382,7 +411,8 @@ survived, because it did not.
 |---|---|
 | No draft and no description given | Ask for one. Do not guess what the user wants to raise. |
 | A description with no draft | Cycle 0 only. Report the verdict and hand off to `compose`. Never draft one here. |
-| Subagent dispatch unavailable | Run the reviewers in sequence and say so in the mandatory `Reviewed:` line. Cycle 2 re-reads, it never **confirms**. |
+| Subagent dispatch unavailable | Run the reviewers in sequence and say so in the mandatory `Reviewed:` line. Cycle 2 re-reads, it never **confirms**. No model tier applies. |
+| The dispatch available takes no model | Dispatch anyway, on the session model, and say nothing. The tier is a preference, not a dependency. |
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
 | Every reviewer returns nothing | Report it plainly and hand back the draft unchanged. |
@@ -405,3 +435,7 @@ survived, because it did not.
 - It does not invent a reviewer. The roster in `docs/reviewer-personas.md` is
   fixed and changes only by pull request.
 - It does not run more than two cycles.
+- It does not let anyone change which model a reviewer runs on. The tiers live
+  in `docs/reviewer-personas.md` and change only by pull request, like the
+  roster itself. `CLAUDE_CODE_SUBAGENT_MODEL` still overrides them, because
+  that is Claude Code's own precedence and not something this skill controls.
