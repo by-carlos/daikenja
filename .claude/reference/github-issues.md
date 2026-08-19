@@ -94,6 +94,11 @@ defaults, so `documentation`, `enhancement` and `bug` cover most cases.
 **Leave the issue's board Status at its default.** Only a dedicated workflow
 tool, or an explicit request from the maintainer, may move an issue's Status.
 
+Issues from this repo go to the **"Claude Plugins"** project (project 3), a
+board shared with `by-carlos/claude-plugins` and `by-carlos/plan-staged-rollout`.
+Filter by the Repository field before reading anything off it as a view of this
+repo.
+
 The remaining board fields (priority, size, effort) are set by whoever files
 with board access, under the maintainer's own filing contract. That contract is
 deliberately not reproduced here, because it covers repos beyond this one.
