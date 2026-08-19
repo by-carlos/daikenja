@@ -181,6 +181,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   gap -- it is that a sequential reviewer has read the ones before it and
   cannot produce isolation, whatever it scores on a fixture. No skill
   behaviour changes (#85).
+- `preflight` Step 6 no longer refers a deletion back to the user as a missing
+  fact. The test was written as a one-way guard against inventing facts, so an
+  ambiguous case had only one safe-looking exit, and a run on 19 August 2026
+  asked whether "as discussed" was accurate when the repair was to cut the
+  phrase. The step now states both failure directions: a fix that only removes
+  or rearranges words already on the page is a wording fix even when the reason
+  to remove them turns on something only the sender knows, and a phrase is a
+  content gap only when the message needs the absent fact in order to stand.
+  The guard in the invention direction is unchanged, and no third
+  classification was added. Cutting an unearned "as discussed" or "as you know"
+  is the worked example (#79).
 
 ## [0.4.0] - 2026-08-17
 
