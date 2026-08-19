@@ -25,6 +25,8 @@ Read these before doing anything. Do not work from memory of them.
   this skill runs as a silent pre-flight when the goal is a request.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- how `writing_style` and
   `personas` resolve, and the failure-behavior table.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. `voice.md` governs the message; this governs everything around it.
 
 ## Input forms
 
@@ -159,7 +161,11 @@ When unsure, leave it out.
 
 ## Output format
 
-Exactly this. Nothing else.
+Exactly this. Nothing else. This shape satisfies `response-format.md`: the
+answer -- the message itself -- leads, and a clean run adds nothing around it.
+The Comment, when present, follows that contract: itemised over narrated,
+entries named topic-first with the ID in parentheses, `profile.tone` scaling
+how far it explains itself within the cap below.
 
 ```
 [the message]

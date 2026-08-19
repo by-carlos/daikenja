@@ -98,6 +98,8 @@ Read these before deriving anything, and do not work from memory of them:
    on top of, and which of its rules are `Fixed` rather than `Defaults`.
 3. `${CLAUDE_PLUGIN_ROOT}/templates/writing-style.md` -- the shape the proposal
    produces.
+4. `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the
+   user is shaped. The report in Step 8 follows it.
 
 If this skill and the config contract ever disagree, the contract wins and you
 say so.
@@ -343,7 +345,9 @@ further: content the user did not see in Step 6 is never written.
 
 ## Step 8: report
 
-Name the file, say what landed, and give the user what the file does not carry:
+Follows `response-format.md`: the result leads, the rest is itemised, and
+`profile.tone` scales the narration. Name the file, say what landed, and give
+the user what the file does not carry:
 
 ```
 Wrote ~/.claude/daikenja/writing-style.md. Five sections, from 214 of your

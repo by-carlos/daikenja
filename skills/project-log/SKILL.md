@@ -37,8 +37,11 @@ only place their detail lives. Do not work from memory of them.
   IDs, tails, Changelog, and the reading rules.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- where the config lives, how
   a project and its ledger are resolved, and what to do when config is missing.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. Proposed ledger lines stay in file grammar; the talk around them
+  follows this.
 
-If the two ever disagree with this skill, the contract wins and you say so.
+If they ever disagree with this skill, the contract wins and you say so.
 
 ## Step 1: get the material
 
@@ -213,7 +216,7 @@ Ledger: <path>              (creating it from the template)
 Decisions -- new
 - 2026-08-14 -- D-006 -- @carlos -- <body>
 
-Open items -- resolve O-003
+Open items -- resolving who is on call (O-003)
 - [x] 2026-08-09 -- O-003 -- @carlos -- <body> -> resolved 2026-08-14, see D-006
 
 Changelog
@@ -281,10 +284,12 @@ Context links carry no ID, so they are recorded by label instead: `+link
 touches links still writes a Changelog line -- it just names links instead of
 IDs.
 
-Then confirm in one or two lines: what was written, where, and the IDs.
+Then confirm in one or two lines: what was written, where, and the IDs --
+topic first, ID in parentheses, per `response-format.md`.
 
 ```
-Wrote 2 entries to C:/GitHub/atlas/.daikenja/ledger.md -- D-006, resolved O-003.
+Wrote 2 entries to C:/GitHub/atlas/.daikenja/ledger.md -- the pipeline
+decision (D-006), and resolved who is on call (O-003).
 ```
 
 ## Failure cases

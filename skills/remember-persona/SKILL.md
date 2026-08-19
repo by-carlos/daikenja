@@ -53,12 +53,13 @@ that would split the user's notes across two stores without telling them.
 **Never write the personas file from any other skill.** A skill that needs an
 entry recorded runs this one.
 
-## Step 0: read the contract
+## Step 0: read the contracts
 
 Read `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` before writing anything --
-how `profile.personas` resolves, and the failure-behavior table. Do not work
-from memory of it. If it and this skill ever disagree, the contract wins and you
-say so.
+how `profile.personas` resolves, and the failure-behavior table. Read
+`${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` for how the report in Step 6
+is shaped. Do not work from memory of them. If a contract and this skill ever
+disagree, the contract wins and you say so.
 
 ## Step 1: get the material
 
@@ -274,7 +275,8 @@ caller's own output rather than a block of its own -- `Learned: added S to
 
 Report the number of entries, not an assessment of them. Do not congratulate the
 user on the persona, and do not summarize what you think it means about the
-person.
+person. The report follows `response-format.md`: the result leads, and a
+write with nothing unusual about it earns nothing beyond the shapes above.
 
 ## Failure cases
 

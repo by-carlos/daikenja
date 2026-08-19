@@ -23,6 +23,8 @@ Read these before doing anything. Do not work from memory of them.
   grammar.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- `last_checkpoint`'s
   format and who writes what.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. The report in Step 4 follows it.
 
 ## Step 1: resolve config, project and ledger
 
@@ -81,17 +83,19 @@ No changes since <last_checkpoint>.
 
 ## Step 4: report the delta
 
-Group by section, newest change first. One line per entry, current state:
+Group by section, newest change first. One line per entry, current state.
+Topic first with the ID and the change in parentheses, per
+`response-format.md` -- the ledger line is ID-first, the reply is not:
 
 ```
 Since 2026-08-13T17:40Z:
 
 Decisions
-- D-002 (new) -- @priya -- Ramp the Harbor rollout 5% / 25% / 100% over three days.
+- Ramp the Harbor rollout 5% / 25% / 100% over three days (D-002, new) -- @priya
 
 Open items
-- O-001 (resolved) -- @sam -- Confirm the 30-day replica cost with finance. -> resolved 2026-08-14, see D-002
-- O-003 (new, @unassigned) -- Decide who is on call during the cutover window.
+- Confirm the 30-day replica cost with finance (O-001, resolved) -- @sam -> resolved 2026-08-14, see the ramp decision (D-002)
+- Decide who is on call during the cutover window (O-003, new) -- @unassigned
 
 Context links
 - Runbook (new) -- https://example.com/atlas/runbook

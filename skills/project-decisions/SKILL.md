@@ -20,6 +20,8 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. The result in Step 5 follows it.
 
 ## Step 1: resolve config, project and ledger
 
@@ -41,8 +43,8 @@ or a context link worth surfacing alongside it.
   naming it as a guess:
 
   ```
-  No decision found about "<query>". Closest thing on record: D-003 ("Freeze
-  schema changes from 2026-08-20..."), if that's what you meant.
+  No decision found about "<query>". Closest thing on record: the schema
+  freeze from 2026-08-20 (D-003), if that's what you meant.
   ```
 
 - **More than one plausible match.** List them briefly and ask which one, or
@@ -70,12 +72,14 @@ status. Do not repair it.
 
 ## Step 5: show the result
 
+Topic first with the ID and status in parentheses, per `response-format.md`:
+
 ```
-D-005 (current) -- @carlos -- Cut over on a Saturday, not a weekday evening --
+Cut over on a Saturday, not a weekday evening (D-005, current) -- @carlos --
 the rollback window is four hours and nobody wants that on a work night.
 [runbook](https://example.com/atlas/runbook)
   Supersedes:
-  D-002 -- @carlos -- Cut over on a weekday evening. [thread](https://example.com/t/4417)
+  Cut over on a weekday evening (D-002) -- @carlos. [thread](https://example.com/t/4417)
 ```
 
 Include the date on every entry shown. If the decision links a context link or

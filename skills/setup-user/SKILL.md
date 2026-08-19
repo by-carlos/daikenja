@@ -221,7 +221,9 @@ This is informational -- it never blocks the rest of setup.
 
 ## Step 6: confirm, and hand off
 
-One or two lines: what was written or left alone, and where.
+One or two lines: what was written or left alone, and where, per
+`${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- the result leads, and a
+clean run earns no report beyond it.
 
 ```
 Daikenja is set up. Wrote ~/.claude/daikenja/daikenja.yaml (profile: name=Carlos,

@@ -145,7 +145,10 @@ empty stops the run instead, per `config-contract.md` § Failure behavior.
 
 ## Step 5: report
 
-Report first, log second. The user often wants only the report.
+Report first, log second. The user often wants only the report. The shape
+below follows `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- read it
+before writing the reply; `profile.tone` scales any narration around the
+sections, never what is in them.
 
 ```
 Meeting: <what it was, when, and roughly how long or how many turns>
