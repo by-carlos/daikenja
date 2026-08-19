@@ -1,0 +1,44 @@
+name: Bug report
+description: Daikenja isn't working as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Daikenja reads and writes your own work content — ledgers, personas,
+        drafted messages. **Do not paste real work content here.** Reduce the
+        problem to a synthetic example, the way `tests/fixtures/` does, or
+        describe the shape of the input without its substance.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part is affected?
+      options:
+        - Message drafting (/compose, /preflight, /thread)
+        - Reviews (/doc-review, /self-review, /meeting-review)
+        - Project ledger (/project-log, /project-summary, /project-catchup, /project-decisions, /project-gaps)
+        - Setup and personas (/setup-user, /setup-project, /remember-persona)
+        - Install / marketplace
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+      placeholder: Steps to reproduce, expected vs. actual behavior.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Environment
+      description: Claude Code version, plugin version, and OS.
+      placeholder: "e.g. Claude Code 2.x, plugin 0.4.0, macOS 15"
+    validations:
+      required: false
