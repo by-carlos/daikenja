@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
 metadata:
   owner: Carlos
-  version: 3
+  version: 4
   pairs-with: compose
 ---
 
@@ -29,10 +29,11 @@ sentence. This skill has no send action.
 
 Check this first, before Step 0.
 
-The safety hinge is Step 6, where every proposed wording fix is tested against
-the draft and one that needs an absent fact is reclassified instead of applied.
-That judgment is the whole difference between a loop that revises and a loop
-that invents, and it is materially better on Opus.
+The safety hinge is Step 6, where every proposed fix is tested against the
+draft: one that needs an absent fact is reclassified instead of applied, and
+one that needs nothing outside the draft is applied instead of sent back as a
+question. That judgment is the whole difference between a loop that revises and
+a loop that invents, and it is materially better on Opus.
 
 **If you can tell you are not running on Opus, say this in one line, then
 carry on:**
@@ -223,11 +224,12 @@ meant.
 ## Step 6: adjudicate -- the safety hinge
 
 **Decide the wording-or-content call yourself. Do not trust the subagent's
-label.** A reviewer can mislabel a content gap as wording and smuggle an
-invented fact in through its suggested `Fix`. This is the one place that gets
-caught.
+label.** A reviewer can label either way round: it can call a content gap a
+wording fix and smuggle an invented fact in through its suggested `Fix`, and it
+can call a wording fix a content gap and send the user a question they did not
+need. This is the one place both get caught.
 
-Every proposed wording fix gets one test:
+Every proposed fix gets one test:
 
 > **Is this expressible using only material already in the draft?**
 
@@ -237,9 +239,48 @@ Every proposed wording fix gets one test:
   questions list with the fact named, and the suggested `Fix` is discarded
   rather than softened into place.
 
+**The test asks what the fix needs, not what the finding noticed.** A reviewer
+often notices a problem by reasoning about something outside the draft. That
+does not make the repair a content gap. Test the repair.
+
 Prior turns in this conversation are not a source of content, per
 `docs/rewrite-rules.md` § Prior conversation context. Knowing the answer does not
 license writing it in. If it belongs in the message, it is a question.
+
+### The hinge fails in two directions
+
+Both directions are wrong, and neither is a safe default to drift toward.
+
+**Inventing.** A fix that needs a fact the draft does not have is applied
+anyway, and the message goes out carrying something the user never said. This
+is the hinge's primary job and nothing below relaxes it: a fix that introduces
+a fact, number, date, owner or commitment is content, every time, whatever
+label the reviewer put on it.
+
+**Over-referring.** A fix that needs nothing outside the draft is sent back as
+a question. The user is asked for a fact the message did not need, and because
+the verdict line counts outstanding facts, a draft that was ready to send is
+reported as blocked. One unnecessary question also teaches the user that the
+questions are optional, which is how a real one gets skipped.
+
+**Deleting words is a wording fix.** A fix that only removes or rearranges what
+is already on the page needs no fact from outside the draft, so it stays a
+wording fix even when the reason to remove it turns on something only the
+sender knows. Cut the words and say so.
+
+Worked example. A reviewer flags "as discussed" in a draft whose reader may
+remember no such discussion, and the same for "as you know". The repair is to
+delete four words. The revised message says everything it said before without
+them, and nothing outside the draft was needed to write it -- so it is a
+wording fix, applied in Step 7, and it produces no question. Asking the user
+"is 'as discussed' accurate?" turns a deletion into a blocker.
+
+**When a phrase is a content gap.** Only when the message needs the absent fact
+in order to stand -- cut the phrase, and the draft loses something it depends
+on. "As we agreed on the call, I am proceeding on Tuesday" grounds the whole
+ask in an agreement, and deleting the clause leaves the ask with no basis, so
+what the agreement actually was is a question. "As discussed, here is the
+staging failure" grounds nothing, and deleting it costs the message nothing.
 
 ### Conflicts
 
@@ -415,6 +456,7 @@ survived, because it did not.
 | The dispatch available takes no model | Dispatch anyway, on the session model, and say nothing. The tier is a preference, not a dependency. |
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
+| A `Fix` only deletes or rearranges words already in the draft | Wording fix. Apply it. Do not ask the user whether the deleted phrase was accurate. |
 | Every reviewer returns nothing | Report it plainly and hand back the draft unchanged. |
 | The `personas` pointer does not resolve | Silent. Archetypes only. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
