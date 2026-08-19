@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `docs/config-contract.md` § Finding the current project no longer says that a
+  read skill stops when no `projects:` entry matches. It continues, because an
+  unregistered project can still have a ledger on disk and a ledger on disk wins
+  over the config. That behaviour landed with #47 and updated
+  `docs/reading.md` § Step A; the contradicting sentence in the contract was
+  left behind, so the two documents disagreed on the branch a reader is most
+  likely to check first. The corrected step states the rule and defers the
+  branch to `docs/reading.md`, which stays the single home for the shared read
+  recipe. No skill behaviour changes -- `project-catchup`'s failure table and
+  `project-summary` Step 4 already implement the continue path (#75).
+
 ### Added
 
 - The writing skills -- `compose`, `doc-review`, `preflight`,
@@ -39,6 +52,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   covering the scrub rule and the rendered-body-plus-explicit-OK gate before
   filing, and naming the two things the scrub deliberately does not cover --
   Daikenja's own config paths and the synthetic test fixtures (#15).
+- Two hard rules in `docs/voice.md` § Fixed that were written down nowhere:
+  **no profanity or slurs** in anything Daikenja generates, with quoted
+  material in a pasted draft or a log line still copied across untouched, and
+  **no shouting** -- no capitals for emphasis and no stacked exclamation marks,
+  since those read as anger whatever the writer intended (#28).
 
 ### Changed
 
@@ -50,6 +68,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `catch up` are named as examples that stay, and `docs/reviewer-personas.md`
   binds the non-native readability check to the same floor so `preflight` does
   not flag them (#40).
+- `docs/voice.md` is now split into a **`## Fixed`** tier that no user
+  `writing-style.md` can switch off and a **`## Defaults`** tier that a user's
+  file may narrow or replace, with every rule audited into one of them. Fixed
+  takes absolute dates and the whole "assume the reader is not a native English
+  speaker" block, which encodes the product premise rather than a taste
+  preference and was overridable until now. Defaults keeps the substitution
+  floor, the ~300-word length threshold and humor; the floor and humor are
+  marked narrowing-only, so a user can tighten them but cannot loosen either
+  past a Fixed rule. `docs/config-contract.md`, `templates/writing-style.md`,
+  `docs/rewrite-rules.md`, `docs/README.md`, `compose` and `preflight` all
+  restate the layering in terms of the two tiers; `compose` had also been
+  claiming two non-overridable rules since #23 removed the second one (#28).
 - `preflight` now states how the reviewers actually ran, on every report, in a
   mandatory `Reviewed:` line. It previously raised a notice only when dispatch
   was unavailable, which asked it to notice an absence -- across four runs the

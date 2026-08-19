@@ -77,7 +77,7 @@ missing piece to avoid the problem.
    the Comment. Never fix it silently.
 
 Apply the default voice from `docs/voice.md` throughout this step -- sentence
-length, word choice, absolute dates, the two non-overridable rules.
+length, word choice, absolute dates, and everything in its `## Fixed` tier.
 
 ## Step 4: voice
 
@@ -85,7 +85,8 @@ Read the user's `writing_style` prose. Resolve the pointer per
 `config-contract.md` § Resolving `writing_style` and `personas` -- it may name a
 local file or a Google Drive file, and the default is
 `~/.claude/daikenja/writing-style.md`. Whatever it resolves to layers on top of
-`docs/voice.md`; it never replaces it.
+`docs/voice.md`; it never replaces it, and it reaches that file's `## Defaults`
+tier only.
 
 - **A local pointer does not resolve.** One notice, then continue on
   `docs/voice.md` alone: "No writing-style.md at `<path>`, composing with the
@@ -99,7 +100,9 @@ local file or a Google Drive file, and the default is
   Zero overrides on top of the default voice is a valid configured state, not
   something to flag or apologize for.
 - **Resolves with content.** Apply it on top of the default voice. State once,
-  briefly, if something in it changed how you wrote this message.
+  briefly, if something in it changed how you wrote this message. A line that
+  contradicts a `## Fixed` rule is not applied; the Fixed rule stands and the
+  line is not treated as an unhonorable rule either, since nothing was broken.
 
 ## Step 5: personas (optional)
 

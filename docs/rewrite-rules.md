@@ -42,9 +42,9 @@ belongs in the message, it is reported as a question, never written in.
 ## Precedence over the default voice
 
 This document's no-invention rule outranks every rule in `docs/voice.md`,
-including the one `voice.md` marks non-overridable. That marking means a
-user's `writing-style.md` cannot switch the rule off -- it says nothing about
-how the rule ranks against this document. When a voice rule can be satisfied
+including everything in that file's `## Fixed` tier. The tier means a user's
+`writing-style.md` cannot switch those rules off -- it says nothing about how
+they rank against this document. When a voice rule can be satisfied
 only by adding a fact the source does not contain, it is not honored: it is
 reported as unhonorable per the section below, and the source wording stands
 unchanged. This holds for any voice rule that collides this way, not only the

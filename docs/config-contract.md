@@ -112,8 +112,12 @@ in:
 2. Compare against every `projects:` entry's `path`, normalized the same way.
 3. Take the **longest matching prefix**. Nested projects therefore resolve to
    the innermost one.
-4. No match means the project is unregistered. Read skills say so in one line
-   and stop. `project-log` offers to register it.
+4. No match means the project is unregistered. Every skill says so in one line
+   and then continues -- an unregistered project still has a ledger to read if
+   one exists on disk, and a ledger on disk wins over the config (see
+   [Finding the ledger](#finding-the-ledger)). `project-log` additionally offers
+   to register it. The branch a read skill follows is in
+   [`reading.md`](reading.md) § Step A.
 
 ### Finding the ledger
 
@@ -306,14 +310,21 @@ of it, and does not replace it**: the default applies except where the user's
 own prose says otherwise. This holds wherever that prose lives -- the layering
 rule is about content, not about storage.
 
-One rule is not overridable, because it is a frozen decision about all
-generated output rather than a matter of taste:
+The default voice sorts its own rules into two tiers, and layering respects
+them:
 
-- Absolute dates, never relative ones.
+- **Fixed.** A user's prose cannot turn these off. They are frozen decisions
+  about all generated output rather than matters of taste. Absolute dates are
+  one of them.
+- **Defaults.** A user's prose may narrow or replace these.
 
-The default voice file itself is **not part of this contract**. It belongs to
-`compose`, its main consumer. This document fixes only the layering rule, so
-that `compose` does not have to invent one.
+A line in a user's prose that contradicts a Fixed rule is not an override and
+has no effect.
+
+Which rule sits in which tier is the voice file's call, not this document's, and
+the file itself is **not part of this contract**. It belongs to `compose`, its
+main consumer. This document fixes only the layering rule and the fact that the
+two tiers exist, so that `compose` does not have to invent either.
 
 ## Who writes what
 
