@@ -1,6 +1,6 @@
 ---
 name: project-log
-description: Records decisions and open items in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. It proposes entries and writes nothing without approval.
+description: Records decisions and open items in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. A short fact the user dictates is written in the same turn and shown verbatim; everything else is proposed first and written only on approval.
 metadata:
   owner: Carlos
   version: 1
@@ -13,9 +13,13 @@ The ledger is the project's memory. This skill is the only thing that writes it.
 
 ## Hard rules
 
-**Never write without approval.** Show the exact lines first, wait for the user
-to say yes, then write. "Yes" means the user said so in this conversation. An
-approval of one proposal does not carry to the next one.
+**Never write lines the user has not stated or approved.** For interpreted
+material -- threads, pastes, transcripts, anything this skill classifies --
+show the exact lines first, wait for the user to say yes, then write. "Yes"
+means the user said so in this conversation, and an approval of one proposal
+does not carry to the next one. For a fact the user dictated (Step 5's
+same-turn path), the dictation is the approval, given in advance -- and it
+stays valid only while the written lines add nothing the user did not say.
 
 **Never invent an entry.** Everything written comes from the material the user
 gave you. If something is implied but not said, put it in the proposal as a
@@ -154,6 +158,43 @@ section's maximum but never the Changelog's, and a retired ID is never reissued.
 
 ## Step 5: build the proposal
 
+### The same-turn path for dictated facts
+
+When the material is a fact the user dictated, skip the proposal: write
+immediately, then show the exact written lines and the Changelog line
+verbatim. The dictation is the approval. A correction afterwards ("change the
+owner to @sam") is an ordinary edit with its own `~D-nnn` Changelog line, so
+nothing is lost -- the Changelog records every write.
+
+A run takes this path only when **all four** of these hold. Fail any one and
+the run follows propose-then-wait below.
+
+1. **The material is the user's own statement, typed as the request itself.**
+   Of Step 1's four kinds, only "a plain description was given" qualifies. A
+   link, a paste, or a transcript never does, even when the user wrote parts
+   of that thread -- there this skill selects and interprets.
+2. **The user's phrasing settles the classification.** The user names the kind
+   ("log the decision that...", "add an open item...") or the statement
+   classifies without judgement. If you have to weigh decision against open
+   item, it is not dictated.
+3. **Every field resolves without a question.** The date is today, or a date
+   the user gave. The owner is who the user named, the user for their own
+   call, else `@unassigned` -- a valid value, not a gap to ask about. The body
+   is the user's statement fitted to the line grammar, not rephrased. The
+   moment a clarifying question is genuinely needed, drop to
+   propose-then-wait.
+4. **The operation is byte-determined.** New entries, and operations the user
+   names by ID ("mark O-003 resolved", "delete D-002"). The duplicate check
+   below still runs first: a hit the user did not name themselves drops the
+   run to propose-then-wait, because merging or superseding is
+   interpretation. At most about three entries per dictation -- more is a
+   batch and follows propose-then-wait.
+
+Scaffolding a missing ledger, ledger repairs, and every run entered from
+another skill (`project-log via <skill>`) never take this path. The Step 3
+confirmation settles whether a ledger belongs there at all, which no dictation
+can, and material handed over by a skill was classified, not dictated.
+
 ### Classify before you write
 
 Getting this wrong pollutes the ledger, and the ledger is what every other skill
@@ -168,8 +209,14 @@ reads.
 - A **question is not a decision**, and a **proposal is not a decision**. If the
   material shows a proposal and no agreement, that is an open item at most.
 
-When you cannot tell, ask. One line, one question. Do not resolve the ambiguity
-yourself and do not log both readings.
+When you cannot tell, ask -- but never serially. Collect every clarifying
+question the run needs -- classification, owners, links, anything -- after
+Step 4 and the duplicate check, and ask them all in one round, one line each,
+in the proposal's "Questions before I write" block. A question the user
+answered, or that the material or config already answers, is never asked again
+in the run. One follow-up question is allowed only when the user's own answer
+created a new ambiguity, and it must name that answer as the cause. Do not
+resolve an ambiguity yourself and do not log both readings.
 
 ### Attribute correctly
 
@@ -246,7 +293,8 @@ Stop and wait for the user.
 - **Partly approved** ("just the first two", "drop the second one"). Write only
   what was approved. Do not argue for the rest.
 - **Edited** ("change the owner to @sam"). Show the corrected block and wait
-  again. A changed line is a new proposal.
+  again. A changed line is a new proposal -- but it re-opens no settled
+  question. Ask nothing the run has already resolved.
 - **Rejected.** Write nothing. Say nothing was written.
 
 Silence is not approval. Neither is the user replying about something else.
@@ -291,6 +339,12 @@ topic first, ID in parentheses, per `response-format.md`.
 Wrote 2 entries to C:/GitHub/atlas/.daikenja/ledger.md -- the pipeline
 decision (D-006), and resolved who is on call (O-003).
 ```
+
+When a written entry names or links another document in the project, offer the
+follow-up instead of leaving it to the user to raise elsewhere: "The rollout
+decision (D-006) points at docs/rollout.md -- update it to match?" Updating
+that document is outside this skill's write scope, so it happens only on the
+user's yes, as its own change -- never under the ledger write's approval.
 
 ## Failure cases
 
