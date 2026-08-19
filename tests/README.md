@@ -146,7 +146,7 @@ last released copy of the skill, so a result obtained any other way is void.
 
 ### `learn-voice`
 
-- [`fixtures/learn-voice-samples.md`](fixtures/learn-voice-samples.md) -- 32 of
+- [`fixtures/learn-voice-samples.md`](fixtures/learn-voice-samples.md) -- 33 of
   the invoker's own messages across four sources and three audiences, sized
   deliberately between the corpus floor and the corpus bar so a run has to say
   the evidence is thin. Six traits are seeded to be found (openers, a

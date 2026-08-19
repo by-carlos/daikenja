@@ -191,9 +191,11 @@ carry a frequency is one example, and one example is not a habit.
 
 Only now write the proposed file, from the Step 3 evidence alone.
 
-**Keep the template's five headings**, and add more only where the evidence
-demands one (`## Humor`, `## How I disagree`, `## Habits to watch` are the
-usual candidates):
+**Keep the template's `# Writing style` title and its five headings**, drop the
+instructional preamble underneath the title -- it is guidance for a user filling
+the file in by hand -- and add further headings only where the evidence demands
+one (`## Humor`, `## How I disagree`, `## Habits to watch` are the usual
+candidates):
 
 ```
 ## Openings and closings
@@ -233,7 +235,9 @@ real overrides of the `Defaults` tier and they go in.
 
 **Quote fragments of style, never fragments of content.** "Quick one --" as an
 opener is style. A sentence naming a customer, a system or a number is content,
-and it does not go in the file even as an example.
+and it does not go in the file even as an example. Trim every quote to the part
+that carries the style: `unless you feel strongly` is the softener, and the
+clause it was attached to brings a project, a date or both along with it.
 
 **Flag the habits that read badly** in their own section -- hedging,
 throat-clearing, over-apologizing, walls of text. The user asked to know, and a
@@ -286,6 +290,13 @@ the user's settings across two stores without telling them.
 **Show the complete file.** Not a summary of it, not the headings, not "and a
 few more lines" -- the exact content that would be written. The user is
 approving bytes.
+
+**Lines the user wrote by hand are carried into the proposal.** Build the
+proposal on top of what is already in the file rather than beside it: their
+lines stay, and the derived ones extend or sit under them. Where the evidence
+contradicts one of their lines, keep the line and say what contradicted it --
+removing it is a proposal of its own and the user makes that call. A user who
+typed a rule meant it, and the samples are the weaker evidence of the two.
 
 **When the file already holds content, show a diff as well**, current against
 proposed, so nothing of theirs disappears unnoticed:
@@ -386,6 +397,7 @@ missing thing is the task itself -- the same rule every Daikenja skill follows.
 | More than one Drive file carries the pointer's name | **Stop.** Name both and say an earlier write was probably interrupted. Never guess which is current. |
 | The Drive replacement fails after the new file was created | The old file is still there and untouched. Say both files now carry the name, name the one just written, and stop. Never trash the old file to tidy up an unverified write. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the proposal somewhere else. |
+| The evidence contradicts a line the user wrote by hand | Keep the line, and say what contradicted it. Removing it is a proposal of its own, shown in the diff, and the user decides. |
 | The user approves part of the proposal | Write that part, shown once more in full first. Partial approval is a normal answer. |
 | The user does not answer | Write nothing. The proposal stays in the conversation. |
 

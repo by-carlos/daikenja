@@ -22,12 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   drops any observation that contradicts a `Fixed` rule in `docs/voice.md`
   because such a line would have no effect. A file that already holds content is
   diffed, never overwritten (#58).
-- `tests/fixtures/learn-voice-samples.md`, 32 of the invoker's own messages
+- `tests/fixtures/learn-voice-samples.md`, 33 of the invoker's own messages
   across four sources and three audiences, with six traits seeded to be found,
   four to be observed and kept out, and two never to be recorded. Four walks
   cover the untouched template, an unseparable block that must be refused, an
   under-the-floor corpus, and a re-run that must diff (#58).
-
 - The writing skills -- `compose`, `doc-review`, `preflight`,
   `remember-persona`, `self-review` and `thread` -- can now be run on
   claude.ai. `scripts/build-claude-ai-skills.py` builds one upload zip per
@@ -100,7 +99,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   afterwards, while a derived writing style replaces the whole file and is
   therefore proposed in full and written only on approval. `setup-user`'s
   never-inspect rule is untouched (#58).
-
 - `preflight` dispatches each reviewer on a model tier matched to what that
   reviewer simulates, rather than running all nine on whatever the session is
   set to. The busy reader and the machine reader take `haiku` -- both simulate
