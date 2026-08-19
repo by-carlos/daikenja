@@ -7,35 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- `docs/config-contract.md` § Finding the current project no longer says that a
-  read skill stops when no `projects:` entry matches. It continues, because an
-  unregistered project can still have a ledger on disk and a ledger on disk wins
-  over the config. That behaviour landed with #47 and updated
-  `docs/reading.md` § Step A; the contradicting sentence in the contract was
-  left behind, so the two documents disagreed on the branch a reader is most
-  likely to check first. The corrected step states the rule and defers the
-  branch to `docs/reading.md`, which stays the single home for the shared read
-  recipe. No skill behaviour changes -- `project-catchup`'s failure table and
-  `project-summary` Step 4 already implement the continue path (#75).
-
-### Changed
-
-- `docs/voice.md` § Assume the reader is not a native English speaker split its
-  last bullet, "International (US) English. Neutral, no regional slang or
-  idiom.", into two Fixed rules: neutral English with no regional slang or
-  idiom, and holding to one spelling variant consistently within a message
-  (never "organize" next to "colour"). Which variant to use is a new
-  `## Defaults` rule, § Spelling variant, whose shipped default flips from US
-  to Commonwealth/British spelling, on the reasoning that a non-native reader
-  was more likely taught Commonwealth spelling than US -- the same premise the
-  surrounding Fixed block already rests on. Unlike the other Defaults rules
-  audited in #28, this one is replaceable outright rather than narrowing-only,
-  since a user writing to a US audience has an equally legitimate claim on US
-  spelling. `templates/writing-style.md` now prompts the user to name their
-  variant (#66).
-
 ### Added
 
 - The writing skills -- `compose`, `doc-review`, `preflight`,
@@ -100,6 +71,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `docs/voice.md` § Assume the reader is not a native English speaker split its
+  last bullet, "International (US) English. Neutral, no regional slang or
+  idiom.", into two Fixed rules: neutral English with no regional slang or
+  idiom, and holding to one spelling variant consistently within a message
+  (never "organize" next to "colour"). Which variant to use is a new
+  `## Defaults` rule, § Spelling variant, whose shipped default flips from US
+  to Commonwealth/British spelling, on the reasoning that a non-native reader
+  was more likely taught Commonwealth spelling than US -- the same premise the
+  surrounding Fixed block already rests on. Unlike the other Defaults rules
+  audited in #28, this one is replaceable outright rather than narrowing-only,
+  since a user writing to a US audience has an equally legitimate claim on US
+  spelling. `templates/writing-style.md` now prompts the user to name their
+  variant (#66).
+
 - `skills/setup-user/SKILL.md` no longer registers a project. Step 5 is gone,
   the remaining steps renumber, and the skill closes by handing off to
   `/daikenja:setup-project`, so a first-ever run is still one continuous flow
@@ -145,6 +130,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   re-reads in the sequential mode and never confirms. `README.md` and
   `.claude-plugin/plugin.json` drop the flat "Claude Code only" claim for the
   split between the two halves (#42).
+
+### Fixed
+
+- `docs/config-contract.md` § Finding the current project no longer says that a
+  read skill stops when no `projects:` entry matches. It continues, because an
+  unregistered project can still have a ledger on disk and a ledger on disk wins
+  over the config. That behaviour landed with #47 and updated
+  `docs/reading.md` § Step A; the contradicting sentence in the contract was
+  left behind, so the two documents disagreed on the branch a reader is most
+  likely to check first. The corrected step states the rule and defers the
+  branch to `docs/reading.md`, which stays the single home for the shared read
+  recipe. No skill behaviour changes -- `project-catchup`'s failure table and
+  `project-summary` Step 4 already implement the continue path (#75).
 
 ## [0.4.0] - 2026-08-17
 
