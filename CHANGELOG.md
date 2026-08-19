@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `/daikenja:learn-voice`, a slash-only skill that derives a proposed
+  `writing-style.md` from writing samples the user supplies. That file was
+  created blank and nothing had ever been able to fill it in, so for anyone who
+  did not write one by hand the layering contract resolved to the default voice
+  and the feature quietly did nothing. The skill works in two passes -- evidence
+  with registers and frequencies first, synthesis second -- shows the complete
+  proposed file, and writes only what the user approves. It reads only samples
+  the user states are their own, stops when authorship in a pasted block cannot
+  be separated, stops below a floor of 30 messages rather than describing a
+  voice from three, records style and never facts about people or projects, and
+  drops any observation that contradicts a `Fixed` rule in `docs/voice.md`
+  because such a line would have no effect. A file that already holds content is
+  diffed, never overwritten (#58).
+- `tests/fixtures/learn-voice-samples.md`, 32 of the invoker's own messages
+  across four sources and three audiences, with six traits seeded to be found,
+  four to be observed and kept out, and two never to be recorded. Four walks
+  cover the untouched template, an unseparable block that must be refused, an
+  under-the-floor corpus, and a re-run that must diff (#58).
+
 - The writing skills -- `compose`, `doc-review`, `preflight`,
   `remember-persona`, `self-review` and `thread` -- can now be run on
   claude.ai. `scripts/build-claude-ai-skills.py` builds one upload zip per
@@ -70,6 +89,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   since those read as anger whatever the writer intended (#28).
 
 ### Changed
+
+- `docs/config-contract.md` § Who writes what now splits `writing-style.md` into
+  creation and content, the same way `personas.md` is split, and names
+  `learn-voice` as its content writer. The old row said the file was written by
+  the user by hand and that Daikenja never edits it, which a skill that writes it
+  would have contradicted -- and the contract wins over a skill, so the skill
+  would simply have been wrong. The paragraph next to it fixes what buys each
+  write: an appended persona is additive, so it is silent and reported
+  afterwards, while a derived writing style replaces the whole file and is
+  therefore proposed in full and written only on approval. `setup-user`'s
+  never-inspect rule is untouched (#58).
 
 - `preflight` dispatches each reviewer on a model tier matched to what that
   reviewer simulates, rather than running all nine on whatever the session is
