@@ -15,6 +15,16 @@ Instructions for Claude Code and other agents working in this repo.
 
 ## Releasing
 
+- **Never move `release` without bumping `version` in
+  `.claude-plugin/plugin.json`.** Claude Code decides whether to update an
+  installed plugin by comparing version strings -- if two refs resolve to the
+  same version, it skips the update. An unbumped fast-forward therefore ships
+  nothing and **fails silently**, which is worse than not shipping at all.
+- **Rollback is forward-only.** To undo a released change: revert it on `main`
+  as a normal commit, bump the patch version, tag, release, and fast-forward
+  `release` onto it. **Never** point `release` at an older commit and never
+  force-push it -- consumers already on the newer version string would not
+  downgrade, and the branch would no longer match any released tag.
 - **Changelog as-you-go, under `## [Unreleased]`.** Add entries to
   `CHANGELOG.md` under an `## [Unreleased]` heading as changes land. This
   records *what* changed without declaring a version. Never write a
