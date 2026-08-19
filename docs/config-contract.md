@@ -112,8 +112,12 @@ in:
 2. Compare against every `projects:` entry's `path`, normalized the same way.
 3. Take the **longest matching prefix**. Nested projects therefore resolve to
    the innermost one.
-4. No match means the project is unregistered. Read skills say so in one line
-   and stop. `project-log` offers to register it.
+4. No match means the project is unregistered. Every skill says so in one line
+   and then continues -- an unregistered project still has a ledger to read if
+   one exists on disk, and a ledger on disk wins over the config (see
+   [Finding the ledger](#finding-the-ledger)). `project-log` additionally offers
+   to register it. The branch a read skill follows is in
+   [`reading.md`](reading.md) § Step A.
 
 ### Finding the ledger
 

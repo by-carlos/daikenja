@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `docs/config-contract.md` § Finding the current project no longer says that a
+  read skill stops when no `projects:` entry matches. It continues, because an
+  unregistered project can still have a ledger on disk and a ledger on disk wins
+  over the config. That behaviour landed with #47 and updated
+  `docs/reading.md` § Step A; the contradicting sentence in the contract was
+  left behind, so the two documents disagreed on the branch a reader is most
+  likely to check first. The corrected step states the rule and defers the
+  branch to `docs/reading.md`, which stays the single home for the shared read
+  recipe. No skill behaviour changes -- `project-catchup`'s failure table and
+  `project-summary` Step 4 already implement the continue path (#75).
+
 ### Added
 
 - `CONTRIBUTING.md` and `SECURITY.md`, both written for a public repository:
