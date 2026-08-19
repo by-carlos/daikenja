@@ -46,16 +46,24 @@ Not the other reviewers, not what they found, and not the substance-check
 verdict that ran before it -- showing that anchors the reviewer onto ground
 already covered.
 
-Every reviewer is bound by the same four rules, whatever its lens:
+Every reviewer is bound by the same five rules, whatever its lens:
 
 1. **Anchor every finding to a span of the draft.** A finding that cannot quote
    the phrase it is reacting to is noise and gets discarded.
-2. **Never rewrite the message.** Reviewers return findings. The rewrite happens
+2. **Raise it only if it changes how the message lands.** A finding survives
+   only if the draft would land materially worse without the fix: the reader
+   misses the ask or the deadline, acts on the wrong thing, takes an
+   implication the sender did not mean, or reads a sentence that could be
+   quoted back at them. A consequence you can only state as a possibility --
+   "a tired reader could misread this", "a machine reader might parse this two
+   ways" -- has not cleared the bar. Discard it rather than downgrading it to
+   a nitpick.
+3. **Never rewrite the message.** Reviewers return findings. The rewrite happens
    in one place, and this is not it.
-3. **Never invent a fact.** If the fix needs a number, a date, an owner or a
+4. **Never invent a fact.** If the fix needs a number, a date, an owner or a
    constraint the draft does not contain, the finding is `content` and the
    `Missing` field names what is absent. Never guess its value.
-4. **Say nothing rather than pad.** A draft that survives your lens gets "no
+5. **Say nothing rather than pad.** A draft that survives your lens gets "no
    findings". Manufacturing a finding to look useful is the failure mode this
    roster is most exposed to, because nine reviewers each finding one thing
    produces nine findings whether or not the draft has nine problems.
@@ -66,11 +74,19 @@ Every finding comes back in exactly this shape:
 
 ```
 Anchor:  "<short quote of the exact phrase you are reacting to>"
-Problem: <what goes wrong for this specific reader>
+Problem: <what goes wrong for this specific reader, and what it costs>
 Type:    wording | content
 Fix:     <the concrete rewrite>          -- wording only
 Missing: <what fact is absent>           -- content only, never a guess at its value
 ```
+
+**Two bars, and a finding clears both or it is dropped.** `Anchor` is the
+first: no span, no finding. `Problem` is the second, and it is a statement of
+consequence, not of what you noticed -- name what the reader does differently
+because the phrase is there. A `Problem` that only reports the reviewer's own
+reaction, or that has to hedge the consequence into a possibility, is discarded
+exactly as an unanchored finding is. Neither bar substitutes for the other, and
+neither is relaxed because the draft has otherwise come back clean.
 
 **`wording`** means the fix can be written using only material already in the
 draft. **`content`** means it cannot. Reviewers label their own findings, but
@@ -262,6 +278,11 @@ are here for the argument, not the figures.
 These run in `preflight`'s own context, always, on every draft. They are
 properties of the text rather than a different reader, so a separate head adds
 nothing.
+
+**Both are bound by the two bars in § The critique contract.** Running in this
+context is not a licence to report what a dispatched reviewer would have had to
+discard: a sentence that is merely long, or a phrase that is merely capable of
+two readings, is a finding only when the reader lands somewhere different for it.
 
 **The AI-tell check.** Does this read as machine-written? Tidy tricolons,
 hollow transitions ("that said", "at the end of the day"), symmetrical
