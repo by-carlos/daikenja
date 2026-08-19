@@ -130,6 +130,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   re-reads in the sequential mode and never confirms. `README.md` and
   `.claude-plugin/plugin.json` drop the flat "Claude Code only" claim for the
   split between the two halves (#42).
+- `.github/workflows/ci.yml` pins every third-party `uses:` reference
+  (`actions/checkout`, `actions/setup-python`, `actions/setup-node`) to its
+  current release commit SHA instead of a mutable tag, so a repointed tag
+  upstream can no longer change what CI runs silently (#22).
 
 ### Fixed
 
