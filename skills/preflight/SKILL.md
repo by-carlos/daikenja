@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
 metadata:
   owner: Carlos
-  version: 4
+  version: 5
   pairs-with: compose
 ---
 
@@ -217,9 +217,18 @@ At the same time, in this context, run the two checks that never dispatch --
 the AI-tell check and non-native English readability, both defined in
 `docs/reviewer-personas.md`.
 
-**Discard any finding with no anchor.** A finding that cannot quote the span it
-is reacting to is too vague to act on. Do not go looking for what it might have
-meant.
+**Discard any finding that misses either bar in `docs/reviewer-personas.md`
+§ The critique contract.** A finding that cannot quote the span it is reacting
+to is too vague to act on, and a finding whose stated cost is only that a reader
+might land somewhere else has not said what the draft loses by keeping the
+phrase. Discard both outright. Do not go looking for what a finding might have
+meant, and do not carry a weak one forward as a nitpick -- a finding that was
+not worth applying is not worth mentioning either.
+
+**Discarding is not overruling the reviewer.** Both bars are part of the brief
+every reviewer was given, so a finding that misses one was never within the
+contract to begin with. This is not the same as disagreeing with a finding that
+clears both, which Step 6 and § Conflicts handle.
 
 ## Step 6: adjudicate -- the safety hinge
 
@@ -420,7 +429,35 @@ says it did has invented the one thing the second cycle exists to buy.
 | `guided` | All six checks, every finding with its anchor, and the reasoning behind each fix. |
 
 **A clean draft produces a short report, not a padded one.** If every reviewer
-returns nothing, say so plainly and hand back the draft unchanged.
+returns nothing -- because nothing was raised, or because nothing raised cleared
+the two bars -- say so plainly and hand back the draft unchanged.
+
+That report is the verdict, the original draft and the evidence lines, and
+nothing else:
+
+```
+Verdict: ready to send
+
+<the draft, exactly as the user gave it>
+
+Nothing to fix. No reviewer found anything that would change how this lands.
+
+Reviewers: busy reader (always on), the machine reader (the ask is a dated
+question someone may action from a summary)
+
+Reviewed: dispatched, each reviewer reading cold.
+Applied: no fixes -- cycle 2 skipped.
+```
+
+**No rewrite is offered on this path, not even as an option.** There is no
+`Needs you` list, no nitpick, and no alternative version alongside the original.
+A user who asked whether a draft was ready and gets back a criticism and a
+replacement reads the original as having fallen short, whatever the covering
+sentence says -- so the clean answer has to look clean. Offering a second version
+"in case you prefer it" is the padded report wearing a hedge.
+
+This is the one case the loop exists to handle well: a draft that really is fine
+and should go out now.
 
 ## When dispatch is unavailable
 
@@ -455,9 +492,10 @@ survived, because it did not.
 | Subagent dispatch unavailable | Run the reviewers in sequence and say so in the mandatory `Reviewed:` line. Cycle 2 re-reads, it never **confirms**. No model tier applies. |
 | The dispatch available takes no model | Dispatch anyway, on the session model, and say nothing. The tier is a preference, not a dependency. |
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
+| A finding states its cost only as a possibility | Discard it. "Someone could misread this" with nothing behind it has not cleared the second bar, and a nitpick in the report is the padding it was discarded to prevent. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
 | A `Fix` only deletes or rearranges words already in the draft | Wording fix. Apply it. Do not ask the user whether the deleted phrase was accurate. |
-| Every reviewer returns nothing | Report it plainly and hand back the draft unchanged. |
+| Every reviewer returns nothing, or nothing they returned survived the bars | Verdict, the original draft unchanged, evidence lines. No rewrite, and none offered as an alternative. |
 | The `personas` pointer does not resolve | Silent. Archetypes only. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-contract.md`. |

@@ -192,6 +192,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The guard in the invention direction is unchanged, and no third
   classification was added. Cutting an unearned "as discussed" or "as you know"
   is the worked example (#79).
+- `preflight` no longer pads the report on a draft that has nothing wrong with
+  it. The reviewer contract required a finding to quote the span it reacted to
+  but never required the fix to be worth making, so a run on 19 August 2026
+  returned `ready to send` on the clean control draft and then added a wording
+  nitpick and a full rewritten version beside it -- which reads as the original
+  having fallen short, whatever the covering sentence says.
+  `docs/reviewer-personas.md` now sets a second bar next to the anchor: a
+  finding survives only if the draft would land materially worse without the
+  fix, and a cost that can only be stated as a possibility is discarded exactly
+  as an unanchored finding is. The two always-on checks are bound by both bars
+  as well. `preflight` Step 5 discards on either bar and carries nothing
+  forward as a nitpick, and Step 10 states what the clean report is: the
+  verdict, the original draft and the evidence lines, with no rewrite and none
+  offered as an alternative. The anchor rule is unchanged and no draft is
+  special-cased (#78).
 
 ## [0.4.0] - 2026-08-17
 
