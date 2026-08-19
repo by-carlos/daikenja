@@ -28,10 +28,24 @@ it every time. This is about how the request is phrased, not about which skill.
 "already answered" as not checked rather than as a pass, which is the same
 honest gap it reports in Claude Code when no ledger is configured.
 
-**`remember-persona` and `setup-user` are not shipped there.** Nothing writes a
-persona entry on claude.ai, and a run that would have learned one says so and
-carries on. Creating the Drive folder and the files in it is `setup-user`'s job
-and happens in Claude Code.
+**`setup-user` is not shipped there.** Creating `~/.claude/daikenja/` is its
+whole job, and the folder and the files inside it are made in Claude Code. A
+claude.ai session that finds no `daikenja` folder in Drive cannot create one.
+
+**`remember-persona` writes to Drive, and only to Drive.** It appends the entry
+by the replace-and-verify sequence in `docs/config-contract.md` -- download,
+splice, create the replacement in the same folder, read it back, then trash the
+old copy. Verified on 19 August 2026: the template was preserved byte for byte,
+the entry landed below it with its recorded date, and one file was left in the
+folder. The local path is not a fallback on this surface. The filesystem a skill
+can reach there is a sandbox that is discarded with the session, so writing an
+entry to it would report a success and lose the prose; when Drive cannot be
+reached the skill prints the entry for the user to paste instead.
+
+**Each connector call is approved separately.** That write asked four times --
+download, create, download again, trash -- and a denial partway through leaves
+the sequence unfinished. "Always allow" turns it into one approval for the
+session. This is claude.ai's connector prompt, not something Daikenja controls.
 
 **Skills do not sync between surfaces.** An upload to claude.ai is per user and
 per skill, is not shared across an organization, and does not reach Claude Code

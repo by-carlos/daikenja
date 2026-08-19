@@ -9,19 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The writing skills -- `compose`, `doc-review`, `preflight`, `self-review` and
-  `thread` -- can now be run on claude.ai. `scripts/build-claude-ai-skills.py`
-  builds one upload zip per skill into `dist/`, carrying the documents each one
+- The writing skills -- `compose`, `doc-review`, `preflight`,
+  `remember-persona`, `self-review` and `thread` -- can now be run on
+  claude.ai. `scripts/build-claude-ai-skills.py` builds one upload zip per
+  skill into `dist/`, carrying the documents and templates each one
   reads and resolving their paths for a surface that has no
   `${CLAUDE_PLUGIN_ROOT}`. Settings come from the `daikenja` folder in Google
   Drive, so nothing needs uploading or keeping in sync. The `project-*` skills
   and `meeting-review` stay Claude Code only by design -- they need the ledger,
   and Claude Code remains the source of truth (#42).
+- `remember-persona` appends its entry to the Drive `personas.md` on claude.ai,
+  by the replace-and-verify sequence the config contract already defined.
+  Verified on 19 August 2026: the template survived byte for byte, the entry
+  landed below it with its recorded date, and the superseded copy was trashed
+  leaving one file in the folder. The local path is not a fallback there -- the
+  filesystem a skill can reach is discarded with the session, so writing to it
+  would report a success and lose the prose (#42).
 - `docs/future-work.md` records what claude.ai cannot do, measured on
-  19 August 2026: no reviewer dispatch, no ledger, no persona writing, no
-  syncing between surfaces, and skills that need to be named rather than
-  triggered by description on a long pasted draft (#42).
-
+  19 August 2026: no reviewer dispatch, no ledger, no `setup-user`, no syncing
+  between surfaces, a separate connector approval per call, and skills that
+  need to be named rather than triggered by description on a long pasted
+  draft (#42).
 - `CONTRIBUTING.md` and `SECURITY.md`, both written for a public repository:
   how to file an issue and open a pull request, the conventions that are easy
   to trip over (voice, ledger format, templates, fixtures), and a private

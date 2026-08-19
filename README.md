@@ -30,9 +30,9 @@ which surface loads a plugin, so it checks at runtime and stops with an
 explanation if the environment cannot give it a home directory.
 
 **The writing skills also run on claude.ai.** `compose`, `doc-review`,
-`preflight`, `self-review` and `thread` need your settings and something you
-paste in, never project state. Build the upload zips and add them there
-yourself:
+`preflight`, `remember-persona`, `self-review` and `thread` need your settings
+and something you paste in, never project state. Build the upload zips and add
+them there yourself:
 
 ```
 python scripts/build-claude-ai-skills.py
@@ -47,8 +47,11 @@ Settings come from the `daikenja` folder in your Google Drive, which
 without anything to upload or keep in sync. Skills do not sync between
 surfaces, so re-upload a zip when a skill changes.
 
+`remember-persona` writes its entry into the Drive file rather than a local
+one, and asks for connector approval at each step.
+
 What claude.ai cannot do -- no reviewer dispatch for `preflight`, no ledger, no
-persona writing -- is recorded in [`docs/future-work.md`](docs/future-work.md).
+`setup-user` -- is recorded in [`docs/future-work.md`](docs/future-work.md).
 
 ## Install
 

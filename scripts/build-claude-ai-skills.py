@@ -38,11 +38,16 @@ OUT_DIR = REPO_ROOT / "dist" / "claude-ai"
 # The writing half of Daikenja. The project-* skills and meeting-review need the
 # ledger, which lives in a project working tree and has no claude.ai equivalent,
 # so they are deliberately absent. setup-user's whole job is creating
-# ~/.claude/daikenja/, which does not exist there either. See docs/future-work.md.
-SHIPPED = ["compose", "doc-review", "preflight", "self-review", "thread"]
+# ~/.claude/daikenja/, which does not exist there either -- and it is what makes
+# the Drive folder the others read. See docs/future-work.md.
+SHIPPED = ["compose", "doc-review", "preflight", "remember-persona", "self-review", "thread"]
 
 # A `docs/<name>.md` mention anywhere in the file, in prose or in a link.
 DOC_REF = re.compile(r"docs/([a-z0-9-]+\.md)")
+
+# A `templates/<name>` mention. A skill that scaffolds a file the user does not
+# have yet copies it from here, so the template travels with the skill.
+TEMPLATE_REF = re.compile(r"templates/([a-z0-9-]+\.(?:md|yaml))")
 
 LIMITATIONS_URL = "https://github.com/by-carlos/daikenja/blob/main/docs/future-work.md"
 
@@ -64,8 +69,25 @@ DISPATCH_NOTE = """>
 > and never write that cycle 2 *confirmed* anything.
 """
 
+PERSONA_NOTE = """>
+> **There is no local file to fall back to here.** `~/.claude/daikenja/` does
+> not exist on claude.ai, and the filesystem this skill can reach is a sandbox
+> that is thrown away when the session ends. Writing an entry there would report
+> a success and lose the user's prose, so on this surface the local path is not
+> a fallback -- it is a failure.
+>
+> `personas.md` means the file in the `daikenja` folder in Google Drive, written
+> by the replace-and-verify sequence in `docs/config-contract.md`. If the
+> connector is missing, the folder does not resolve, or the read-back after the
+> write does not confirm, **do not claim a write**: print the exact entry and
+> tell the user to paste it in themselves.
+"""
+
 # Skills whose behaviour actually changes without dispatch.
 DISPATCHES = {"preflight"}
+
+# Skills that write, and so must never fall back to the throwaway sandbox disk.
+WRITES = {"remember-persona"}
 
 
 def add_surface_note(text, skill):
@@ -78,6 +100,8 @@ def add_surface_note(text, skill):
             note = SURFACE_NOTE
             if skill in DISPATCHES:
                 note += DISPATCH_NOTE
+            if skill in WRITES:
+                note += PERSONA_NOTE
             return "".join(lines[: index + 1]) + "\n" + note + "".join(lines[index + 1 :])
     return None
 
@@ -115,6 +139,7 @@ def build(skill):
     # Claude Code expands ${CLAUDE_PLUGIN_ROOT}; claude.ai does not, and would
     # read the unexpanded path as a literal file name.
     shipped = text.replace("${CLAUDE_PLUGIN_ROOT}/docs/", "docs/")
+    shipped = shipped.replace("${CLAUDE_PLUGIN_ROOT}/templates/", "templates/")
     if "CLAUDE_PLUGIN_ROOT" in shipped:
         return (
             f"{skill}: SKILL.md still references CLAUDE_PLUGIN_ROOT outside "
@@ -135,6 +160,14 @@ def build(skill):
         (dest / "docs").mkdir(exist_ok=True)
         shutil.copyfile(doc, dest / "docs" / name)
         carried.append(name)
+
+    for name in sorted(set(TEMPLATE_REF.findall(text))):
+        template = REPO_ROOT / "templates" / name
+        if not template.is_file():
+            return f"{skill}: SKILL.md references templates/{name}, which does not exist"
+        (dest / "templates").mkdir(exist_ok=True)
+        shutil.copyfile(template, dest / "templates" / name)
+        carried.append(f"templates/{name}")
 
     archive = OUT_DIR / f"{skill}.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as zf:
