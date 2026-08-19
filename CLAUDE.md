@@ -55,15 +55,23 @@ Instructions for Claude Code and other agents working in this repo.
   that is a settings change outside this repo's working tree and needs the
   maintainer's explicit sign-off, per the global risk-labeling rule.
 
-## Filing issues
+## Capturing follow-up work (GitHub issues)
 
 Follow-up work goes to this repo's GitHub issues (`by-carlos/daikenja`).
 **Before opening one, read `.claude/reference/github-issues.md`** -- it defines
-the required body format (Context / Options / AI prompt), the label rules, and
-when to suggest rather than file. Do not file without reading it.
+the required body format (Context / Options / AI prompt), the label rules, the
+public-repo scrub list, and when to suggest rather than file. Do not file
+without reading it.
 
-Default to suggesting. Name the follow-up in one line and offer to open an
-issue; file it once the maintainer agrees.
+- **Tracker & board:** issues live in `by-carlos/daikenja` and go to the
+  **"Claude Plugins"** project (project 3). Its priority scale is **P0-P4**.
+- **That board is shared across every Claude plugin repo**, not scoped to this
+  one -- `by-carlos/claude-plugins` and `by-carlos/plan-staged-rollout` file
+  there too. So don't read the board as a view of this repo: filter by the
+  Repository field before concluding anything about what is open here, and
+  don't assume a neighbouring item is ours.
+- **Default to suggesting.** Name the follow-up in one line and offer to open
+  an issue; file it once the maintainer agrees.
 
 ## Repo conventions
 
