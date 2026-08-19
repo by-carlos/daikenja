@@ -171,6 +171,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   branch to `docs/reading.md`, which stays the single home for the shared read
   recipe. No skill behaviour changes -- `project-catchup`'s failure table and
   `project-summary` Step 4 already implement the continue path (#75).
+- `docs/future-work.md` and the preflight design spec no longer disagree with
+  `skills/preflight/SKILL.md` about whether the no-dispatch reviewer fallback
+  has been run against the fixtures. It has -- `dist/claude-ai` zips build
+  straight from the working-tree `skills/` and `docs/`, with no marketplace
+  cache in between, so the claude.ai runs in #77 genuinely exercised the
+  in-context fallback, and claude.ai's total lack of subagents guaranteed
+  every one of them hit it. The permanent limitation was never the testing
+  gap -- it is that a sequential reviewer has read the ones before it and
+  cannot produce isolation, whatever it scores on a fixture. No skill
+  behaviour changes (#85).
 - `preflight` Step 6 no longer refers a deletion back to the user as a missing
   fact. The test was written as a one-way guard against inventing facts, so an
   ambiguous case had only one safe-looking exit, and a run on 19 August 2026

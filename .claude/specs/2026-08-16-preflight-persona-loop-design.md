@@ -3,8 +3,9 @@
 **Date:** 16 Aug 2026
 **Status:** approved design, fully implemented. PR 1 of § 10.3 landed 16 Aug
 2026 (#30), PR 2 landed 16 Aug 2026 (#33), PR 3 landed 16 Aug 2026 (#37).
-One deviation: § 13.3 criterion 4 was dropped rather than verified, and the
-no-subagent fallback it covers is documented as an unsupported path.
+§ 13.3 criterion 4 was verified 19 Aug 2026 (#77), against the `preflight`
+fixtures on claude.ai -- the only surface with no subagent dispatch, so every
+run there exercises the in-context fallback rather than skipping it.
 Amended 19 Aug 2026 (#38): D12 and § 7.7 add a per-reviewer model tier. D4 is
 unchanged by it.
 **Affects:** `skills/preflight`, `skills/compose`, `docs/`, `templates/personas.md`, one new skill
