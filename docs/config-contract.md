@@ -33,8 +33,10 @@ daikenja/writing-style.md  same folder, created by setup-user
 See
 [Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas).
 
-`setup-user` is the only skill that creates or edits configuration keys. The one
-exception is `last_checkpoint`; see [Who writes what](#who-writes-what).
+Three skills write configuration keys, and each owns a different block:
+`setup-user` owns `profile:`, `setup-project` owns a project's entry under
+`projects:`, and `project-catchup` owns `last_checkpoint` alone. Nothing else
+writes this file. See [Who writes what](#who-writes-what).
 
 ## Schema
 
@@ -115,8 +117,9 @@ in:
 4. No match means the project is unregistered. Every skill says so in one line
    and then continues -- an unregistered project still has a ledger to read if
    one exists on disk, and a ledger on disk wins over the config (see
-   [Finding the ledger](#finding-the-ledger)). `project-log` additionally offers
-   to register it. The branch a read skill follows is in
+   [Finding the ledger](#finding-the-ledger)). `project-log` additionally names
+   `setup-project` as the way to register it. The branch a read skill follows is
+   in
    [`reading.md`](reading.md) § Step A.
 
 ### Finding the ledger
@@ -129,9 +132,9 @@ in:
    skill that creates one.
 
 **A ledger found on disk wins over the config.** If `.daikenja/ledger.md` exists
-but no `projects:` entry matches, the ledger is used and `project-log` offers to
-add the missing entry on its next write. The file on disk is the fact; the config
-is the index.
+but no `projects:` entry matches, the ledger is used and `project-log` names
+`setup-project` as the way to add the missing entry. The file on disk is the
+fact; the config is the index.
 
 ### Resolving `writing_style` and `personas`
 
@@ -330,7 +333,8 @@ two tiers exist, so that `compose` does not have to invent either.
 
 | File | Written by | Notes |
 |---|---|---|
-| `daikenja.yaml` -- everything except `last_checkpoint` | `setup-user` | Only on user approval. |
+| `daikenja.yaml` -- the `profile:` block | `setup-user` | Only on user approval. Never touches `projects:`. |
+| `daikenja.yaml` -- a project's entry under `projects:` | `setup-project` | Only on user approval, and only the entry matching the directory it runs in. Registration is idempotent: an exact normalized-path match leaves the existing entry and its key alone. Never writes `last_checkpoint`. |
 | `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
 | `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
@@ -383,6 +387,12 @@ new people only. Prose the user wrote by hand is never rewritten silently.
 migrate, import, or convert anything from a previous Daikenja or from any
 pre-plugin layout.
 
+**`setup-project` may propose ledger content but never writes it.** Its optional
+seeding step derives candidate decisions and open items from sources the user
+names, and hands them to `project-log`, which shows the exact lines and waits.
+That keeps the single-writer rule for the ledger intact while letting a project
+start with the history it already has.
+
 ## Failure behavior
 
 One rule covers the common cases:
@@ -395,8 +405,8 @@ One rule covers the common cases:
 | `daikenja.yaml` absent | Ledger-only skills still work using the defaults (`.daikenja/ledger.md`, 21 days). Skills that need the profile say "Daikenja is not configured -- run `/daikenja:setup-user`" and stop. |
 | Malformed YAML | **Stop.** Report the first line that does not parse. Never guess the intent, and never rewrite the file -- repair would clobber hand-written content. |
 | Valid YAML, missing optional key | Treat as absent, degrade for that key alone with one notice, and continue. One missing optional key never fails a run. |
-| Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. |
-| `projects:` absent or empty | The project is unregistered. See the resolution order above. |
+| Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. `setup-project` stops here rather than continuing, because it has no profile to register a project against. |
+| `projects:` absent or empty | The project is unregistered. See the resolution order above. `setup-project` is what registers one. |
 | `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. |
 | A pointed-at local prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
 | A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, the `daikenja` folder is missing or duplicated, no file in it carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per Who writes what). |
@@ -466,5 +476,5 @@ profile:
 
 With that file alone, `compose` works with the default voice, `project-log`
 scaffolds and writes `.daikenja/ledger.md` in whatever project it runs in and
-offers to register it, `project-gaps` uses the 21-day default, and
-`self-review` runs without ROLE CHECK.
+names `setup-project` as the way to register it, `project-gaps` uses the 21-day
+default, and `self-review` runs without ROLE CHECK.
