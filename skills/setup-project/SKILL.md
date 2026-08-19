@@ -264,7 +264,8 @@ not a fault in the entries.
 ## Step 5: confirm
 
 Two or three lines: what was written, where, and what was deliberately left
-alone.
+alone, per `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- the result
+leads, and seeded entries are counted as ranges, not listed one by one.
 
 ```
 Registered this project as `harbor` at C:/GitHub/harbor, with

@@ -71,7 +71,10 @@ only, the same parked-by-title treatment `self-review` uses.
 
 ## Step 4: report
 
-One entry per finding, in the order fixed by Step 3:
+The report follows `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- read it
+before writing the reply; `profile.tone` scales any narration around the
+findings, never the findings themselves. One entry per finding, in the order
+fixed by Step 3:
 
 ```
 1. [checklist category] -- <one-line title>

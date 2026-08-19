@@ -71,6 +71,8 @@ Read these before doing anything. Do not work from memory of them.
   written in.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- how `profile.tone`,
   `writing_style` and `personas` resolve, and the failure-behavior table.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. The report in Step 10 implements it.
 
 ## Step 1: take the input as given
 
@@ -372,7 +374,8 @@ and this one carries on -- it never blocks a review.
 
 ## Step 10: report
 
-Verdict first, deliverable second, evidence third:
+The shape below implements `response-format.md`; where the two ever disagree,
+the contract wins. Verdict first, deliverable second, evidence third:
 
 ```
 Verdict: needs 2 facts from you before it goes

@@ -42,11 +42,15 @@ state it plainly or drop it.
 **Do not invent findings to fill the cap.** A thread the invoker handled well
 produces a short report. Three findings is not a quota.
 
-## Step 0: read the shared doc
+## Step 0: read the shared docs
 
-Read `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` before doing anything. It
-is where `tone` and `norms_doc` resolve, and it carries the failure-behavior
-table this skill follows. Do not work from memory of it.
+Read these before doing anything. Do not work from memory of them.
+
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- where `tone` and
+  `norms_doc` resolve, and the failure-behavior table this skill follows.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. The tone modes in Step 7 refine its tone table and stay inside
+  its invariants.
 
 ## Step 1: get the thread and identify the invoker
 
@@ -205,11 +209,15 @@ a lie about the thread, and the user will notice.
 `profile.tone` from `daikenja.yaml` selects the mode. Default is `standard`.
 There is no project-level override for tone.
 
+**The assessment leads in every mode**, per `response-format.md` § The answer
+comes first: after the two identification lines the report opens with, the
+reply goes straight to "What worked" and the findings. No mode walks its
+reasoning first and delivers the assessment at the end.
+
 **What the mode changes, and nothing else.**
 
 | | `direct` | `standard` | `guided` |
 |---|---|---|---|
-| Verdict placement | First line, before anything else. | After a one-line frame of the thread. | Last, after the reasoning has been walked through. |
 | Scaffolding | None. Findings only. | A one-line frame, and a closing line. | Frame, why each finding is being raised, and a closing "what to carry into the next one". |
 | Findings shown | 5 | 4 | 3 |
 | "What worked" | After the findings, one line each. | Before the findings. | Before the findings, with a line on why each mattered. |
@@ -253,7 +261,8 @@ title. If the document does not name a duty, there is no verdict on it.
 
 ## Step 9: report
 
-One canonical shape, arranged per the tone table in Step 7.
+One canonical shape, arranged per the tone table in Step 7 and bound by
+`response-format.md`.
 
 ```
 Reviewed: <what the thread was, how many turns, over what period>

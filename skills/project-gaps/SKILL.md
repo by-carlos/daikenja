@@ -22,6 +22,8 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Open items.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- `stale_after_days`
   resolution order.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. The report in Step 4 follows it.
 
 ## Step 1: resolve config, project and ledger
 
@@ -54,16 +56,17 @@ condition are reported.
 
 Two groups, an item may appear in both if it qualifies both ways. Sort each
 group oldest first -- the longest-standing gap is the one that matters most.
+Topic first with the ID in parentheses, per `response-format.md`:
 
 ```
 Gaps in <project> (stale_after_days: 21, using this project's override)
 
 Unowned (2)
-- O-006 -- 2026-08-14 -- Decide who is on call during the cutover window.
-- O-001 -- 2026-08-05 -- Agree the success criteria for calling the migration done. (9 days)
+- Decide who is on call during the cutover window (O-006) -- 2026-08-14
+- Agree the success criteria for calling the migration done (O-001) -- 2026-08-05 (9 days)
 
 Stale (1, older than 21 days)
-- O-001 -- 2026-08-05 -- Agree the success criteria for calling the migration done. (9 days, also unowned)
+- Agree the success criteria for calling the migration done (O-001) -- 2026-08-05 (9 days, also unowned)
 ```
 
 If nothing qualifies, say so plainly rather than omitting the report:

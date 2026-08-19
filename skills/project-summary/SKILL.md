@@ -19,6 +19,8 @@ Read these before doing anything. Do not work from memory of them.
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession,
   resolution tails.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
+  is shaped. The overview in Step 3 follows it.
 
 ## Step 1: resolve config, project and ledger
 
@@ -45,23 +47,24 @@ enough unless the user asks for detail -- do not repeat every resolved body.
 
 **Shape.** Newest first within each group, matching the ledger's own order.
 Do not silently reorder or group by owner -- that is a presentation choice
-`project-gaps` makes, not this skill.
+`project-gaps` makes, not this skill. Topic first with the ID in parentheses,
+per `response-format.md` -- the ledger line is ID-first, the reply is not.
 
 ```
 <project> ledger -- C:/GitHub/atlas/.daikenja/ledger.md
 
 Decisions in force (4)
-- D-005 -- @carlos -- Cut over on a Saturday, not a weekday evening.
-- D-004 -- @unassigned -- Keep the legacy read replica online for 30 days after cutover.
-- D-003 -- @priya -- Freeze schema changes from 2026-08-20 until cutover completes.
-- D-001 -- @priya -- Atlas replaces the legacy store. No dual-write period.
+- Cut over on a Saturday, not a weekday evening (D-005) -- @carlos
+- Keep the legacy read replica online for 30 days after cutover (D-004) -- @unassigned
+- Freeze schema changes from 2026-08-20 until cutover completes (D-003) -- @priya
+- Atlas replaces the legacy store. No dual-write period (D-001) -- @priya
 (1 earlier decision superseded; ask /daikenja:project-decisions for the history.)
 
 Open items -- 4 open, 2 resolved
-- O-006 -- @unassigned -- Decide who is on call during the cutover window.
-- O-005 -- @sam -- Confirm the 30-day replica cost with finance.
-- O-004 -- @priya -- Write the rollback runbook and dry-run it once.
-- O-001 -- @unassigned -- Agree the success criteria for calling the migration done.
+- Decide who is on call during the cutover window (O-006) -- @unassigned
+- Confirm the 30-day replica cost with finance (O-005) -- @sam
+- Write the rollback runbook and dry-run it once (O-004) -- @priya
+- Agree the success criteria for calling the migration done (O-001) -- @unassigned
 
 Context links (2)
 - Runbook -- https://example.com/atlas/runbook

@@ -37,7 +37,9 @@ content.
 
 ## Step 2: summarize it
 
-Keep this to about 5 lines.
+Keep this to about 5 lines. The block below follows
+`${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- read it before writing the
+reply; the summary is the answer and nothing precedes it.
 
 ```
 Thread: [channel or subject, and how many messages]
