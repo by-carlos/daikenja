@@ -144,6 +144,23 @@ last released copy of the skill, so a result obtained any other way is void.
   rule against a user who replies about something else, and the refusal to
   invent a date.
 
+### `learn-voice`
+
+- [`fixtures/learn-voice-samples.md`](fixtures/learn-voice-samples.md) -- 33 of
+  the invoker's own messages across four sources and three audiences, sized
+  deliberately between the corpus floor and the corpus bar so a run has to say
+  the evidence is thin. Six traits are seeded to be found (openers, a
+  greeting split by register, bullets past three items, how a request is
+  softened and sharpened, US spelling, summary-first past roughly 120 words),
+  four to be observed and kept out because `docs/voice.md` fixes them
+  (shouting, relative dates, an undecodable idiom, and two floor-keeping idioms
+  that are not findings at all), and two never to be recorded -- the project's
+  own vocabulary, and anything about the three colleagues in the corpus. Four
+  walks over it: the whole corpus against an untouched template, a block whose
+  authorship cannot be separated and must be refused, the DM block alone as an
+  under-the-floor stop, and a re-run against a file the user has hand-written a
+  line into, which must be diffed and not replaced.
+
 Every fixture is synthetic: invented project, invented people, `example.com`
 links. Nothing in this directory may contain real work content, personal data or
 organization data.

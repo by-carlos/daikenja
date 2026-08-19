@@ -13,7 +13,7 @@ you have not approved.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Fourteen skills ship today.
+**Status:** in active development. Fifteen skills ship today.
 
 ## Where each half runs
 
@@ -54,6 +54,10 @@ surfaces, so re-upload a zip when a skill changes.
 `remember-persona` writes its entry into the Drive file rather than a local
 one, and asks for connector approval at each step.
 
+`learn-voice` is not in that set yet. It writes `writing-style.md`, which on
+claude.ai exists only as a Drive file, and that path has not been exercised
+there -- so it ships to Claude Code alone for now.
+
 What claude.ai cannot do -- no reviewer dispatch for `preflight`, no ledger, no
 `setup-user` -- is recorded in [`docs/future-work.md`](docs/future-work.md).
 
@@ -73,7 +77,7 @@ have. `setup-user` is once per person; `setup-project` is once per project.
 
 ## Skills
 
-Fourteen skills, grouped by what they do.
+Fifteen skills, grouped by what they do.
 
 **Writing a reply**
 
@@ -127,6 +131,14 @@ Fourteen skills, grouped by what they do.
   from sources the project already has. Seeding proposes entries and hands them
   to `/daikenja:project-log` for your approval; it never writes the ledger
   itself.
+- `/daikenja:learn-voice` (**beta**) -- works out how you write from writing
+  samples you supply, and proposes the whole of your `writing-style.md`. Beta
+  because it has been walked by hand against a fixture but not yet used on a
+  real corpus, so read the proposal before you approve it. It reads only
+  samples you say you wrote yourself, records style and never facts about
+  people or projects, shows the complete file -- as a diff if you already have
+  one -- and writes nothing until you approve it. Run it whenever you have more
+  samples, not only at setup.
 
 ## Where your data lives
 
@@ -138,7 +150,7 @@ and get overwritten on update.
 |---|---|---|
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
-| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you |
+| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` for a proposal you approve |
 | A project's decision ledger | `<project>/.daikenja/ledger.md` | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
