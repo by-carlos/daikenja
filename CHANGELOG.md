@@ -138,6 +138,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `sample-transcript.md`'s three-label trap for one speaker, and the
   `D-003` cross-reference between `sample-ledger.md` and
   `sample-drafts-preflight.md` (#39).
+- `.github/workflows/ci.yml` pins every third-party `uses:` reference
+  (`actions/checkout`, `actions/setup-python`, `actions/setup-node`) to its
+  current release commit SHA instead of a mutable tag, so a repointed tag
+  upstream can no longer change what CI runs silently (#22).
 
 ### Fixed
 
