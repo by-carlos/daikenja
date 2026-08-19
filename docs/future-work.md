@@ -86,13 +86,16 @@ suspended to do it.
 almost always content, which no further cycle can fix. A draft with deep
 problems gets two passes and a list of questions, not convergence.
 
-**Running the reviewers without subagents is not supported.** When dispatch is
-unavailable `preflight` falls back to reading each brief in sequence in its own
-context, so the skill degrades instead of failing. That path has never been run
-against the fixtures, and it cannot preserve the isolation that makes a second
-opinion worth having -- a sequential reviewer has read the ones before it and
-defers to them. It says so when it happens. Treat what it returns as weaker
-than a dispatched run.
+**Running the reviewers without subagents cannot preserve isolation.** When
+dispatch is unavailable `preflight` falls back to reading each brief in
+sequence in its own context, so the skill degrades instead of failing. Run
+against the fixtures on claude.ai on 19 August 2026 -- the only surface where
+this path runs at all -- it found the planted content gaps and the
+unresolvable recipient conflict. That result does not lift the limitation: a
+sequential reviewer has read the ones before it and defers to them, so the
+isolation that makes a second opinion worth having is gone regardless of what
+the path scores on a fixture. It says so when it happens. Treat what it
+returns as weaker than a dispatched run.
 
 **A reviewer's model tier cannot be changed.** Each archetype is dispatched on
 the tier written against it in [`reviewer-personas.md`](reviewer-personas.md) --
