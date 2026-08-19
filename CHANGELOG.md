@@ -71,6 +71,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `preflight` dispatches each reviewer on a model tier matched to what that
+  reviewer simulates, rather than running all nine on whatever the session is
+  set to. The busy reader and the machine reader take `haiku` -- both simulate
+  a *degraded* reader, and a strong model asked to skim does not skim; it reads
+  properly and then reports what a skimmer would have missed, which is a
+  different and weaker signal. The executive, the tone-sensitive reader and the
+  person being asked to do the work take `sonnet`. The fact-checker, the risk
+  reader, the subtext reader and the dissenter take `opus`, because they
+  simulate a reader sharper than normal. The tiers live in
+  `docs/reviewer-personas.md` and nowhere else, so there is no second copy to
+  drift; a named addressee inherits the tier of the archetype it embodies, and
+  no user setting changes one. `preflight`'s own context is unaffected and still
+  wants the strongest model, which is what its Opus notice is about -- that
+  notice now says so explicitly. Where nothing dispatches, as on claude.ai, no
+  tier applies and the `Reviewed:` line already reports that (#38).
+
 - `docs/voice.md` § Assume the reader is not a native English speaker split its
   last bullet, "International (US) English. Neutral, no regional slang or
   idiom.", into two Fixed rules: neutral English with no regional slang or

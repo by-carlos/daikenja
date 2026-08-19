@@ -1,7 +1,8 @@
 # Reviewer personas
 
-The reviewers `preflight` dispatches to challenge a draft, the two checks it
-always runs itself, and the contract every finding comes back in.
+The reviewers `preflight` dispatches to challenge a draft, the model tier each
+one runs on, the two checks it always runs itself, and the contract every
+finding comes back in.
 
 `preflight` selects from this roster and applies what comes back. It does not
 restate these briefs in its own body, and it never invents a reviewer that is
@@ -76,6 +77,44 @@ draft. **`content`** means it cannot. Reviewers label their own findings, but
 the label is a proposal: `preflight` re-decides it and does not trust it, since
 a mislabelled content gap is how an invented fact gets in through a suggested
 `Fix`.
+
+## What each reviewer runs on
+
+An archetype is a way of reading, and some ways of reading are simulated better
+by a weaker model than by a stronger one. Each reviewer therefore carries a
+**model tier**, and `preflight` passes it at dispatch.
+
+| Tier | Reviewers | Why this tier |
+|---|---|---|
+| `haiku` | The busy reader, the machine reader | These simulate a *degraded* reader. A strong model asked to skim does not skim -- it reads properly and then reports what a skimmer would have missed, which is a different and much weaker signal. The limitation is the persona. |
+| `sonnet` | The executive, the tone-sensitive reader, the person being asked to do the work | An ordinary reader with one preoccupation. A narrow lens and a rigid output contract, which is what this tier is for. |
+| `opus` | The fact-checker, the risk reader, the subtext reader, the dissenter | These simulate a reader *sharper than normal*, catching what an ordinary read misses. Risk and subtext are the most judgment-heavy lenses here: what becomes evidence in an escalation, and the gap between what is said and what is received. |
+
+The tier is a **family alias, never a versioned model ID.** `haiku`, `sonnet`
+and `opus` survive a version bump; `claude-opus-5` does not.
+
+**The tier is set here and nowhere else.** This table is the only place a
+reviewer's tier is written down, so there is no second copy to drift from it.
+
+**A named addressee takes the tier of the archetype it embodies.** A brief is a
+delta on an archetype, per § How a brief is assembled, so it inherits that
+archetype's tier along with everything else. Nothing in `personas.md` sets a
+tier, and a user cannot change one -- the same rule that makes the roster itself
+fixed.
+
+**`preflight`'s own context is not on this table.** Adjudication, the rewrite
+and the two always-on checks all run there, and they always want the strongest
+model available. That is why `preflight` says so in one line when it finds it is
+not on Opus.
+
+**Two things override the table, and neither is a fault:**
+
+- **`CLAUDE_CODE_SUBAGENT_MODEL`.** If it is set, Claude Code pins every
+  subagent to that model and it wins over the tier dispatched here. It is the
+  clean way to force the whole roster onto one model.
+- **No dispatch, no tiers.** Where subagents are unavailable -- claude.ai --
+  every reviewer runs in `preflight`'s own context on the session's model. The
+  mandatory `Reviewed:` line already reports that the run went that way.
 
 ## The roster
 

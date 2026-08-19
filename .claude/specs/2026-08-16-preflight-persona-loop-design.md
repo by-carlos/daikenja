@@ -5,6 +5,8 @@
 2026 (#30), PR 2 landed 16 Aug 2026 (#33), PR 3 landed 16 Aug 2026 (#37).
 One deviation: § 13.3 criterion 4 was dropped rather than verified, and the
 no-subagent fallback it covers is documented as an unsupported path.
+Amended 19 Aug 2026 (#38): D12 and § 7.7 add a per-reviewer model tier. D4 is
+unchanged by it.
 **Affects:** `skills/preflight`, `skills/compose`, `docs/`, `templates/personas.md`, one new skill
 
 ---
@@ -48,6 +50,7 @@ iteration is already in the metaphor.
 | D9 | Report depth keys off the existing `profile.tone` | `config-contract.md` already defines `tone` as "how much the skills explain themselves". No new config key. |
 | D10 | A new writer skill owns every `personas.md` write; `preflight` and `compose` route through it | Mirrors the ledger's single-writer rule, where only `log` writes and `meeting-review` writes through it. |
 | D11 | Learned personas are written silently and reported after | Chosen deliberately over propose-then-approve, for friction. Constrained by the guardrails in § 7.3. |
+| D12 | Each reviewer is dispatched on a model tier carried by its archetype, set in `docs/reviewer-personas.md` and passed as the subagent's `model` at dispatch | Added 19 Aug 2026 (#38). An archetype simulating a *degraded* reader is made worse by a stronger model, not better -- asked to skim, a capable reader reads properly and then reports what a skimmer would have missed. Extends D4 rather than replacing it: the briefs stay in the doc and the dispatch shape is unchanged. |
 
 ## 4. Identity and boundary
 
@@ -82,6 +85,8 @@ names.
 | **The machine reader** | Machine processing | Sarcasm and irony flattened to literal, rhetorical questions answered literally, "that thing we discussed" with no antecedent, multiple asks where an agent picks one |
 | **The person being asked to do the work** | Self-interest | Unclear ownership, being volunteered, unrealistic timing |
 | **The dissenter** *(inference-only, never pinned)* | Persuasion | Unaddressed objections, assumptions stated as settled |
+
+Each archetype also carries a model tier, added by D12. See § 7.7.
 
 Two checks run **in the main context, always, and are never dispatched** --
 they are properties of the text rather than a different reader, so a separate
@@ -245,6 +250,61 @@ missing thing is the task itself.* Dispatch is a preference, not a dependency.
 Cycle 1 with two named addressees is 6 spawns; cycle 2 re-dispatches only those
 who raised something. A messy draft with two addressees runs to roughly 9-10
 spawns. This is the accepted price of D4.
+
+Since D12 those spawns are no longer all at one price. Two of the nine
+archetypes run on `haiku` and three on `sonnet`, so a session on Opus stops
+paying top-tier rates for the busy reader -- the one persona that is better
+cheap. Cost was not the reason for the tiers and it does not set them, but it
+moves the right way.
+
+### 7.7 The model each reviewer runs on
+
+Added 19 Aug 2026 with D12 (#38).
+
+**The finding this rests on, verified rather than assumed.** Claude Code's
+`Agent` tool takes a `model` parameter at dispatch time, so a skill can ask for
+a model for a subagent it spawns without shipping that subagent as an
+`agents/*.md` definition. Its documented resolution order is
+`CLAUDE_CODE_SUBAGENT_MODEL` → the per-invocation parameter → the definition's
+`model:` frontmatter → the main conversation's model. Skill frontmatter still
+has no `model` key, which is what made this look impossible; the knob is on the
+dispatch, not on the skill.
+
+This is why D4 survives. The briefs stay in `docs/reviewer-personas.md`, one
+subagent per persona is still dispatched in parallel, and nothing moves into
+nine shipped agent files that would then have to be kept in sync with the
+roster.
+
+**The tiers, and why they split this way.** The table lives in
+`docs/reviewer-personas.md` § What each reviewer runs on and is written down
+in exactly one place. The busy reader and the machine reader take `haiku`,
+because both simulate a *degraded* reader and the limitation is the persona --
+a strong model asked to skim reads properly and then reports what a skimmer
+would have missed, which is a different and weaker signal. The executive, the
+tone-sensitive reader and the person being asked to do the work take `sonnet`:
+an ordinary reader with one preoccupation, a narrow lens, a rigid output
+contract. The fact-checker, the risk reader, the subtext reader and the
+dissenter take `opus`, because they simulate a reader sharper than normal and
+risk and subtext are the most judgment-heavy lenses in the roster.
+
+**Family aliases only.** `haiku`, `sonnet`, `opus` -- never `claude-opus-5`.
+Aliases survive a version bump and versioned IDs rot.
+
+**The main context is not on the table**, and always wants the strongest model
+available: § 7.3 adjudication is the safety hinge, and the two always-on checks
+and the rewrite also run there. That is what the Opus notice at the top of the
+skill is for, and it now says explicitly that it is about that context rather
+than about the reviewers.
+
+**A tier is not user-configurable**, on the same reasoning that fixes the
+roster (D2). A `personas.md` entry sets no tier; a named addressee inherits the
+tier of the archetype it embodies. `CLAUDE_CODE_SUBAGENT_MODEL` overrides
+everything, which is Claude Code's precedence and the clean way to pin the
+whole roster to one model.
+
+**Where nothing dispatches** -- claude.ai, per § 7.5 -- no tier applies and
+every reviewer runs on the session model. The mandatory `Reviewed:` line
+already reports that the run went that way, so this needs no second notice.
 
 ## 8. Learned personas
 
