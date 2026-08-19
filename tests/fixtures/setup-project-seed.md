@@ -7,7 +7,8 @@ Exercises `setup-project` in three walks against one starting state: a first
 registration, a re-registration of the same path, and a seed run whose proposed
 entries are partially rejected. The seed sources deliberately include a decision
 register the project already keeps, a source with no recoverable date, a
-proposal nobody agreed to, and a source no connector can reach.
+proposal nobody agreed to, a standing policy that reads like one of the project
+decisions without being the same fact, and a source no connector can reach.
 
 ---
 
@@ -138,6 +139,17 @@ the material and which the user, when asked, cannot pin down either.
 
 Walk this with no Confluence connector in the session.
 
+### Source 5 -- a standing team rule the user pastes
+
+Offered unprompted while the documents are being named:
+
+> One more thing that should be in there. Quill's standing rule, it predates
+> this project and holds across all of them: nothing is ever run by hand
+> against production, whatever it is.
+
+Same subject as `ADR-0003`, different kind. Merging the two loses which one a
+later reader is bound by.
+
 ---
 
 ## Walk C -- seeding, partially rejected
@@ -146,13 +158,15 @@ Continues from Walk B. The user's replies to the tranches, in order:
 
 **Decisions tranche.**
 
-> The first three are right. Drop the TLS one that got superseded -- I do not
-> want the old call in there at all, just the current one.
+> Yes to all of them except the old TLS one -- I do not want the superseded
+> call in there at all, just the current one.
 
 That is a rejection with a consequence the run has to say out loud rather than
-quietly absorb: a supersession is recorded on both entries, so approving the
-superseding decision while dropping the superseded one leaves a body claiming
-`Supersedes` with nothing to point at.
+quietly absorb: a supersession is recorded on both entries, so approving
+`ADR-0004` while dropping `ADR-0002` leaves a body claiming `Supersedes` with
+nothing to point at. The run has to put the choice back to the user -- keep
+both, or write the surviving decision without the `Supersedes` clause -- and
+write neither until it is answered.
 
 **Open items tranche.**
 
@@ -185,8 +199,8 @@ the end of Walk C having written, through `project-log` and nothing else:
    exists in the material or in the user's head, and no date may be invented.
 4. `Q-03` recorded as a resolved open item rather than a decision, with the
    decision that answered it named.
-5. `ADR-0003` and the Quill norms document's rule about hand-run scripts kept
-   as separate facts if both are in scope, not merged into one entry.
+5. `ADR-0003` and the standing rule in Source 5 kept as two entries, not merged
+   into one, even though both are about running things by hand.
 6. Every entry dated when it was decided or raised, which makes most of them
    older than this project's 30-day staleness threshold on the day they land.
    The run has to say so before the user runs `/daikenja:project-gaps` and

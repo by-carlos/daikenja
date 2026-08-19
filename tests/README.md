@@ -138,8 +138,9 @@ last released copy of the skill, so a result obtained any other way is void.
   path that must leave that key alone, and a seed run the user only partly
   approves. The sources are seeded with one decision, one suggestion nobody
   agreed to, one open item whose date exists nowhere, a superseded record the
-  user asks to drop while keeping its replacement, and a Confluence space no
-  connector can reach. Exercises the tranche flow, the restate-before-proposing
+  user asks to drop while keeping its replacement, a standing team policy that
+  reads like one of the project decisions without being the same fact, and a
+  Confluence space no connector can reach. Exercises the tranche flow, the restate-before-proposing
   rule against a user who replies about something else, and the refusal to
   invent a date.
 

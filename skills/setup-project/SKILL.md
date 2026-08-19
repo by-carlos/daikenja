@@ -228,7 +228,7 @@ tranche the user answers around is a tranche nobody approved.
 - **Nothing carries forward.** An approval of one tranche approves that tranche.
 
 The classification rules, the attribution rules, the duplicate check and the
-insert rule are all `project-log`'s and are not restated here. Three things are
+insert rule are all `project-log`'s and are not restated here. Four things are
 worth saying because a seed run hits them and a normal log run does not:
 
 - **Date each entry with the date it was actually decided or raised**, not with
@@ -240,7 +240,15 @@ worth saying because a seed run hits them and a normal log run does not:
   part of this skill licenses inventing one.
 - **Anything implied but not stated goes in the proposal as a question**, not as
   an entry. A design document describing a preference is not a decision, and a
-  register's open question is an open item rather than a decision about it.
+  register's open question is an open item rather than a decision about it. A
+  question the register records as **answered** is a resolved open item naming
+  the decision that answered it, not a decision in its own right.
+- **A partial approval can break a supersession pair.** Approving a decision
+  that supersedes another while dropping the one it supersedes leaves a body
+  claiming `Supersedes` with nothing to point at, and the ledger's rule is that
+  the marking lives on both entries. Say so before the write and let the user
+  choose -- keep both, or write the surviving decision without the `Supersedes`
+  clause. Never write half a pair and never repair it afterwards.
 
 **Say what a backfill does to the audit before the user runs it.** Entries dated
 to their true origin are older than `stale_after_days` the moment they land, so
