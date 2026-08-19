@@ -34,6 +34,10 @@ Write in prose or bullets, whichever you prefer. Useful things to pin down:
 - Anything you have been told about your writing, good or bad.
 - Which spelling variant you write in -- Commonwealth/British is the shipped
   default; say so here if you want US spelling instead.
+- Whether a soft deadline to a reader in your own time zone may go relative
+  ("ideally by end of day") instead of an absolute date -- absolute stays the
+  default until you say so here, and a hard deadline or a reader in another
+  time zone always gets an absolute date regardless.
 
 Delete everything below this line once you have written your own.
 

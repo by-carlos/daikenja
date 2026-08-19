@@ -29,8 +29,11 @@ contradicts one has no effect.
 
 ### Absolute dates
 
-Absolute dates, never relative ones ("by Tuesday 11 Aug", not "by next
-Tuesday"). Teams are in different time zones.
+A hard deadline, and any date given to a reader in another time zone, always
+gets an absolute date ("by Tuesday 11 Aug", not "by next Tuesday"). Teams are
+in different time zones, and a commitment that has to hold needs to read the
+same wherever the recipient opens it. A soft deadline to a reader who shares
+the writer's time zone is a narrower case; see § Relative soft deadlines.
 
 ### Assume the reader is not a native English speaker
 
@@ -81,6 +84,21 @@ discount that as a personal quirk is the one reading in a second language.
 
 A user's `writing-style.md` may narrow or replace anything in this section.
 Where narrowing is the only direction available, the rule says so.
+
+### Relative soft deadlines
+
+The Fixed rule above covers a hard deadline and any reader outside the
+writer's own time zone -- both always get an absolute date. A soft deadline to
+a reader who shares the writer's time zone is different: there is no zone gap
+for a relative date to read wrong across, and "ideally by end of day" is what
+two people in the same office actually say to each other.
+
+Absolute dates stay the default here too. A `writing-style.md` entry may
+permit relative phrasing for this one case; without that entry, nothing
+changes from the Fixed wording above. The entry carries the burden of saying
+so -- it must name the same-timezone, soft-deadline scope, not just "use
+relative dates". A line that broad would reach into the Fixed core above,
+where it has no effect.
 
 ### The substitution floor
 

@@ -96,6 +96,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `docs/voice.md` § Absolute dates narrows its `Fixed` core to a hard deadline
+  and any reader in another time zone -- both still always get an absolute
+  date. A new `## Defaults` rule, § Relative soft deadlines, lets a
+  `writing-style.md` entry permit relative phrasing ("ideally by end of day")
+  for a soft deadline to a reader who shares the writer's own time zone, with
+  the entry carrying the burden of naming that exact scope; a line that just
+  says "use relative dates" would reach into the Fixed core, where it still
+  has no effect. Follows the structure #66 used to split the spelling variant
+  out of a Fixed block. A live session on 18 Aug 2026 saw the user hand-edit a
+  drafted "by end of day today, 2026-08-18" to "Ideally by EOD" for a
+  same-timezone reader; `compose` logged the preference to `writing-style.md`
+  but correctly noted it was inert against the old rule, and predicted the
+  same conflict would keep resurfacing. `docs/config-contract.md`'s
+  illustrative Fixed-tier example and `templates/writing-style.md` are updated
+  to match (#100).
 - `docs/config-contract.md` § Who writes what now splits `writing-style.md` into
   creation and content, the same way `personas.md` is split, and names
   `learn-voice` as its content writer. The old row said the file was written by

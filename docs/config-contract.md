@@ -317,8 +317,8 @@ The default voice sorts its own rules into two tiers, and layering respects
 them:
 
 - **Fixed.** A user's prose cannot turn these off. They are frozen decisions
-  about all generated output rather than matters of taste. Absolute dates are
-  one of them.
+  about all generated output rather than matters of taste. A hard deadline's
+  absolute date is one of them.
 - **Defaults.** A user's prose may narrow or replace these.
 
 A line in a user's prose that contradicts a Fixed rule is not an override and
