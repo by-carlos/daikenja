@@ -5,6 +5,59 @@ are facts about current behaviour, not a roadmap -- nothing here is promised,
 scheduled, or in progress. A limitation leaves this file only when the
 behaviour actually changes.
 
+## On claude.ai
+
+The writing skills -- `compose`, `doc-review`, `preflight`, `self-review` and
+`thread` -- are uploaded there as five separate zips built by
+`scripts/build-claude-ai-skills.py`. Everything below was measured on
+19 August 2026 across six runs against the `preflight` fixtures.
+
+**Nothing dispatches.** claude.ai has no subagents, so `preflight`'s reviewers
+all run in one context and each has read the ones before it. That path finds
+planted content gaps and the unresolvable recipient conflict, and it invents no
+facts, but it cannot produce the isolation that makes a second opinion worth
+having. Every report says which way it ran in its `Reviewed:` line, and cycle 2
+re-reads rather than confirming.
+
+**A skill is not reliably picked up from the description alone.** A long pasted
+draft opening with "Poke holes in this before I send" was answered without the
+skill loading at all. Naming it -- "use the preflight skill on this" -- loaded
+it every time. This is about how the request is phrased, not about which skill.
+
+**There is no ledger, so `preflight`'s sixth check never passes.** It reports
+"already answered" as not checked rather than as a pass, which is the same
+honest gap it reports in Claude Code when no ledger is configured.
+
+**Neither setup skill is shipped there.** Creating `~/.claude/daikenja/` is
+`setup-user`'s whole job, and the folder and the files inside it are made in
+Claude Code. A claude.ai session that finds no `daikenja` folder in Drive cannot
+create one. `setup-project` is absent for both reasons at once: it writes that
+same config, and its seeding step reads a project working tree that a browser
+session does not have.
+
+**`remember-persona` writes to Drive, and only to Drive.** It appends the entry
+by the replace-and-verify sequence in `docs/config-contract.md` -- download,
+splice, create the replacement in the same folder, read it back, then trash the
+old copy. Verified on 19 August 2026: the template was preserved byte for byte,
+the entry landed below it with its recorded date, and one file was left in the
+folder. The local path is not a fallback on this surface. The filesystem a skill
+can reach there is a sandbox that is discarded with the session, so writing an
+entry to it would report a success and lose the prose; when Drive cannot be
+reached the skill prints the entry for the user to paste instead.
+
+**Each connector call is approved separately.** That write asked four times --
+download, create, download again, trash -- and a denial partway through leaves
+the sequence unfinished. "Always allow" turns it into one approval for the
+session. This is claude.ai's connector prompt, not something Daikenja controls.
+
+**Skills do not sync between surfaces.** An upload to claude.ai is per user and
+per skill, is not shared across an organization, and does not reach Claude Code
+or the API. A change to a skill here means re-uploading the zip by hand. This
+is Anthropic's design, not something Daikenja can package around.
+
+**Code execution must be enabled** on the account, on a Pro, Max, Team or
+Enterprise plan. Without it a custom skill does not load at all.
+
 ## Reviewer personas
 
 **Group-level personas are not supported.** `personas.md` is read as individual
