@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `/daikenja:learn-voice`, a slash-only skill that derives a proposed
+- `/daikenja:learn-voice` (**beta**), a slash-only skill that derives a proposed
   `writing-style.md` from writing samples the user supplies. That file was
   created blank and nothing had ever been able to fill it in, so for anyone who
   did not write one by hand the layering contract resolved to the default voice
@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   drops any observation that contradicts a `Fixed` rule in `docs/voice.md`
   because such a line would have no effect. A file that already holds content is
   diffed, never overwritten (#58).
+- **Why `learn-voice` is marked beta.** Its acceptance surface is a live run, and
+  it has not had one. What has been done is a hand-walk of every branch against
+  `tests/fixtures/learn-voice-samples.md`, which is how two of its rules were
+  found. Until a real run against a real corpus happens, read the proposal
+  before approving it rather than assuming the derivation is right, and expect
+  the thresholds in Step 2 to move once there is evidence about where they
+  should sit (#58).
 - `tests/fixtures/learn-voice-samples.md`, 33 of the invoker's own messages
   across four sources and three audiences, with six traits seeded to be found,
   four to be observed and kept out, and two never to be recorded. Four walks

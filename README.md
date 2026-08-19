@@ -131,8 +131,10 @@ Fifteen skills, grouped by what they do.
   from sources the project already has. Seeding proposes entries and hands them
   to `/daikenja:project-log` for your approval; it never writes the ledger
   itself.
-- `/daikenja:learn-voice` -- works out how you write from writing samples you
-  supply, and proposes the whole of your `writing-style.md`. It reads only
+- `/daikenja:learn-voice` (**beta**) -- works out how you write from writing
+  samples you supply, and proposes the whole of your `writing-style.md`. Beta
+  because it has been walked by hand against a fixture but not yet used on a
+  real corpus, so read the proposal before you approve it. It reads only
   samples you say you wrote yourself, records style and never facts about
   people or projects, shows the complete file -- as a diff if you already have
   one -- and writes nothing until you approve it. Run it whenever you have more
