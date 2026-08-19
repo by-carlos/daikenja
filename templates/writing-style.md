@@ -5,8 +5,13 @@ rewrites anything on your behalf.
 
 Copy this file to `~/.claude/daikenja/writing-style.md` and fill it in. Point at
 it from `daikenja.yaml` with `profile.writing_style`. Nothing here ships with
-the plugin -- it is yours, it stays on your machine, and Daikenja never edits
-it.
+the plugin -- it is yours, and it stays on your machine.
+
+**One skill writes this file, and only with your approval.** If you would rather
+not start from a blank page, `/daikenja:learn-voice` works out how you write
+from writing samples you supply and proposes the whole file. It shows you the
+complete content first, diffs it against anything already here, and writes only
+what you approve. Nothing else edits this file.
 
 **This layers on top of the Daikenja default voice, it does not replace it.**
 The default applies except where you say otherwise, so you only need to write
