@@ -196,6 +196,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `templates/writing-style.md` no longer tells the user that Daikenja never
+  edits this file. That stopped being true when `learn-voice` shipped, and the
+  template is the one place a user reads about the file before they own a copy
+  of it. It now names the one skill that writes it and the approval that buys
+  the write. Templates are copied out and never edited afterwards, so this
+  reaches new copies only (#58).
 - `docs/config-contract.md` § Finding the current project no longer says that a
   read skill stops when no `projects:` entry matches. It continues, because an
   unregistered project can still have a ledger on disk and a ledger on disk wins
