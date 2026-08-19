@@ -7,35 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- `docs/config-contract.md` § Finding the current project no longer says that a
-  read skill stops when no `projects:` entry matches. It continues, because an
-  unregistered project can still have a ledger on disk and a ledger on disk wins
-  over the config. That behaviour landed with #47 and updated
-  `docs/reading.md` § Step A; the contradicting sentence in the contract was
-  left behind, so the two documents disagreed on the branch a reader is most
-  likely to check first. The corrected step states the rule and defers the
-  branch to `docs/reading.md`, which stays the single home for the shared read
-  recipe. No skill behaviour changes -- `project-catchup`'s failure table and
-  `project-summary` Step 4 already implement the continue path (#75).
-
-### Changed
-
-- `docs/voice.md` § Assume the reader is not a native English speaker split its
-  last bullet, "International (US) English. Neutral, no regional slang or
-  idiom.", into two Fixed rules: neutral English with no regional slang or
-  idiom, and holding to one spelling variant consistently within a message
-  (never "organize" next to "colour"). Which variant to use is a new
-  `## Defaults` rule, § Spelling variant, whose shipped default flips from US
-  to Commonwealth/British spelling, on the reasoning that a non-native reader
-  was more likely taught Commonwealth spelling than US -- the same premise the
-  surrounding Fixed block already rests on. Unlike the other Defaults rules
-  audited in #28, this one is replaceable outright rather than narrowing-only,
-  since a user writing to a US audience has an equally legitimate claim on US
-  spelling. `templates/writing-style.md` now prompts the user to name their
-  variant (#66).
-
 ### Added
 
 - The writing skills -- `compose`, `doc-review`, `preflight`,
@@ -59,6 +30,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   between surfaces, a separate connector approval per call, and skills that
   need to be named rather than triggered by description on a long pasted
   draft (#42).
+- `/daikenja:setup-project`, a slash-only skill that registers the project you
+  are standing in. Registering a second repository used to cost a full
+  `setup-user` run, questionnaire included, because one skill carried a
+  once-per-person job and a once-per-project one. The new skill requires a
+  configured `daikenja.yaml`, does the registration idempotently, and offers
+  the per-project keys `docs/config-contract.md` defines (`ledger`,
+  `stale_after_days`, `norms_doc`) rather than leaving them to be discovered.
+  It never writes `last_checkpoint`, which stays `project-catchup`'s (#57).
+- **Optional ledger seeding** in the same skill. A project can start from what
+  it already has -- a decision log, a wiki space, a Slack channel, a README --
+  instead of from an empty file. Its first action is to look for a register the
+  project already keeps, because many do, and the documented answer when it
+  finds one is that the ledger is the index and those documents are the depth:
+  one-line bodies pointing at the record, and source identifiers carried across
+  so `ADR-0007` stays citable. Seeding writes nothing itself. Candidates go to
+  `/daikenja:project-log` in bounded tranches -- decisions, then open items,
+  then context links -- with any unanswered tranche restated before a new one
+  opens, so partial approval stays usable at forty entries and a proposal the
+  user replied around cannot be mistaken for an approved one. No second
+  approval gate is added; `project-log`'s is the gate (#57).
+- `tests/fixtures/setup-project-seed.md`, covering a first registration, a
+  re-registration of the same path under a user-chosen key, and a seed run the
+  user only partly approves, with a source no connector can reach and an open
+  item whose date exists nowhere (#57).
 - `CONTRIBUTING.md` and `SECURITY.md`, both written for a public repository:
   how to file an issue and open a pull request, the conventions that are easy
   to trip over (voice, ledger format, templates, fixtures), and a private
@@ -76,6 +71,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `docs/voice.md` § Assume the reader is not a native English speaker split its
+  last bullet, "International (US) English. Neutral, no regional slang or
+  idiom.", into two Fixed rules: neutral English with no regional slang or
+  idiom, and holding to one spelling variant consistently within a message
+  (never "organize" next to "colour"). Which variant to use is a new
+  `## Defaults` rule, § Spelling variant, whose shipped default flips from US
+  to Commonwealth/British spelling, on the reasoning that a non-native reader
+  was more likely taught Commonwealth spelling than US -- the same premise the
+  surrounding Fixed block already rests on. Unlike the other Defaults rules
+  audited in #28, this one is replaceable outright rather than narrowing-only,
+  since a user writing to a US audience has an equally legitimate claim on US
+  spelling. `templates/writing-style.md` now prompts the user to name their
+  variant (#66).
+
+- `skills/setup-user/SKILL.md` no longer registers a project. Step 5 is gone,
+  the remaining steps renumber, and the skill closes by handing off to
+  `/daikenja:setup-project`, so a first-ever run is still one continuous flow
+  while a second repository costs only the second skill. Its frontmatter
+  `description` and `metadata.writes` now say `profile:` block only.
+  `docs/config-contract.md` carries the matching boundary: three skills write
+  configuration keys and each owns a different block (#57).
+- `project-log`, `project-catchup` and `remember-persona` name
+  `/daikenja:setup-project` as the way to register a project instead of
+  `/daikenja:setup-user`. `project-log` also stops printing a YAML block for
+  the user to paste by hand, since the new skill adds the entry itself (#57).
+- `project-log`'s duplicate check gains the criterion it was missing: same
+  subject is not the same fact. A standing policy and a project decision stay
+  separate entries even when they read alike, and the test is what would have
+  to change for each to stop being true. The rule said to compare by meaning
+  and gave nothing to compare with, which left the call to whoever was running
+  the skill (#57).
 - `docs/voice.md` now carries a **substitution floor**: a replacement only
   counts when it is at least as natural as what it replaced, so an idiom with
   no better plain form stays. The idiom rule read as a blanket ban, which is
@@ -112,6 +138,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `sample-transcript.md`'s three-label trap for one speaker, and the
   `D-003` cross-reference between `sample-ledger.md` and
   `sample-drafts-preflight.md` (#39).
+
+### Fixed
+
+- `docs/config-contract.md` § Finding the current project no longer says that a
+  read skill stops when no `projects:` entry matches. It continues, because an
+  unregistered project can still have a ledger on disk and a ledger on disk wins
+  over the config. That behaviour landed with #47 and updated
+  `docs/reading.md` § Step A; the contradicting sentence in the contract was
+  left behind, so the two documents disagreed on the branch a reader is most
+  likely to check first. The corrected step states the rule and defers the
+  branch to `docs/reading.md`, which stays the single home for the shared read
+  recipe. No skill behaviour changes -- `project-catchup`'s failure table and
+  `project-summary` Step 4 already implement the continue path (#75).
 
 ## [0.4.0] - 2026-08-17
 

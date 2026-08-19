@@ -1,10 +1,10 @@
 ---
 name: setup-user
-description: One-time (and re-runnable) setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or creates them in Google Drive if you ask), registers the current project, and reports which connected tools the other skills can use. Run explicitly with /daikenja:setup-user -- it never fires on its own.
+description: One-time (and re-runnable) personal setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or creates them in Google Drive if you ask), and reports which connected tools the other skills can use. It does not register a project -- /daikenja:setup-project does that, and this skill hands off to it at the end, so a first-ever run is still one continuous flow. Run explicitly with /daikenja:setup-user -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 3
-  writes: ~/.claude/daikenja/daikenja.yaml, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
+  version: 4
+  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block only, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
@@ -14,6 +14,12 @@ The skill every other Daikenja skill assumes has already run. It writes
 `daikenja.yaml`, nothing else -- `personas.md` and `writing-style.md` get a
 blank starting copy if the user has none, and this skill never writes a word of
 their content afterwards.
+
+**This is the once-per-person half of setup, and only that.** Everything with a
+per-project lifetime -- registering a directory under `projects:`, that
+project's own settings, seeding its ledger -- belongs to
+`/daikenja:setup-project`, which Step 6 hands off to. Running this skill again
+to add a second repository is exactly the shape that split the two apart.
 
 **Slash-only on purpose.** This skill asks personal questions and writes files
 outside the project. Nothing about "help me get started" or "set up my config"
@@ -61,8 +67,6 @@ second run reconcile instead of clobber.
 - `~/.claude/daikenja/personas.md`, `~/.claude/daikenja/writing-style.md` --
   note only whether each exists. Never open them to check content; existence is
   the only thing that decides whether to copy the template.
-- The current directory's normalized path (forward slashes, no trailing slash),
-  and whether any `projects:` entry already has this exact `path`.
 
 ## Step 2: create the config directory and file
 
@@ -199,28 +203,7 @@ described, and is the only way content reaches that file from Daikenja. The two
 are different acts on the same file, so neither constrains the other. See
 `docs/config-contract.md` § Who writes what.
 
-## Step 5: register the current project
-
-Compute the current directory's normalized path (forward slashes, no trailing
-slash). Compare against every `projects:` entry's `path`, normalized the same
-way.
-
-- **Exact match already exists.** Say which project key it is registered under
-  and leave the entry alone -- registration is idempotent, not a place to
-  silently change a key someone chose.
-- **No match.** Propose a new entry, key defaulting to the directory's own
-  name (ask if the user wants a different label), and add it under `projects:`:
-
-  ```yaml
-  <dir-name>:
-    path: <normalized absolute path>
-  ```
-
-  Leave `ledger`, `last_checkpoint`, `stale_after_days` and `norms_doc` unset --
-  they default per `docs/config-contract.md` and get written by the skills that
-  actually need them (`project-log`, `project-catchup`).
-
-## Step 6: report tool availability
+## Step 5: report tool availability
 
 State plainly which connected tools the other skills can use this session, and
 what degrades without them. Do not guess at tools that are not visible in this
@@ -236,22 +219,37 @@ At minimum cover: a link-fetching capability (`thread`, `project-log` follow a
 pasted link), and any chat connector (Slack, email, Teams) if one is present.
 This is informational -- it never blocks the rest of setup.
 
-## Step 7: confirm
+## Step 6: confirm, and hand off
 
 One or two lines: what was written or left alone, and where.
 
 ```
 Daikenja is set up. Wrote ~/.claude/daikenja/daikenja.yaml (profile: name=Carlos,
 tone=standard). writing-style.md and personas.md already existed and were not
-touched. Registered this project as `billing-api` at C:/GitHub/billing-api.
+touched.
 ```
+
+**Then point at `/daikenja:setup-project`.** Personal setup is done once ever;
+registering a project happens once per project, and nothing here has registered
+the directory the user is standing in. Offer it as the next step so a
+first-ever run stays one continuous flow:
+
+```
+Next, run /daikenja:setup-project in each project you want Daikenja to track.
+It registers the directory, sets that project's own settings, and can seed its
+ledger from a decision log, a wiki space or a Slack channel you already have.
+You will not need to run /daikenja:setup-user again.
+```
+
+That is an offer, not a chained skill. This skill ends here whether or not the
+user takes it.
 
 ## Re-running this skill
 
 Safe at any time. It never overwrites `personas.md` or `writing-style.md` once
-they exist, never touches a `projects:` entry that already matches the current
-path, and only edits the `profile:` keys the user answers in Step 3 -- everything
-else already in `daikenja.yaml` is left as it was found.
+they exist, never touches `projects:` at all, and only edits the `profile:` keys
+the user answers in Step 3 -- everything else already in `daikenja.yaml` is left
+as it was found.
 
 ## Failure cases
 

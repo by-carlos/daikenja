@@ -114,7 +114,8 @@ Wait for approval. Silence is not approval.
 - **Approved.** Edit `~/.claude/daikenja/daikenja.yaml`, the matched project's
   `last_checkpoint` key only, surgically -- not a rewrite. If the project is
   unregistered, there is nowhere to write it: say so and name
-  `/daikenja:setup-user` as the way to register it, then stop without writing.
+  `/daikenja:setup-project` as the way to register it, then stop without
+  writing.
 - **Declined.** Leave the checkpoint untouched and say so. The next run
   reports the same delta again, which is correct -- nothing was missed.
 
@@ -126,7 +127,7 @@ the ledger; this carve-out is `last_checkpoint` alone, per
 
 | Situation | What to do |
 |---|---|
-| `daikenja.yaml` absent | Treat as a first run against ledger defaults. Note that no checkpoint can be written until `/daikenja:setup-user` runs and this project is registered. |
+| `daikenja.yaml` absent | Treat as a first run against ledger defaults. Note that no checkpoint can be written until `/daikenja:setup-user` has configured Daikenja and `/daikenja:setup-project` has registered this project. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A Changelog ID resolves to no entry | One line saying so, then continue with the rest of the delta. |

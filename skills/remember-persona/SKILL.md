@@ -308,8 +308,9 @@ missing thing is the task itself.
 - It does not inspect or overwrite `personas.md` when the file already exists.
   Scaffolding only happens on absence, the same test `setup-user` uses, and
   `setup-user`'s own create-if-absent rule is untouched by this skill.
-- It does not write `daikenja.yaml`. That is `/daikenja:setup-user`, except for
-  `last_checkpoint`, which `project-catchup` owns.
+- It does not write `daikenja.yaml`. `/daikenja:setup-user` owns the `profile:`
+  block, `/daikenja:setup-project` owns a project's `projects:` entry, and
+  `last_checkpoint` belongs to `project-catchup`.
 - It does not record project decisions or open items. That is
   `/daikenja:project-log`, which writes the ledger and never touches this file.
 - It does not build a persona by reading past messages, threads or transcripts.

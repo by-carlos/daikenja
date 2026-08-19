@@ -28,9 +28,12 @@ it every time. This is about how the request is phrased, not about which skill.
 "already answered" as not checked rather than as a pass, which is the same
 honest gap it reports in Claude Code when no ledger is configured.
 
-**`setup-user` is not shipped there.** Creating `~/.claude/daikenja/` is its
-whole job, and the folder and the files inside it are made in Claude Code. A
-claude.ai session that finds no `daikenja` folder in Drive cannot create one.
+**Neither setup skill is shipped there.** Creating `~/.claude/daikenja/` is
+`setup-user`'s whole job, and the folder and the files inside it are made in
+Claude Code. A claude.ai session that finds no `daikenja` folder in Drive cannot
+create one. `setup-project` is absent for both reasons at once: it writes that
+same config, and its seeding step reads a project working tree that a browser
+session does not have.
 
 **`remember-persona` writes to Drive, and only to Drive.** It appends the entry
 by the replace-and-verify sequence in `docs/config-contract.md` -- download,
