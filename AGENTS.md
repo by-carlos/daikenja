@@ -45,6 +45,13 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
 - **Voice is contractual.** Anything Daikenja drafts or rewrites follows
   `docs/voice.md`, and `docs/config-contract.md` fixes how a user's own
   `writing-style.md` layers on top. Read both before changing either.
+- **Never move `release` without bumping `version` in
+  `.claude-plugin/plugin.json`.** Claude Code compares version strings to decide
+  whether to update an installed plugin, so an unbumped fast-forward ships
+  nothing and **fails silently**.
+- **Rollback is forward-only.** Revert on `main`, bump the patch, tag, release,
+  fast-forward. **Never** point `release` at an older commit and never
+  force-push it — consumers on the newer version string would not downgrade.
 - **Changelog as-you-go, under `## [Unreleased]`.** Never write a
   dated/versioned heading or bump the version file mid-batch — that recreates
   version drift.
