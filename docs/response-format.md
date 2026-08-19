@@ -102,8 +102,14 @@ A skill may refine this table for its own report -- `preflight` and
 Nothing found, nothing to do, nothing changed: say so in one line and stop.
 "No gaps. Every open item has an owner and is within 21 days." is a complete
 report. Padding a clean result to look thorough teaches the user to skim, and
-a user who skims misses the report that is not clean. A skill's template may
-fix the exact wording of its clean line.
+a user who skims misses the report that is not clean.
+
+A skill's template may fix the exact wording of its clean line, and lines its
+template makes mandatory stay -- a deliverable handed back (`preflight`
+returns the draft), or a provenance line that must print on every run
+(`preflight`'s `Reviewed:`). What the clean path never gains is the optional
+material: no findings section with nothing in it, no alternative version "in
+case", no explanation of everything that was checked and passed.
 
 ## No undefined coined terms
 
