@@ -108,6 +108,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `project-log` gains a same-turn path for dictated facts: when the material is
+  the user's own short statement -- typed as the request itself, classification
+  settled by their phrasing, every field resolved without a question, and the
+  operation byte-determined (new entries, or an ID the user named) -- the skill
+  writes immediately and shows the written lines and Changelog line verbatim,
+  instead of proposing and waiting. The hard rule is reworded, not weakened:
+  never write lines the user has not stated or approved -- a dictation *is* the
+  approval, and it holds only while the written lines add nothing the user did
+  not say. Threads, pastes, transcripts, bulk backfills, duplicate-check hits
+  the user did not name, ledger scaffolding, repairs, and runs entered from
+  another skill all keep propose-then-wait. Two more frictions from the same
+  live session: all clarifying questions in a run now land in a single round,
+  computed once and never re-asked -- a revised proposal re-opens no settled
+  question -- and when a written entry points at another project document, the
+  confirmation offers the follow-up update instead of declining it (still its
+  own approval; companion-document config is deferred to #70). The ledger file
+  grammar in `docs/ledger-format.md` is untouched. Walked by hand against
+  `tests/fixtures/dictated-log-requests.md` (#99).
 - `docs/voice.md` § Absolute dates narrows its `Fixed` core to a hard deadline
   and any reader in another time zone -- both still always get an absolute
   date. A new `## Defaults` rule, § Relative soft deadlines, lets a
