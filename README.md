@@ -13,7 +13,7 @@ you have not approved.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Thirteen skills ship today.
+**Status:** in active development. Fourteen skills ship today.
 
 ## Claude Code only
 
@@ -41,9 +41,14 @@ claude plugin install by-carlos/daikenja
 Then run `/daikenja:setup-user` once. It checks the environment and writes your
 configuration into `~/.claude/daikenja/`.
 
+After that, run `/daikenja:setup-project` in each project you want Daikenja to
+track. It registers the directory, sets that project's own settings, and can
+seed its ledger from a decision log, a wiki space or a Slack channel you already
+have. `setup-user` is once per person; `setup-project` is once per project.
+
 ## Skills
 
-Thirteen skills, grouped by what they do.
+Fourteen skills, grouped by what they do.
 
 **Writing a reply**
 
@@ -89,9 +94,14 @@ Thirteen skills, grouped by what they do.
 
 **Setup**
 
-- `/daikenja:setup-user` -- one-time, re-runnable setup. Checks the
-  environment, writes your `daikenja.yaml`, captures your profile, and
-  registers the current project.
+- `/daikenja:setup-user` -- one-time, re-runnable personal setup. Checks the
+  environment, writes your `daikenja.yaml` and captures your profile. It does
+  not register a project.
+- `/daikenja:setup-project` -- once per project. Registers the directory you are
+  in, offers that project's own settings, and can optionally seed its ledger
+  from sources the project already has. Seeding proposes entries and hands them
+  to `/daikenja:project-log` for your approval; it never writes the ledger
+  itself.
 
 ## Where your data lives
 
@@ -101,7 +111,7 @@ and get overwritten on update.
 
 | What | Where | Written by |
 |---|---|---|
-| Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user`, plus `project-catchup` for the `last_checkpoint` key only |
+| Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you |
 | A project's decision ledger | `<project>/.daikenja/ledger.md` | `project-log` only |
@@ -135,7 +145,9 @@ Two rules the skills follow:
 - **One writer for the ledger.** Only the `project-log` skill writes ledger
   content. `project-catchup` writes one config key, `last_checkpoint`, because
   reporting a delta and moving the checkpoint is its job -- it never touches
-  the ledger itself. Every other skill only reads.
+  the ledger itself. `setup-project` can propose a whole ledger's worth of
+  entries when it seeds one, and every last line still goes through
+  `project-log` for your approval. Every other skill only reads.
 - **You approve first.** A skill proposes a ledger entry, you confirm, then it
   writes.
 
