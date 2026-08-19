@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `docs/response-format.md`, a binding contract for how a skill reports to the
+  user in the conversation -- the third contract surface next to the ledger
+  file (`ledger-format.md`) and drafted messages (`voice.md`). It fixes six
+  rules drawn from the first days of live use: the answer or verdict comes
+  first, findings are itemised rather than narrated, entries are named
+  topic-first with the ID in parentheses, `profile.tone` scales narration
+  length in every skill, a clean result is one line, and a coined term is
+  defined where it first appears. All fifteen skills now cite it from their
+  reading list or output step; the ledger read skills and `project-log` flip
+  their reply templates to topic-first entry references, and `self-review` no
+  longer moves the verdict to the end in `guided` mode (#97).
+
 - `/daikenja:learn-voice` (**beta**), a slash-only skill that derives a proposed
   `writing-style.md` from writing samples the user supplies. That file was
   created blank and nothing had ever been able to fill it in, so for anyone who
