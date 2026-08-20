@@ -39,15 +39,34 @@ Instructions for Claude Code and other agents working in this repo.
      body set to that version's actual `CHANGELOG.md` entry content (copied
      in, not a bare "see CHANGELOG.md" pointer) plus a link back to the file
      for full history.
-  4. Fast-forward the `release` branch to that tag and push it:
-     `git push origin vx.y.z:release`. This is the actual distribution step --
-     the marketplace entry in `by-carlos/claude-plugins` points at `release`,
-     not `main`, so nothing reaches installers until this push happens.
+  4. Fast-forward the `release` branch to that tag and push it. Tags in this
+     repo are annotated, so pushing the tag name directly
+     (`git push origin vx.y.z:release`) asks GitHub to point a branch at a tag
+     object and is rejected with `remote: fatal error in commit_refs`. Peel it
+     to the commit first: `git push origin 'vx.y.z^{}:release'` (the quotes
+     are required in PowerShell, where `^` is its escape character). This is
+     the actual distribution step -- the marketplace entry in
+     `by-carlos/claude-plugins` points at `release`, not `main`, so nothing
+     reaches installers until this push happens.
 - **Semver:** a `feat` in the batch means a **minor** bump; only
   `fix`/`docs`/`chore` means a **patch**. Pre-1.0, breaking changes go in a
   minor.
 - **Tag per released version** (not per commit, not major-only) -- the
   `CHANGELOG.md` release links assume a tag exists for each version.
+- **The four steps above can run as two GitHub Actions workflows** instead of
+  by hand: `.github/workflows/release-prepare.yml` (`workflow_dispatch`, an
+  optional `bump` input) does step 1-2 and opens a PR against `main`;
+  `.github/workflows/release-publish.yml` (on push to `main`, gated on the
+  plugin version having changed) does steps 3-4 once that PR merges. Both need
+  a `RELEASE_TOKEN` repository secret -- the default `GITHUB_TOKEN` cannot
+  update `release` under the `release updates` ruleset, and a pull request it
+  opens can never trigger `ci.yml`'s required checks, since bot-raised events
+  don't trigger further workflow runs. `RELEASE_TOKEN` needs `contents: write`
+  and `pull_requests: write`, plus membership in the `release updates` bypass
+  list if it belongs to a GitHub App rather than the maintainer's own account.
+  Setting that up is a repository-settings change, so it's the maintainer's to
+  do by hand; until `RELEASE_TOKEN` exists, the manual steps above are the
+  only path.
 
 ## Distribution and branch protection
 

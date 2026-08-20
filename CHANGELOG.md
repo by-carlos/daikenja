@@ -7,8 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Two GitHub Actions workflows automate the release sequence `CLAUDE.md`
+  documents by hand: `release-prepare.yml` (`workflow_dispatch`, with a
+  `bump` input that defaults to inferring minor-vs-patch from whether a
+  `feat` commit landed since the last tag) bumps `version` in
+  `.claude-plugin/plugin.json`, dates the `CHANGELOG.md` entry, and opens a
+  PR against `main`; `release-publish.yml` (on push to `main`, gated on the
+  plugin version having actually changed) tags the release, cuts the GitHub
+  release from that version's changelog section, and fast-forwards `release`.
+  Both need a `RELEASE_TOKEN` repository secret, since the default
+  `GITHUB_TOKEN` can neither update `release` under its ruleset nor open a PR
+  that `ci.yml` will run checks against -- setting that secret up is a
+  repository-settings change left to the maintainer, so both workflows are
+  inert until it exists and the manual sequence stays the fallback. The
+  version-bump and changelog-rotation logic lives in
+  `scripts/prepare_release.py` and `scripts/changelog_section.py` (#113).
+
 ### Fixed
 
+- `CLAUDE.md`'s documented recovery command for the last release step,
+  `git push origin vx.y.z:release`, was wrong: tags in this repo are
+  annotated, so the command asks GitHub to point a branch at a tag object and
+  is rejected with `remote: fatal error in commit_refs`. It now reads
+  `git push origin 'vx.y.z^{}:release'`, which peels the tag to its commit
+  first, with a note that the quotes are required in PowerShell since `^` is
+  its escape character. Found the day this bit: the 0.5.0 release looked
+  complete from every trace on the repository -- version bumped, changelog
+  dated, tag and GitHub release cut -- while `release`, the branch the
+  `by-carlos/claude-plugins` marketplace entry actually reads, silently
+  stayed on 0.4.0 (#113).
 - A person described in material the user pasted could be written into
   `~/.claude/daikenja/personas.md` without being confirmed. The only guard was a
   declaration in the material itself -- `preflight` Step 9 and
