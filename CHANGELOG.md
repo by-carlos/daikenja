@@ -312,6 +312,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   this is distinct from #78, which bars weak findings within a single run
   rather than convergence across runs. Exercised by
   `tests/fixtures/preflight-rerun.md` (#101).
+- `preflight` no longer drops a finding as resolved when the text it anchored
+  to was never changed. Dispatched runs of
+  `tests/fixtures/preflight-recipient-conflict.md` on 20 August 2026 had two
+  reviewers close a cycle-1 finding in cycle 2 by citing a clause that was in
+  the original draft and had never been edited -- the problem left the report
+  with nothing in the message having changed, which is the opposite of what
+  the second cycle is bought for. The cause is structural: Step 5's isolation
+  rule means a re-dispatched reviewer has not seen its own cycle-1 finding and
+  reads the revision cold, so "resolved" was a fresh opinion rather than a
+  confirmation. Step 7 now records, finding by finding, the edit it made in
+  answer to each one, and Step 8 closes a cycle-1 finding only where that
+  record shows an edit -- one the rewrite never touched stands as a restate
+  whatever cycle 2 says about it. The test is the edit rather than the literal
+  anchor text, so a length finding answered by cutting elsewhere still closes.
+  Step 10 states that `Applied:` counts edits and not findings closed, and the
+  `Reviewed:` guidance now says a dispatched cycle 2 is a second read of the
+  revision rather than a memory of the first. The isolation rule is unchanged,
+  no cycle and no reviewer is added, and no fixture is special-cased (#95).
 
 ## [0.4.0] - 2026-08-17
 
