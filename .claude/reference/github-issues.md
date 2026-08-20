@@ -83,6 +83,55 @@ same.
 
 Cross-reference related issues by number so a chain of follow-ups stays linked.
 
+## Provenance — say where the issue came from
+
+Months later the hard question is rarely *what* the issue says. It is *why this
+was filed at all*. Answer it in the issue itself, as the last line of **Context**:
+
+```
+_Surfaced while working on by-carlos/daikenja#<N> — <who or what was working>, <DD Mon YYYY>._
+```
+
+An AI agent puts its own session identifier in that middle slot, so the work can
+be traced back to the conversation that produced it. Claude Code sessions have
+one in `$CLAUDE_CODE_SESSION_ID`. A human contributor writes what they were doing
+instead. Either way the date is absolute (see Dates below).
+
+When nothing was in play, name the activity rather than an issue:
+`_Surfaced during <short phrase> — <who>, <date>._`
+
+**That `#<N>` mention is the relationship.** GitHub posts a cross-reference onto
+the origin issue's timeline, so it reads "…mentioned this issue" and links back
+without anyone editing it. GitHub has no generic "relates to" link — this is it.
+A label is not a substitute, because a label carries no target.
+
+## Relationships — which link to use, and when
+
+GitHub has exactly three typed issue relationships that matter here. Reach for
+the weakest one that is literally true.
+
+| Situation | What to set |
+|---|---|
+| Noticed while doing something else — the common case | **Nothing.** The provenance line's mention is the link. |
+| This genuinely cannot start until another issue lands | `gh issue create --blocked-by <n>` (or `--blocking <n>`) |
+| One job that clearly wants splitting | A parent with sub-issues — **propose it first**, see below |
+
+**Never nest a spin-off as a sub-issue** of whatever surfaced it. It hides the
+work inside a parent nobody reopens and leaves that parent looking unfinished
+forever.
+
+**Do propose a split** when a single issue genuinely wants one — the parts need
+different levels of effort, or it is too big to land as one reviewable change.
+Name the proposed pieces in one line each and create the parent only once the
+maintainer agrees.
+
+**`--blocked-by` means blocked, not preferred.** If two issues are merely nicer
+in a given order, say so in a sentence and set no dependency: a fake blocker
+stalls a queue and misrepresents the work.
+
+**Filing more than one issue at a time obliges you to say which comes first.**
+End the batch with a plain "Start with #N." — one issue, no hedging.
+
 ## Labels
 
 Apply the existing repo labels that fit. Check with `gh label list` first and do
@@ -106,6 +155,29 @@ deliberately not reproduced here, because it covers repos beyond this one.
 **If you are filing without board access, file the issue and stop there.** A
 body that stands on its own is the deliverable; the board fields are not your
 problem.
+
+## Starting work on an issue
+
+Provenance runs both ways. Filing records where an issue came from; **picking one
+up records who is acting on it.** Before the first commit, post one comment:
+
+```
+🤖 Claude Code session `<session-id>` picking this up — <one line on the approach>. Branch: `<branch>`.
+```
+
+A human contributor says the same thing without the session identifier. Either
+way it is one comment, posted when work actually begins — not on reading,
+triaging, or answering a question about the issue. Say what you intend to do; a
+bare "picking this up" is noise, while the approach line is what makes sense
+beside the diff months later.
+
+**No closing comment.** The pull request that closes the issue already carries
+the outcome. Comment a second time only if you *abandon* the issue without a PR,
+saying so and why, so the next person does not re-derive it.
+
+Keep the robot marker if you are an agent. Commands run with the maintainer's own
+credentials, so the comment appears under a human account — the marker is the
+only thing distinguishing agent-written comments from theirs.
 
 ## Dates
 
