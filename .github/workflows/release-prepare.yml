@@ -36,7 +36,7 @@ jobs:
           git config user.name "daikenja-release-bot"
           git config user.email "daikenja-release-bot@users.noreply.github.com"
 
-          BRANCH="release/v${VERSION}"
+          BRANCH="chore/release-${VERSION}"
           git switch -c "$BRANCH"
           git add .claude-plugin/plugin.json CHANGELOG.md
           git commit -m "chore(release): ${VERSION}"
