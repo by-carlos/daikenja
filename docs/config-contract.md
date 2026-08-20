@@ -70,8 +70,12 @@ in a `.md` file that the config points at. There is deliberately no second
 mechanism -- no `profile.md`, no free-text identity blob. Two ways to say who
 you are is one too many.
 
-**`tone`** sets how much the skills explain themselves. `direct` is terse,
-`guided` walks through its reasoning, `standard` is the middle and the default.
+**`tone`** scales how much a skill's reply narrates beyond the answer itself.
+This document only defines the value and its default; how a skill applies it
+to a reply is [`response-format.md`](response-format.md)'s contract, which
+every skill's output step follows: `direct` is terse, `guided` adds the
+reasoning behind each finding and a closing line, `standard` is the middle and
+the default.
 
 **`writing_style` and `personas`** are **pointers**, not fixed paths. A pointer
 may be a relative path, an absolute path, or a Google Drive file name. The three
