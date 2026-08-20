@@ -330,6 +330,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Reviewed:` guidance now says a dispatched cycle 2 is a second read of the
   revision rather than a memory of the first. The isolation rule is unchanged,
   no cycle and no reviewer is added, and no fixture is special-cased (#95).
+- `docs/config-contract.md`'s `tone` field note no longer describes its effect
+  in its own words. It said `tone` "sets how much the skills explain
+  themselves," but at the time only `preflight` and `self-review` read the
+  key -- the other thirteen skills never consulted it, so a user on `direct`
+  still got full-length narration nearly everywhere. `docs/response-format.md`
+  (#97) now gives `profile.tone` one binding mechanism that every skill's
+  output step follows, so the field note points there instead of restating
+  the behaviour a second place (#98).
 
 ## [0.4.0] - 2026-08-17
 
