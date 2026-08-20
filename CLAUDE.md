@@ -53,6 +53,20 @@ Instructions for Claude Code and other agents working in this repo.
   minor.
 - **Tag per released version** (not per commit, not major-only) -- the
   `CHANGELOG.md` release links assume a tag exists for each version.
+- **The four steps above can run as two GitHub Actions workflows** instead of
+  by hand: `.github/workflows/release-prepare.yml` (`workflow_dispatch`, an
+  optional `bump` input) does step 1-2 and opens a PR against `main`;
+  `.github/workflows/release-publish.yml` (on push to `main`, gated on the
+  plugin version having changed) does steps 3-4 once that PR merges. Both need
+  a `RELEASE_TOKEN` repository secret -- the default `GITHUB_TOKEN` cannot
+  update `release` under the `release updates` ruleset, and a pull request it
+  opens can never trigger `ci.yml`'s required checks, since bot-raised events
+  don't trigger further workflow runs. `RELEASE_TOKEN` needs `contents: write`
+  and `pull_requests: write`, plus membership in the `release updates` bypass
+  list if it belongs to a GitHub App rather than the maintainer's own account.
+  Setting that up is a repository-settings change, so it's the maintainer's to
+  do by hand; until `RELEASE_TOKEN` exists, the manual steps above are the
+  only path.
 
 ## Distribution and branch protection
 
