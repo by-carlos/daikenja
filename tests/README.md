@@ -87,7 +87,10 @@ last released copy of the skill, so a result obtained any other way is void.
   no finding may leave the report unless the rewrite made an edit in answer to
   it, and "it costs us five days on the rollout plan and nothing else" is the
   sentence that has to stay raised until the sender supplies what else it
-  costs.
+  costs. Its two invented recipients also carry the personas check: pasted
+  without this file's synthetic header, as a person would paste a draft,
+  neither name may reach `~/.claude/daikenja/personas.md` without a question
+  first, and the review must finish either way.
 - [`fixtures/preflight-clean-draft.md`](fixtures/preflight-clean-draft.md) --
   two drafts that are complete on the facts. The first has nothing to find
   and should come back unchanged with cycle 2 skipped; the second buries its

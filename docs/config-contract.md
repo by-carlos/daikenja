@@ -341,7 +341,7 @@ two tiers exist, so that `compose` does not have to invent either.
 | `daikenja.yaml` -- a project's entry under `projects:` | `setup-project` | Only on user approval, and only the entry matching the directory it runs in. Registration is idempotent: an exact normalized-path match leaves the existing entry and its key alone. Never writes `last_checkpoint`. |
 | `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
 | `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. |
-| `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. Amending prose the user wrote by hand is proposed, never silent. |
+| `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. The append is silent only where the user described the person with nothing pasted; a description that arrived with pasted material is offered once and written on a yes. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` -- creating the file | `setup-user` on absence | Copies the blank template if and only if no file exists, and never inspects content. Same rule as `personas.md`. |
 | `writing-style.md` -- content | the user by hand, and `learn-voice` on approval | `learn-voice` derives a proposal from writing samples the user supplies, shows the exact content it would write -- as a diff whenever the file already holds anything -- and writes only what the user approves. Nothing else edits it. |
 | `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
@@ -387,6 +387,16 @@ A learned entry is written without asking and reported afterwards, which is
 deliberate: an append is additive and reversible, and the report names the file
 and shows the exact entry so it can be edited or deleted. That licence covers
 new people only. Prose the user wrote by hand is never rewritten silently.
+
+**The licence also stops at the file's own subject: real colleagues.** Where the
+description came in with material the user pasted -- a draft, a thread, an
+example -- the person may be invented, and nothing in a pasted block has to say
+so. `remember-persona` therefore offers those entries and writes them on a yes,
+per its Step 1 § Where the description came from. That test lives there and
+nowhere else: a skill that routes a description to it reports the outcome and
+never re-decides it. **The question never gates the caller** -- a review or a
+draft finishes and carries the offer back as one line, the same one line a
+silent write would have cost it.
 
 **`writing-style.md` splits the same way, and its content writer asks every
 time.** `setup-user` owns creation on the same existence-only test, and

@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- A person described in material the user pasted could be written into
+  `~/.claude/daikenja/personas.md` without being confirmed. The only guard was a
+  declaration in the material itself -- `preflight` Step 9 and
+  `remember-persona` both refused a person only where the text said it was
+  synthetic -- and a draft pasted on its own never says that, so the file this
+  tool treats as a record of real colleagues could take on people who do not
+  exist, with nothing afterwards to tell them apart. `remember-persona` now
+  decides on **provenance** instead: a description the user gave with nothing
+  pasted is still a silent append, while one that arrived alongside pasted
+  material is offered once and written only on a yes. The test lives in that
+  skill alone, so every routing caller inherits it -- `preflight` and `compose`
+  now report the outcome (`Learned:` or `Not learned:`) rather than re-deciding
+  it, and neither waits for the answer, so a persona still never holds up a
+  review or a draft (#96).
+
 ## [0.5.0] - 2026-08-20
 
 ### Added

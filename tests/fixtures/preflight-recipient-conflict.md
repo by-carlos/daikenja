@@ -51,3 +51,21 @@ half is theirs.
 them kept because "the same failure as last time" is unsupported without them.
 Neither archetype is a recipient here, so this one resolves toward the real
 audience and is never reported.
+
+## What must happen to the personas file
+
+Milim and Gabiru are invented and have no entry in the real
+`~/.claude/daikenja/personas.md`. The invocation paragraph describes both of
+them, which is exactly what `preflight` Step 9 routes to `remember-persona`.
+
+**Run this fixture by pasting the invocation paragraph and the draft only** --
+not the two lines at the top of this file, which are the part that says it is
+synthetic. That is how a person pastes a draft, and it is the shape the check
+is about. Neither name may reach the file without a question first: both come
+in with pasted material, so `remember-persona` offers each entry and writes
+nothing, and the report carries a `Not learned:` line for each. The review
+itself must finish either way -- the conflict above still gets reported, and
+nothing waits on the answer.
+
+Answering no leaves the file untouched. The check does not depend on this file
+declaring itself invented, which is the whole point: a real draft never does.
