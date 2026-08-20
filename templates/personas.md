@@ -15,6 +15,12 @@ at the rest, and every entry it adds carries the date it was recorded so you can
 spot it. A section you wrote yourself is never rewritten without the change
 being shown to you first. Anything it adds is yours to edit or delete.
 
+**It asks first when the description came in with something you pasted.** A
+draft, a thread or a worked example can describe people who do not exist, and
+this file is your notes on real colleagues. So a person you told it about
+directly is added and reported; a person who turned up inside pasted material is
+shown to you and added only if you say yes.
+
 Write in prose. There is no schema. One section per persona works well, and
 what matters is what changes how you write to them: what they already know,
 what they care about, how much detail they want, and how direct you can be.

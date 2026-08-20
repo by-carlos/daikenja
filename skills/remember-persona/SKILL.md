@@ -3,7 +3,7 @@ name: remember-persona
 description: Records what the user says about a person they write to, in their own personas file (by default ~/.claude/daikenja/personas.md, or a Google Drive file if that is where they keep it), so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
-  version: 5
+  version: 6
   writes: whatever profile.personas resolves to (default ~/.claude/daikenja/personas.md)
 ---
 
@@ -33,6 +33,17 @@ liability if it is ever read over the user's shoulder.
 someone with no entry is additive and reversible, so it is written without
 asking and reported after. Changing prose the user wrote by hand is a different
 act -- it is **proposed**, shown in full, and written only on approval.
+
+**Silent also means nobody was pasted.** A first entry is written unasked only
+when the user described the person **with no pasted material in play** -- they
+told you about a colleague, and that is the whole input. When the description
+arrives alongside something the user pasted -- a draft, a thread, a transcript,
+an example, a borrowed template -- the entry is **offered once and written on a
+yes**, because material pasted whole can describe people who do not exist and
+nothing in the paste has to say so. This is a question about **provenance**, not
+about whether the text looks invented: asking is what the skill does when it
+cannot tell, and the confirmation is asked once per person and never again once
+they have an entry. See Step 1 § Where the description came from.
 
 **Scaffold, never hand-build.** If the personas file does not exist when this
 skill has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
@@ -84,6 +95,36 @@ it plainly enough:
 ```
 That description comes from a test fixture, so I have not recorded it.
 ```
+
+### Where the description came from
+
+That rule catches material that announces itself. Most invented people do not:
+a draft pasted on its own says nothing about being a worked example, and a
+person pasting one is not going to add a line saying so. So the declaration is
+the fast path, not the guard. The guard is where the description came from, and
+it is settled once, here, before Step 5 writes anything.
+
+- **The user described the person and pasted nothing.** They typed it, or they
+  said it while asking for something that carried no pasted block. Their own
+  words about someone they work with. Write it silently, per Step 5.
+- **The description came in with pasted material**, whether it sits inside the
+  paste or in the sentences around it. **Offer it, do not write it.** A block
+  pasted whole can be a worked example, a template someone sent, or a fixture,
+  and the people in it may not exist. One question, answered once.
+- **The person already has an entry.** No provenance question. Step 5 already
+  proposes every addition to an existing entry, and the question is about the
+  first write only.
+
+**When in doubt, offer.** The cost of asking is one line the user answers with
+a word. The cost of guessing wrong is a person who does not exist sitting in a
+file this tool treats as a record of real colleagues, with nothing afterwards to
+mark them apart from the real ones.
+
+**The question never gates the caller.** When another skill routed here, that
+skill finishes its own work and reports the offer as one line -- it does not
+wait for the answer, and a review or a draft is never held up by a persona.
+Offering costs the caller exactly what a silent write cost it: one line in the
+report. The user answering later runs this skill again for the write.
 
 ## Step 2: resolve the file
 
@@ -197,6 +238,31 @@ recalled from memory, and never a relative date.
 
 ## Step 5: write
 
+**New person whose description came in with pasted material.** Write nothing
+yet. Show the entry in full and ask one question:
+
+```
+M has no entry, and that description came in with the draft you pasted. Add
+them to ~/.claude/daikenja/personas.md?
+
+  ## M
+
+  **Who they are.** Runs the billing team.
+  **How to write to them.** Short. Lead with the ask.
+
+I have not written anything yet.
+```
+
+Approval is the user saying yes in this conversation, and it covers this one
+person. Anything else -- silence, a reply about the draft, a yes to a different
+question -- is not approval, and the entry stays in the conversation where the
+user can still use it. On a yes, the write is the append below and the report is
+Step 6's. On a no, write nothing and say nothing further about it.
+
+**When this skill was routed to from another skill, the question goes in that
+skill's report and the run ends there.** The caller does not wait for an answer
+and nothing is written this run, per Step 1 § Where the description came from.
+
 **New person, no existing entry.** Append the section **at the end of the
 entries, immediately after the last persona section -- not at the end of the
 file.** A file may carry trailing sections that have to stay last: standing
@@ -273,6 +339,14 @@ When this skill ran inside another skill's work, that report is one line in the
 caller's own output rather than a block of its own -- `Learned: added S to
 ~/.claude/daikenja/personas.md.` The user can open the file to see the entry.
 
+**An entry that was offered and not written reports as one line too**, and it
+says plainly that nothing was written:
+
+```
+Not learned: S came in with the material you pasted, so I have not added them
+to ~/.claude/daikenja/personas.md. Say the word and I will.
+```
+
 Report the number of entries, not an assessment of them. Do not congratulate the
 user on the persona, and do not summarize what you think it means about the
 person. The report follows `response-format.md`: the result leads, and a
@@ -295,7 +369,8 @@ missing thing is the task itself.
 | `profile.personas` names a path that does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the entry somewhere else. |
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
-| The description came from a fixture or worked example | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |
+| The description came from a fixture or worked example, and says so | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |
+| The description came in with pasted material and says nothing about being invented | Offer it, do not write it. Show the entry, ask once, and write only on a yes. A routed caller gets the offer as one line and does not wait. |
 | The file's entries use a different format from the template | Match the file, not the template. It is the authority on its own format. |
 | The file has trailing sections after the entries | Append after the last entry, above those sections. Never at the very end. Placement is the same in Drive, where the whole file is rewritten from the bytes just downloaded, per Step 5. |
 | The description is evaluative ("he is useless") | Record the behaviour underneath it if the user stated one, and say in one line what you wrote instead. If there is no behaviour under it, write nothing and ask what they do. |
@@ -317,3 +392,7 @@ missing thing is the task itself.
   `/daikenja:project-log`, which writes the ledger and never touches this file.
 - It does not build a persona by reading past messages, threads or transcripts.
   Only what the user states is recorded.
+- It does not decide whether a person is real by reading the text. It asks,
+  once, whenever the description arrived with something the user pasted.
+- It does not hold up the skill that routed to it. The question travels back as
+  one line and is answered whenever the user gets to it.

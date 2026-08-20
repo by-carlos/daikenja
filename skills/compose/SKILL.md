@@ -3,7 +3,7 @@ name: compose
 description: Rewrites or drafts a work message (Slack, Teams, email) so it stays clear, calm and easy to read for a non-native English audience, without changing the ask, the stance or the confidence level. Returns one balanced message, then offers a firmer or softer version on request. Use this whenever the user pastes a draft message, asks for help replying to a colleague, asks to "make this sound better", "tone this down", "make this sound better before I send it", or has just finished the /daikenja:thread skill and is ready to draft -- even a plain "go ahead" or "draft it" once that skill's intent block exists.
 metadata:
   owner: Carlos
-  version: 5
+  version: 6
   pairs-with: thread
 ---
 
@@ -129,10 +129,15 @@ inferred from the draft or the thread -- "M challenges every technical claim" is
 material, M having challenged one in a pasted thread is not.
 
 That write is silent and comes back as one line to add to the `Comment` block
-(`Learned: added M to ~/.claude/daikenja/personas.md.`). An unresolvable local
-`personas` pointer also comes back as one line, and drafting continues. An
-unresolvable `drive:` pointer stops the run there, per Step 5. Never write the
-personas prose from here.
+(`Learned: added M to ~/.claude/daikenja/personas.md.`). **Where the description
+came in with a pasted draft or thread, that skill offers the entry instead of
+writing it**, and the line reads `Not learned: M came in with the material you
+pasted, so I have not added them to ~/.claude/daikenja/personas.md. Say the word
+and I will.` Which of the two happens is decided there, by `remember-persona`
+Step 1 § Where the description came from -- do not make that call here, and do
+not wait for the user's answer. An unresolvable local `personas` pointer also
+comes back as one line, and drafting continues. An unresolvable `drive:` pointer
+stops the run there, per Step 5. Never write the personas prose from here.
 
 ## Step 6: substance pre-flight (requests only)
 
