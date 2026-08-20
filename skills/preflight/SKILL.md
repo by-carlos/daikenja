@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
 metadata:
   owner: Carlos
-  version: 7
+  version: 8
   pairs-with: compose
 ---
 
@@ -428,9 +428,18 @@ fixtures and worked examples describe invented people, and writing them into the
 user's real file pollutes it with people who do not exist. Skip the routing
 silently and say so in one line in the report.
 
-The write is silent, and it is reported afterwards as the one-line `Learned:`
-line in Step 10. A missing `personas.md` comes back as one line from that skill
-and this one carries on -- it never blocks a review.
+**Whether a person the material does not vouch for gets written is not this
+skill's call.** A review almost always runs on a pasted draft, so almost every
+person routed from here arrives with pasted material -- and `remember-persona`
+holds the one test that decides what happens to those, per its Step 1 § Where
+the description came from. Route the description with what the user said and
+leave the decision there. Do not add a second test here, and do not pre-judge
+which people are real.
+
+The outcome comes back as one line for Step 10 -- `Learned:` where the entry was
+written, `Not learned:` where it was offered instead. Either way this skill
+carries on: it never waits for the answer, and a missing `personas.md` comes
+back as one line too. Nothing about a persona blocks a review.
 
 ## Step 10: report
 
@@ -460,6 +469,13 @@ Learned: added S to ~/.claude/daikenja/personas.md.
 
 The verdict line is `ready to send` or `needs <n> facts from you before it
 goes`. Nothing else.
+
+**`Learned:` has a counterpart that says nothing was written.** Where Step 9
+routed someone and `remember-persona` offered the entry instead of writing it,
+the line reads `Not learned: S came in with the material you pasted, so I have
+not added them to ~/.claude/daikenja/personas.md. Say the word and I will.` It
+is one line in the same place, it carries the question, and the verdict above it
+is unaffected -- the review is finished either way.
 
 **`Applied:` counts edits, not findings closed.** It is the number of wording
 fixes Step 7 actually made across both cycles. A cycle-1 finding that stands
@@ -594,6 +610,7 @@ survived, because it did not.
 | A cycle-2 reviewer calls a finding resolved but Step 7 made no edit for it | The finding stands, as a restate. Cycle 2 closes only what the rewrite changed. |
 | Every reviewer returns nothing, or nothing they returned survived the bars | Verdict, the original draft unchanged, evidence lines. No rewrite, and none offered as an alternative. |
 | The `personas` pointer does not resolve | Silent. Archetypes only. |
+| Step 9 routed someone and `remember-persona` offered the entry rather than writing it | Report it as the `Not learned:` line and finish. Never wait for the answer, and never write the entry from here. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-contract.md`. |
 | No ledger at the resolved path | Not fatal. Report "already answered" as not checked and continue. |
