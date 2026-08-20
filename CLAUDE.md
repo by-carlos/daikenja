@@ -39,10 +39,15 @@ Instructions for Claude Code and other agents working in this repo.
      body set to that version's actual `CHANGELOG.md` entry content (copied
      in, not a bare "see CHANGELOG.md" pointer) plus a link back to the file
      for full history.
-  4. Fast-forward the `release` branch to that tag and push it:
-     `git push origin vx.y.z:release`. This is the actual distribution step --
-     the marketplace entry in `by-carlos/claude-plugins` points at `release`,
-     not `main`, so nothing reaches installers until this push happens.
+  4. Fast-forward the `release` branch to that tag and push it. Tags in this
+     repo are annotated, so pushing the tag name directly
+     (`git push origin vx.y.z:release`) asks GitHub to point a branch at a tag
+     object and is rejected with `remote: fatal error in commit_refs`. Peel it
+     to the commit first: `git push origin 'vx.y.z^{}:release'` (the quotes
+     are required in PowerShell, where `^` is its escape character). This is
+     the actual distribution step -- the marketplace entry in
+     `by-carlos/claude-plugins` points at `release`, not `main`, so nothing
+     reaches installers until this push happens.
 - **Semver:** a `feat` in the batch means a **minor** bump; only
   `fix`/`docs`/`chore` means a **patch**. Pre-1.0, breaking changes go in a
   minor.

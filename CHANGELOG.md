@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `CLAUDE.md`'s documented recovery command for the last release step,
+  `git push origin vx.y.z:release`, was wrong: tags in this repo are
+  annotated, so the command asks GitHub to point a branch at a tag object and
+  is rejected with `remote: fatal error in commit_refs`. It now reads
+  `git push origin 'vx.y.z^{}:release'`, which peels the tag to its commit
+  first, with a note that the quotes are required in PowerShell since `^` is
+  its escape character. Found the day this bit: the 0.5.0 release looked
+  complete from every trace on the repository -- version bumped, changelog
+  dated, tag and GitHub release cut -- while `release`, the branch the
+  `by-carlos/claude-plugins` marketplace entry actually reads, silently
+  stayed on 0.4.0 (#113).
 - A person described in material the user pasted could be written into
   `~/.claude/daikenja/personas.md` without being confirmed. The only guard was a
   declaration in the material itself -- `preflight` Step 9 and
