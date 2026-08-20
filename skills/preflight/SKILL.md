@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
 metadata:
   owner: Carlos
-  version: 6
+  version: 7
   pairs-with: compose
 ---
 
@@ -355,16 +355,55 @@ writing style.
   § Failure behavior.
 - A rule that cannot be honoured is named in the report, never broken silently.
 
+**Keep a record of what this step changed, finding by finding.** Against each
+cycle-1 finding write either the edit made in answer to it, or nothing. A
+content finding gets nothing by definition -- its repair needed a fact the draft
+does not have. So does a finding left unfixed because no fix served both
+recipients, per Step 6 case 3. Step 8 reads this record, and without it cycle 2
+cannot tell a fix that landed from a sentence nobody touched.
+
 ## Step 8: cycle 2 -- re-check once
 
 **Re-dispatch only the reviewers that raised something in cycle 1**, each on the
-same model tier it ran on then, against the revised draft. They confirm
-resolved or restate.
+same model tier it ran on then, against the revised draft. They read the
+revision and say whether each problem is still there.
 
 - New wording findings are adjudicated and applied the same way.
 - New content findings join the questions list.
 - **Zero wording findings in cycle 1 skips cycle 2 entirely.** There is nothing
   to re-read.
+
+### A finding is resolved only where Step 7 changed something
+
+A cycle-2 reviewer **reads cold**. Step 5's isolation rule means it has not seen
+its own cycle-1 finding, so what comes back is a second read of the revision and
+not a memory of what it said the first time. It can therefore decide it no
+longer minds a sentence nobody touched. On 20 August 2026 two reviewers did
+exactly that: both closed a cycle-1 finding by citing a clause that was in the
+original draft and had never been edited, and the finding left the report with
+nothing in the message having changed.
+
+So the resolution is not the reviewer's to give on its own:
+
+> **A cycle-1 finding is recorded as resolved only where Step 7's record shows
+> an edit made in answer to it. A finding with nothing recorded against it
+> stands, whatever cycle 2 says about it.**
+
+- **Step 7 edited for it and cycle 2 finds it gone.** Resolved. Drop it.
+- **Step 7 edited for it and cycle 2 still raises it.** It stands. The edit did
+  not land, which is the thing cycle 2 exists to catch.
+- **Step 7 made no edit for it.** It stands as a **restate**, and cycle 2's
+  reading changes nothing. Report it where it already sat -- a content finding
+  in the `Needs you` list, an unresolvable recipient conflict in the conflict
+  line.
+
+**The test is the edit, not the wording of the anchor.** A length finding
+answered by cutting a different paragraph was acted on, and cycle 2 may close
+it. Where the record is empty nothing was acted on, and no reading of the
+revision changes that.
+
+This adds no cycle and no reviewer. It is a check on what the loop already
+holds, applied before a finding is allowed to leave the report.
 
 **If cycle 2 runs at all, it runs as a dispatch. Cost is not a reason to skip
 it.** Judging in this context that a fix "plainly resolves" a reviewer's finding
@@ -422,6 +461,12 @@ Learned: added S to ~/.claude/daikenja/personas.md.
 The verdict line is `ready to send` or `needs <n> facts from you before it
 goes`. Nothing else.
 
+**`Applied:` counts edits, not findings closed.** It is the number of wording
+fixes Step 7 actually made across both cycles. A cycle-1 finding that stands
+under Step 8 was never an edit, so it is not counted there and it does not
+leave the report -- it stays in the `Needs you` list or the conflict line it
+already belonged to.
+
 ### Reporting a re-run
 
 When Step 1's re-run rule applied, the report carries one more line,
@@ -463,6 +508,12 @@ is the run least likely to print it.
 `re-read once in the same context`, never `confirmed`. A reviewer that never
 read the revision independently cannot confirm a fix landed, and a report that
 says it did has invented the one thing the second cycle exists to buy.
+
+**A dispatched cycle 2 is a second read of the revision, not a memory of the
+first read.** The re-dispatched reviewer reads cold, per Step 5, and has not
+seen its own cycle-1 finding. What it can settle is whether an edit landed. A
+finding Step 7 never edited for is not its to close, per Step 8, and it stays
+in the report whichever way the reviewers ran.
 
 **Depth keys off `profile.tone`**, per `config-contract.md`:
 
@@ -540,6 +591,7 @@ survived, because it did not.
 | A finding states its cost only as a possibility | Discard it. "Someone could misread this" with nothing behind it has not cleared the second bar, and a nitpick in the report is the padding it was discarded to prevent. |
 | A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
 | A `Fix` only deletes or rearranges words already in the draft | Wording fix. Apply it. Do not ask the user whether the deleted phrase was accurate. |
+| A cycle-2 reviewer calls a finding resolved but Step 7 made no edit for it | The finding stands, as a restate. Cycle 2 closes only what the rewrite changed. |
 | Every reviewer returns nothing, or nothing they returned survived the bars | Verdict, the original draft unchanged, evidence lines. No rewrite, and none offered as an alternative. |
 | The `personas` pointer does not resolve | Silent. Archetypes only. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
@@ -560,6 +612,7 @@ survived, because it did not.
 - It does not invent a reviewer. The roster in `docs/reviewer-personas.md` is
   fixed and changes only by pull request.
 - It does not run more than two cycles.
+- It does not let cycle 2 close a finding the rewrite never touched.
 - It does not let anyone change which model a reviewer runs on. The tiers live
   in `docs/reviewer-personas.md` and change only by pull request, like the
   roster itself. `CLAUDE_CODE_SUBAGENT_MODEL` still overrides them, because

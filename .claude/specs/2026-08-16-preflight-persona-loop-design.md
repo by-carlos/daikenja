@@ -8,6 +8,9 @@ fixtures on claude.ai -- the only surface with no subagent dispatch, so every
 run there exercises the in-context fallback rather than skipping it.
 Amended 19 Aug 2026 (#38): D12 and § 7.7 add a per-reviewer model tier. D4 is
 unchanged by it.
+Amended 20 Aug 2026 (#95): § 7.1 gates a cycle-2 resolution on the rewrite
+having made an edit for that finding. The two-cycle bound and the isolation
+rule are unchanged by it.
 **Affects:** `skills/preflight`, `skills/compose`, `docs/`, `templates/personas.md`, one new skill
 
 ---
@@ -182,9 +185,13 @@ brief** -- not the other personas, and not the cycle-0 verdict, since showing it
 anchors them onto checks that already ran.
 
 **Cycle 2 -- only personas that raised something in cycle 1 are
-re-dispatched**, against the revised draft. They confirm resolved or restate.
-New wording findings are applied; new content findings join the questions list.
-Zero wording findings in cycle 1 skips cycle 2 entirely.
+re-dispatched**, against the revised draft. They read the revision and say
+whether each problem is still there. A cycle-1 finding is closed only where the
+rewrite made an edit in answer to it; one the rewrite never touched stands,
+because a persona re-dispatched under the isolation rule reads cold and is
+giving a second opinion rather than confirming its own finding. New wording
+findings are applied; new content findings join the questions list. Zero wording
+findings in cycle 1 skips cycle 2 entirely.
 
 ### 7.2 The critique contract
 
