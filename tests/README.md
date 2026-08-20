@@ -89,6 +89,14 @@ last released copy of the skill, so a result obtained any other way is void.
   ask, opens with "as discussed", asks a bare rhetorical question and closes
   on a hollow tricolon, while still containing every date, owner and
   deadline a fix could need. Both must finish with no questions.
+- [`fixtures/preflight-rerun.md`](fixtures/preflight-rerun.md) -- a
+  certificate-rotation approval run twice: run 1 is missing the window and the
+  failure mode and must ask for both; the user answers both in the
+  conversation; run 2's revised draft states them but introduces one new gap
+  (when an on-call shift starts). Run 2 must report the first two as settled
+  since the last run, never re-ask them, and -- as a second consecutive run
+  still ending `needs facts` -- state that the remaining set is exactly the
+  one new fact and name it.
 
 ### `doc-review`
 

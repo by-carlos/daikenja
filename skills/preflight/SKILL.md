@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
 metadata:
   owner: Carlos
-  version: 5
+  version: 6
   pairs-with: compose
 ---
 
@@ -87,6 +87,25 @@ Read these before doing anything. Do not work from memory of them.
 
 Do not invent or fill in anything absent from what was given. A gap is a
 finding, never something to guess at.
+
+### Re-running on the same draft
+
+If this skill already produced a report on a draft in this conversation, and
+the input now is a revision of that same draft rather than a new one, this run
+does not start cold.
+
+First, collect every direction the user has given since that report -- an
+answer to a `Needs you` question, a fact supplied outright, a conflict
+resolved by choosing one side. State each as **settled** in one line and never
+raise it again in this run, whether or not the revised draft's wording
+visibly reflects it.
+
+Then continue the loop from Step 2 as normal, and raise only what the earlier
+report did not already ask: a genuinely new question, or a fact none of the
+user's directions answered.
+
+A draft with no earlier report in this conversation is not a re-run, whatever
+it contains. Do not search for or assume a report that is not in front of you.
 
 ## Step 2: determine the goal
 
@@ -401,6 +420,26 @@ Learned: added S to ~/.claude/daikenja/personas.md.
 The verdict line is `ready to send` or `needs <n> facts from you before it
 goes`. Nothing else.
 
+### Reporting a re-run
+
+When Step 1's re-run rule applied, the report carries one more line,
+`Settled since last run:`, naming what the user's directions closed out since
+the earlier report. It sits after `Needs you` when there is a list, or after
+the draft when there is not:
+
+```
+Settled since last run: the window (12 minutes), and that in-flight requests
+fail and must be retried rather than queuing.
+```
+
+**If this is the second consecutive run on the same draft and the verdict is
+still `needs <n> facts`, say whether that is all of it.** State plainly
+whether the remaining `Needs you` items are the complete set -- nothing else
+is expected to surface on a further revision -- or whether more may still
+emerge once the draft changes again. Name every remaining fact in the `Needs
+you` list itself; this line adds only the finite-or-not statement, not a
+second listing.
+
 ### The `Reviewed:` line is mandatory
 
 **Every report carries it, on every run, whichever way the reviewers ran.** It
@@ -492,6 +531,7 @@ survived, because it did not.
 |---|---|
 | No draft and no description given | Ask for one. Do not guess what the user wants to raise. |
 | A description with no draft | Cycle 0 only. Report the verdict and hand off to `compose`. Never draft one here. |
+| The input is a revision of a draft this skill already reported on in this conversation | Collect the user's directions given since that report, state them settled in one line, and never re-raise them. Raise only what is new. |
 | Subagent dispatch unavailable | Run the reviewers in sequence and say so in the mandatory `Reviewed:` line. Cycle 2 re-reads, it never **confirms**. No model tier applies. |
 | The dispatch available takes no model | Dispatch anyway, on the session model, and say nothing. The tier is a preference, not a dependency. |
 | A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
