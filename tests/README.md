@@ -82,7 +82,12 @@ last released copy of the skill, so a result obtained any other way is void.
   inline briefs that make both of them real recipients. No fix serves both,
   so the conflict is reported and not resolved. A third conflict, between
   the busy reader and the fact-checker over an error code neither of them
-  receives, is seeded as a control and must stay unreported.
+  receives, is seeded as a control and must stay unreported. This is also the
+  draft that catches a cycle-2 reviewer closing a finding on untouched text:
+  no finding may leave the report unless the rewrite made an edit in answer to
+  it, and "it costs us five days on the rollout plan and nothing else" is the
+  sentence that has to stay raised until the sender supplies what else it
+  costs.
 - [`fixtures/preflight-clean-draft.md`](fixtures/preflight-clean-draft.md) --
   two drafts that are complete on the facts. The first has nothing to find
   and should come back unchanged with cycle 2 skipped; the second buries its
