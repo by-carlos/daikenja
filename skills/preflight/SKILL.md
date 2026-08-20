@@ -194,7 +194,9 @@ if one matches, plus whatever the user said inline this run. Inline wins over
 the file; the file wins over the archetype.
 
 - **Named, with nothing known about them.** Not in `personas.md`, nothing said
-  inline. Archetypes only. Silent, not an error.
+  inline. Archetypes only. Not an error, but name the capture path: one line in
+  the report that no `personas.md` entry exists for them and `/daikenja:remember-persona`
+  is how to add one.
 - **A local `personas` pointer does not resolve.** Silent. The `Reviewers:` line
   already names what ran, which makes a notice redundant.
 - **A `drive:` pointer does not resolve, or reads back empty.** Stop and name

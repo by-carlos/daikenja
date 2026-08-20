@@ -241,6 +241,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `preflight` and `compose` now name `/daikenja:remember-persona` in the one
+  line they already report when a named recipient has no `personas.md` entry,
+  instead of reporting the absence and stopping there. Two live sessions on
+  19-20 Aug 2026 hit that line and neither pointed at the skill that exists to
+  capture exactly what was missing (#102).
 - `templates/writing-style.md` no longer tells the user that Daikenja never
   edits this file. That stopped being true when `learn-voice` shipped, and the
   template is the one place a user reads about the file before they own a copy
