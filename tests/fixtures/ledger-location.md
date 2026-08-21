@@ -1,7 +1,7 @@
 # `ledger:` resolution -- configuration fixtures
 
 <!--
-Fixture: four synthetic `daikenja.yaml` project entries plus the walks each is
+Fixture: five synthetic `daikenja.yaml` project entries plus the walks each is
 for. Everything here is invented -- invented projects, invented people,
 `example.com` links. Nothing is read at runtime.
 
@@ -128,18 +128,69 @@ machine's configuration, for instance).
    a missing default file would get. There is nothing distinct about a broken
    absolute pointer; a missing local path is a fact you can establish just as
    plainly as a missing relative one.
-4. `project-log` treats this the same as any other missing ledger. `harbor` is
-   already registered, so Step 3's "doesn't look like a project" question does
-   not fire regardless of what `C:/GitHub/harbor` itself contains -- that
-   check is about the current directory's registration status, not about the
-   resolved ledger path. Scaffolding proceeds: create the missing
-   `D:/Backups/old-machine/` parent directory and write the template there,
-   folded into the same Step 5 approval as the rest of the write.
+4. `project-log` reaches Step 3 with a missing ledger. `harbor-rollout` is a
+   registered project, so the "doesn't look like a project" question does not
+   fire -- that check is about the current directory, not about the resolved
+   ledger path. What happens next depends on whether the resolved path is
+   writable, and **the two outcomes must not be conflated**:
+   - **`D:` exists and is writable.** Scaffolding proceeds: create the missing
+     `D:/Backups/old-machine/` parent directory and write the template there,
+     folded into the same Step 5 approval as the rest of the write.
+   - **`D:` does not exist on this machine**, which is the case this config is
+     written for. Creating the parent fails, so the failure-table row "Ledger
+     path unreadable or not writable" governs: **stop**, name the path and the
+     error, and write nothing. Do **not** fall back to
+     `C:/GitHub/harbor/.daikenja/ledger.md`, and do not write the entries
+     anywhere else.
 
 **The failure this catches:** silently falling back to
-`C:/GitHub/harbor/.daikenja/ledger.md` because the configured absolute path
-did not resolve -- per `docs/config-contract.md` § Finding the ledger, an
-explicit `ledger:` key is authoritative and never degrades to the default.
-That degrade would also violate "a ledger found on disk wins over the
-config", which is scoped to an *unmatched* project, not to second-guessing a
-matched one's explicit key.
+`C:/GitHub/harbor/.daikenja/ledger.md` when the configured absolute path did
+not resolve or could not be written -- per `docs/config-contract.md`
+§ Finding the ledger, an explicit `ledger:` key is authoritative and never
+degrades to the default. That degrade would also violate "a ledger found on
+disk wins over the config", which is scoped to an *unmatched* project, not to
+second-guessing a matched one's explicit key. A stale pointer must be visible
+as a stop, because the alternative is a user logging happily into a second
+ledger while believing they are appending to the one they configured.
+
+## Config E -- a registered project that resolves to the home directory
+
+Beyond the four the issue asked for. It guards the boundary between Step 3's
+two checks, which are easy to collapse into one "is this a project?" test.
+
+```yaml
+profile:
+  name: rimuru
+
+projects:
+  everything:
+    path: C:/Users/rimuru
+```
+
+**Expected walk of `project-log`**, run from `C:/Users/rimuru` -- the user's
+actual home directory -- with no ledger on disk.
+
+1. The entry matches exactly, so this is a **registered** project. It has no
+   `ledger:` key, so the resolved path is
+   `C:/Users/rimuru/.daikenja/ledger.md`.
+2. Step 3's **refuse-outright** check fires anyway and the run **stops**:
+
+   ```
+   Won't create a ledger in C:/Users/rimuru -- that's your home directory, not
+   a project. Run this from the project you mean to log.
+   ```
+
+3. The registered-project exemption does **not** reach this check. It exempts
+   only the second one, the `.git`/`.daikenja/` heuristic. Registration is
+   evidence about an ordinary directory; it is not evidence that the home
+   directory is a project, because `daikenja.yaml` is hand-editable and
+   matching takes the longest prefix -- an entry whose `path` is
+   `C:/Users` would sweep the home directory in the same way without ever
+   naming it.
+
+**The failure this catches:** scoping the registered-project exemption to the
+whole of Step 3 rather than to the heuristic alone, which silently disables
+the home-directory refusal for exactly the configurations most likely to have
+a too-broad `path`. `setup-project` refuses to register `~` or `~/.claude`, so
+the only way such an entry exists is a hand edit -- which is precisely the
+case a guard should not trust.

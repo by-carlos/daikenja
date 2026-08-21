@@ -4,7 +4,7 @@ description: Records decisions and open items in a project's Daikenja ledger. Us
 metadata:
   owner: Carlos
   version: 1
-  writes: <project>/.daikenja/ledger.md
+  writes: the project's ledger, wherever `ledger:` resolves to (default <project>/.daikenja/ledger.md)
 ---
 
 # Log
@@ -98,17 +98,6 @@ plausibly a project. Nothing about a missing ledger says it is -- the current
 directory could just as easily be the user's home directory or a scratch
 folder they happened to be in.
 
-**A project already registered in `daikenja.yaml` skips this check entirely.**
-Registration is itself the confirmation that this directory is a project --
-`setup-project` already settled that when it added the entry, per its own
-Step 2 nested-project guard. This matters for a project with no repository of
-its own: its directory has no `.git` and, before its first log, no
-`.daikenja/` either, and the heuristic below would otherwise ask every time.
-Go straight to the "otherwise" branch below for any matched project.
-
-The two checks that follow apply only to an **unregistered** current
-directory -- the case this skill has no config-side confirmation for at all.
-
 **Refuse outright** when the current directory is the user's home directory
 (the real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do
 not scaffold, and do not fold this into the Step 5 proposal -- there is
@@ -119,11 +108,26 @@ Won't create a ledger in <path> -- that's your home directory, not a project.
 Run this from the project you mean to log.
 ```
 
+**This refusal is unconditional.** A `projects:` entry matching the home
+directory does not license scaffolding there. Matching takes the longest
+prefix, so an entry whose `path` is the home directory's parent makes the home
+directory itself resolve to a project, and `daikenja.yaml` is hand-editable --
+so a matched project is not evidence that this directory is one.
+`setup-project` refuses to register either path for the same reason.
+
 **Otherwise, if the directory is neither a VCS root** (no `.git`) **nor
-already holds a `.daikenja/`**, it still is not obviously a project. Ask,
-naming the exact absolute path, before doing anything else -- this
-confirmation is separate from the Step 5 write approval, because it settles
-whether a ledger belongs here at all, not what goes in it:
+already holds a `.daikenja/`**, it still is not obviously a project -- unless
+it is **already registered in `daikenja.yaml`**, in which case skip this check
+and go straight to the "otherwise" branch below. Registration is a deliberate
+act that settles the question these two markers only guess at, and a project
+with no repository of its own has neither marker: no `.git`, and no
+`.daikenja/` until its first log. Without this exemption such a project is
+asked to confirm itself on every first log.
+
+For an unregistered directory carrying neither marker, ask, naming the exact
+absolute path, before doing anything else -- this confirmation is separate
+from the Step 5 write approval, because it settles whether a ledger belongs
+here at all, not what goes in it:
 
 ```
 <path> doesn't look like a project (no .git, no .daikenja/). Create a ledger
@@ -133,8 +137,8 @@ there anyway?
 Wait for a yes before continuing. A no ends the run here; say nothing was
 written.
 
-**Otherwise** (a VCS root, or a directory that already has `.daikenja/`), say
-so plainly before doing anything else:
+**Otherwise** (a VCS root, a directory that already has `.daikenja/`, or a
+registered project), say so plainly before doing anything else:
 
 ```
 No ledger at <path>. I will create one from the Daikenja template.
@@ -371,8 +375,8 @@ missing thing is the task itself.
 |---|---|
 | `daikenja.yaml` absent | One notice, then continue on the defaults (`.daikenja/ledger.md`, owner `@unassigned` unless the user names one). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. |
-| Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. |
+| Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. Unconditional -- a matching `projects:` entry does not license it. |
+| Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the directory is a registered project. |
 | Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
 | Ledger missing a required H2 section | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |

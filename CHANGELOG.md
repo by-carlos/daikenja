@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`project-log`'s home-directory refusal is unconditional again.** The
+  registered-project exemption added alongside the `ledger:` pointer change
+  was scoped to the whole of Step 3, which also disabled the refusal that
+  stops a ledger being scaffolded in `~` or `~/.claude`. Because project
+  matching takes the longest prefix and `daikenja.yaml` is hand-editable, an
+  entry whose `path` is the home directory's parent made the home directory
+  resolve to a project and silently bypassed the guard. The exemption now
+  covers only the `.git`/`.daikenja/` heuristic it was meant for, which is
+  what a project with no repository of its own actually needs
+  (`skills/project-log/SKILL.md`, `tests/fixtures/ledger-location.md`
+  Config E) (#69).
+- **`tests/fixtures/ledger-location.md` Config D asserted the wrong outcome.**
+  It described `project-log` scaffolding into an absolute path on a volume
+  that does not exist, where the skill's own failure table says an unwritable
+  ledger path is a stop. It now splits the writable and unwritable cases and
+  states the stop, since a fixture encoding the wrong expectation is worse
+  than no fixture (#69).
+- **Three write-scope references still said the ledger is always
+  `<project>/.daikenja/ledger.md`** -- `project-log`'s frontmatter `writes:`
+  key, `docs/config-contract.md` § Who writes what, and `README.md`'s file
+  table. All three now say the ledger is wherever `ledger:` resolves to, with
+  that path as the default (#69).
 - **Plugin author name corrected to "Carlos Eng"** in
   `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
   the plugin marketplace listing.
