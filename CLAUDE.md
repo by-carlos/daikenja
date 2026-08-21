@@ -12,6 +12,14 @@ Instructions for Claude Code and other agents working in this repo.
 - **Never push directly to `main`.** Work on a branch off `main` and open a PR.
 - **Merging is never unilateral.** Propose the merge and wait for the
   maintainer's explicit OK.
+- **A branch that sat while other PRs landed is rebuilt, not merged.** Before
+  resolving any conflict, `git fetch origin` and read what actually landed on
+  `main` -- the diffs, not just the file names. Changes land here in batches, so
+  a branch open an hour may be several PRs behind. If more than one landed,
+  branch off current `main`, re-apply the work, open a fresh PR and close the
+  stale one as superseded. Re-applying costs one clean replay and no
+  force-push, where merging costs a conflict resolution and can silently carry
+  work that a landed PR already did independently.
 
 ## Releasing
 
