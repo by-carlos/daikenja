@@ -73,7 +73,7 @@ across every path of every entry -- and mark which entry it lands in. Marking
 the current project is the point of running this from a terminal at all.
 
 **Never open a ledger.** Existence is the whole question here. Reading content
-is what the four read skills are for, and this skill has no business knowing
+is what the five read skills are for, and this skill has no business knowing
 what is inside.
 
 ## Step 3: look for unregistered ledgers

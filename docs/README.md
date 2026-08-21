@@ -21,8 +21,9 @@ redefines one. When a contract changes, it changes here and the skills follow.
   newest first, written by the change and promoted by the release. The only
   document here written for the user rather than for a skill.
 - [`reading.md`](reading.md) -- the shared read mechanism for `project-catchup`,
-  `project-summary`, `project-decisions` and `project-gaps`: take an optional
-  project key, resolve config, find the ledger, parse it.
+  `project-summary`, `project-decisions`, `project-gaps` and
+  `project-sources`: take an optional project key, resolve config, find the
+  ledger, parse it.
 - [`voice.md`](voice.md) -- the default writing voice, in two tiers: `Fixed`,
   which a user cannot switch off, and `Defaults`, which a user's own
   `writing-style.md` layers on top of. The layering contract is fixed in
