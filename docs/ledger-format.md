@@ -10,9 +10,18 @@ spec. A skill that invents its own shape is a bug.
 `.daikenja/ledger.md` in the project root, by default.
 
 A project may point somewhere else with the `ledger:` key in
-`~/.claude/daikenja/daikenja.yaml`. See
-[`config-contract.md`](config-contract.md) for the lookup order a skill follows
-to find it.
+`~/.claude/daikenja/daikenja.yaml`, as a relative or an absolute path. See
+[`config-contract.md`](config-contract.md) § Resolving `ledger` for the pointer
+grammar and § Finding the ledger for the lookup order a skill follows.
+
+**A project with no repository of its own** -- work tracked across a wiki, a
+chat space or a ticket system rather than a code checkout -- has no natural
+folder for the ledger to sit in. The recommended convention for that case is an
+absolute pointer into
+`~/.claude/daikenja/ledgers/<project-key>.md`, alongside every other file
+Daikenja keeps for the user rather than for a repository. Nothing below this
+point changes for a ledger at that location -- the format, the sections, the
+entry grammar, and the write rules are the same wherever the file lives.
 
 ## File skeleton
 

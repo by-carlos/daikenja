@@ -109,8 +109,10 @@ Ask in one short round, and take silence as "leave them all unset":
 ```
 Registered. Three optional settings for this project -- skip any or all:
 
-1. ledger -- where the ledger file lives, relative to the project root.
-   Default .daikenja/ledger.md.
+1. ledger -- where the ledger file lives: a path relative to the project root,
+   or an absolute path (useful for a project with no repository of its own --
+   the convention is ~/.claude/daikenja/ledgers/<project-key>.md). Default
+   .daikenja/ledger.md.
 2. stale_after_days -- how long an open item may sit before project-gaps calls
    it stale. Inherits <the profile value> if you skip it.
 3. norms_doc -- your team's ways-of-working document, as a path or a URL.

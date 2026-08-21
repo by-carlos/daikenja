@@ -43,6 +43,48 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### A project's `ledger:` key now also accepts an absolute path
+
+**What changed on disk.** Nothing in any file you already have. A project's
+`ledger:` key in `daikenja.yaml` (under `projects: <key>:`) used to be
+understood only as a path relative to that project's `path`. It now also
+accepts an absolute path, resolving to that location verbatim -- useful for a
+project with no repository of its own, where the recommended convention is
+pointing it at `~/.claude/daikenja/ledgers/<project-key>.md`. See
+`docs/config-contract.md` § Resolving `ledger`.
+
+**What happens if you do nothing.** Nothing changes. Every `ledger:` value
+you already have is a relative path, which resolves exactly as it always has
+-- relative to the project's `path`, with `.daikenja/ledger.md` as the
+default when the key is absent. This addition is purely a widening of what
+the key accepts, not a change to what any existing value means.
+
+**The exact edit.** Optional, and only if you want a project's ledger to live
+outside its own directory:
+
+```yaml
+# before
+projects:
+  vendor-onboarding-programme:
+    path: C:/Users/you/daikenja-projects/vendor-onboarding-programme
+
+# after
+projects:
+  vendor-onboarding-programme:
+    path: C:/Users/you/daikenja-projects/vendor-onboarding-programme
+    ledger: C:/Users/you/.claude/daikenja/ledgers/vendor-onboarding-programme.md
+```
+
+**Can `setup-user` do it?** No. `ledger:` is a per-project key, owned by
+`/daikenja:setup-project`, which offers it when registering or re-running
+against a project. `setup-user` never touches `projects:` entries.
+
+**Reversible?** Yes, for the pointer. Delete the key, or point it back at a
+relative path, and Daikenja looks in the default location again -- this only
+changes where it looks, never the ledger's own format. It does not move the
+file for you: if you already have content at the absolute location, moving it
+back under the project (or updating the key to point at wherever you leave it)
+is yours to do by hand.
 ### Ledger entries may carry an approximate date, and a Changelog line may be compacted
 
 **What changed on disk.** Nothing, until you write one. Two things a ledger may
