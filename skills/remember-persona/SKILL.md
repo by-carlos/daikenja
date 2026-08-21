@@ -3,7 +3,7 @@ name: remember-persona
 description: Records what the user says about a person they write to, in their own personas file (by default ~/.claude/daikenja/personas.md, or a Google Drive file if that is where they keep it), so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study. Not for a project decision or an open item (that is /daikenja:project-log) and not for the rest of first-time setup, which this skill does not perform (that is /daikenja:setup-user).
 metadata:
   owner: Carlos
-  version: 6
+  version: 7
   writes: whatever profile.personas resolves to (default ~/.claude/daikenja/personas.md)
 ---
 
@@ -28,6 +28,13 @@ that is true beats a paragraph that is half guessed.
 are. "Challenges technical claims" is a lens someone can write toward. "Is
 obstructive" is a verdict, it is worse reviewer input, and this file is a
 liability if it is ever read over the user's shoulder.
+
+**One exception, and it is identity rather than character: `Known as`.** An
+identifier the user states -- a full name, a handle, a chat ID, an email
+address -- is recorded verbatim under that label, because it is what lets a
+`@handle` in a ledger have a referent. It is the only field that is not a lens,
+and the only-what-the-user-said rule binds it harder than the rest: an
+identifier is **never** derived. See Step 4 § The `Known as` field.
 
 **Silent means append-only, and only for new people.** Adding a section for
 someone with no entry is additive and reversible, so it is written without
@@ -81,6 +88,11 @@ this skill ever disagree, the contract wins and you say so.
   from what the user said while drafting, not from the draft's own contents.
 - **A person is named with nothing said about them.** There is nothing to
   record. Say so in one line and write nothing. A name is not a persona.
+- **The user gave an identifier and nothing else** ("Priya Nair is `@priya`",
+  "D is dana@example.com"). That **is** material: it is a statement about who a
+  handle refers to, which is the one thing a bare mention never carries. Record
+  it under `Known as` and leave every other field out. See Step 4 § The `Known
+  as` field.
 - **Nothing was given.** Ask who, and what about them. Do not go reading threads
   or drafts to assemble a picture of somebody.
 
@@ -212,6 +224,8 @@ The shape below is the fallback, for a file that has no entries yet to copy:
 ```markdown
 ## Sarah
 
+**Known as.** Sarah Kaur. `@sarah`, sarah.kaur@example.com.
+
 **Who they are.** Director of platform engineering. Signs off on the migration
 budget.
 
@@ -224,14 +238,50 @@ history.
 delete this freely.*
 ```
 
-**Write only the fields the material supports.** Four labels with two of them
-guessed is worse than one label that is true. The template's labels are `Who
-they are`, `What they already know`, `What they want from you` and `How to write
-to them`; use the ones that fit and drop the rest.
+**Write only the fields the material supports.** Five labels with two of them
+guessed is worse than one label that is true. The template's labels are `Known
+as`, `Who they are`, `What they already know`, `What they want from you` and
+`How to write to them`; use the ones that fit and drop the rest.
 
 **Relational context goes under `Who they are`** -- "reports to V", "works
 closely with K's team". It is not a lens, but it is a fact the user stated and
 it matters for how a message lands. It gets no field of its own.
+
+### The `Known as` field
+
+It holds the identifiers that mean this person: their full name, the handles
+they go by, a chat ID, an email address. It exists so that a `@handle` written
+in a project ledger has somewhere to resolve to, and so
+`/daikenja:project-log` can tell a genuinely new colleague apart from a second
+spelling of one already recorded -- see
+`${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Who an owner handle refers to.
+
+**Never derive an identifier.** `@priya` does not follow from "Priya Nair", an
+address does not follow from a name, and a chat ID follows from nothing. Write
+the ones the user actually gave and leave the field out entirely when they gave
+none. A wrong identifier is worse than a missing one: it points a later reader
+at the wrong person with the same confidence as a right one.
+
+**That is not a contradiction of how a ledger entry is attributed.**
+`project-log` and `meeting-review` do turn `Priya Nair` into `@priya`, and they
+are right to: an entry needs an owner token and that derivation is how one is
+minted. Writing it here is a different claim -- that the identifier *is* this
+person's, durably, for anything that resolves a handle later. Minting a token
+for one line is cheap to correct. Recording it as a fact is what a later reader
+trusts.
+
+**Write each identifier as the user wrote it.** Do not normalize case, do not
+strip an `@`, do not expand an initial into a full name. The point of the field
+is to match what turns up elsewhere.
+
+**A person may have several.** That is the field working: two handles listed
+here are what stops the second one being reported as somebody new.
+
+**It is optional, and an entry carrying only this field is still worth
+writing.** A section with `Known as` and nothing under it says who a handle
+refers to without claiming to know how to write to them. That is the whole of
+what the user said, and it is what a bare mention of a name is not -- Step 1
+keeps the two apart.
 
 **The provenance line is required on every entry this skill writes.** Writes are
 silent, so the file has to say which entries came from Daikenja and when. Get
@@ -371,6 +421,8 @@ missing thing is the task itself.
 | `profile.personas` names a path that does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the entry somewhere else. |
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
+| The user gave only an identifier for them -- a full name, a handle, a chat ID, an address | Material, not a bare mention. Write the entry with `Known as` and no other field. |
+| An identifier would have to be guessed to fill `Known as` | Leave the field out. Never derive a handle from a name or an address from either. |
 | The description came from a fixture or worked example, and says so | Write nothing. One line saying it came from a test fixture. Do not ask the user to confirm. |
 | The description came in with pasted material and says nothing about being invented | Offer it, do not write it. Show the entry, ask once, and write only on a yes. A routed caller gets the offer as one line and does not wait. |
 | The file's entries use a different format from the template | Match the file, not the template. It is the authority on its own format. |

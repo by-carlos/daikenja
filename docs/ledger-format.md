@@ -123,6 +123,30 @@ Every field is always present. A field is never omitted to signal absence --
 `@unassigned` is written out, because positional parsing depends on the field
 count and because `gaps` searches for exactly that token.
 
+### Who an owner handle refers to
+
+The grammar above fixes the shape of `<owner>`, not its referent. `@priya` is
+one token on a line. Nothing in the ledger says which Priya it is, and nothing
+says whether the `@priya.n` three entries down is the same person or a second
+one.
+
+**`personas.md` is where that is recorded** -- whatever `profile.personas`
+resolves to, per
+[`config-resolution.md`](config-resolution.md#resolving-writing_style-and-personas),
+under the optional `Known as` field the shipped template describes. It stays
+what it already was: the user's own prose about people they write to, kept for
+their own reasons. **It is not a roster.** A handle missing from it is the
+normal case, no skill treats an unrecorded owner as an error, and nothing here
+makes the ledger depend on that file existing.
+
+What it buys is one check, and only in `project-log`: a handle seen neither
+elsewhere in this ledger nor in `personas.md` is **reported**, in one line
+inside the proposal that skill was already showing. That is the whole mechanism.
+Nothing is rejected, no handle is rewritten, and `<owner>` stays free text --
+the point is to surface a second spelling at the moment it is one keystroke to
+fix, not to police the field. `@unassigned` is never reported: it is the
+documented value for no owner, not an unrecognized person.
+
 ### Continuation lines
 
 An entry may carry detail on following lines indented by two spaces, with no
