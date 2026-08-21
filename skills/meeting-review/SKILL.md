@@ -118,13 +118,44 @@ if you need the detail, and never format entries yourself.
 
 ## Step 4: attribute
 
-The owner is `@` plus one lowercase token, no spaces, taken from the speaker
-label in the transcript (`Priya Nair` becomes `@priya`).
+The owner is `@` plus one lowercase token, no spaces. Unless the user has
+already recorded a handle for that person, it is derived from the speaker label
+in the transcript (`Priya Nair` becomes `@priya`).
 
 - A person who accepted a task owns it.
 - What the user says is theirs is theirs. Use the first token of `profile.name`
   from `~/.claude/daikenja/daikenja.yaml`.
 - Nobody identifiable means `@unassigned`.
+
+**Before deriving a handle, check whether the user has already recorded one.**
+A persona in `personas.md` may carry a `Known as` field naming the identifiers
+that mean that person -- their full name, the handles they go by, a chat ID, an
+email address. If the transcript's speaker matches a persona, by its section
+heading or by an identifier listed in that persona's `Known as`, attribute the
+entry to the handle recorded there, even where it differs from what the label
+would have produced. A speaker labelled `Priya Nair`, whose persona records
+`@p.nair`, owns her entries as `@p.nair`. Deriving from the label is the
+fallback, and it stays the common case.
+
+**Using a recorded handle is not inventing one.** The rule below -- never invent
+a handle for someone you do not know -- is about a person with no record
+anywhere. A handle the user wrote down themselves is the opposite of an invented
+one: it is the only evidence of what this person is called, and ignoring it is
+what mints the second spelling.
+
+**Where two personas could both match one speaker, do not guess.** Fall back to
+the transcript's own label and say so in one line under `Notes` in the report,
+naming both personas so the user can settle it. Attributing work to the wrong
+person reads exactly as confidently as attributing it to the right one.
+
+**Never write `personas.md` from here.** `remember-persona` owns every content
+write to it, and this lookup is a read. Offering to run that skill for a speaker
+who has no persona is fine; running it is not.
+
+This lookup does not replace `project-log`'s own check on the handles it is
+handed -- its § Say when a handle is new. That check still runs on every entry
+and still reports whatever this step could not account for.
+The two hold together: this stops most drift being minted, that reports the rest.
 
 **A name that is not in `personas.md` is normal, not an error.** That file is
 optional prose that tells you who someone is. It is not a roster, and a person
@@ -175,9 +206,10 @@ say in one line what came up empty ("nothing was settled in this meeting").
 
 `Notes` is where the judgment calls go, one line each, so the user can overrule
 any of them. A decision the meeting only restated, a point lost to a garbled
-passage, a name the config does not cover, a missing `daikenja.yaml` -- all of
-it lands here rather than being dropped silently or padded into a section it
-does not belong in.
+passage, a name the config does not cover, a missing `daikenja.yaml`, a speaker
+attributed to a handle that is not what their label would have produced, a
+speaker two personas could both be -- all of it lands here rather than being
+dropped silently or padded into a section it does not belong in.
 
 Quote sparingly and only where the wording carries the weight. Keep each line to
 one idea.
