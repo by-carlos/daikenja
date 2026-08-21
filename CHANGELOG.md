@@ -99,6 +99,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   exists when none is written. `release-prepare.yml`'s `git add` now includes
   the file, without which an automated release would promote nothing
   (`CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`) (#67).
+- **Issue filing now has a floor: describing it must cost less than doing it.**
+  § When to file scoped its trivia rule to work "you would just fix in the
+  current change", which left a mechanical follow-up noticed *outside* the
+  current change with no path but a full four-section body, a provenance line
+  and a board decision -- routinely more writing than the fix. A session that
+  spots a handful of one-line corrections now offers to make them on a short
+  branch, and files only when the maintainer declines or the item needs a
+  decision, a discussion or another session. The section also states that fixing
+  it now is not free either, so the two costs get compared rather than one being
+  assumed (`.claude/reference/github-issues.md`).
 
 ## [0.5.1] - 2026-08-20
 

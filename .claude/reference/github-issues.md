@@ -12,6 +12,22 @@ when they have said up front to capture findings. Do not silently expand the
 scope of the task you were given, and do not file issues for trivia you would
 just fix in the current change.
 
+**Floor test -- describing it must cost less than doing it.** This file, a
+four-section body, a provenance line and a board decision is the right price for
+work worth remembering. It is the wrong price for three one-line doc edits. So
+before filing, ask whether the follow-up is **mechanical**: no design call to
+make, the exact edits already located, Size XS. If it is, the offer to the
+maintainer is **"want me to just fix this?"** -- a short branch off `main` and
+one PR -- not an issue. This extends the trivia rule above to trivia noticed
+*outside* the current change, which otherwise has no path but the full ceremony.
+File instead only when the maintainer declines the fix, or when the item needs a
+decision, a discussion, or a session that is not this one.
+
+"Fix it now" is not free either: it costs a branch, a commit, a PR and a merge
+gate. That is cheaper than an issue for a handful of mechanical edits and more
+expensive for anything else. When it is genuinely close, say so in one line and
+let the maintainer pick.
+
 **One rabbit hole at a time.** Finish or safely stabilise the current task
 first, then capture the tangent. The issue is how the rest gets remembered.
 
