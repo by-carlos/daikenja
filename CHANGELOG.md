@@ -88,6 +88,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the file, without which an automated release would promote nothing
   (`CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`) (#67).
 
+### Fixed
+
+- **Two documents named a skill that no longer does that job.**
+  `docs/reading.md` told a read skill to offer `/daikenja:project-log` when the
+  current directory is not in `daikenja.yaml`, but registering a project is
+  `/daikenja:setup-project`'s job -- `project-log` writes ledger content, never
+  the `projects:` entry -- so anyone following that notice ran the wrong skill
+  and got no registration. `templates/daikenja.yaml` still described
+  `last_checkpoint` as "written by `catchup`", a name that has been
+  `project-catchup` since 0.3.0, and that comment ships to every new install.
+  The file's other `project-log` references are correct and were left alone:
+  creating a missing ledger really is that skill's job.
+- **`__pycache__/` was not ignored**, although the repo carries five Python
+  files and `CONTRIBUTING.md` tells contributors to run
+  `python tests/check-invariants.py`. Doing so left untracked bytecode in
+  `git status` with nothing stopping it from being committed (`.gitignore`).
+
 ## [0.5.1] - 2026-08-20
 
 ### Added

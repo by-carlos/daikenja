@@ -23,9 +23,9 @@ order.
 - **Present and valid.** Match the current directory against every
   `projects:` entry's `path`, normalized (forward slashes, no trailing slash,
   case-insensitive) and longest-prefix-wins. No match means the project is
-  unregistered: say so in one line and name `/daikenja:project-log` as the skill that
-  offers to register it, then continue -- an unregistered project still has a
-  ledger to read if one exists on disk.
+  unregistered: say so in one line and name `/daikenja:setup-project` as the
+  skill that offers to register it, then continue -- an unregistered project
+  still has a ledger to read if one exists on disk.
 
 **Then check the version marker**, per `config-contract.md` § Version marker and
 upgrades. That contract defines when the notice fires and how it is worded; this

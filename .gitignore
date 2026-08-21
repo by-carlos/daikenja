@@ -39,3 +39,7 @@ docs/superpowers/
 # Generated claude.ai upload zips. Rebuild with
 # scripts/build-claude-ai-skills.py -- docs/ is the source of truth.
 dist/
+
+# Python bytecode from the repo scripts and tests
+__pycache__/
+*.pyc
