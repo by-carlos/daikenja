@@ -76,17 +76,68 @@ in:
 
 ### Finding the ledger
 
-1. The matched project's `ledger:` key, resolved relative to its `path`.
-2. Otherwise `.daikenja/ledger.md` under the project root.
-3. If the file does not exist, `project-log` scaffolds it from
+1. **The matched project has a `ledger:` key.** Resolve it per its pointer
+   form -- see [Resolving `ledger`](#resolving-ledger) -- and use that path.
+   The default filename below is not consulted; an explicit key is
+   authoritative, not a hint to check alongside it.
+2. **The matched project has no `ledger:` key**, or no project matched at all.
+   Use `.daikenja/ledger.md` under the project root (or under the current
+   directory, when nothing matched).
+3. If the resolved file does not exist, `project-log` scaffolds it from
    [`../templates/ledger.md`](../templates/ledger.md) after the user approves.
    Read skills do not scaffold; they report that no ledger exists and name the
    skill that creates one.
 
-**A ledger found on disk wins over the config.** If `.daikenja/ledger.md` exists
-but no `projects:` entry matches, the ledger is used and `project-log` names
-`setup-project` as the way to add the missing entry. The file on disk is the
-fact; the config is the index.
+**A ledger found on disk wins over the config.** This is a rule about an
+**unmatched project**, not about overriding an explicit `ledger:` key. If
+`.daikenja/ledger.md` exists under the current directory but no `projects:`
+entry matches it, that file is used and `project-log` names `setup-project` as
+the way to add the missing entry. The file on disk is the fact; the config is
+the index. Once a project *is* matched and carries a `ledger:` key -- relative
+or absolute -- that key's resolved path is the ledger, full stop; there is no
+second, on-disk probe to fall back to if it happens to be missing.
+
+### Resolving `ledger`
+
+`ledger` is a pointer, reusing the grammar defined in
+[Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas)
+minus its Drive form. Two forms are legal:
+
+| Form | Example | Resolves to |
+|---|---|---|
+| Relative path | `.daikenja/ledger.md` | That path, relative to the project's `path`. This is the default and today's only behavior, unchanged. |
+| Absolute path | `C:/Users/you/daikenja-ledgers/harbor.md` | That path, verbatim -- it may be anywhere, including outside the project directory entirely. |
+
+**`ledger` deliberately does not accept the `drive:` form.** Two reasons, both
+from this document's own Drive rules above. First, write frequency: a ledger
+is written on every `project-log` run, while `personas.md` is appended rarely
+-- the replacement sequence's brief two-file window between create and trash
+is a rare risk for personas and a routine one for a ledger. Second, "a ledger
+found on disk wins over the config" has no meaning for a file that is not on
+disk, and that interaction needs its own design rather than an assumption. If
+Drive support for the ledger is wanted later, it is its own change.
+
+**A project with no repository of its own** -- work tracked across a wiki, a
+chat space, a ticket system, with no folder that is naturally "the project" --
+has nowhere for a relative `ledger:` to be relative *to* in spirit, even though
+`path` still requires some directory. The recommended convention is an absolute
+pointer into Daikenja's own configuration directory:
+
+```yaml
+projects:
+  vendor-onboarding-programme:
+    path: C:/Users/you/daikenja-projects/vendor-onboarding-programme
+    ledger: C:/Users/you/.claude/daikenja/ledgers/vendor-onboarding-programme.md
+```
+
+`path` is still required and still what resolution matches the current
+directory against, so a repository-less project needs some directory to be
+"in" when a skill runs -- typically a scratch folder created for the purpose.
+The `ledger:` key is what keeps the record itself out of that folder and inside
+`~/.claude/daikenja/ledgers/<project-key>.md`, alongside every other file
+Daikenja manages for the user rather than for a repository. Nothing about the
+ledger's own format changes -- it is read and written exactly as
+[`ledger-format.md`](ledger-format.md) specifies, regardless of where it lives.
 
 ### Resolving `writing_style` and `personas`
 

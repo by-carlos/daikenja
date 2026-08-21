@@ -35,14 +35,23 @@ that does.
 
 ## Step B: resolve the ledger path
 
-1. The matched project's `ledger:` key, resolved relative to its `path`.
-2. Otherwise `.daikenja/ledger.md` under the current directory.
-3. **A ledger found on disk wins over the config.** Check the resolved path
-   even when the project did not match.
+1. The matched project's `ledger:` key, if it has one -- resolved per its
+   pointer form (relative or absolute), per `config-resolution.md` § Resolving
+   `ledger`. An explicit key is authoritative: the default filename in the
+   next step is not also checked.
+2. Otherwise `.daikenja/ledger.md` under the project root (or under the
+   current directory, when nothing matched).
+3. **A ledger found on disk wins over the config.** This applies only when no
+   project matched at all -- check the default path even then. It does not
+   apply to a matched project's explicit `ledger:` key: that key's resolved
+   path is the ledger, whether or not a file happens to sit at the default
+   location too.
 
 **Name the resolved path before the answer**, every time, success or failure
 -- one line, so someone who ran a read skill from the wrong directory can
-tell which project's ledger they are looking at without digging:
+tell which project's ledger they are looking at without digging. This is
+always the fully resolved **absolute** path, even when the configured
+`ledger:` value was relative:
 
 ```
 Ledger: <path>
@@ -67,7 +76,11 @@ not match the entry grammar.
 
 Parse every Decisions and Open items entry into its four fields (date, id,
 owner, body) plus tail, per `ledger-format.md` § Entry grammar. Parse the
-Changelog into (timestamp, writer, summary) per § Section: Changelog.
+Changelog into (timestamp, writer, summary) per § Section: Changelog, and
+resolve the two summary compactions defined there before reading it: join any
+indented continuation lines to the summary, then expand any
+`<verb><first>..<last>` range into the individual IDs it stands for. A summary
+read without doing both under-reports what a bulk write changed.
 
 **Never rewrite the file.** Only `project-log` writes. A read skill that finds a
 malformed line reports it in its output and moves on; it does not fix it, even

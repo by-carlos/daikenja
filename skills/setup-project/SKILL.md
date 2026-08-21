@@ -109,8 +109,10 @@ Ask in one short round, and take silence as "leave them all unset":
 ```
 Registered. Three optional settings for this project -- skip any or all:
 
-1. ledger -- where the ledger file lives, relative to the project root.
-   Default .daikenja/ledger.md.
+1. ledger -- where the ledger file lives: a path relative to the project root,
+   or an absolute path (useful for a project with no repository of its own --
+   the convention is ~/.claude/daikenja/ledgers/<project-key>.md). Default
+   .daikenja/ledger.md.
 2. stale_after_days -- how long an open item may sit before project-gaps calls
    it stale. Inherits <the profile value> if you skip it.
 3. norms_doc -- your team's ways-of-working document, as a path or a URL.
@@ -241,9 +243,12 @@ worth saying because a seed run hits them and a normal log run does not:
   today. That is what the date field means, and a backfill is the one situation
   where the two differ for every entry.
 - **An entry whose date cannot be established is not proposed.** Ask the user
-  for it. If they cannot supply one either, leave the entry out and say which
-  ones were dropped and why. The date field is required and absolute, and no
-  part of this skill licenses inventing one.
+  for it. An approximation is a real answer: take it, and `project-log` writes
+  the entry with the `Approximate date.` marker and the derivation in the body,
+  per `ledger-format.md` § Approximate dates. Only when the user cannot supply
+  even an approximation is the entry left out, and then say which ones were
+  dropped and why. The date field is required and absolute, and no part of this
+  skill licenses inventing one.
 - **Anything implied but not stated goes in the proposal as a question**, not as
   an entry. A design document describing a preference is not a decision, and a
   register's open question is an open item rather than a decision about it. A

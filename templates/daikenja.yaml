@@ -63,7 +63,10 @@ projects: {}
 # projects:
 #   atlas-migration:
 #     path: C:/GitHub/atlas          # required, absolute
-#     ledger: .daikenja/ledger.md     # optional, relative to path. This is the default.
+#     ledger: .daikenja/ledger.md     # optional, pointer -- relative to path (default)
+#                                     # or absolute, e.g. for a project with no
+#                                     # repository of its own: see
+#                                     # docs/config-resolution.md § Resolving `ledger`.
 #     last_checkpoint:               # written by `project-catchup`, leave empty
 #     stale_after_days: 30           # optional, overrides the profile value
 #     norms_doc:                     # optional, overrides the profile value

@@ -25,7 +25,7 @@ profile:
 projects:
   <project-key>:
     path: <absolute path>             # required
-    ledger: .daikenja/ledger.md        # optional, relative to path
+    ledger: .daikenja/ledger.md        # optional, pointer -- relative (default) or absolute
     last_checkpoint: 2026-08-14T09:12Z  # optional, written by project-catchup
     stale_after_days: <int>           # optional, overrides the profile value
     norms_doc: <path or url>          # optional, overrides the profile value
@@ -85,6 +85,12 @@ already reported.
 
 **The `<project-key>` is a human label and is never used for matching.** Call it
 whatever reads well. Matching is by `path`; see below.
+
+**`ledger`** is a **pointer**, not a fixed path. A pointer is a relative path or
+an absolute path -- the same two forms `writing_style` and `personas` accept,
+minus the `drive:` form. The full rule, including the recommended location for
+a project with no repository of its own, is
+[Resolving `ledger`](config-resolution.md#resolving-ledger).
 
 ## Worked example
 
