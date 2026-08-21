@@ -70,8 +70,10 @@ Follow `config-contract.md` § Resolution order exactly. In short:
 2. Match the current directory against the `projects:` entries by `path`,
    normalized and longest prefix wins. The project key is a label and is never
    matched on.
-3. Resolve the ledger: the matched project's `ledger:` key, otherwise
-   `.daikenja/ledger.md` under the project root.
+3. Resolve the ledger: the matched project's `ledger:` key if it has one --
+   relative or absolute, per `config-contract.md` § Resolving `ledger` -- and
+   that resolved path is authoritative. Otherwise `.daikenja/ledger.md` under
+   the project root.
 4. Check the version marker and emit the one-line notice if it applies, per
    `config-contract.md` § Version marker and upgrades. It never blocks a write,
    and this skill never migrates anything -- `/daikenja:setup-user` does that.
@@ -95,6 +97,17 @@ If the ledger file does not exist, check first whether this directory is
 plausibly a project. Nothing about a missing ledger says it is -- the current
 directory could just as easily be the user's home directory or a scratch
 folder they happened to be in.
+
+**A project already registered in `daikenja.yaml` skips this check entirely.**
+Registration is itself the confirmation that this directory is a project --
+`setup-project` already settled that when it added the entry, per its own
+Step 2 nested-project guard. This matters for a project with no repository of
+its own: its directory has no `.git` and, before its first log, no
+`.daikenja/` either, and the heuristic below would otherwise ask every time.
+Go straight to the "otherwise" branch below for any matched project.
+
+The two checks that follow apply only to an **unregistered** current
+directory -- the case this skill has no config-side confirmation for at all.
 
 **Refuse outright** when the current directory is the user's home directory
 (the real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do

@@ -15,6 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A project's `ledger:` key now accepts an absolute path**, not only a path
+  relative to the project's `path`. A project with no repository of its own
+  -- work tracked across a wiki, a chat space or a ticket system -- has no
+  natural folder for its ledger to sit in, and previously had nowhere else to
+  put it. The recommended convention for that case is
+  `~/.claude/daikenja/ledgers/<project-key>.md`. The `drive:` form is
+  deliberately not extended to `ledger:` -- a ledger is written far more often
+  than `personas.md` or `writing-style.md`, and "a ledger found on disk wins
+  over the config" has no meaning for a file that is not on disk
+  (`docs/config-contract.md` § Resolving `ledger` and § Finding the ledger,
+  `docs/ledger-format.md` § Location, `docs/reading.md` § Step B,
+  `skills/project-log/SKILL.md`, `skills/setup-project/SKILL.md`,
+  `templates/daikenja.yaml`) (#69).
 - **`daikenja.yaml` now records which version of Daikenja last wrote it**, in a
   top-level `daikenja_version` key. It sits at the top level rather than under
   `profile:` because it describes the file, not the person -- a profile key
