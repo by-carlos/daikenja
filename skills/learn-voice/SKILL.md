@@ -32,7 +32,7 @@ are where the two differ; everything else is the same work on the same prose.
 
 ## Where this sits next to `setup-user`
 
-`setup-user` Step 4 states a rule that this skill deliberately does not share:
+`setup-user` Step 5 states a rule that this skill deliberately does not share:
 *"Already there. Leave it alone... Never inspect or overwrite user prose."* That
 rule is load-bearing for `setup-user` being safe to re-run, and **it is
 unchanged**. `setup-user` still tests only whether the file exists, still copies

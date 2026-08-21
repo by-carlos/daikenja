@@ -27,6 +27,12 @@ order.
   offers to register it, then continue -- an unregistered project still has a
   ledger to read if one exists on disk.
 
+**Then check the version marker**, per `config-contract.md` § Version marker and
+upgrades. That contract defines when the notice fires and how it is worded; this
+step only says that a read skill emits it. It is one line, it never blocks the
+read, and a read skill never migrates anything -- `setup-user` is the only skill
+that does.
+
 ## Step B: resolve the ledger path
 
 1. The matched project's `ledger:` key, resolved relative to its `path`.
@@ -85,6 +91,8 @@ This project is not in daikenja.yaml. Using the ledger at <path> anyway.
 No ledger at <path>. Run /daikenja:project-log to create one.
 Line <n>: <what is wrong>. Skipped.
 Using this project's <N>-day staleness threshold.
+daikenja.yaml was written by Daikenja <recorded>; <installed> is installed -- run /daikenja:setup-user.
+daikenja.yaml predates version tracking; <installed> is installed -- run /daikenja:setup-user.
 ```
 
 ## What each skill adds on top of this
