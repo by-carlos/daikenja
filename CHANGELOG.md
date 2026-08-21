@@ -116,6 +116,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it now is not free either, so the two costs get compared rather than one being
   assumed (`.claude/reference/github-issues.md`).
 
+### Changed
+
+- **The release scripts derive `owner/repo` instead of hardcoding it.**
+  `scripts/changelog_lib.py` gains a `repo_slug()` helper that reads
+  `GITHUB_REPOSITORY`, which Actions always sets, and falls back to the origin
+  remote for local runs; `scripts/prepare_release.py` and
+  `scripts/changelog_section.py` call it in place of their
+  `REPO = "by-carlos/daikenja"` constant. Every generated link is unchanged,
+  because that variable resolves to the same slug in this repository's own
+  workflow runs. The point is portability: `by-carlos/plan-staged-rollout` now
+  runs the same pipeline, and the hardcoded slug was the only thing that made
+  the three script files impossible to keep in step. Two of the three are now
+  byte-identical between the repositories and the third differs only in
+  docstrings.
+
 ## [0.5.1] - 2026-08-20
 
 ### Added
