@@ -359,6 +359,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`project-summary` and `project-catchup` could drop the one word that
+  changes the correct reaction to a decision.** Both reword entries
+  topic-first rather than quoting them, and neither Step 0 named
+  `ledger-format.md` § Body markers, so an entry carrying `Imposed.`,
+  `Blocked by <id>.` or `Contradicts <id>.` could lose that marker in exactly
+  the two reports a newcomer with no prior context reads. `project-summary`
+  also had no failure row for a marker naming an ID that does not resolve,
+  unlike its sibling read skills. Both skills now read § Body markers, say a
+  decision carrying `Imposed.` is reported as imposed, carry a `Blocked
+  by`/`Contradicts` marker into the reworded line, and `project-summary`
+  reports a dangling marker reference the same way `project-decisions` and
+  `project-gaps` already do (`skills/project-summary/SKILL.md`,
+  `skills/project-catchup/SKILL.md`) (#146).
 - **`templates/ledger.md` shipped a live `## Sources` heading the format
   contract says must not exist yet.** The section's own commented-out example
   lines were correctly hidden, but the heading above them was not, so every

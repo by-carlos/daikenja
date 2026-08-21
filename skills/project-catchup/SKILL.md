@@ -20,7 +20,7 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Changelog
-  grammar.
+  grammar, and § Body markers for relationships and imposed decisions.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes --
   `last_checkpoint`'s format.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` -- who writes what.
@@ -106,7 +106,10 @@ No changes since <last_checkpoint>.
 
 Group by section, newest change first. One line per entry, current state.
 Topic first with the ID and the change in parentheses, per
-`response-format.md` -- the ledger line is ID-first, the reply is not:
+`response-format.md` -- the ledger line is ID-first, the reply is not. A
+decision carrying `Imposed.` is reported as imposed, and a `Blocked by
+<id>.` or `Contradicts <id>.` marker on a reported entry is carried into its
+reworded line, not dropped:
 
 ```
 Since 2026-08-13T17:40Z:
