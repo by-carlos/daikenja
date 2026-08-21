@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Meeting attribution now prefers a handle you have already recorded, instead
+  of deriving a fresh one from every transcript.** `meeting-review` minted an
+  owner token from the speaker label each time, so a colleague recorded in
+  `personas.md` under a different handle gained a second spelling on every
+  meeting -- and the check added alongside `Known as` could only report that
+  after the fact, on every run, until somebody fixed it by hand. § Step 4:
+  attribute now looks the speaker up first, by persona section heading or by any
+  identifier in that persona's `Known as`, and attributes the entry to the
+  handle recorded there; deriving from the label stays the fallback and stays
+  the common case. Where two personas could both be one speaker it does not
+  guess -- the label wins and the report says which two, in one line under
+  `Notes`, as it does whenever a resolved handle is not what the label would
+  have produced. `personas.md` is still optional prose and still not a roster: a
+  speaker missing from it is the normal case, it is never written from here, and
+  `project-log`'s check is unchanged and still reports whatever this step could
+  not account for (`skills/meeting-review/SKILL.md`,
+  `tests/fixtures/owner-handles.md`) (#137).
 - **The ledger can now say that one entry blocks or contradicts another, and
   that a decision was imposed from outside.** Supersession was the only
   relationship the entry grammar could express, so "this open question

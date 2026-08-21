@@ -154,13 +154,14 @@ who has no persona is fine; running it is not.
 
 This lookup does not replace `project-log`'s own check on the handles it is
 handed -- its § Say when a handle is new. That check still runs on every entry
-and still reports whatever this step could not account for.
-The two hold together: this stops most drift being minted, that reports the rest.
+and still reports whatever this step could not account for. The two hold
+together: this stops most drift being minted, that reports the rest.
 
 **A name that is not in `personas.md` is normal, not an error.** That file is
 optional prose that tells you who someone is. It is not a roster, and a person
-missing from it did not stop attending meetings. Use the transcript's own label,
-and never invent a role, a team or a handle for someone you do not know. If the
+missing from it did not stop attending meetings. Fall back to the transcript's
+own label, and never invent a role, a team or a handle for someone you do not
+know. If the
 transcript names people the config does not cover, note it once at the end of
 the report, in one line, and carry on.
 
