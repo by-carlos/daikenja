@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`tests/check-invariants.py` now checks the backfill fixture against the
+  ledger contract**, replaying `tests/fixtures/ledger-backfill.md`'s two bulk
+  writes through the insert rule `docs/ledger-format.md` states, and its
+  Changelog lines through the continuation-join and range expansion it defines.
+  That rule is the only part of the ledger contract that is arithmetic rather
+  than judgement, which is what makes it worth a script; every other fixture in
+  `tests/` is still exercised by hand, and this does not change that. Verified
+  by mutation rather than assumed: a swapped entry, a backwards range, a range
+  crossing sections, and a well-formed line filed as malformed are each caught
+  (#71).
 - **A project may now span several directories, or none at all.** `projects:`
   gains `paths:`, a list; `path:` is its single-value form and keeps working
   exactly as it did, so every configuration already on disk resolves
@@ -130,6 +140,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **A Changelog summary item that looks like a range and cannot be expanded**
+  -- endpoints in two different sections, or running backwards -- is now
+  covered by `docs/ledger-format.md` § Reading rules as rule 5: report the
+  line, skip that item, never expand it partially. It had been stated only in
+  `project-catchup`'s failure table, which is a skill restating a property of
+  the format -- the layering this repo's rules forbid, and the reason Option B
+  was rejected on #71 in the first place. The old rule 5 is now rule 6; the
+  only rule the repo cross-references by number is rule 3, which did not move
+  (#71).
+- **An approximate date is never written on `project-log`'s same-turn dictated
+  path.** The marker's contract states the normalization *before* the write,
+  and the dictated path has no proposal -- it writes first and shows the lines
+  afterwards, while its condition 3 admitted "a date the user gave". Since
+  "some time in March" becomes a real date only by a derivation the user should
+  approve rather than be shown, a run needing the marker now proposes and waits
+  like any other (#71).
+- **`stale_after_days`' field note says again what a backfill does to it.**
+  Splitting `config-contract.md` into focused documents (#130) carried the note
+  over in its pre-#128 wording, dropping the two sentences saying a backfilled
+  item dated to its true origin is stale the moment it lands. Restored in
+  `docs/config-schema.md`, which is where that note now lives (#71).
 - **The ledger's ordering rule is now a position, not a location.** A new entry
   goes directly above the first entry whose date is the same as or older than
   its own, and at the end of the section when there is none. For an entry dated

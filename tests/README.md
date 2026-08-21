@@ -9,7 +9,12 @@ stage's acceptance checks can be re-run later against the same inputs.
   clean, every `skills/*/SKILL.md` frontmatter block parses as YAML with
   a `name` matching its directory and a `description`, and
   `docs/upgrading.md`'s version headings are well-formed, newest-first and
-  each named in `CHANGELOG.md` too. Requires `pyyaml`
+  each named in `CHANGELOG.md` too, and `fixtures/ledger-backfill.md` agrees
+  with `docs/ledger-format.md` -- its two bulk writes replayed through the
+  stated insert rule, and its Changelog lines through the continuation-join
+  and range expansion. That last one is the only fixture checked by script
+  rather than by hand, because the ordering rule is the only part of the
+  ledger contract that is arithmetic instead of judgement. Requires `pyyaml`
   (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
   `python tests/check-invariants.py`; CI runs it on every push and pull
   request via `.github/workflows/ci.yml`.
