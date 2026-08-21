@@ -166,6 +166,49 @@ the line by hand -- it is a markdown file.
 what it was. A ledger with markers is also readable by an older Daikenja, which
 treats them as ordinary body text and shows them.
 
+### A persona entry can now record the handles someone goes by
+
+**What changed on disk.** Nothing, until you write one. A persona section in
+`personas.md` gained an optional field, **`Known as`** -- their full name and
+anything else that means the same person: another handle, a chat ID, an email
+address. `project-log` reads it to tell a genuinely new ledger handle apart
+from a second spelling of someone you already have, and `meeting-review` reads
+it to attribute a transcript's action items to the handle you already use
+instead of minting a fresh one from however the speaker label was spelled.
+
+**What happens if you do nothing.** Nothing breaks. Every persona section you
+have stays exactly as valid as it is today, and both skills keep working --
+`project-log`'s check narrows to comparing a new handle against the ledger
+alone, and `meeting-review` keeps deriving a handle from the speaker label,
+which stays the common case. You only miss the cross-check: a colleague
+spelled two ways -- `@priya` in one ledger entry, `@priya.nair` in a meeting
+transcript -- reads as two people instead of one.
+
+**The exact edit.** Optional, on any persona section, existing or new:
+
+```markdown
+<!-- before -->
+## Priya Nair
+
+**Who they are.** ...
+
+<!-- after -->
+## Priya Nair
+
+**Known as.** Priya Nair, @priya.nair, priya@example.com
+
+**Who they are.** ...
+```
+
+**Can `setup-user` do it for you?** No, and deliberately. `personas.md` is
+your own notes on real colleagues; `setup-user` never writes persona content.
+`/daikenja:remember-persona` adds the field for you, and only from an
+identifier you actually stated.
+
+**Reversible?** Yes. Delete the line and the persona section is what it was --
+neither skill requires it, and its absence just narrows what each one can
+resolve.
+
 ### A project can now span several directories, or none
 
 **What changed on disk.** Nothing, unless you want it to. A `projects:` entry
