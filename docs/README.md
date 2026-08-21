@@ -8,6 +8,10 @@ redefines one. When a contract changes, it changes here and the skills follow.
 - [`config-contract.md`](config-contract.md) -- the `daikenja.yaml` schema, the
   lookup order, how the `writing_style` and `personas` pointers resolve,
   precedence, and failure behavior.
+- [`upgrading.md`](upgrading.md) -- what a user has to do when a release changes
+  something already on their disk. One section per version that needs action,
+  newest first, written by the change and promoted by the release. The only
+  document here written for the user rather than for a skill.
 - [`reading.md`](reading.md) -- the shared read mechanism for `project-catchup`,
   `project-summary`, `project-decisions` and `project-gaps`: resolve config,
   find the ledger, parse it.
