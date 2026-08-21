@@ -55,6 +55,11 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
 - **Changelog as-you-go, under `## [Unreleased]`.** Never write a
   dated/versioned heading or bump the version file mid-batch — that recreates
   version drift.
+- **Upgrade notes as-you-go too, under `## [Unreleased]` in
+  `docs/upgrading.md`** — but only when the change touches something already on
+  a user's disk (the `daikenja.yaml` schema, the ledger grammar or location, a
+  skill name, any path the plugin reads). Most changes add nothing there. A
+  release only promotes that heading; it never writes the note.
 - **Before filing an issue, read `.claude/reference/github-issues.md`** — it
   defines the required body format, label rules, and when to suggest rather than
   file. Default to suggesting.

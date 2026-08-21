@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
-"""Bump the plugin version and rotate CHANGELOG.md's Unreleased section.
+"""Bump the plugin version and rotate the Unreleased sections.
 
 Run by .github/workflows/release-prepare.yml. Edits
-.claude-plugin/plugin.json and CHANGELOG.md in place; the caller commits the
-result and opens a pull request. Never touches the `release` branch or
-creates a tag -- that is release-publish.yml's job, run after this PR merges.
+.claude-plugin/plugin.json, CHANGELOG.md and docs/upgrading.md in place; the
+caller commits the result and opens a pull request. Never touches the
+`release` branch or creates a tag -- that is release-publish.yml's job, run
+after this PR merges.
+
+CHANGELOG.md and docs/upgrading.md rotate the same way but are not equally
+required. Every release has a changelog entry, so a missing or empty
+`## [Unreleased]` there is an error. Most releases change nothing already on a
+user's disk, so docs/upgrading.md usually has no `## [Unreleased]` heading at
+all and rotating it is a no-op.
 """
 
 import argparse
@@ -20,6 +27,7 @@ from changelog_lib import section_body
 REPO = "by-carlos/daikenja"
 PLUGIN_JSON = Path(".claude-plugin/plugin.json")
 CHANGELOG = Path("CHANGELOG.md")
+UPGRADING = Path("docs/upgrading.md")
 
 FEAT_COMMIT_RE = re.compile(r"^feat(\(.+\))?!?:")
 UNRELEASED_HEADING_RE = re.compile(r"^## \[Unreleased\][ \t]*$", re.MULTILINE)
@@ -99,6 +107,37 @@ def rotate_changelog(new_version):
     CHANGELOG.write_text(text, encoding="utf-8")
 
 
+def rotate_upgrading(new_version):
+    """Promote docs/upgrading.md's Unreleased heading, if it has one.
+
+    Returns True if a heading was promoted. No heading is the normal case and
+    is not an error -- most releases change nothing already on a user's disk.
+    A heading with an empty body is an error: someone left the heading behind
+    without a note, and shipping a version section with nothing under it tells
+    the user a migration exists when none is written.
+    """
+    if not UPGRADING.exists():
+        return False
+
+    text = UPGRADING.read_text(encoding="utf-8")
+
+    heading = UNRELEASED_HEADING_RE.search(text)
+    if not heading:
+        return False
+    if not section_body(text, heading.end()):
+        sys.exit(f"{UPGRADING} has an empty ## [Unreleased] section -- remove it or write the note")
+
+    date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    text = (
+        text[: heading.start()]
+        + f"## [{new_version}] - {date}"
+        + text[heading.end() :]
+    )
+
+    UPGRADING.write_text(text, encoding="utf-8")
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--bump", choices=["auto", "patch", "minor"], default="auto")
@@ -110,9 +149,12 @@ def main():
     new_version = bump(current, kind)
 
     rotate_changelog(new_version)
+    upgraded = rotate_upgrading(new_version)
     set_plugin_version(new_version)
 
     print(f"{current} -> {new_version} ({kind} bump)")
+    if upgraded:
+        print(f"promoted an upgrade note in {UPGRADING}")
     if args.github_output:
         with open(args.github_output, "a", encoding="utf-8") as fh:
             fh.write(f"version={new_version}\n")

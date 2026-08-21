@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_TOKEN }}
 
-      - name: bump version and rotate CHANGELOG.md
+      - name: bump version and rotate the Unreleased sections
         id: release
         run: >
           python3 scripts/prepare_release.py
@@ -38,7 +38,7 @@ jobs:
 
           BRANCH="chore/release-${VERSION}"
           git switch -c "$BRANCH"
-          git add .claude-plugin/plugin.json CHANGELOG.md
+          git add .claude-plugin/plugin.json CHANGELOG.md docs/upgrading.md
           git commit -m "chore(release): ${VERSION}"
           git push origin "$BRANCH"
 
@@ -46,7 +46,8 @@ jobs:
           Release ${VERSION} (${BUMP} bump), prepared by \`release-prepare.yml\`.
 
           - Bumps \`version\` in \`.claude-plugin/plugin.json\` to ${VERSION}.
-          - Renames \`## [Unreleased]\` to \`## [${VERSION}] - $(date -u +%Y-%m-%d)\` and adds the tag link.
+          - Renames \`## [Unreleased]\` to \`## [${VERSION}] - $(date -u +%Y-%m-%d)\` in \`CHANGELOG.md\` and adds the tag link.
+          - Does the same in \`docs/upgrading.md\` if it has an \`## [Unreleased]\` heading. Most releases have none, and then that file is untouched.
 
           Merging this PR pushes to \`main\`, which triggers \`release-publish.yml\`: it tags \`v${VERSION}\`, cuts the GitHub release from this version's CHANGELOG.md section, and fast-forwards \`release\`.
           EOF

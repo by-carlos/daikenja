@@ -40,7 +40,16 @@ enough to stand on its own.
 3. **Add a changelog entry** under `## [Unreleased]` in `CHANGELOG.md` as part
    of the change. Never write a dated or versioned heading and never bump the
    version file -- releases are cut separately, as one atomic change.
-4. **Open a pull request** against `main`, describing what changed and why.
+4. **Add an upgrade note** under `## [Unreleased]` in
+   [`docs/upgrading.md`](docs/upgrading.md), **but only if your change touches
+   something that already exists on a user's machine** -- the `daikenja.yaml`
+   schema, the ledger grammar or location, a skill name, or any path the plugin
+   reads. Most changes need nothing here, and a release that changes nothing on
+   disk adds nothing to that file. Same as-you-go rule as the changelog, for the
+   same reason: a release that has to reconstruct what was breaking across a
+   whole batch gets it wrong. A pull request that needs a note and does not have
+   one is incomplete.
+5. **Open a pull request** against `main`, describing what changed and why.
    Never push directly to `main`.
 
 `main` requires a passing `gitleaks` scan, passing invariant checks, and the
@@ -87,9 +96,14 @@ There is no test runner for the skills themselves. The fixtures under
 
 Releases are the maintainer's call and land as one atomic change: bump
 `version` in `.claude-plugin/plugin.json`, promote `## [Unreleased]` to a dated
-heading in `CHANGELOG.md`, tag `vx.y.z`, and fast-forward the `release` branch
-to that tag. The marketplace points at `release`, so a merge to `main` never
-reaches installers on its own.
+heading in `CHANGELOG.md` and -- when there is one -- in
+[`docs/upgrading.md`](docs/upgrading.md) too, tag `vx.y.z`, and fast-forward the
+`release` branch to that tag. The marketplace points at `release`, so a merge to
+`main` never reaches installers on its own.
+
+A release only ever **promotes** an upgrade note; it never writes one. If the
+batch broke something on disk and nobody added the note when the change landed,
+the release has no way to reconstruct it.
 
 ## Security
 
