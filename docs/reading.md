@@ -117,6 +117,14 @@ indented continuation lines to the summary, then expand any
 `<verb><first>..<last>` range into the individual IDs it stands for. A summary
 read without doing both under-reports what a bulk write changed.
 
+**Body markers need no parsing of their own.** `Supersedes D-nnn.`,
+`Imposed.`, `Blocked by <id>.`, `Contradicts <id>.` and `Approximate date.` are
+ordinary body text in a fixed order at the front of `<body>`, per
+`ledger-format.md` § Body markers -- they are not fields and not tails, so
+every skill already reads and shows them without doing anything. A skill that
+acts on one resolves the ID it names against the entries it just parsed, and
+reports a reference that resolves to nothing per § Reading rules, rule 6.
+
 **Never rewrite the file.** Only `project-log` writes. A read skill that finds a
 malformed line reports it in its output and moves on; it does not fix it, even
 when the fix is obvious.
