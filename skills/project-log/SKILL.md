@@ -131,8 +131,8 @@ Run this from the project you mean to log.
 
 **This refusal is unconditional.** A `projects:` entry matching the home
 directory does not license scaffolding there. Matching takes the longest
-prefix, so an entry whose `path` is the home directory's parent makes the home
-directory itself resolve to a project, and `daikenja.yaml` is hand-editable --
+prefix, so an entry with a path that is the home directory's parent makes the
+home directory itself resolve to a project, and `daikenja.yaml` is hand-editable --
 so a matched project is not evidence that this directory is one.
 `setup-project` refuses to register either path for the same reason.
 

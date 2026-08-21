@@ -109,7 +109,7 @@ different file -- that is why `setup-project` appends and never reorders.
 
 **What changed on disk.** Nothing in any file you already have. A project's
 `ledger:` key in `daikenja.yaml` (under `projects: <key>:`) used to be
-understood only as a path relative to that project's `path`. It now also
+understood only as a path relative to that project's own directory. It now also
 accepts an absolute path, resolving to that location verbatim -- useful for a
 project with no repository of its own, where the recommended convention is
 pointing it at `~/.claude/daikenja/ledgers/<project-key>.md`. See
@@ -117,8 +117,8 @@ pointing it at `~/.claude/daikenja/ledgers/<project-key>.md`. See
 
 **What happens if you do nothing.** Nothing changes. Every `ledger:` value
 you already have is a relative path, which resolves exactly as it always has
--- relative to the project's `path`, with `.daikenja/ledger.md` as the
-default when the key is absent. This addition is purely a widening of what
+-- relative to the project root, with `.daikenja/ledger.md` as the default
+when the key is absent. This addition is purely a widening of what
 the key accepts, not a change to what any existing value means.
 
 **The exact edit.** Optional, and only if you want a project's ledger to live

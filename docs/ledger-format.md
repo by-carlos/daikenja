@@ -7,7 +7,9 @@ spec. A skill that invents its own shape is a bug.
 
 ## Location
 
-`.daikenja/ledger.md` in the project root, by default.
+`.daikenja/ledger.md` in the project root, by default. **The root is the
+first path in the project's entry**, so a project spanning several directories
+keeps one ledger, in the first one registered -- not one per directory.
 
 A project may point somewhere else with the `ledger:` key in
 `~/.claude/daikenja/daikenja.yaml`, as a relative or an absolute path. See
@@ -15,11 +17,13 @@ A project may point somewhere else with the `ledger:` key in
 pointer grammar and § Finding the ledger for the lookup order a skill follows.
 
 **A project with no repository of its own** -- work tracked across a wiki, a
-chat space or a ticket system rather than a code checkout -- has no natural
-folder for the ledger to sit in. The recommended convention for that case is an
-absolute pointer into
+chat space or a ticket system rather than a code checkout -- registers with no
+directory at all (`paths: []`) and therefore has no root for a relative pointer
+to resolve against. Give it an absolute one, by convention
 `~/.claude/daikenja/ledgers/<project-key>.md`, alongside every other file
-Daikenja keeps for the user rather than for a repository. Nothing below this
+Daikenja keeps for the user rather than for a repository. The two keys are a
+pair: `paths: []` is what makes the project reachable by name without a folder,
+and the absolute `ledger:` is what gives its record a location. Nothing below this
 point changes for a ledger at that location -- the format, the sections, the
 entry grammar, and the write rules are the same wherever the file lives.
 
