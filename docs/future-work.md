@@ -127,6 +127,17 @@ than accountability. The work an imposed decision creates on this side is an
 Open item, and that is what the audit sees -- but only once somebody raises it.
 `project-log` offers; nothing enforces.
 
+**The ledger tracks ownership and staleness, not severity.** `project-gaps`
+filters on exactly those two conditions -- `<owner>` is `@unassigned`, or the
+entry is older than `stale_after_days` -- and nothing in the entry grammar
+records how much an item matters. An item that blocks all work but was raised
+yesterday and has an owner is invisible to the audit; a cosmetic item three
+weeks old is reported identically. The audit is therefore a neglect report, not
+a priority report, and reading it as the second thing produces a wrong picture
+of what is urgent. A user who needs to track severity or consequence keeps that
+outside the ledger, in whatever document already serves that purpose for them
+-- Daikenja does not provide one.
+
 ## Reviewer personas
 
 **Group-level personas are not supported.** `personas.md` is read as individual
