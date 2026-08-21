@@ -24,7 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   have produced. `personas.md` is still optional prose and still not a roster: a
   speaker missing from it is the normal case, it is never written from here, and
   `project-log`'s check is unchanged and still reports whatever this step could
-  not account for (`skills/meeting-review/SKILL.md`,
+  not account for. The three places that described `Known as` as buying one
+  check in `project-log` alone now name both consumers
+  (`skills/meeting-review/SKILL.md`, `docs/ledger-format.md` § Who an owner
+  handle refers to, `skills/remember-persona/SKILL.md`, `templates/personas.md`,
   `tests/fixtures/owner-handles.md`) (#137).
 - **The ledger can now say that one entry blocks or contradicts another, and
   that a decision was imposed from outside.** Supersession was the only
