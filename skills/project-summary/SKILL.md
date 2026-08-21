@@ -34,7 +34,8 @@ Do not restate the resolution here.
 ## Step 2: read the ledger
 
 Follow `reading.md` § Step C. This is the one read skill that genuinely wants
-every section, so read all four in full.
+every section, so read them all in full -- the original four, plus Sources
+when the ledger has it.
 
 ## Step 3: build the overview
 
@@ -49,6 +50,13 @@ open, since that is what someone new needs to act on. For resolved, a count is
 enough unless the user asks for detail -- do not repeat every resolved body.
 
 **Context links.** List them all; there is no volume problem here.
+
+**Sources.** Only when the ledger has the section: list each source's label
+and target, with its `read:` date ("never read" when the field is absent).
+Whether a source *moved* is `/daikenja:project-sources`'s job -- do not query
+any connector from this overview, and do not report staleness here. A ledger
+without the section gets no Sources block at all; that is an older ledger,
+not an empty section.
 
 **Shape.** Newest first within each group, matching the ledger's own order.
 Do not silently reorder or group by owner -- that is a presentation choice
