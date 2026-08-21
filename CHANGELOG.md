@@ -237,6 +237,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **License changed from MIT to FSL-1.1-ALv2** (Functional Source License).
+  Every use stays free except offering the plugin in a competing commercial
+  product, and each release automatically becomes Apache-2.0 two years after it
+  is made available. Versions released before this change remain MIT.
+
 - **`project-gaps` now says what is blocking an item it reports**, naming the
   blocker topic-first with its ID and whether that blocker is itself still
   open -- an item waiting on something already resolved is the case worth

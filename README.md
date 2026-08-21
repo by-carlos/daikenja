@@ -241,4 +241,6 @@ one, so a format change happens in `docs/` first.
 
 ## License
 
-MIT -- see [LICENSE](LICENSE).
+[FSL-1.1-ALv2](LICENSE) -- free for any use except building a competing
+commercial product, and each release becomes Apache-2.0 two years after it is
+made available. Versions released before this change remain MIT.
