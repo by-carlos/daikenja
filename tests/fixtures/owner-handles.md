@@ -3,12 +3,18 @@
 Synthetic. Invented people, `example.com` links only. Nothing here comes from
 real work content, and no path below exists on any machine.
 
-Exercises `project-log` § Say when a handle is new against
-[`sample-ledger.md`](sample-ledger.md), the beacon project. Eight walks: a
-handle the ledger already knows, a handle only `personas.md` knows, a handle
-neither knows, two spellings of one person, `@unassigned`, and the three
-configuration states -- no personas file, a broken `drive:` pointer, and a
-dictated write.
+Exercises the two halves of handle drift, against
+[`sample-ledger.md`](sample-ledger.md), the beacon project.
+
+Walks 1-8 cover `project-log` § Say when a handle is new: a handle the ledger
+already knows, a handle only `personas.md` knows, a handle neither knows, two
+spellings of one person, `@unassigned`, and the three configuration states --
+no personas file, a broken `drive:` pointer, and a dictated write.
+
+Walks 9-11 cover `meeting-review` § Step 4: attribute, which runs *before* that
+check and is what stops most second spellings being minted at all: a speaker the
+user has recorded under a handle the transcript label would not have produced, a
+speaker recorded nowhere, and a speaker two personas could both be.
 
 The walks are run by hand; this repo has no test runner. Each states the user's
 message and what the run must and must not do.
@@ -18,9 +24,10 @@ message and what the run must and must not do.
 ## The personas file these walks assume
 
 Whatever `profile.personas` resolves to. Walks 1-5 and 8 assume this content;
-walks 6 and 7 replace it. It deliberately does **not** cover everyone in the
-beacon ledger -- it is the user's own prose, not a roster, and a person missing
-from it is the normal case.
+walks 6 and 7 replace it; walks 9-11 assume it plus the three extra sections
+below. It deliberately does **not** cover everyone in the beacon ledger -- it is
+the user's own prose, not a roster, and a person missing from it is the normal
+case.
 
 ~~~markdown
 # Personas
@@ -195,12 +202,109 @@ was unfamiliar, or writing first and checking second.
 
 ---
 
+## The extra personas walks 9-11 assume
+
+Appended to the file above. `Souei` is recorded under a handle their speaker
+label would not produce, and the two Gabirus are the ambiguity.
+
+~~~markdown
+## Souei
+
+**Known as.** Souei Tempest. `@souei.t`, chat ID `U04SOUEI`.
+
+**Who they are.** Runs customer comms for the beacon rollout.
+
+## Gabiru H
+
+**Known as.** Gabiru Hiryu. `@gabiru.h`.
+
+**Who they are.** Storage team.
+
+## Gabiru S
+
+**Known as.** Gabiru Souka. `@gabiru.s`.
+
+**Who they are.** Storage team, joined in July.
+~~~
+
+## Walk 9: a speaker recorded under a different handle
+
+A transcript in which the line
+
+> [00:01:20] Souei: I will have the customer comms written by Wednesday.
+
+produces an action item.
+
+Expected: before deriving anything, the speaker label `Souei` matches the
+`## Souei` section, whose `Known as` records `@souei.t`. The entry is owned by
+**`@souei.t`**, not the `@souei` the label alone would have produced. One line
+under `Notes` says the handle came from `personas.md` and is not what the label
+would give, so the user can overrule it.
+
+When those entries reach `project-log`, its own check accounts for `@souei.t`
+from `personas.md` and reports nothing. That is the whole point of the ordering:
+the drift never exists, so there is nothing to warn about.
+
+Must not happen: `@souei` in the entry; resolving silently, with no `Notes`
+line; a write to `personas.md`; or treating the recorded handle as an invented
+one because the transcript never spelled it.
+
+## Walk 10: a speaker no persona covers
+
+The same transcript, for the line
+
+> [00:04:10] Benimaru: I will take the runbook dates.
+
+Expected: `Benimaru` matches no section heading and no `Known as` identifier.
+The label is used, exactly as before this rule existed: **`@benimaru`**. This is
+the common case and it is not an error -- `personas.md` is not a roster.
+
+No `Notes` line is owed for it, beyond the existing one-line note at the end of
+the report when the transcript names people the config does not cover.
+`project-log`'s check then finds `@benimaru` already owns `O-001` in the beacon
+ledger and reports nothing.
+
+Must not happen: an error, a stop, a question the run waits on, or a handle
+invented for them from anything other than their own label.
+
+## Walk 11: two personas could both be this speaker
+
+The same transcript, for the line
+
+> [00:09:52] Gabiru: I will confirm the storage headroom before the canary.
+
+Expected: `Gabiru` matches no section heading, and matches the first name in
+**both** `Gabiru H`'s and `Gabiru S`'s `Known as`. Do not guess. Fall back to
+the transcript's own label -- **`@gabiru`** -- and say so in one line under
+`Notes`, naming both personas:
+
+~~~
+Notes
+- Gabiru could be Gabiru Hiryu (@gabiru.h) or Gabiru Souka (@gabiru.s). Used
+  the transcript's label, @gabiru. Tell me which and I will fix it.
+~~~
+
+`project-log`'s check then reports `@gabiru` as a handle neither the ledger nor
+`personas.md` accounts for, naming a near miss. Both mechanisms firing on one
+entry is correct, not duplication: the note says the run could not tell, the
+check says the handle it settled on is new.
+
+Must not happen: picking either persona; picking the one recorded first, or most
+recently; merging the two personas; asking a question the run waits on before
+producing the report; or dropping the `Notes` line because the downstream check
+will mention the handle anyway.
+
+---
+
 ## What must not happen in any walk
 
-- **A handle is never rewritten.** Not to match a near miss, not to lowercase
-  it, not to expand it.
-- **`personas.md` is never written by `project-log`.** Not created, not
-  appended to, not corrected. `remember-persona` owns every content write to it.
+- **A handle the user supplied is never rewritten.** Not to match a near miss,
+  not to lowercase it, not to expand it. Walk 9 is not an exception: nobody
+  supplied a handle there, so `meeting-review` chose which one to mint, and it
+  chose the recorded one over a derived one.
+- **`personas.md` is never written.** Not by `project-log`, not by
+  `meeting-review`. Not created, not appended to, not corrected.
+  `remember-persona` owns every content write to it.
 - **Nothing is ever rejected.** There is no list of legal owners. The check
   reports and the ledger stays free text.
 - **`@unassigned` is never reported.**
