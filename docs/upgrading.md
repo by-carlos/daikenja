@@ -43,6 +43,65 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### A project can now span several directories, or none
+
+**What changed on disk.** Nothing, unless you want it to. A `projects:` entry
+gains an optional `paths:` key holding a list of directories. The `path:` key
+you already have is the single-value form of exactly that, so **no file already
+on your disk needs editing and none of them resolve any differently.** This
+section exists because the schema grew, not because something you have has
+stopped working.
+
+**What happens if you do nothing.** Every project keeps resolving from its one
+directory, exactly as before. What you do not get is the two shapes the list
+allows: one project spanning several repositories, and a project with no
+repository at all.
+
+**The exact edit.** Only if you want one of those two shapes. To make one
+project out of several directories, replace its `path:` with a `paths:` list.
+**The first path in the list is the project root, and the ledger lives there** --
+put the repository you already keep the ledger in at the top, or the ledger you
+have stops being the one that gets read:
+
+```yaml
+# before
+projects:
+  platform-programme:
+    path: C:/GitHub/platform-api
+
+# after
+projects:
+  platform-programme:
+    paths:
+      - C:/GitHub/platform-api      # still the root: the ledger stays here
+      - C:/GitHub/platform-web
+      - C:/GitHub/platform-infra
+```
+
+To register work that has no directory -- a programme living in a wiki, a
+tracker and a chat space -- give it an empty list. It is then reachable by
+name, from anywhere, and it has nowhere to keep a ledger yet:
+
+```yaml
+# after
+projects:
+  q4-planning:
+    paths: []
+```
+
+**Can `setup-user` do it?** No, and it will not offer. Which of your projects
+belong together is a judgement about your work, not a migration, and there is
+no old shape for it to convert. `/daikenja:setup-project` is what makes these
+edits: run it in the second directory of a project and it asks whether that is
+a new project or another root of one you already track.
+`/daikenja:project-list` shows you what is registered today.
+
+**Reversible?** Yes, completely. A one-element `paths:` list and a `path:`
+scalar mean the same thing, so collapsing a list back to a scalar restores the
+file you had. The only irreversible act is reordering a `paths:` list, which
+moves the project root and therefore repoints the ledger at a different file --
+that is why `setup-project` appends and never reorders.
+
 ### Your configuration now records which version wrote it
 
 **What changed on disk.** `daikenja.yaml` gains one top-level key,
