@@ -38,7 +38,7 @@ Read these before writing anything. They are binding, and they are the
 only place their detail lives. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- section names, entry grammar,
-  IDs, tails, Changelog, and the reading rules.
+  IDs, tails, body markers, Changelog, and the reading rules.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- where the config lives, how
   a project and its ledger are resolved, and what to do when config is missing.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-versioning.md` -- the version-marker notice
@@ -244,7 +244,11 @@ the run follows propose-then-wait below.
    below still runs first: a hit the user did not name themselves drops the
    run to propose-then-wait, because merging or superseding is
    interpretation. At most about three entries per dictation -- more is a
-   batch and follows propose-then-wait.
+   batch and follows propose-then-wait. **A body marker follows the same
+   line.** `Blocked by O-007.` written because the user said so, naming an ID
+   that resolves in this ledger, is byte-determined; a marker you concluded
+   from the material is interpretation and drops the run, as does one whose ID
+   resolves to nothing.
 
 Scaffolding a missing ledger, ledger repairs, and every run entered from
 another skill (`project-log via <skill>`) never take this path. The Step 3
@@ -286,6 +290,65 @@ The owner is `@` plus one token, no spaces, lowercase.
   `project-gaps` reports.
 
 Never merge two people's positions into one entry.
+
+### Mark a decision that was imposed
+
+A decision made **outside the group keeping this ledger and binding on it** --
+a platform team's published standard, a security policy, a contract term --
+opens its body with the literal `Imposed.` followed by who imposed it, per
+`ledger-format.md` § A decision imposed from outside. Anything the group
+decided itself carries no marker; that is the ordinary case and there is
+nothing to write for it.
+
+The test is not who is named in the material, it is **whether this group could
+reopen it**. A decision the user argued for and won inside a programme is
+theirs, even though the programme published it. A standard handed down that the
+user can only comply with, seek an exemption from, or escalate is imposed. When
+the material does not settle which, ask in the proposal -- never guess, and
+never mark a decision imposed because it arrived from another team's document.
+
+`@unassigned` is the usual owner for an imposed decision, and it is not a gap.
+Do not attribute an imposed decision to whoever forwarded it.
+
+**Offer the open item, never write it.** An imposed decision creates work on
+this side -- comply, seek an exemption, escalate -- and that work is what
+`/daikenja:project-gaps` can actually audit, because it reads Open items and
+not decisions. When the material does not already name that work, offer to
+raise it in one line, saying that nobody on this side is on the hook yet and
+asking who is. On the propose-then-wait path that line goes in "Questions
+before I write". On the same-turn dictated path it goes alongside the written
+lines as an offer, exactly like Step 8's follow-up offers: the dictated
+decision still lands in that turn, and the open item is a separate write
+needing its own yes. Writing the item unasked would be inventing an entry,
+which the hard rules forbid -- and asking about it is not a reason to hold back
+the entry the user dictated.
+
+### Record a relationship only where the source says so
+
+Two relationships beyond supersession are recorded, as body markers on the
+**constrained** entry only: `Blocked by <id>.` and `Contradicts <id>.`, per
+`ledger-format.md` § Relationships between entries. The entry they name gains
+nothing -- do not edit it to mark the other side, and do not raise a second
+Changelog verb for it.
+
+**Write one only when the material states it.** "We can't start this until the
+exemption criteria are published" is a block. Two entries that merely look
+related to you are not, however obvious the graph seems -- inferring one
+produces a relationship nobody agreed to, and the no-invention rule outranks a
+richer record. When the material hints at a relationship without stating it,
+that is a line in "Questions before I write".
+
+Three more rules fall out of that:
+
+- **The ID must resolve.** A marker naming an entry this ledger does not have
+  is a broken reference the moment it is written. Name the ID in the proposal
+  if you cannot resolve it, and do not write the marker until it is settled.
+- **Adding a marker to an entry already written is an ordinary edit**, with its
+  own `~D-nnn` or `~O-nnn` Changelog verb. There is no separate verb for a
+  relationship, because there is no separate operation -- the body changed.
+- **Settling one end never rewrites the other.** Resolving `O-007` does not
+  strip `Blocked by O-007.` from `O-008`. Removing a marker is an edit the user
+  asks for, like any other.
 
 ### Say when a handle is new
 
@@ -377,6 +440,13 @@ facts.
   and the old entry gains its tail.
 - **An open item the material settles.** Propose a resolution: flip the box and
   append the tail. Resolved items stay where they are.
+- **Something that conflicts with an existing entry without replacing it.**
+  That is a `Contradicts <id>.` marker on the new entry, not a supersession.
+  Supersession says the old call is out of force; a contradiction says both are
+  on record and somebody has to reconcile them, which is exactly the state
+  worth recording rather than resolving on the user's behalf. An open item that
+  reopens a decision already in force is the common shape here -- the decision
+  keeps standing and the item says it is contested.
 - **Genuinely new.** Propose a new entry with the next ID.
 
 ### Backfilling an existing project
@@ -475,6 +545,12 @@ too.
 Insert one line in one place. Do not sort the section, and do not move the
 entries around it.
 
+A body carrying markers writes them in the fixed order `ledger-format.md`
+§ Body markers sets out -- `Supersedes D-nnn.`, `Imposed.`, relationship
+markers, `Approximate date.`, then the body proper. That order is part of the
+contract rather than a preference: a reader can find a marker without reading
+the whole body only if every entry puts them in the same place.
+
 Edits, resolutions and supersessions change the line in place. Nothing moves.
 
 Deleting an entry, when the user asks for it, removes the line and records
@@ -542,6 +618,10 @@ missing thing is the task itself.
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
 | A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |
 | Supersession marked on only one of the two entries | Report the mismatch, naming both IDs. The tail is authoritative. Do not repair it as a side effect of another write. |
+| A relationship the material implies but never states | One line in "Questions before I write" naming both entries. Never write the marker on your own reading of the material. |
+| A `Blocked by` or `Contradicts` the user asks for, naming an ID this ledger does not have | Do not write it. Name the ID in the proposal and ask which entry was meant. A marker written against a missing ID is a broken reference from the moment it lands. |
+| An existing entry already carries a marker naming a missing ID | Report it -- which entry, which ID -- then continue with the write, per `ledger-format.md` § Reading rules, rule 6. Repairing it is a separate write with its own approval. |
+| The material does not settle whether a decision was imposed or made here | Ask, in one line in the proposal. Never infer it from which team's document the material came out of. |
 | An entry's date cannot be established | Ask for it. An approximation is a real answer and is written with the `Approximate date.` marker. Never invent one, and never fall back to today. If the user cannot approximate it, drop that entry and say so. |
 | An owner handle appears neither in this ledger nor in `personas.md` | One line in the proposal naming the handle, and the near miss if there is one. Never a block, never a rewrite of the handle. |
 | `personas` is not configured, or its local file is missing | Check the ledger alone, with one notice saying the comparison was narrower for it. Not an error -- the file is optional prose, not a roster. |
@@ -562,3 +642,7 @@ missing thing is the task itself.
   offer `/daikenja:remember-persona`, which owns every content write to it.
 - It does not validate an owner handle. There is no list of legal owners, no
   rejection and no correction -- only the notice in Step 5.
+- It does not build a relationship graph. It writes the markers the material
+  states, on one entry each, and never sweeps the ledger looking for entries
+  that ought to be linked or for markers that ought to be retired now that
+  what they name is settled.
