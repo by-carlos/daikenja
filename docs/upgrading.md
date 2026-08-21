@@ -51,7 +51,7 @@ understood only as a path relative to that project's `path`. It now also
 accepts an absolute path, resolving to that location verbatim -- useful for a
 project with no repository of its own, where the recommended convention is
 pointing it at `~/.claude/daikenja/ledgers/<project-key>.md`. See
-`docs/config-contract.md` § Resolving `ledger`.
+`docs/config-resolution.md` § Resolving `ledger`.
 
 **What happens if you do nothing.** Nothing changes. Every `ledger:` value
 you already have is a relative path, which resolves exactly as it always has

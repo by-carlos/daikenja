@@ -23,7 +23,8 @@ confirmations, notices. It does not govern:
   means showing the real bytes.
 - **The drafted message inside a reply.** What `compose` or `preflight` hands
   back for the user to send is governed by `voice.md` and the user's own
-  `writing-style.md` layered per `config-contract.md`. This contract governs
+  `writing-style.md` layered per `config-resolution.md` § Voice and writing
+  style. This contract governs
   the reply around that message, never the message.
 
 Where a skill's own report template and this contract disagree, this contract
@@ -74,7 +75,7 @@ Two boundaries:
 ## `profile.tone` scales the narration
 
 `profile.tone` (`direct` | `standard` | `guided`, default `standard`) resolves
-per `config-contract.md`, and every skill applies it to its reply. A skill
+per `config-schema.md` § Field notes, and every skill applies it to its reply. A skill
 that has no other reason to read the config still resolves this one key from
 `~/.claude/daikenja/daikenja.yaml`. When the file is absent or the value is
 not one of the three, use `standard` silently -- a skill that already prints a

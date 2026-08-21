@@ -79,7 +79,7 @@ PERSONA_NOTE = """>
 > a fallback -- it is a failure.
 >
 > `personas.md` means the file in the `daikenja` folder in Google Drive, written
-> by the replace-and-verify sequence in `docs/config-contract.md`. If the
+> by the replace-and-verify sequence in `docs/config-drive.md`. If the
 > connector is missing, the folder does not resolve, or the read-back after the
 > write does not confirm, **do not claim a write**: print the exact entry and
 > tell the user to paste it in themselves.

@@ -20,8 +20,8 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Open items.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- `stale_after_days`
-  resolution order.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- what
+  `stale_after_days` measures.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The report in Step 4 follows it.
 
@@ -47,7 +47,7 @@ For each open line, evaluate two independent conditions:
 - **Stale.** Today's date minus the entry's `<date>` field is greater than the
   resolved `stale_after_days`. Age is measured from when the item was raised,
   not from when it was last touched -- the ledger does not track that, per
-  `config-contract.md`.
+  `config-schema.md`.
 
 An item can be both, one, or neither. Only items matching at least one
 condition are reported.

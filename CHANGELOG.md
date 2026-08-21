@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   backfill decorrelates the two on purpose, and a second backfill arriving later
   would break any attempt to keep them aligned anyway
   (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
+- **`docs/config-contract.md` split into five focused documents** --
+  `config-resolution.md` (the resolution core: location, lookup order,
+  precedence, voice layering, failure behavior), `config-schema.md` (the
+  key-by-key schema, field notes, worked examples), `config-writers.md` (who
+  writes what), `config-drive.md` (Google Drive pointer mechanics), and
+  `config-versioning.md` (the `daikenja_version` marker and upgrade path).
+  Every skill's Step 0 pre-read now names only the sections it actually uses,
+  instead of the whole 611-line contract -- `project-gaps` now loads 148 lines
+  instead of 611. No documented behavior changed; only which file a skill
+  reads and how the sections are grouped.
 
 ### Fixed
 
@@ -47,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   than no fixture (#69).
 - **Three write-scope references still said the ledger is always
   `<project>/.daikenja/ledger.md`** -- `project-log`'s frontmatter `writes:`
-  key, `docs/config-contract.md` § Who writes what, and `README.md`'s file
+  key, `docs/config-writers.md` § Who writes what, and `README.md`'s file
   table. All three now say the ledger is wherever `ledger:` resolves to, with
   that path as the default (#69).
 - **Plugin author name corrected to "Carlos Eng"** in
@@ -65,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   deliberately not extended to `ledger:` -- a ledger is written far more often
   than `personas.md` or `writing-style.md`, and "a ledger found on disk wins
   over the config" has no meaning for a file that is not on disk
-  (`docs/config-contract.md` § Resolving `ledger` and § Finding the ledger,
+  (`docs/config-resolution.md` § Resolving `ledger` and § Finding the ledger,
   `docs/ledger-format.md` § Location, `docs/reading.md` § Step B,
   `skills/project-log/SKILL.md`, `skills/setup-project/SKILL.md`,
   `templates/daikenja.yaml`) (#69).
@@ -107,7 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   simply landed and they found out when it stopped resolving. That has already
   happened once: the five skills renamed in 0.3.0 were handled by shipping the
   change before anyone was using it, which is timing, not a mechanism
-  (`docs/config-contract.md` § Version marker and upgrades,
+  (`docs/config-versioning.md` § Version marker and upgrades,
   `templates/daikenja.yaml`) (#67).
 - **`docs/upgrading.md`**, the document that says what a user has to do when a
   release changes something already on their disk. One file, newest-version
@@ -140,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when `docs/upgrading.md` actually names a version later than the recorded one,
   so a patch release that changes nothing on disk stays silent; a line that
   fired on every bump would teach the user to ignore the one that matters. The
-  rule is defined once in `docs/config-contract.md` and inherited rather than
+  rule is defined once in `docs/config-versioning.md` and inherited rather than
   restated, since a rule copied into a dozen skills drifts a dozen ways
   (`docs/reading.md`, `skills/project-log/SKILL.md`,
   `skills/setup-project/SKILL.md`) (#67).
@@ -150,7 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Three stale references left behind by earlier renames.**
   `docs/reading.md` still named `project-log` as the skill that registers an
   unregistered project; it now names `setup-project`, matching
-  `docs/config-contract.md` and `skills/project-log/SKILL.md`.
+  `docs/config-resolution.md` and `skills/project-log/SKILL.md`.
   `templates/daikenja.yaml` still called the checkpoint-writing skill
   `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
   `.gitignore` now excludes `__pycache__/`, since both

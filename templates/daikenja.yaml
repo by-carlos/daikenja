@@ -1,7 +1,7 @@
 # Daikenja configuration.
 #
 # Location: ~/.claude/daikenja/daikenja.yaml
-# Schema:   docs/config-contract.md in the Daikenja plugin.
+# Schema:   docs/config-schema.md in the Daikenja plugin.
 #
 # This file holds your profile and one entry per project Daikenja tracks.
 # Keep it here, not in the plugin directory -- plugin directories are
@@ -66,7 +66,7 @@ projects: {}
 #     ledger: .daikenja/ledger.md     # optional, pointer -- relative to path (default)
 #                                     # or absolute, e.g. for a project with no
 #                                     # repository of its own: see
-#                                     # docs/config-contract.md § Resolving `ledger`.
+#                                     # docs/config-resolution.md § Resolving `ledger`.
 #     last_checkpoint:               # written by `project-catchup`, leave empty
 #     stale_after_days: 30           # optional, overrides the profile value
 #     norms_doc:                     # optional, overrides the profile value

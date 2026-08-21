@@ -11,8 +11,8 @@ spec. A skill that invents its own shape is a bug.
 
 A project may point somewhere else with the `ledger:` key in
 `~/.claude/daikenja/daikenja.yaml`, as a relative or an absolute path. See
-[`config-contract.md`](config-contract.md) § Resolving `ledger` for the pointer
-grammar and § Finding the ledger for the lookup order a skill follows.
+[`config-resolution.md`](config-resolution.md) § Resolving `ledger` for the
+pointer grammar and § Finding the ledger for the lookup order a skill follows.
 
 **A project with no repository of its own** -- work tracked across a wiki, a
 chat space or a ticket system rather than a code checkout -- has no natural

@@ -26,7 +26,7 @@ projects:
 
 **Expected walk**, run from `C:/GitHub/tempest-guild`.
 
-1. `docs/config-contract.md` § Finding the ledger, step 2 applies: no
+1. `docs/config-resolution.md` § Finding the ledger, step 2 applies: no
    `ledger:` key, so the ledger is `C:/GitHub/tempest-guild/.daikenja/ledger.md`.
 2. `Ledger: C:/GitHub/tempest-guild/.daikenja/ledger.md` -- the fully resolved
    absolute path, per `docs/reading.md` § Step B.
@@ -145,7 +145,7 @@ machine's configuration, for instance).
 
 **The failure this catches:** silently falling back to
 `C:/GitHub/harbor/.daikenja/ledger.md` when the configured absolute path did
-not resolve or could not be written -- per `docs/config-contract.md`
+not resolve or could not be written -- per `docs/config-resolution.md`
 § Finding the ledger, an explicit `ledger:` key is authoritative and never
 degrades to the default. That degrade would also violate "a ledger found on
 disk wins over the config", which is scoped to an *unmatched* project, not to

@@ -34,13 +34,15 @@ entry runs this one. The Changelog then records the writer as
 
 ## Step 0: read the contracts
 
-Read these two files before writing anything. They are binding, and they are the
+Read these before writing anything. They are binding, and they are the
 only place their detail lives. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- section names, entry grammar,
   IDs, tails, Changelog, and the reading rules.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- where the config lives, how
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- where the config lives, how
   a project and its ledger are resolved, and what to do when config is missing.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-versioning.md` -- the version-marker notice
+  this skill emits and never migrates.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. Proposed ledger lines stay in file grammar; the talk around them
   follows this.
@@ -62,7 +64,7 @@ at the content of something you could not read.
 
 ## Step 2: resolve the config, the project and the ledger
 
-Follow `config-contract.md` § Resolution order exactly. In short:
+Follow `config-resolution.md` § Resolution order exactly. In short:
 
 1. Read `~/.claude/daikenja/daikenja.yaml`. Absent is not fatal here -- this
    skill works on defaults. Malformed YAML **is** fatal: report the first line
@@ -71,11 +73,11 @@ Follow `config-contract.md` § Resolution order exactly. In short:
    normalized and longest prefix wins. The project key is a label and is never
    matched on.
 3. Resolve the ledger: the matched project's `ledger:` key if it has one --
-   relative or absolute, per `config-contract.md` § Resolving `ledger` -- and
+   relative or absolute, per `config-resolution.md` § Resolving `ledger` -- and
    that resolved path is authoritative. Otherwise `.daikenja/ledger.md` under
    the project root.
 4. Check the version marker and emit the one-line notice if it applies, per
-   `config-contract.md` § Version marker and upgrades. It never blocks a write,
+   `config-versioning.md` § Version marker and upgrades. It never blocks a write,
    and this skill never migrates anything -- `/daikenja:setup-user` does that.
 
 **A ledger on disk wins over the config.** If `.daikenja/ledger.md` exists but

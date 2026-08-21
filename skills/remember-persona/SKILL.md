@@ -56,7 +56,7 @@ for `setup-user` to have run first.
 **Scaffolding covers local files only, and a write is never redirected.** When
 `profile.personas` points at a Google Drive file, this skill writes to that file
 and never creates one -- `setup-user` is the only skill that creates a Drive
-file, per `config-contract.md` § Who writes what. If a Drive pointer does not
+file, per `config-writers.md` § Who writes what. If a Drive pointer does not
 resolve, write nothing, say so, and keep the entry in the conversation so the
 user can retry once the file is reachable. Never fall back to the local default:
 that would split the user's notes across two stores without telling them.
@@ -66,11 +66,13 @@ entry recorded runs this one.
 
 ## Step 0: read the contracts
 
-Read `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` before writing anything --
+Read `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` before writing anything --
 how `profile.personas` resolves, and the failure-behavior table. Read
-`${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` for how the report in Step 6
-is shaped. Do not work from memory of them. If a contract and this skill ever
-disagree, the contract wins and you say so.
+`${CLAUDE_PLUGIN_ROOT}/docs/config-drive.md` for the Drive-specific read and
+write mechanics, and `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` for who
+writes what. Read `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` for how the
+report in Step 6 is shaped. Do not work from memory of them. If a contract and
+this skill ever disagree, the contract wins and you say so.
 
 ## Step 1: get the material
 
@@ -128,12 +130,12 @@ report. The user answering later runs this skill again for the write.
 
 ## Step 2: resolve the file
 
-Follow `config-contract.md` § Resolution order.
+Follow `config-resolution.md` § Resolution order.
 
 1. Read `~/.claude/daikenja/daikenja.yaml`. Malformed YAML is fatal -- report
    the first line that does not parse and stop. Never rewrite a file you cannot
    parse.
-2. Resolve `profile.personas` per `config-contract.md` § Resolving
+2. Resolve `profile.personas` per `config-resolution.md` § Resolving
    `writing_style` and `personas`. It may name a local file or a Drive file.
    Default `~/.claude/daikenja/personas.md`.
 
@@ -271,7 +273,7 @@ those breaks the file's own structure.
 
 **In Drive, the placement is the same and the write is a replacement.** The
 connector cannot update a file's content, so the write follows
-`config-contract.md` § Writing replaces the file: download, splice the entry
+`config-drive.md` § Writing replaces the file: download, splice the entry
 into the downloaded bytes at the same position, create a new file with the same
 name **in the same `daikenja` folder**, read it back to confirm, and only then
 trash the old one. **Never trash first** -- a create that fails after the old
