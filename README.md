@@ -151,7 +151,7 @@ and get overwritten on update.
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` for a proposal you approve |
-| A project's decision ledger | `<project>/.daikenja/ledger.md` | `project-log` only |
+| A project's decision ledger | `<project>/.daikenja/ledger.md`, or wherever that project's `ledger:` key points -- including outside the project, for work with no repository of its own | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
 your directories; the copies are the live files.

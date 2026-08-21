@@ -14,7 +14,7 @@ live and how a pointer resolves to one.
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. The append is silent only where the user described the person with nothing pasted; a description that arrived with pasted material is offered once and written on a yes. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` -- creating the file | `setup-user` on absence | Copies the blank template if and only if no file exists, and never inspects content. Same rule as `personas.md`. |
 | `writing-style.md` -- content | the user by hand, and `learn-voice` on approval | `learn-voice` derives a proposal from writing samples the user supplies, shows the exact content it would write -- as a diff whenever the file already holds anything -- and writes only what the user approves. Nothing else edits it. |
-| `<project>/.daikenja/ledger.md` | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. |
+| The project's ledger -- wherever `ledger:` resolves to, `<project>/.daikenja/ledger.md` by default | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. Who may write does not change with where the ledger lives, exactly as it does not for the two prose files above. |
 
 **The table names the local defaults, and who may write does not change with
 where the prose lives.** When `personas` or `writing_style` points at a Drive
