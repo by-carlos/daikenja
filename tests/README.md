@@ -6,8 +6,10 @@ stage's acceptance checks can be re-run later against the same inputs.
 
 - [`check-invariants.py`](check-invariants.py) -- enforces the invariants
   every v2 build stage checked by hand: `claude plugin validate .` exits
-  clean, and every `skills/*/SKILL.md` frontmatter block parses as YAML with
-  a `name` matching its directory and a `description`. Requires `pyyaml`
+  clean, every `skills/*/SKILL.md` frontmatter block parses as YAML with
+  a `name` matching its directory and a `description`, and
+  `docs/upgrading.md`'s version headings are well-formed, newest-first and
+  each named in `CHANGELOG.md` too. Requires `pyyaml`
   (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
   `python tests/check-invariants.py`; CI runs it on every push and pull
   request via `.github/workflows/ci.yml`.
@@ -143,6 +145,19 @@ last released copy of the skill, so a result obtained any other way is void.
   unachievable without saying what would be dropped to hit it. Exercises
   `self-review`'s third-party check: findings must land on the invoker
   alone, never on `gobta`.
+
+### `setup-user`
+
+- [`fixtures/setup-user-upgrade.md`](fixtures/setup-user-upgrade.md) -- five
+  `daikenja.yaml` files for the upgrade branch, each with the walk it is for: no
+  version key (the state every pre-0.6.0 install is in, which must produce a
+  proposal and never a stop), an older version, the current version (a silent
+  no-op -- an ordinary re-run must not get noisier), a file that does not parse
+  (Step 1 stops and Step 2 never runs, even though a readable version sits on
+  the first line), and a version *ahead* of the installed one, which must never
+  be stamped backwards. The older-version file carries a second and third walk,
+  over one read skill and over `project-log`, confirming each emits the one-line
+  notice and then continues without migrating or stamping anything.
 
 ### `setup-project`
 
