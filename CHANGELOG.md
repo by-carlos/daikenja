@@ -7,63 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **The ledger's ordering rule is now a position, not a location.** A new entry
-  goes directly above the first entry whose date is the same as or older than
-  its own, and at the end of the section when there is none. For an entry dated
-  today -- every entry an incremental write produces -- that resolves to
-  directly under the H2 heading, so nothing about an ordinary `project-log` run
-  changes. It only differs for a backfill, where the old wording ("insert
-  directly under the H2 heading") broke newest-first on the very first entry
-  and left each session to invent its own way out
-  (`docs/ledger-format.md` § Ordering, `skills/project-log/SKILL.md` Step 7)
-  (#71).
-- **A written ledger entry is never renumbered**, stated outright rather than
-  left to be derived from the Changelog-completeness rule. IDs are allocated in
-  proposal order and carry identity; the date field carries chronology. A
-  backfill decorrelates the two on purpose, and a second backfill arriving later
-  would break any attempt to keep them aligned anyway
-  (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
-- **`docs/config-contract.md` split into five focused documents** --
-  `config-resolution.md` (the resolution core: location, lookup order,
-  precedence, voice layering, failure behavior), `config-schema.md` (the
-  key-by-key schema, field notes, worked examples), `config-writers.md` (who
-  writes what), `config-drive.md` (Google Drive pointer mechanics), and
-  `config-versioning.md` (the `daikenja_version` marker and upgrade path).
-  Every skill's Step 0 pre-read now names only the sections it actually uses,
-  instead of the whole 611-line contract -- `project-gaps` now loads 148 lines
-  instead of 611. No documented behavior changed; only which file a skill
-  reads and how the sections are grouped.
-
-### Fixed
-
-- **`project-log`'s home-directory refusal is unconditional again.** The
-  registered-project exemption added alongside the `ledger:` pointer change
-  was scoped to the whole of Step 3, which also disabled the refusal that
-  stops a ledger being scaffolded in `~` or `~/.claude`. Because project
-  matching takes the longest prefix and `daikenja.yaml` is hand-editable, an
-  entry whose `path` is the home directory's parent made the home directory
-  resolve to a project and silently bypassed the guard. The exemption now
-  covers only the `.git`/`.daikenja/` heuristic it was meant for, which is
-  what a project with no repository of its own actually needs
-  (`skills/project-log/SKILL.md`, `tests/fixtures/ledger-location.md`
-  Config E) (#69).
-- **`tests/fixtures/ledger-location.md` Config D asserted the wrong outcome.**
-  It described `project-log` scaffolding into an absolute path on a volume
-  that does not exist, where the skill's own failure table says an unwritable
-  ledger path is a stop. It now splits the writable and unwritable cases and
-  states the stop, since a fixture encoding the wrong expectation is worse
-  than no fixture (#69).
-- **Three write-scope references still said the ledger is always
-  `<project>/.daikenja/ledger.md`** -- `project-log`'s frontmatter `writes:`
-  key, `docs/config-writers.md` § Who writes what, and `README.md`'s file
-  table. All three now say the ledger is wherever `ledger:` resolves to, with
-  that path as the default (#69).
-- **Plugin author name corrected to "Carlos Eng"** in
-  `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
-  the plugin marketplace listing.
-
 ### Added
 
 - **A project may now span several directories, or none at all.** `projects:`
@@ -185,33 +128,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`docs/reading.md`, `skills/project-log/SKILL.md`,
   `skills/setup-project/SKILL.md`) (#67).
 
-### Fixed
-
-- **Three stale references left behind by earlier renames.**
-  `docs/reading.md` still named `project-log` as the skill that registers an
-  unregistered project; it now names `setup-project`, matching
-  `docs/config-resolution.md` and `skills/project-log/SKILL.md`.
-  `templates/daikenja.yaml` still called the checkpoint-writing skill
-  `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
-  `.gitignore` now excludes `__pycache__/`, since both
-  `tests/check-invariants.py` and `scripts/prepare_release.py` leave one behind
-  in the working tree.
-- **Invariant (d)** in `tests/check-invariants.py`: `docs/upgrading.md`'s
-  version headings are well-formed semver, newest-first, and each names a
-  version `CHANGELOG.md` also records. `setup-user` applies those sections in
-  the order it reads them, so an out-of-order heading migrates in the wrong
-  sequence. The rule that matters most -- that a pull request touching
-  user-side data adds a section -- is deliberately **not** checked: whether a
-  diff changes something on a user's disk is a judgement, not a pattern, and a
-  check that guessed would either pass everything or block everything. The
-  docstring says so rather than adding a check that does not check (#67).
-- **`tests/fixtures/setup-user-upgrade.md`**, five synthetic configurations
-  with the walk each is for -- no version key, an older version, the current
-  version, a file that does not parse, and a version ahead of the installed one
-  -- plus walks of a read skill and `project-log` over the older-version file
-  (#67).
-
 ### Changed
+
+- **The ledger's ordering rule is now a position, not a location.** A new entry
+  goes directly above the first entry whose date is the same as or older than
+  its own, and at the end of the section when there is none. For an entry dated
+  today -- every entry an incremental write produces -- that resolves to
+  directly under the H2 heading, so nothing about an ordinary `project-log` run
+  changes. It only differs for a backfill, where the old wording ("insert
+  directly under the H2 heading") broke newest-first on the very first entry
+  and left each session to invent its own way out
+  (`docs/ledger-format.md` § Ordering, `skills/project-log/SKILL.md` Step 7)
+  (#71).
+- **A written ledger entry is never renumbered**, stated outright rather than
+  left to be derived from the Changelog-completeness rule. IDs are allocated in
+  proposal order and carry identity; the date field carries chronology. A
+  backfill decorrelates the two on purpose, and a second backfill arriving later
+  would break any attempt to keep them aligned anyway
+  (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
+- **`docs/config-contract.md` split into five focused documents** --
+  `config-resolution.md` (the resolution core: location, lookup order,
+  precedence, voice layering, failure behavior), `config-schema.md` (the
+  key-by-key schema, field notes, worked examples), `config-writers.md` (who
+  writes what), `config-drive.md` (Google Drive pointer mechanics), and
+  `config-versioning.md` (the `daikenja_version` marker and upgrade path).
+  Every skill's Step 0 pre-read now names only the sections it actually uses,
+  instead of the whole 611-line contract -- `project-gaps` now loads 148 lines
+  instead of 611. No documented behavior changed; only which file a skill
+  reads and how the sections are grouped.
 
 - **`setup-project` asks whether a directory is a new project or another root
   of one already tracked**, and appends to that entry's `paths` when it is the
@@ -245,8 +189,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it now is not free either, so the two costs get compared rather than one being
   assumed (`.claude/reference/github-issues.md`).
 
-### Changed
-
 - **The release scripts derive `owner/repo` instead of hardcoding it.**
   `scripts/changelog_lib.py` gains a `repo_slug()` helper that reads
   `GITHUB_REPOSITORY`, which Actions always sets, and falls back to the origin
@@ -259,6 +201,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the three script files impossible to keep in step. Two of the three are now
   byte-identical between the repositories and the third differs only in
   docstrings.
+
+### Fixed
+
+- **`project-log`'s home-directory refusal is unconditional again.** The
+  registered-project exemption added alongside the `ledger:` pointer change
+  was scoped to the whole of Step 3, which also disabled the refusal that
+  stops a ledger being scaffolded in `~` or `~/.claude`. Because project
+  matching takes the longest prefix and `daikenja.yaml` is hand-editable, an
+  entry whose `path` is the home directory's parent made the home directory
+  resolve to a project and silently bypassed the guard. The exemption now
+  covers only the `.git`/`.daikenja/` heuristic it was meant for, which is
+  what a project with no repository of its own actually needs
+  (`skills/project-log/SKILL.md`, `tests/fixtures/ledger-location.md`
+  Config E) (#69).
+- **`tests/fixtures/ledger-location.md` Config D asserted the wrong outcome.**
+  It described `project-log` scaffolding into an absolute path on a volume
+  that does not exist, where the skill's own failure table says an unwritable
+  ledger path is a stop. It now splits the writable and unwritable cases and
+  states the stop, since a fixture encoding the wrong expectation is worse
+  than no fixture (#69).
+- **Three write-scope references still said the ledger is always
+  `<project>/.daikenja/ledger.md`** -- `project-log`'s frontmatter `writes:`
+  key, `docs/config-writers.md` § Who writes what, and `README.md`'s file
+  table. All three now say the ledger is wherever `ledger:` resolves to, with
+  that path as the default (#69).
+- **Plugin author name corrected to "Carlos Eng"** in
+  `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
+  the plugin marketplace listing.
+
+- **Three stale references left behind by earlier renames.**
+  `docs/reading.md` still named `project-log` as the skill that registers an
+  unregistered project; it now names `setup-project`, matching
+  `docs/config-resolution.md` and `skills/project-log/SKILL.md`.
+  `templates/daikenja.yaml` still called the checkpoint-writing skill
+  `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
+  `.gitignore` now excludes `__pycache__/`, since both
+  `tests/check-invariants.py` and `scripts/prepare_release.py` leave one behind
+  in the working tree.
+- **Invariant (d)** in `tests/check-invariants.py`: `docs/upgrading.md`'s
+  version headings are well-formed semver, newest-first, and each names a
+  version `CHANGELOG.md` also records. `setup-user` applies those sections in
+  the order it reads them, so an out-of-order heading migrates in the wrong
+  sequence. The rule that matters most -- that a pull request touching
+  user-side data adds a section -- is deliberately **not** checked: whether a
+  diff changes something on a user's disk is a judgement, not a pattern, and a
+  check that guessed would either pass everything or block everything. The
+  docstring says so rather than adding a check that does not check (#67).
+- **`tests/fixtures/setup-user-upgrade.md`**, five synthetic configurations
+  with the walk each is for -- no version key, an older version, the current
+  version, a file that does not parse, and a version ahead of the installed one
+  -- plus walks of a read skill and `project-log` over the older-version file
+  (#67).
 
 ## [0.5.1] - 2026-08-20
 
