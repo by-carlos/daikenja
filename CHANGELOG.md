@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **An owner handle nobody has seen before is now reported before it is
+  written.** `project-log` checks each entry's owner against the handles that
+  ledger already uses and -- only for one it cannot account for -- against
+  `personas.md`, then says so in one line inside the proposal it was already
+  showing, naming an existing handle that plausibly means the same person when
+  there is one. `@priya` and `@priya.nair` sitting in one ledger was previously
+  invisible to every skill, including the audit. It is a notice and nothing
+  else: never a block, never a rewritten handle, never a write to
+  `personas.md`, and `@unassigned` is never reported. To give a handle
+  something to resolve against, `personas.md` gains an optional **`Known as`**
+  field -- full name, other handles, chat ID, email address -- written by
+  `remember-persona` alone and only from identifiers the user actually stated,
+  never derived from a name. Nothing already on disk changes meaning: a
+  personas file without the field, or no personas file at all, narrows the
+  comparison to the ledger and says so in the same line
+  (`skills/project-log/SKILL.md`, `skills/remember-persona/SKILL.md`,
+  `templates/personas.md`, `docs/ledger-format.md` § Who an owner handle refers
+  to, `tests/fixtures/owner-handles.md`) (#74).
 - **`tests/check-invariants.py` now checks the backfill fixture against the
   ledger contract**, replaying `tests/fixtures/ledger-backfill.md`'s two bulk
   writes through the insert rule `docs/ledger-format.md` states, and its
@@ -140,6 +158,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`project-log` now reads `personas.md`, so a `drive:` pointer that fails can
+  stop a run that would previously have written.** The stop is the one already
+  in `docs/config-resolution.md` § Failure behavior -- a pointer the user
+  configured and that cannot be reached is a failed request, not an unset key,
+  and never degrades to the local default. What is new is that `project-log` is
+  now subject to it. The reach is deliberately narrow: the check consults
+  `personas.md` only for a handle the ledger cannot already account for, so a
+  run naming only owners that ledger has seen writes normally whatever the
+  pointer does. When it does stop, it stops before writing and shows the
+  proposal, so nothing is lost (#74).
 - **A Changelog summary item that looks like a range and cannot be expanded**
   -- endpoints in two different sections, or running backwards -- is now
   covered by `docs/ledger-format.md` § Reading rules as rule 5: report the

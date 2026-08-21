@@ -59,6 +59,15 @@ stage's acceptance checks can be re-run later against the same inputs.
   date are each shown as the wrong answer. Two malformed ranges at the end
   exercise the report-and-continue path.
 
+- [`fixtures/owner-handles.md`](fixtures/owner-handles.md) -- a synthetic
+  personas file plus eight walks over `project-log`'s owner-handle check,
+  against `sample-ledger.md`: a handle the ledger already uses, a handle only
+  the personas file knows, a handle neither knows, two spellings of one person,
+  `@unassigned`, no personas file at all, an unresolvable `drive:` pointer, and
+  a dictated write. It fixes the two things the check is easiest to get wrong --
+  that a handle the ledger already knows never reads `personas.md`, and that
+  the notice is a notice rather than a question the run waits on.
+
 ### `meeting-review`
 
 - [`fixtures/sample-transcript.md`](fixtures/sample-transcript.md) -- a
