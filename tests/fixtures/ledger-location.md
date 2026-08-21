@@ -5,10 +5,11 @@ Fixture: five synthetic `daikenja.yaml` project entries plus the walks each is
 for. Everything here is invented -- invented projects, invented people,
 `example.com` links. Nothing is read at runtime.
 
-There is no test runner. Walk `project-log` and the four read skills
-(`project-catchup`, `project-summary`, `project-decisions`, `project-gaps`) by
-hand against each configuration below, run from the directory named in each
-walk, and compare against the expected result stated under it.
+There is no test runner. Walk `project-log` and the five read skills
+(`project-catchup`, `project-summary`, `project-decisions`, `project-gaps`,
+`project-sources`) by hand against each configuration below, run from the
+directory named in each walk, and compare against the expected result stated
+under it.
 -->
 
 ## Config A -- no `ledger:` key

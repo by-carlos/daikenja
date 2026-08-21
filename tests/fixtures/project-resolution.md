@@ -5,7 +5,7 @@ Fixture: one synthetic `daikenja.yaml` plus eight walks over it. Everything
 here is invented -- invented projects, invented people, `example.com` links.
 Nothing is read at runtime.
 
-There is no test runner. Walk the four read skills, `project-log`,
+There is no test runner. Walk the five read skills, `project-log`,
 `setup-project` and `project-list` by hand against the configuration below and
 compare against the expected result stated under each walk.
 
