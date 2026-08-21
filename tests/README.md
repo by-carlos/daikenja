@@ -40,6 +40,20 @@ stage's acceptance checks can be re-run later against the same inputs.
   handling: it must report both mismatches, naming both IDs, and never repair
   the ledger.
 
+- [`fixtures/ledger-backfill.md`](fixtures/ledger-backfill.md) -- an
+  incrementally kept `lantern` ledger plus three walks that exercise the four
+  rules a bulk backfill depends on: a first bulk write whose entries are all
+  older than what is already in the file, a second bulk write arriving three
+  days later that supersedes an entry the first one wrote, and a
+  `project-catchup` run over both. It fixes the resulting entry order (IDs and
+  dates deliberately decorrelated, and never renumbered), two `Approximate
+  date.` entries with the derivation the user supplied, a Changelog line
+  carrying both compactions -- a dense ID range and a continuation line -- and
+  the twelve changes `catchup` must recover from them. Its "what must not
+  happen" lists are the point: a sparse range, a renumbering and an invented
+  date are each shown as the wrong answer. Two malformed ranges at the end
+  exercise the report-and-continue path.
+
 ### `meeting-review`
 
 - [`fixtures/sample-transcript.md`](fixtures/sample-transcript.md) -- a
