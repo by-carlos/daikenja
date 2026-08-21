@@ -175,6 +175,21 @@ last released copy of the skill, so a result obtained any other way is void.
   rule against a user who replies about something else, and the refusal to
   invent a date.
 
+### Project resolution
+
+- [`fixtures/project-resolution.md`](fixtures/project-resolution.md) -- one
+  `daikenja.yaml` holding all four legal project shapes -- a single-value
+  `path` written before `paths` existed, a three-repository `paths` list, a
+  project with `paths: []`, and a project nested inside another -- plus seven
+  walks over it. Covers the scalar form resolving unchanged, a multi-path
+  project resolving its ledger against its **first** path rather than the path
+  that matched, a pathless project stopping instead of falling back, a project
+  key that resolves from the wrong directory, a key that resolves to nothing,
+  nesting still winning on the longest prefix, and the `project-list` report.
+  The two failures it exists to catch are silent: a ledger resolved against
+  whichever repository the user was standing in, and a bad key answered from
+  the current directory.
+
 ### `learn-voice`
 
 - [`fixtures/learn-voice-samples.md`](fixtures/learn-voice-samples.md) -- 33 of
