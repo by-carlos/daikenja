@@ -251,9 +251,11 @@ it matters for how a message lands. It gets no field of its own.
 
 It holds the identifiers that mean this person: their full name, the handles
 they go by, a chat ID, an email address. It exists so that a `@handle` written
-in a project ledger has somewhere to resolve to, and so
-`/daikenja:project-log` can tell a genuinely new colleague apart from a second
-spelling of one already recorded -- see
+in a project ledger has somewhere to resolve to: so `/daikenja:meeting-review`
+can attribute a transcript's speaker to the handle already recorded for them
+rather than deriving a new one, and so `/daikenja:project-log` can tell a
+genuinely new colleague apart from a second spelling of one already recorded --
+see
 `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Who an owner handle refers to.
 
 **Never derive an identifier.** `@priya` does not follow from "Priya Nair", an
@@ -263,12 +265,12 @@ none. A wrong identifier is worse than a missing one: it points a later reader
 at the wrong person with the same confidence as a right one.
 
 **That is not a contradiction of how a ledger entry is attributed.**
-`project-log` and `meeting-review` do turn `Priya Nair` into `@priya`, and they
-are right to: an entry needs an owner token and that derivation is how one is
-minted. Writing it here is a different claim -- that the identifier *is* this
-person's, durably, for anything that resolves a handle later. Minting a token
-for one line is cheap to correct. Recording it as a fact is what a later reader
-trusts.
+`project-log` and `meeting-review` do turn `Priya Nair` into `@priya` when
+nothing here says otherwise, and they are right to: an entry needs an owner
+token and that derivation is how one is minted. Writing it here is a different
+claim -- that the identifier *is* this person's, durably, for anything that
+resolves a handle later. Minting a token for one line is cheap to correct.
+Recording it as a fact is what a later reader trusts.
 
 **Write each identifier as the user wrote it.** Do not normalize case, do not
 strip an `@`, do not expand an initial into a full name. The point of the field

@@ -144,13 +144,19 @@ their own reasons. **It is not a roster.** A handle missing from it is the
 normal case, no skill treats an unrecorded owner as an error, and nothing here
 makes the ledger depend on that file existing.
 
-What it buys is one check, and only in `project-log`: a handle seen neither
-elsewhere in this ledger nor in `personas.md` is **reported**, in one line
-inside the proposal that skill was already showing. That is the whole mechanism.
-Nothing is rejected, no handle is rewritten, and `<owner>` stays free text --
-the point is to surface a second spelling at the moment it is one keystroke to
-fix, not to police the field. `@unassigned` is never reported: it is the
-documented value for no owner, not an unrecognized person.
+What it buys is two things, in that order. `meeting-review` **prefers** a
+recorded handle: where a transcript's speaker matches a persona, the entry is
+attributed to the handle written there rather than to one derived from the
+speaker label, so the second spelling is never minted -- see its § Step 4:
+attribute. `project-log` then **reports** whatever is left: a handle seen
+neither elsewhere in this ledger nor in `personas.md` gets one line inside the
+proposal that skill was already showing.
+
+That is the whole mechanism. Nothing is rejected, no handle a user supplied is
+rewritten, and `<owner>` stays free text -- the point is to avoid a second
+spelling where the file settles it, and otherwise to surface one at the moment
+it is one keystroke to fix, not to police the field. `@unassigned` is never
+reported: it is the documented value for no owner, not an unrecognized person.
 
 ### Continuation lines
 
