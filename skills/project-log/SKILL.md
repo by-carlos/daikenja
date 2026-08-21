@@ -47,6 +47,12 @@ only place their detail lives. Do not work from memory of them.
   is shaped. Proposed ledger lines stay in file grammar; the talk around them
   follows this.
 
+One more, read only when the run actually needs it:
+`${CLAUDE_PLUGIN_ROOT}/docs/config-drive.md`, for the download mechanics behind
+a `drive:` pointer. Step 5's owner check is the only thing here that reads
+`personas.md`, and it reads it only when a run carries a handle this ledger does
+not already know.
+
 If they ever disagree with this skill, the contract wins and you say so.
 
 ## Step 1: get the material
@@ -281,6 +287,60 @@ The owner is `@` plus one token, no spaces, lowercase.
 
 Never merge two people's positions into one entry.
 
+### Say when a handle is new
+
+A handle is free text and nothing has ever checked it, so one colleague
+accumulates several spellings and neither the audit nor the summary sees a
+problem. This is the check that surfaces that, and it is a **notice, not a
+gate**. A genuinely new person is the ordinary case. What is worth the user's
+attention is the moment a second spelling appears, when fixing it costs one
+word.
+
+Run it for each entry the run would write whose owner is **not** `@unassigned`.
+That value is never reported: it is the documented way to say there is no owner,
+not an unrecognized person.
+
+1. **Look in this ledger first.** If the handle already appears as the
+   `<owner>` of any entry, in either section -- resolved, superseded, it makes
+   no difference -- it is known. Say nothing and stop here. This is the common
+   case, and stopping here is why `personas.md` is usually never read at all.
+2. **Otherwise resolve `profile.personas` and look there.** It resolves per
+   `config-resolution.md` § Resolving `writing_style` and `personas`, and a
+   `drive:` pointer is read through `config-drive.md`'s download mechanics. The
+   handle is known if it names a persona section, or appears in one's `Known as`
+   field. Match generously, the way `remember-persona` matches a heading:
+   `Sarah`, `Sarah Kaur` and `@sarah` are one person when the file plainly means
+   one person.
+3. **In neither, report it** -- one line per handle, in the proposal, naming the
+   handle and where it was not found.
+
+**Name the near miss when there is one.** If a handle already in the ledger or
+in `personas.md` plausibly means the same person -- one is a prefix or a longer
+form of the other, or `Known as` lists a name the new handle is built from --
+say which, as a question the user can answer in a word. That is the whole point
+of the check: `@priya` and `@priya.nair` sitting in one ledger is the failure,
+and it is invisible once both are written.
+
+```
+New owner handles:
+- @priya.nair -- not in this ledger and not in personas.md. The ledger already
+  uses @priya. Same person?
+- @dana -- not in this ledger and not in personas.md.
+```
+
+**Never resolve it yourself.** Do not rewrite a handle to match an existing one,
+do not merge two entries because they look like one person, and do not write
+`personas.md` -- `remember-persona` owns every content write to that file, per
+`config-writers.md` § Who writes what. Offering it is fine: "`/daikenja:remember-persona`
+can record who `@dana` is." Running it is the user's call.
+
+**The check never turns a run into a proposal.** It produces a notice, not a
+question, so it does not fail condition 3 of the same-turn path above. A
+dictated write still lands in the same turn, and the notice is shown alongside
+the written lines. What it does require is that the check runs **before** the
+write either way -- a handle reported after the fact is a handle already in the
+file.
+
 ### Check for duplicates first
 
 For each candidate, look for an entry that already records the same fact.
@@ -344,9 +404,17 @@ Open items -- resolving who is on call (O-003)
 Changelog
 - 2026-08-14T16:40Z -- project-log -- +D-006, resolved O-003
 
+New owner handles:
+- <handle> -- not in this ledger and not in personas.md. <near miss, if any>
+
 Questions before I write:
 - <anything you could not classify, one line each>
 ```
+
+The handles block is a **notice** and the questions block is a **question**: the
+first needs no answer and the run proceeds without one, while the second is what
+Step 6 waits on. Drop either block entirely when it is empty rather than writing
+a heading with nothing under it.
 
 Get both dates from the environment, not from memory:
 
@@ -458,6 +526,9 @@ missing thing is the task itself.
 | A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |
 | Supersession marked on only one of the two entries | Report the mismatch, naming both IDs. The tail is authoritative. Do not repair it as a side effect of another write. |
 | An entry's date cannot be established | Ask for it. An approximation is a real answer and is written with the `Approximate date.` marker. Never invent one, and never fall back to today. If the user cannot approximate it, drop that entry and say so. |
+| An owner handle appears neither in this ledger nor in `personas.md` | One line in the proposal naming the handle, and the near miss if there is one. Never a block, never a rewrite of the handle. |
+| `personas` is not configured, or its local file is missing | Check the ledger alone, with one notice saying the comparison was narrower for it. Not an error -- the file is optional prose, not a roster. |
+| `personas` is a `drive:` pointer that does not resolve, or reads back empty | **Stop** before writing, per `config-resolution.md` § Failure behavior. Show the proposal so the user keeps it, say nothing was written, and never fall back to a local file. Reached only when a run has a handle this ledger does not already know. |
 | Nothing in the material is worth logging | Say so and write nothing. An empty ledger is better than a padded one. |
 
 ## What this skill does not do
@@ -470,3 +541,7 @@ missing thing is the task itself.
   `last_checkpoint` belongs to `project-catchup`.
 - It does not archive, prune or trim anything on a schedule. Old resolved items
   stay until a human asks for them to go.
+- It does not write `personas.md`. It reads that file to check a handle and may
+  offer `/daikenja:remember-persona`, which owns every content write to it.
+- It does not validate an owner handle. There is no list of legal owners, no
+  rejection and no correction -- only the notice in Step 5.
