@@ -262,6 +262,14 @@ the ones the user actually gave and leave the field out entirely when they gave
 none. A wrong identifier is worse than a missing one: it points a later reader
 at the wrong person with the same confidence as a right one.
 
+**That is not a contradiction of how a ledger entry is attributed.**
+`project-log` and `meeting-review` do turn `Priya Nair` into `@priya`, and they
+are right to: an entry needs an owner token and that derivation is how one is
+minted. Writing it here is a different claim -- that the identifier *is* this
+person's, durably, for anything that resolves a handle later. Minting a token
+for one line is cheap to correct. Recording it as a fact is what a later reader
+trusts.
+
 **Write each identifier as the user wrote it.** Do not normalize case, do not
 strip an `@`, do not expand an initial into a full name. The point of the field
 is to match what turns up elsewhere.

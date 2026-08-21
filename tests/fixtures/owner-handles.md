@@ -204,6 +204,11 @@ was unfamiliar, or writing first and checking second.
 - **Nothing is ever rejected.** There is no list of legal owners. The check
   reports and the ledger stays free text.
 - **`@unassigned` is never reported.**
-- **The check never adds a question the run waits on.** The proposal's
-  "Questions before I write" block is for things that genuinely block a write;
-  an unfamiliar handle is not one.
+- **The check never adds a question the run waits on.** "Same person?" invites
+  a correction and does not block anything. The proposal's "Questions before I
+  write" block is for what genuinely blocks a write, and an unfamiliar handle is
+  never one.
+- **The check is not an audit of the file.** A ledger already holding both
+  `@benimaru` and `@benimaru.k`, on a run that writes neither, reports nothing.
+  Walk 4 catches the second spelling as it arrives, which is the only moment
+  this check exists for.

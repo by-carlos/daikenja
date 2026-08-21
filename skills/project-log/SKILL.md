@@ -296,9 +296,18 @@ gate**. A genuinely new person is the ordinary case. What is worth the user's
 attention is the moment a second spelling appears, when fixing it costs one
 word.
 
-Run it for each entry the run would write whose owner is **not** `@unassigned`.
-That value is never reported: it is the documented way to say there is no owner,
-not an unrecognized person.
+Run it once the proposal's entries are settled -- after the duplicate check
+below, so it sees the handles the run will actually write and not the ones a
+merged or superseded candidate would have carried. It covers every handle the
+run writes: a new entry's owner, and an owner changed by an edit. Skip
+`@unassigned` entirely. That value is never reported: it is the documented way
+to say there is no owner, not an unrecognized person.
+
+**It catches drift as it arrives, and does not audit what is already there.** A
+ledger that already holds both `@priya` and `@priya.nair` reports nothing on a
+run that writes neither -- both are handles this ledger uses. Nothing here is a
+sweep of the existing file, and `project-gaps` still does not read owners for
+this.
 
 1. **Look in this ledger first.** If the handle already appears as the
    `<owner>` of any entry, in either section -- resolved, superseded, it makes
@@ -317,9 +326,17 @@ not an unrecognized person.
 **Name the near miss when there is one.** If a handle already in the ledger or
 in `personas.md` plausibly means the same person -- one is a prefix or a longer
 form of the other, or `Known as` lists a name the new handle is built from --
-say which, as a question the user can answer in a word. That is the whole point
-of the check: `@priya` and `@priya.nair` sitting in one ledger is the failure,
-and it is invisible once both are written.
+say which, phrased so it can be corrected in a word. That is the whole point of
+the check: `@priya` and `@priya.nair` sitting in one ledger is the failure, and
+it is invisible once both are written.
+
+**It reads like a question and is still not one.** "Same person?" invites a
+correction; it does not make the run wait. On the propose-then-wait path the
+user is already being waited on, so they answer it or they do not. On the
+same-turn path the entry is written and a correction afterwards is an ordinary
+edit with its own `~D-nnn` Changelog line, exactly as that path already says of
+every other correction. Nothing is lost either way, which is why this never
+belongs in the "Questions before I write" block.
 
 ```
 New owner handles:
