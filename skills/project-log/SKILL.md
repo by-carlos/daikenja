@@ -72,6 +72,9 @@ Follow `config-contract.md` § Resolution order exactly. In short:
    matched on.
 3. Resolve the ledger: the matched project's `ledger:` key, otherwise
    `.daikenja/ledger.md` under the project root.
+4. Check the version marker and emit the one-line notice if it applies, per
+   `config-contract.md` § Version marker and upgrades. It never blocks a write,
+   and this skill never migrates anything -- `/daikenja:setup-user` does that.
 
 **A ledger on disk wins over the config.** If `.daikenja/ledger.md` exists but
 no project matches, use it and carry on.

@@ -5,6 +5,89 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`daikenja.yaml` now records which version of Daikenja last wrote it**, in a
+  top-level `daikenja_version` key. It sits at the top level rather than under
+  `profile:` because it describes the file, not the person -- a profile key
+  would imply it is a setting the user chose. An absent or empty value is a
+  legal state meaning "written before this key existed", never an error, so no
+  configuration already on disk becomes invalid. Until now nothing on a user's
+  machine recorded this, so a release that changed something they already had
+  simply landed and they found out when it stopped resolving. That has already
+  happened once: the five skills renamed in 0.3.0 were handled by shipping the
+  change before anyone was using it, which is timing, not a mechanism
+  (`docs/config-contract.md` § Version marker and upgrades,
+  `templates/daikenja.yaml`) (#67).
+- **`docs/upgrading.md`**, the document that says what a user has to do when a
+  release changes something already on their disk. One file, newest-version
+  first, one section per version that needs action and nothing at all for a
+  release that needs none. Each section states the same five things: what
+  changed on disk, what happens if the user does nothing, the exact edit as
+  before-and-after, whether `setup-user` can make it, and whether it is
+  reversible. It does not duplicate `CHANGELOG.md` -- the changelog records
+  *what changed*, this records *what you must do about it*, and two files
+  holding different facts do not drift the way two files holding the same fact
+  do. It ships with the 0.3.0 skill rename as its first real section (#67).
+- **`setup-user` Step 2, the upgrade branch** -- the only place in Daikenja
+  where an existing configuration is migrated, and no new skill. It runs after
+  Step 1's read and before anything is written, because every step below it
+  assumes the current schema and a file that does not parse has to stop the run
+  first. On a version match it is a silent no-op, so an ordinary re-run reads
+  exactly as it did before. When the recorded version is behind, it shows the
+  applicable `docs/upgrading.md` sections oldest-first, proposes the edits it
+  can make, and writes on approval -- stamping `daikenja_version` in the same
+  edit. Declining writes nothing and deliberately does not stamp, so the notice
+  keeps saying the upgrade is outstanding; a version *ahead* of the installed
+  one is never stamped backwards, which would destroy the only record that a
+  newer version had been there. It never edits a ledger: `project-log` remains
+  the single writer of ledger content and an upgrade step touching one is
+  reported rather than performed (`skills/setup-user/SKILL.md`) (#67).
+- **A one-line version-mismatch notice wherever the configuration is read.**
+  It names both versions and `/daikenja:setup-user`, never blocks the run it
+  appears in, and is what makes the upgrade branch get reached at all -- nobody
+  re-runs setup after an upgrade unless something tells them to. It fires only
+  when `docs/upgrading.md` actually names a version later than the recorded one,
+  so a patch release that changes nothing on disk stays silent; a line that
+  fired on every bump would teach the user to ignore the one that matters. The
+  rule is defined once in `docs/config-contract.md` and inherited rather than
+  restated, since a rule copied into a dozen skills drifts a dozen ways
+  (`docs/reading.md`, `skills/project-log/SKILL.md`,
+  `skills/setup-project/SKILL.md`) (#67).
+- **Invariant (d)** in `tests/check-invariants.py`: `docs/upgrading.md`'s
+  version headings are well-formed semver, newest-first, and each names a
+  version `CHANGELOG.md` also records. `setup-user` applies those sections in
+  the order it reads them, so an out-of-order heading migrates in the wrong
+  sequence. The rule that matters most -- that a pull request touching
+  user-side data adds a section -- is deliberately **not** checked: whether a
+  diff changes something on a user's disk is a judgement, not a pattern, and a
+  check that guessed would either pass everything or block everything. The
+  docstring says so rather than adding a check that does not check (#67).
+- **`tests/fixtures/setup-user-upgrade.md`**, five synthetic configurations
+  with the walk each is for -- no version key, an older version, the current
+  version, a file that does not parse, and a version ahead of the installed one
+  -- plus walks of a read skill and `project-log` over the older-version file
+  (#67).
+
+### Changed
+
+- **Upgrade notes are written as-you-go, exactly like changelog entries.** A
+  pull request that changes the `daikenja.yaml` schema, the ledger grammar or
+  location, a skill name, or any path the plugin reads adds its section under
+  `## [Unreleased]` in `docs/upgrading.md` in the same commit; the release only
+  **promotes** that heading. A release that had to reconstruct what was
+  breaking across a whole batch would get it wrong, which is the same version
+  drift the changelog rule already exists to prevent. `scripts/prepare_release.py`
+  promotes the heading when there is one and treats its absence as the normal
+  case rather than an error -- unlike the changelog, where every release has an
+  entry -- while a heading left behind with an empty body is an error, since
+  shipping a version section with nothing under it tells the user a migration
+  exists when none is written. `release-prepare.yml`'s `git add` now includes
+  the file, without which an automated release would promote nothing
+  (`CONTRIBUTING.md`, `CLAUDE.md`, `AGENTS.md`) (#67).
+
 ## [0.5.1] - 2026-08-20
 
 ### Added

@@ -9,6 +9,13 @@
 #
 # Only `name` is required. Delete any optional key you do not want.
 
+# Which version of Daikenja last wrote this file. `/daikenja:setup-user` stamps
+# it on every run, and nothing else ever writes it. It is what lets a release
+# that changes something already on your disk be detected and handled -- see
+# docs/upgrading.md in the plugin. Leave it alone; there is nothing to set here
+# by hand, and an empty or missing value is a legal state, not an error.
+daikenja_version:
+
 profile:
   # Required. Your name, as it should appear on ledger entries you own.
   name:

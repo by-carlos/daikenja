@@ -30,16 +30,30 @@ Instructions for Claude Code and other agents working in this repo.
   records *what* changed without declaring a version. Never write a
   dated/versioned heading or bump the version file mid-batch -- that
   recreates version drift.
+- **Upgrade notes as-you-go too, in `docs/upgrading.md`.** A change that touches
+  something already on a user's disk -- the `daikenja.yaml` schema, the ledger
+  grammar or location, a skill name, any path the plugin reads -- adds its
+  section under that file's own `## [Unreleased]` heading in the same commit.
+  Most changes add nothing, and that is the normal case. The release **promotes**
+  the heading; it never writes the note, because a release that has to
+  reconstruct what was breaking across a whole batch gets it wrong. That file is
+  what a user reads and what `setup-user`'s upgrade branch applies, so a missing
+  note is a silently broken install, not a documentation gap.
 - **A release is one atomic change**, done all together (own commit/PR):
   1. Bump `version` in `.claude-plugin/plugin.json` (semver).
   2. Rename `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` and add the
      `[x.y.z]: https://github.com/by-carlos/daikenja/releases/tag/vx.y.z`
      link at the bottom.
-  3. Tag `vx.y.z` and cut the matching GitHub release, with the release notes
+  3. **If `docs/upgrading.md` has an `## [Unreleased]` heading**, rename it the
+     same way, to `## [x.y.z] - YYYY-MM-DD`. No link line -- that file's
+     bracketed headings mirror the changelog's shape but are not links. Usually
+     there is no such heading and this step does nothing, which is the normal
+     case, not a skipped step.
+  4. Tag `vx.y.z` and cut the matching GitHub release, with the release notes
      body set to that version's actual `CHANGELOG.md` entry content (copied
      in, not a bare "see CHANGELOG.md" pointer) plus a link back to the file
      for full history.
-  4. Fast-forward the `release` branch to that tag and push it. Tags in this
+  5. Fast-forward the `release` branch to that tag and push it. Tags in this
      repo are annotated, so pushing the tag name directly
      (`git push origin vx.y.z:release`) asks GitHub to point a branch at a tag
      object and is rejected with `remote: fatal error in commit_refs`. Peel it
@@ -53,11 +67,11 @@ Instructions for Claude Code and other agents working in this repo.
   minor.
 - **Tag per released version** (not per commit, not major-only) -- the
   `CHANGELOG.md` release links assume a tag exists for each version.
-- **The four steps above can run as two GitHub Actions workflows** instead of
+- **The five steps above can run as two GitHub Actions workflows** instead of
   by hand: `.github/workflows/release-prepare.yml` (`workflow_dispatch`, an
-  optional `bump` input) does step 1-2 and opens a PR against `main`;
+  optional `bump` input) does steps 1-3 and opens a PR against `main`;
   `.github/workflows/release-publish.yml` (on push to `main`, gated on the
-  plugin version having changed) does steps 3-4 once that PR merges. Both need
+  plugin version having changed) does steps 4-5 once that PR merges. Both need
   a `RELEASE_TOKEN` repository secret -- the default `GITHUB_TOKEN` cannot
   update `release` under the `release updates` ruleset, and a pull request it
   opens can never trigger `ci.yml`'s required checks, since bot-raised events

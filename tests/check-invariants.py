@@ -6,15 +6,29 @@
     `description`, `name` matches its directory, and `description` is not
     truncated by an unquoted ": " (which silently drops the whole block at
     load time while the skill still appears to load).
+(d) docs/upgrading.md's version headings are well-formed, newest-first, and
+    each names a version CHANGELOG.md also records.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
 check.
 
+What (d) deliberately does NOT check is the rule that matters most: that a pull
+request touching user-side data adds an `## [Unreleased]` section to
+docs/upgrading.md. Whether a diff changes something already on a user's disk is
+a judgement, not a pattern, and a check that guessed at it would either pass
+everything or block every unrelated change. That rule is enforced by review,
+stated in CONTRIBUTING.md. What is left is mechanical and still worth having:
+`setup-user`'s upgrade branch reads that file top to bottom and applies the
+sections later than the user's recorded version, so an out-of-order heading
+applies migrations in the wrong sequence, and a version that was never released
+cannot be compared against anything.
+
 Exits non-zero on the first invariant that fails, after running every check
 and printing all failures found.
 """
 
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -23,6 +37,13 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
+UPGRADING = REPO_ROOT / "docs" / "upgrading.md"
+CHANGELOG = REPO_ROOT / "CHANGELOG.md"
+
+BRACKET_HEADING_RE = re.compile(
+    r"^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?[ \t]*$", re.MULTILINE
+)
+SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 
 failures = []
 
@@ -111,9 +132,73 @@ def check_skill_frontmatter():
             )
 
 
+def check_upgrading_headings():
+    if not UPGRADING.exists():
+        fail("d: upgrading.md", str(UPGRADING), "file is missing")
+        return
+
+    headings = BRACKET_HEADING_RE.findall(UPGRADING.read_text(encoding="utf-8"))
+    if not headings:
+        fail(
+            "d: upgrading.md",
+            str(UPGRADING),
+            "no '## [version]' headings found -- it should hold at least one section",
+        )
+        return
+
+    versions = []
+    for index, (label, date) in enumerate(headings):
+        if label == "Unreleased":
+            if index != 0:
+                fail(
+                    "d: upgrading.md",
+                    str(UPGRADING),
+                    "'## [Unreleased]' must come first -- sections are newest-first",
+                )
+            if date:
+                fail(
+                    "d: upgrading.md",
+                    str(UPGRADING),
+                    "'## [Unreleased]' must not carry a date",
+                )
+            continue
+        if not SEMVER_RE.match(label):
+            fail("d: upgrading.md", str(UPGRADING), f"'## [{label}]' is not a semver version")
+            continue
+        if not date:
+            fail("d: upgrading.md", str(UPGRADING), f"'## [{label}]' has no ' - YYYY-MM-DD' date")
+        versions.append(label)
+
+    parsed = [tuple(int(part) for part in version.split(".")) for version in versions]
+    if parsed != sorted(parsed, reverse=True):
+        fail(
+            "d: upgrading.md",
+            str(UPGRADING),
+            f"version headings are not newest-first: {versions}. "
+            "setup-user applies them in the order it reads them.",
+        )
+
+    if not CHANGELOG.exists():
+        fail("d: upgrading.md", str(CHANGELOG), "file is missing")
+        return
+
+    released = {
+        label
+        for label, _ in BRACKET_HEADING_RE.findall(CHANGELOG.read_text(encoding="utf-8"))
+    }
+    for version in versions:
+        if version not in released:
+            fail(
+                "d: upgrading.md",
+                str(UPGRADING),
+                f"'## [{version}]' names a version CHANGELOG.md does not record",
+            )
+
+
 def main():
     check_plugin_validate()
     check_skill_frontmatter()
+    check_upgrading_headings()
 
     if failures:
         print("Invariant checks failed:", file=sys.stderr)

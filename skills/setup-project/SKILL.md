@@ -43,6 +43,12 @@ Read `~/.claude/daikenja/daikenja.yaml`. Three outcomes and no others:
 - **It exists but `profile.name` is unset or empty.** Stop. The configuration is
   incomplete, and `setup-user` is what completes it. Say so and name it.
 
+On a file that exists and parses, also check the version marker and emit the
+one-line notice if it applies, per `docs/config-contract.md` § Version marker
+and upgrades. It never blocks registration. **This skill does not migrate and
+does not write `daikenja_version`**, even though it writes to the same file --
+the upgrade branch lives in `setup-user` and stays there.
+
 This skill never captures profile data. If the user offers a name, role or tone
 here, record nothing and point at `/daikenja:setup-user`.
 

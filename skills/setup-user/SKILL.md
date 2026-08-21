@@ -1,10 +1,10 @@
 ---
 name: setup-user
-description: One-time (and re-runnable) personal setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or creates them in Google Drive if you ask), and reports which connected tools the other skills can use. It does not register a project -- /daikenja:setup-project does that, and this skill hands off to it at the end, so a first-ever run is still one continuous flow. Run explicitly with /daikenja:setup-user -- it never fires on its own.
+description: One-time (and re-runnable) personal setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or creates them in Google Drive if you ask), and reports which connected tools the other skills can use. It is also the only place an upgrade is applied -- when the version recorded in your configuration is behind the installed one, it proposes the edits docs/upgrading.md lists for the versions in between and writes them on approval, which is what the one-line version notice in every other skill points at. It does not register a project -- /daikenja:setup-project does that, and this skill hands off to it at the end, so a first-ever run is still one continuous flow. Run explicitly with /daikenja:setup-user -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 4
-  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block only, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
+  version: 5
+  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
@@ -18,8 +18,17 @@ their content afterwards.
 **This is the once-per-person half of setup, and only that.** Everything with a
 per-project lifetime -- registering a directory under `projects:`, that
 project's own settings, seeding its ledger -- belongs to
-`/daikenja:setup-project`, which Step 6 hands off to. Running this skill again
+`/daikenja:setup-project`, which Step 7 hands off to. Running this skill again
 to add a second repository is exactly the shape that split the two apart.
+
+**Migration is a third lifetime again, and it belongs here.** Step 2 runs once
+per upgrade -- not once per person, not once per project. It sits in this skill
+because this is already where `daikenja.yaml`'s non-project keys are written, so
+it needs no new writer and no exception to
+`${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` § Who writes what. The
+`disable-model-invocation: true` above works in its favour for the same reason:
+editing stored user data should be something the user triggers deliberately, not
+something a model chains into mid-task because it noticed a version gap.
 
 **Slash-only on purpose.** This skill asks personal questions and writes files
 outside the project. Nothing about "help me get started" or "set up my config"
@@ -63,26 +72,99 @@ second run reconcile instead of clobber.
 
 - `~/.claude/daikenja/daikenja.yaml` -- read it if present. Malformed YAML:
   stop, name the first line that does not parse, same as every other skill's
-  failure behavior. Never rewrite a file you cannot parse.
+  failure behavior. Never rewrite a file you cannot parse. Note its
+  `daikenja_version` if it has one; Step 2 needs it.
 - `~/.claude/daikenja/personas.md`, `~/.claude/daikenja/writing-style.md` --
   note only whether each exists. Never open them to check content; existence is
   the only thing that decides whether to copy the template.
 
-## Step 2: create the config directory and file
+## Step 2: the upgrade branch
+
+This is the only place in Daikenja where an existing configuration is migrated.
+Every other skill that notices a version gap says one line and continues; none
+of them edits anything. See
+`${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` § Version marker and upgrades.
+
+**Its position is deliberate.** It runs immediately after Step 1's read and
+before anything at all is written, because every step below assumes the current
+schema -- Step 4 edits `profile:` keys by name, Step 5 resolves the two
+pointers. Migrating after either had run would mean editing a file whose shape
+was already half-changed. It cannot run any earlier either: a file that does not
+parse has to stop the run in Step 1, before a migration is so much as
+considered.
+
+**Compare two versions.** The **recorded** version is the `daikenja_version`
+Step 1 read. The **installed** version is the `version` field of
+`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Compare them as semver,
+numerically, field by field -- `0.10.0` is later than `0.9.0`, and string order
+says the opposite.
+
+Four cases and no others:
+
+- **Step 1 found no file.** Nothing exists to upgrade. Say nothing. Step 3
+  creates the file and Step 4 stamps the version.
+- **Recorded matches installed.** Silent no-op. Say nothing at all -- an
+  ordinary re-run must not become noisier because this branch exists.
+- **Recorded is absent, empty, or behind installed.** Take the branch below. An
+  absent key and an empty one mean the same thing: written before the key
+  existed.
+- **Recorded is ahead of installed.** A newer Daikenja wrote this file than the
+  one running. Do not migrate, and **never stamp the version backwards** --
+  overwriting it would destroy the only record that a newer version had been
+  here. One line, then continue with the rest of setup:
+
+  ```
+  daikenja.yaml was written by Daikenja 0.7.0 and 0.6.0 is installed. I have
+  left the version alone and changed nothing -- downgrades are not migrated.
+  ```
+
+### Proposing the upgrade
+
+1. **Read `${CLAUDE_PLUGIN_ROOT}/docs/upgrading.md`.** One file, newest-version
+   first.
+2. **Select every section whose version is later than the recorded one.** If the
+   recorded version is absent or empty, that is every section in the file.
+   Sections under `## [Unreleased]` never count -- an unreleased note is not a
+   version anyone can be on.
+3. **Nothing selected.** Nothing to propose. Say nothing here; Step 4 stamps the
+   version, which is what stops the notice.
+4. **Something selected.** Show them **oldest first**, which is the order they
+   have to be applied in. For each, state what changed on disk and what happens
+   if nothing is done, and then either propose the exact edit or say plainly
+   that it is not an edit this skill can make. Ask once, for all of them
+   together.
+
+**What this skill may edit, and what it may not.** It edits
+`~/.claude/daikenja/daikenja.yaml` and the two prose files it already owns.
+It never edits a ledger: `project-log` is the single writer of ledger content
+and that rule does not bend for a migration. An upgrade step that touches a
+project's ledger is reported for the user to carry out, never performed here.
+
+**On approval.** Make the edits with the Edit tool, one key at a time, and stamp
+`daikenja_version` to the installed version in the same write. If the key is not
+in the file at all, write it at the top level, above `profile:`. Then say what
+was applied and what -- if anything -- the user still has to do by hand.
+
+**On decline.** Write nothing and **do not stamp the version.** Say so in one
+line, and say that the notice will keep appearing until this skill is run again
+and the upgrade accepted. Stamping a declined upgrade would silence the only
+thing still telling the user it is outstanding.
+
+## Step 3: create the config directory and file
 
 If `~/.claude/daikenja/` does not exist, create it.
 
 If `daikenja.yaml` does not exist, copy
 `${CLAUDE_PLUGIN_ROOT}/templates/daikenja.yaml` to
-`~/.claude/daikenja/daikenja.yaml` verbatim, then fill it in Step 3. Do not skip
+`~/.claude/daikenja/daikenja.yaml` verbatim, then fill it in Step 4. Do not skip
 the copy and hand-build a file from memory of the schema -- the template is the
 source of the comments the user keeps.
 
-If `daikenja.yaml` already exists, Step 3 edits it surgically (the Edit tool,
+If `daikenja.yaml` already exists, Step 4 edits it surgically (the Edit tool,
 not a rewrite) so hand-added keys -- `norms_doc`, per-project overrides, other
 projects -- survive untouched.
 
-## Step 3: capture the profile
+## Step 4: capture the profile
 
 One short round, not an interrogation. Ask for what is missing or say what is
 already set and ask if they want to change it:
@@ -106,9 +188,19 @@ writing a half-filled file -- do not write `profile.name:` empty.
 Write the answers into the `profile:` block with the Edit tool, one key at a
 time, on top of whichever fields already had values. Leave `writing_style` and
 `personas` at the template's defaults (`./writing-style.md`, `./personas.md`)
-unless the user says otherwise -- Step 4 is what makes those paths real.
+unless the user says otherwise -- Step 5 is what makes those paths real.
 
-## Step 4: copy the prose templates, only if absent
+**Then stamp `daikenja_version`** with the installed version, at the top level
+above `profile:`. This is what stops every other skill printing the version
+notice, so it is written on every successful run, not only on a first one. Two
+cases where it is **not** written, both decided in Step 2 and neither revisited
+here:
+
+- The user declined an upgrade this run proposed. The version stays where it
+  was, so the notice keeps telling them the upgrade is outstanding.
+- The recorded version is ahead of the installed one. Never write it backwards.
+
+## Step 5: copy the prose templates, only if absent
 
 For each of `personas.md` and `writing-style.md`:
 
@@ -203,7 +295,7 @@ described, and is the only way content reaches that file from Daikenja. The two
 are different acts on the same file, so neither constrains the other. See
 `docs/config-contract.md` § Who writes what.
 
-## Step 5: report tool availability
+## Step 6: report tool availability
 
 State plainly which connected tools the other skills can use this session, and
 what degrades without them. Do not guess at tools that are not visible in this
@@ -219,7 +311,7 @@ At minimum cover: a link-fetching capability (`thread`, `project-log` follow a
 pasted link), and any chat connector (Slack, email, Teams) if one is present.
 This is informational -- it never blocks the rest of setup.
 
-## Step 6: confirm, and hand off
+## Step 7: confirm, and hand off
 
 One or two lines: what was written or left alone, and where, per
 `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- the result leads, and a
@@ -250,8 +342,15 @@ user takes it.
 
 Safe at any time. It never overwrites `personas.md` or `writing-style.md` once
 they exist, never touches `projects:` at all, and only edits the `profile:` keys
-the user answers in Step 3 -- everything else already in `daikenja.yaml` is left
+the user answers in Step 4 -- everything else already in `daikenja.yaml` is left
 as it was found.
+
+**Step 2 does not change that.** On a version match it is a silent no-op and
+says nothing, so an ordinary re-run reads exactly as it did before the branch
+existed. It speaks only when the recorded version is actually out of date, and
+even then it proposes rather than writes. `daikenja_version` is the one key it
+adds to the set this skill maintains, and it is rewritten with the same value on
+every matching run, which changes nothing on disk.
 
 ## Failure cases
 
@@ -261,7 +360,12 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | Situation | What to do |
 |---|---|
 | Not Claude Code (Step 0) | **Stop.** Nothing written. See Step 0's message. |
-| `daikenja.yaml` exists but is malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
+| `daikenja.yaml` exists but is malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. This outranks Step 2 -- never attempt to migrate a file you could not parse. |
+| `daikenja_version` is absent or empty | Not an error. It means the file was written before the key existed. Step 2 treats it as "behind every version" and proposes accordingly. |
+| `docs/upgrading.md` cannot be read | One notice naming the path, then continue with the rest of setup. Do not guess what an upgrade would have said, and do not stamp `daikenja_version` -- the notice in the other skills is the only remaining prompt. |
+| `plugin.json` cannot be read, so the installed version is unknown | One notice, then skip Step 2 entirely and continue. There is nothing to compare against and nothing safe to stamp. |
+| The recorded version is ahead of the installed one | One notice naming both. Do not migrate and **never stamp the version backwards** -- that would erase the only record that a newer version wrote the file. |
+| The user declines a proposed upgrade | Write nothing and leave `daikenja_version` as it was. Say the notice will keep appearing until the upgrade is accepted. Never stamp a declined upgrade. |
 | User skips `name` | **Stop** before writing `daikenja.yaml`. Say the config is incomplete and ask again next run. |
 | `~/.claude/daikenja/` cannot be created (permissions, etc.) | **Stop.** Name the path and the error. |
 | A pointed-at local prose file path in an existing config does not resolve | One notice naming the path, then continue -- this is `setup-user` reporting the same failure mode every reading skill uses, not something it repairs. |
