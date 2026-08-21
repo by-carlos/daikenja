@@ -64,6 +64,6 @@ projects: {}
 #   atlas-migration:
 #     path: C:/GitHub/atlas          # required, absolute
 #     ledger: .daikenja/ledger.md     # optional, relative to path. This is the default.
-#     last_checkpoint:               # written by `catchup`, leave empty
+#     last_checkpoint:               # written by `project-catchup`, leave empty
 #     stale_after_days: 30           # optional, overrides the profile value
 #     norms_doc:                     # optional, overrides the profile value
