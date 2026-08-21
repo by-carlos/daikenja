@@ -4,7 +4,7 @@ description: Registers the project you are in with Daikenja, sets its per-projec
 metadata:
   owner: Carlos
   version: 1
-  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry: the one matching the current directory, the one the user names it should join, or a new one
+  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one
 disable-model-invocation: true
 ---
 
