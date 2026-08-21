@@ -38,14 +38,32 @@ The H1 is free text and carries no meaning. Skills key off the H2 headings.
 
 ## Ordering
 
-**Newest first, in every section.** A new entry is inserted directly under its
-H2 heading. This is deliberate and it is uniform: `log` has one insert rule for
-the whole file, and the current state is what you read first.
+**Newest first, in every section.** A new entry is inserted **directly above the
+first entry whose date is the same as or older than its own**. When the section
+holds no such entry, it goes at the end of the section.
+
+The rule is a *position*, not a location. For an entry dated today -- which is
+every entry an ordinary incremental write produces -- that position resolves to
+directly under the H2 heading, which is why "insert at the top" reads as the
+same rule and is never wrong for that case. It stops being enough only in a
+**backfill**, where most entries are older than everything already in the file:
+inserting those under the heading would break newest-first on the very first
+one. Inserting at the date position keeps the file readable without renumbering
+anything.
+
+The Changelog follows the same rule and always resolves to the top, because a
+Changelog line is timestamped when the write happens. It is therefore the newest
+line in the file whatever the entries it names are dated -- a bulk write of
+five-year-old decisions still puts today's Changelog line on top. Context links
+have no ordering rule at all, so a new one goes directly under the heading.
 
 **No skill may depend on the ordering.** A human is free to reorder Open items
 by priority, and `log` restores nothing. Order is a reading convenience; the
 date field is the fact. `catchup` in particular gets its delta from the
-Changelog, never from position in a section.
+Changelog, never from position in a section. This is also why the insert rule
+above is a scan for one position rather than a sort: `log` inserts a line and
+never touches the entries around it, so a section a human has arranged by hand
+stays arranged by hand.
 
 ## Entry grammar
 
@@ -83,7 +101,7 @@ body text -- a body is free to contain `->` as punctuation.
 | Field | Rule |
 |---|---|
 | `<marker>` | `- ` in Decisions. `- [ ] ` or `- [x] ` in Open items. |
-| `<date>` | `YYYY-MM-DD`, absolute, never relative. The date the entry was created. |
+| `<date>` | `YYYY-MM-DD`, absolute, never relative. The best known date the entry's subject was decided or raised. For an incremental write that is the day it is written; for a backfill it is the original date. See [Approximate dates](#approximate-dates). |
 | `<id>` | `D-001` in Decisions, `O-001` in Open items. See [IDs](#ids). |
 | `<owner>` | `@` plus one token, no spaces. `@unassigned` when there is none. |
 | `<body>` | Free text on one line. May contain `--`. May end with markdown links. |
@@ -119,12 +137,61 @@ alone is not enough: delete the newest entry and the section's maximum drops,
 which would reissue a retired ID. The Changelog names every ID ever created, so
 it is what makes retirement stick.
 
+**A written entry is never renumbered.** IDs record allocation order, not
+chronology, and in a backfill the two come apart: entries dated earlier than
+everything already in the file still take the next free IDs, so an old entry
+routinely carries a higher number than the newer entries sitting above it. That
+is expected and it is not a defect to tidy. Renumbering to restore the
+correlation would invalidate every Changelog line, every `Supersedes D-nnn.`
+body and every `see D-nnn` tail already naming the old ID -- and a second
+backfill arriving later would break it again anyway. **The date field carries
+chronology; the ID carries identity.** Order in the file comes from insert
+position, per [Ordering](#ordering), never from the number.
+
+Within one run, IDs are allocated in the order the entries appear in the
+proposal. Nothing requires that order to be chronological.
+
 Past `999` the number simply grows to four digits.
 
 IDs are what let `log` update an existing entry instead of appending a near
 duplicate, and what let the Changelog name precisely what changed.
 
 Context links carry no ID. Nothing updates them by reference.
+
+### Approximate dates
+
+`<date>` is always a real `YYYY-MM-DD` and always the best date known for what
+the entry records. A backfill regularly meets a source that never recorded one:
+a decision register with no date column, a wiki page whose only timestamp says
+when somebody last edited it rather than when the call was made. For those, the
+entry's **body opens with the literal `Approximate date.`** and then says where
+the approximation came from.
+
+```markdown
+- 2026-03-01 -- D-007 -- @unassigned -- Approximate date. Taken from the decision register, which records no dates; that page was first published in March 2026. Pin the vendor SDK to a major version.
+```
+
+Three rules make that safe.
+
+**The marker never licenses inventing a date.** It marks a date *the user
+supplied* as approximate. `log` does not choose one, does not fall back to
+today, and does not read one off a file's modification time. An entry whose date
+the user cannot even approximate is still not written -- that rule is unchanged.
+What the marker adds is somewhere for a run to go once the user does supply an
+approximation, instead of stalling on a date nobody can produce exactly.
+
+**An approximation is normalized to the first day of the coarsest unit given**,
+and the proposal says so before anything is written: "March 2026" becomes
+`2026-03-01`, "sometime in 2025" becomes `2025-01-01`. That is arithmetic on
+what the user said, not a guess at what they meant.
+
+**Nothing downstream treats the entry differently.** The marker is ordinary body
+text, so every skill already reads and shows it, and an approximate date feeds
+`gaps`'s staleness arithmetic exactly like an exact one. Marking it is what
+stops a later reader taking a placeholder for a record.
+
+When an entry needs this and a supersession marking both, `Supersedes D-nnn.`
+comes first: `-- Supersedes D-002. Approximate date. <body>`.
 
 ## Section: Decisions
 
@@ -249,6 +316,51 @@ go on that run's single line.
 The Changelog is not capped and is never trimmed automatically. Silent trimming
 would write to the ledger without a human approving it.
 
+### Compacting a long summary
+
+One line per write is right for an incremental run, and produces for a bulk
+write a single unbroken line naming thirty-odd IDs. It parses correctly and it
+is unreadable. Two compactions are allowed. **Both are lossless** -- every ID
+and every label that would have been listed is still recoverable from the line,
+which matters because `catchup` reads this line and never diffs the file.
+
+**Consecutive IDs may be written as a range**, `<verb><first>..<last>`:
+
+```
+- 2026-08-21T10:15Z -- project-log via setup-project -- +D-001..D-017, +O-001..O-009
+```
+
+- Both endpoints are in the same section, and the range is **inclusive and
+  dense**: every ID between them was touched by that same verb in that run. A
+  range is never sparse. If one ID in the interval was untouched, or took a
+  different verb, write two ranges or list the IDs.
+- The endpoints must differ. A single ID is written plainly.
+- The word verbs range too: `resolved O-004..O-006`, `superseded D-002..D-004`,
+  and so do `~D-001..D-003` and `-O-011..O-013`.
+- **Expanding is the reader's job.** `+D-001..D-017` means exactly what
+  seventeen comma-separated `+D-nnn` items mean, and a skill reports it that
+  way. A range a skill does not expand is a set of changes nobody is told about.
+
+**A summary may continue on continuation lines**, indented two spaces and
+carrying no list marker, exactly as an entry's detail does:
+
+```
+- 2026-08-21T10:15Z -- project-log via setup-project -- +link "Decision register",
+  +link "Rollout channel export", +link "Vendor evaluation sheet",
+  +link "On-call rota"
+```
+
+A reader strips each continuation line's indent and joins it to the summary with
+a single space, then splits on commas as usual. This is what keeps context links
+readable: a link is named by its quoted label rather than by an ID, so labels
+have no order to range over and would otherwise have no compaction at all.
+Continuation lines are already ignored by the grammar check
+([Reading rules](#reading-rules-for-skills), rule 3), so nothing already on disk
+changes meaning.
+
+Neither compaction is required, and neither belongs on a short line. A run that
+names four IDs writes the four IDs.
+
 ## Reading rules for skills
 
 1. Locate a section by its exact H2 heading. Do not infer sections by position.
@@ -326,3 +438,40 @@ What a skill reads out of that example:
   `stale_after_days` and the date the skill runs.
 - `D-005`'s body contains ` -- ` as punctuation. It is still one decision, not
   two fields, because the split stops after `@carlos`.
+
+## Worked example: a bulk backfill
+
+The same ledger a week later, after an existing project's history was recorded
+in one run. Four things in it are only well-defined because of the rules above.
+
+```markdown
+## Decisions
+
+- 2026-08-14 -- D-005 -- @carlos -- Supersedes D-002. Cut over on a Saturday, not a weekday evening.
+- 2026-08-12 -- D-004 -- @unassigned -- Keep the legacy read replica online for 30 days after cutover.
+- 2026-06-02 -- D-007 -- @priya -- Atlas runs in eu-west-1 only. No multi-region until after cutover.
+- 2026-03-01 -- D-006 -- @unassigned -- Approximate date. Taken from the architecture wiki, which records no dates; the page was created in March 2026. Buy the managed Atlas tier rather than self-hosting.
+
+## Changelog
+
+- 2026-08-21T10:15Z -- project-log via setup-project -- +D-006..D-007, +O-007..O-009,
+  +link "Architecture wiki", +link "Vendor evaluation sheet"
+- 2026-08-14T16:40Z -- log -- +D-005, superseded D-002, resolved O-003, +O-006
+```
+
+- **The two backfilled decisions sort by date, not to the top.** `D-007` lands
+  between `D-004` and `D-006` because 2026-06-02 does, which is
+  [Ordering](#ordering) read as a position.
+- **Their IDs are the highest in the section and their dates the oldest.** That
+  decorrelation is the expected outcome of never renumbering, per
+  [IDs](#ids). A reader takes chronology from the date field.
+- **`D-006` carries the `Approximate date.` marker** because the wiki recorded
+  none and the user could only place it in March 2026.
+- **The Changelog line is ranged and continued.** Expanded, it says
+  `+D-006, +D-007, +O-007, +O-008, +O-009` and two link additions -- nothing is
+  lost, and `catchup` reports all seven changes.
+
+Entries dated to their true origin are older than `stale_after_days` the moment
+they land, so `gaps` reports the open ones as stale on the next run. That is the
+audit working as specified, not a fault in the entries; `setup-project` says so
+before a seed run for exactly this reason.
