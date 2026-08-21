@@ -258,6 +258,8 @@ missing thing is the task itself.
 | Garbled or inaudible passages | Treat as ambiguous. Do not reconstruct. Say which candidate is affected. |
 | Two labels might be the same person | Keep them separate and ask. Never merge two people. |
 | A name is not in `personas.md` | Not an error. Use the transcript's label and note it once at the end. |
+| A speaker matches a persona whose `Known as` records a different handle | Use the recorded handle, not the one the label would give, and say so in one line under `Notes`. |
+| Two personas could both be one speaker | Do not guess. Use the transcript's label and name both personas in one line under `Notes`. |
 | The `personas` pointer does not resolve, or `daikenja.yaml` is missing | One notice, then continue. Neither is needed to read a transcript. |
 | Nothing was settled | Say so and propose nothing. A meeting with no decisions is a normal meeting. |
 | User asks you to write the ledger directly | Decline per the hard rule. Run `/daikenja:project-log`. |
