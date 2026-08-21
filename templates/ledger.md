@@ -36,7 +36,7 @@ source's system reports it), "read:" (YYYY-MM-DD), "covers:",
 
 <!-- - Label -- https://example.com -->
 
-## Sources
+<!-- ## Sources -->
 
 <!-- - S-001 -- Label -- https://example.com/page -->
 <!-- Field lines follow, indented two spaces, one per line, in this order: -->
