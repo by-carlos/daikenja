@@ -1,6 +1,6 @@
 ---
 name: project-log
-description: Records decisions and open items in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. A short fact the user dictates is written in the same turn and shown verbatim; everything else is proposed first and written only on approval.
+description: Records decisions, open items and sources in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", "track this page as a source", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Not for checking whether tracked sources moved -- that is /daikenja:project-sources, which records a refresh through this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. A short fact the user dictates is written in the same turn and shown verbatim; everything else is proposed first and written only on approval.
 metadata:
   owner: Carlos
   version: 1
@@ -188,8 +188,12 @@ supplies it.
 
 Read the whole ledger before proposing anything. You need three things from it.
 
-**The four sections.** Locate each by its exact H2 heading. If one is missing,
-stop and use the failure table below.
+**The sections.** Locate each by its exact H2 heading. If one of the original
+four is missing, stop and use the failure table below. `## Sources` is the
+exception: a ledger without that heading tracks no sources and is complete as
+it stands, per `ledger-format.md` § File skeleton -- the heading is added,
+directly above `## Changelog`, as part of the approved write that records the
+first source, never on its own.
 
 **The existing entries.** You are checking whether what the user is logging is
 already recorded. Compare by meaning, not by wording.
@@ -268,6 +272,8 @@ reads.
   or raise it as an open item if it is a real unanswered question.
 - A **question is not a decision**, and a **proposal is not a decision**. If the
   material shows a proposal and no agreement, that is an open item at most.
+- A **document to track is a source**, not a decision and not an open item --
+  it goes in the Sources section per § Record a source below.
 
 When you cannot tell, ask -- but never serially. Collect every clarifying
 question the run needs -- classification, owners, links, anything -- after
@@ -421,6 +427,38 @@ the written lines. What it does require is that the check runs **before** the
 write either way -- a handle reported after the fact is a handle already in the
 file.
 
+### Record a source
+
+A source -- a document this project is tracked from -- goes in the
+`## Sources` section as a head line plus indented field lines, per
+`ledger-format.md` § Section: Sources. Everything general is unchanged: the
+next `S-nnn` comes from the highest ever used in that section plus the
+Changelog, the write needs a dictation or an approval, and the Changelog line
+names it (`+S-nnn`, `~S-nnn`, `-S-nnn` -- never `resolved` or `superseded`).
+
+- **Write only the fields the material supplies.** An absent field means
+  unknown and stays absent. Never fetch the target to fill `modified:` in --
+  reading what a source's system reports is `/daikenja:project-sources`'s job,
+  and a refresh comes back through this skill with the values already
+  established.
+- **`modified:` and `read:` move together**, per the contract: they record
+  what the system reported when the source was last read, and when that was.
+  Neither is updated unless the source was actually read -- by the user, or
+  shown to them in a `project-sources` run -- and neither is ever today's date
+  by default.
+- **When the ledger has no `## Sources` heading**, add it directly above
+  `## Changelog` as part of the same write, and say so in the proposal (or,
+  on the same-turn path, in the confirmation). The heading is never added on
+  its own.
+- **A dictated source takes the same-turn path** under the same four
+  conditions as any entry: the fields are the user's own statement, nothing is
+  fetched, and the operation is byte-determined.
+- **The duplicate check below covers sources too.** The same target already
+  recorded as a source is an edit to that `S-nnn`, not a second source. A
+  context link with the same target is *not* a duplicate -- the two sections
+  record different things, and nothing migrates a link into a source unless
+  the user asks for the pair of writes.
+
 ### Check for duplicates first
 
 For each candidate, look for an entry that already records the same fact.
@@ -539,8 +577,8 @@ For an entry dated today -- every ordinary write -- that position is directly
 under the H2 heading, which is what the rule used to say. A backfilled entry
 sorts into the file instead of piling up on top of newer ones. The Changelog
 line is timestamped now, so it is always the newest line and always goes
-directly under its heading; a context link has no ordering rule and goes there
-too.
+directly under its heading; a context link or a source has no ordering rule
+and goes directly under its heading too.
 
 Insert one line in one place. Do not sort the section, and do not move the
 entries around it.
@@ -577,7 +615,8 @@ that run's single line.
 Context links carry no ID, so they are recorded by label instead: `+link
 "<label>"` for an addition, `-link "<label>"` for a removal. A run that only
 touches links still writes a Changelog line -- it just names links instead of
-IDs.
+IDs. A source is named by its ID and takes the three symbol verbs only:
+`+S-nnn`, `~S-nnn`, `-S-nnn`.
 
 **A bulk run may compact its summary**, per `ledger-format.md` § Compacting a
 long summary: consecutive IDs taking the same verb become a dense range
@@ -614,7 +653,8 @@ missing thing is the task itself.
 | Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the directory is a registered project. |
 | Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
-| Ledger missing a required H2 section | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |
+| Ledger missing one of the four original H2 sections | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |
+| Ledger has no `## Sources` heading and the run records a source | Not a missing section -- the heading is optional until the first source. Add it directly above `## Changelog` as part of the same write, and say so. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
 | A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |
 | Supersession marked on only one of the two entries | Report the mismatch, naming both IDs. The tail is authoritative. Do not repair it as a side effect of another write. |
@@ -633,6 +673,9 @@ missing thing is the task itself.
 - It does not summarize a thread for reading. That is `/daikenja:thread`.
 - It does not report what changed since last time. That is
   `/daikenja:project-catchup`.
+- It does not check whether a source moved, and it never fetches a source's
+  target. That is `/daikenja:project-sources`, which reads and reports --
+  and, when the user records a refresh, writes it through this skill.
 - It does not write `daikenja.yaml`. `/daikenja:setup-user` owns the `profile:`
   block, `/daikenja:setup-project` owns a project's `projects:` entry, and
   `last_checkpoint` belongs to `project-catchup`.
