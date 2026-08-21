@@ -58,8 +58,11 @@ profile:
 
 projects:
   <project-key>:
-    path: <absolute path>             # required
-    ledger: .daikenja/ledger.md        # optional, relative to path
+    paths:                            # optional, a list of absolute paths
+      - <absolute path>
+      - <absolute path>
+    path: <absolute path>             # optional, the single-value form of paths
+    ledger: .daikenja/ledger.md        # optional, relative to the project root
     last_checkpoint: 2026-08-14T09:12Z  # optional, written by project-catchup
     stale_after_days: <int>           # optional, overrides the profile value
     norms_doc: <path or url>          # optional, overrides the profile value
@@ -117,8 +120,47 @@ and "this has been open five weeks" is the signal worth having. Default 21 days.
 timestamp format the ledger's Changelog uses. It marks how far `project-catchup` has
 already reported.
 
-**The `<project-key>` is a human label and is never used for matching.** Call it
-whatever reads well. Matching is by `path`; see below.
+**`paths` is the list of directories that resolve to this project**, and `path`
+is its single-value form. A project may have several roots -- a programme
+spanning three repositories is one project, not three -- and it may have none.
+The three legal shapes are:
+
+```yaml
+projects:
+  atlas:                       # one root, the single-value form
+    path: C:/GitHub/atlas
+
+  platform-programme:          # several roots, all resolving to one project
+    paths:
+      - C:/GitHub/platform-api
+      - C:/GitHub/platform-web
+      - C:/GitHub/platform-infra
+
+  q4-planning:                 # no root at all, reachable only by key
+    paths: []
+```
+
+**`path` and `paths` mean the same thing and are read as one list.** A `path`
+scalar is exactly a one-element `paths`, so every configuration written before
+`paths` existed resolves identically after it. Nothing is deprecated and
+nothing has to be rewritten. Writing both keys on one entry is a
+[failure case](#failure-behavior): the entry is read as the union of the two
+and the run says so, because guessing which one the user meant is worse than
+naming the contradiction.
+
+**A project with no roots is legal, not malformed.** `paths: []`, an empty
+`paths:`, or neither key present all mean the same thing: this project is
+reachable only by name. That is what a programme with no directory of its own
+needs -- a body of work that lives across a wiki, a tracker and a chat space
+has no folder to be, and before this it had to be recorded against whichever
+folder happened to be open. Directory resolution skips such an entry silently;
+it is not a match failure and never a warning.
+
+**The `<project-key>` is the project's name, and naming it resolves it.** Call
+it whatever reads well -- it is still never matched against a directory. What
+changed is that a skill accepts it as an argument, so a project can be read
+from anywhere on disk rather than only from inside it. See
+[Finding the project](#finding-the-project).
 
 ## Resolution order
 
@@ -127,17 +169,43 @@ whatever reads well. Matching is by `path`; see below.
 1. `~/.claude/daikenja/daikenja.yaml`. There is no search path and no
    project-local config file. One location, always.
 
-### Finding the current project
+### Finding the project
 
-A skill resolves which `projects:` entry applies to the directory it is running
-in:
+**Two routes, and the named one wins.** A skill resolves which `projects:`
+entry applies either from a project key the user named, or from the directory
+it is running in. The key route is checked first and is decisive: it never
+falls through to the directory.
+
+#### By key, when the user named one
+
+1. Compare the given key against every `projects:` key, case-insensitively.
+2. **Exactly one match: use it.** Directory resolution does not run at all --
+   the current directory is irrelevant to the rest of the run.
+3. **No match: say so and stop.** Name the key that was given, list the
+   registered keys, and write nothing. **Never fall back to the current
+   directory.** Silently answering about a different project than the one
+   named is the failure this route exists to remove, and it is worse than no
+   answer, because the reply looks correct.
+
+The skills that accept a key argument are the four read skills, per
+[`reading.md`](reading.md) § Step A, and `project-list`, whose whole job is to
+report them. `project-log` and `setup-project` resolve by directory only; they
+write inside a project root, and a name alone does not say which root.
+
+#### By directory, otherwise
 
 1. Normalize the current directory: forward slashes, no trailing slash,
    case-insensitive comparison. (Windows paths compare case-insensitively and
    arrive in both slash styles; normalizing first avoids both traps.)
-2. Compare against every `projects:` entry's `path`, normalized the same way.
-3. Take the **longest matching prefix**. Nested projects therefore resolve to
-   the innermost one.
+2. Compare against **every path of every `projects:` entry**, normalized the
+   same way. An entry's paths are its `paths` list, or its `path` scalar read
+   as a one-element list. An entry with no paths is skipped -- it is reachable
+   only by key, and that is a legal state, not a match failure.
+3. Take the **longest matching prefix**, across all paths of all entries. The
+   entry owning that path is the match. Nested projects therefore resolve to
+   the innermost one, whichever entry it belongs to, and two paths of the same
+   project cannot compete with each other -- they resolve to the same project
+   either way.
 4. No match means the project is unregistered. Every skill says so in one line
    and then continues -- an unregistered project still has a ledger to read if
    one exists on disk, and a ledger on disk wins over the config (see
@@ -148,7 +216,23 @@ in:
 
 ### Finding the ledger
 
-1. The matched project's `ledger:` key, resolved relative to its `path`.
+**The project root is the first path in the entry**, not the path that matched.
+A project has one ledger, so its root cannot depend on which of its
+directories the user happened to be standing in -- resolving relative to the
+matched path would give a three-repository project three ledgers and no way to
+tell which one holds the decision. The first path is therefore the root from
+every direction: from any of the project's own directories, and from the key
+route, which has no matched path at all. Order the list deliberately; the first
+entry is where the ledger lives.
+
+**A project with no paths has no root, so a relative `ledger:` cannot
+resolve.** Such a project is addressable and reportable, but until a ledger can
+be given a location outside a project directory there is nowhere for its ledger
+to be. A skill that needs one says so in one line and stops, per
+[Failure behavior](#failure-behavior). See
+[`future-work.md`](future-work.md).
+
+1. The matched project's `ledger:` key, resolved relative to the project root.
 2. Otherwise `.daikenja/ledger.md` under the project root.
 3. If the file does not exist, `project-log` scaffolds it from
    [`../templates/ledger.md`](../templates/ledger.md) after the user approves.
@@ -429,7 +513,7 @@ two tiers exist, so that `compose` does not have to invent either.
 |---|---|---|
 | `daikenja.yaml` -- the `profile:` block | `setup-user` | Only on user approval. Never touches `projects:`. |
 | `daikenja.yaml` -- `daikenja_version` | `setup-user` | Stamped on every successful run, in the same approved write as whatever else that run changed. No other skill writes it, and no skill writes it because it noticed a mismatch. See [Version marker and upgrades](#version-marker-and-upgrades). |
-| `daikenja.yaml` -- a project's entry under `projects:` | `setup-project` | Only on user approval, and only the entry matching the directory it runs in. Registration is idempotent: an exact normalized-path match leaves the existing entry and its key alone. Never writes `last_checkpoint`. |
+| `daikenja.yaml` -- a project's entry under `projects:` | `setup-project` | Only on user approval, and only the entry matching the directory it runs in, or an entry the user names to add this directory to. Registration is idempotent: an exact normalized-path match anywhere in the entry's `paths` leaves the existing entry and its key alone. Never writes `last_checkpoint`. |
 | `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
 | `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. The append is silent only where the user described the person with nothing pasted; a description that arrived with pasted material is offered once and written on a yes. Amending prose the user wrote by hand is proposed, never silent. |
@@ -532,6 +616,10 @@ One rule covers the common cases:
 | `daikenja_version` absent, empty, or different from the installed version | One notice line naming both versions and `/daikenja:setup-user`, then continue -- and only when [`upgrading.md`](upgrading.md) names a version later than the recorded one. Never a stop, and never a migration performed by the skill that noticed. See [Version marker and upgrades](#version-marker-and-upgrades). |
 | The installed version cannot be read (`plugin.json` missing or unparsing) | No notice, continue silently. The marker is a diagnostic, and a diagnostic that cannot run is not a failure of the task. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. `setup-project` is what registers one. |
+| A named project key matches no entry | **Stop.** Name the key, list the registered keys, and write nothing. Never fall back to the current directory -- an answer about the wrong project reads exactly like a correct one. |
+| A project entry has neither `path` nor `paths`, or an empty `paths` | Not an error. The project is reachable only by key and is skipped by directory resolution. A skill that then needs a ledger root stops with one line: "`<key>` has no path, so its ledger has no location yet." |
+| A project entry has both `path` and `paths` | Read the entry as the union of the two, and say so in one line naming the key. Do not guess which was meant, and do not rewrite the file to remove one -- `setup-project` is where the user fixes it. |
+| A path in `paths` does not exist on disk | Not an error for resolution: a path that matches nothing simply never matches. `project-list` reports it; every other skill stays silent, because a detached network drive is not a configuration mistake. |
 | `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. |
 | A pointed-at local prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per Who writes what) rather than treating the file as unreadable. |
 | A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, the `daikenja` folder is missing or duplicated, no file in it carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per Who writes what). |
@@ -551,8 +639,10 @@ such certainty, which is why only that form stops.
 
 ## Worked example
 
-A filled `daikenja.yaml` with two projects, one of which overrides the global
-staleness threshold and points its ledger somewhere other than the default:
+A filled `daikenja.yaml` with four projects: one single-root, one that
+overrides the global staleness threshold and points its ledger somewhere other
+than the default, one spanning three repositories, and one with no repository
+at all.
 
 ```yaml
 daikenja_version: 0.5.1
@@ -579,18 +669,44 @@ projects:
     last_checkpoint: 2026-08-13T17:40Z
     stale_after_days: 30
     norms_doc: https://example.com/platform/ways-of-working
+
+  platform-programme:
+    paths:
+      - C:/GitHub/platform-api
+      - C:/GitHub/platform-web
+      - C:/GitHub/platform-infra
+
+  q4-planning:
+    paths: []
 ```
 
 Resolving from `C:\GitHub\atlas\services\ingest`:
 
 1. Normalized: `c:/github/atlas/services/ingest`.
-2. `c:/github/atlas` is a prefix; `c:/github/billing-api` is not.
+2. `c:/github/atlas` is a prefix; no other path of any entry is.
 3. Longest match is `atlas-migration`.
 4. It has no `ledger:` key, so the ledger is `C:/GitHub/atlas/.daikenja/ledger.md`.
 5. It has no `stale_after_days`, so `project-gaps` uses the profile's 21 days
    and says so.
 6. It has no `norms_doc` and neither does the profile, so `self-review` skips
    ROLE CHECK.
+
+Resolving from `C:\GitHub\platform-web\src`:
+
+1. Normalized: `c:/github/platform-web/src`.
+2. `c:/github/platform-web` is a prefix, and it is the second path of
+   `platform-programme`.
+3. The project is `platform-programme`. Its root is the **first** path,
+   `C:/GitHub/platform-api`, so the ledger is
+   `C:/GitHub/platform-api/.daikenja/ledger.md` -- the same file a run from
+   `platform-infra` reads, which is the point of one project having one ledger.
+
+Resolving `q4-planning` by name, from anywhere:
+
+1. The key matches, so directory resolution never runs.
+2. The entry has no paths, so there is no root to resolve a ledger against. A
+   read skill reports that in one line and stops; it does not fall back to the
+   current directory.
 
 ### Minimal valid file
 
