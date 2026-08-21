@@ -241,9 +241,12 @@ worth saying because a seed run hits them and a normal log run does not:
   today. That is what the date field means, and a backfill is the one situation
   where the two differ for every entry.
 - **An entry whose date cannot be established is not proposed.** Ask the user
-  for it. If they cannot supply one either, leave the entry out and say which
-  ones were dropped and why. The date field is required and absolute, and no
-  part of this skill licenses inventing one.
+  for it. An approximation is a real answer: take it, and `project-log` writes
+  the entry with the `Approximate date.` marker and the derivation in the body,
+  per `ledger-format.md` § Approximate dates. Only when the user cannot supply
+  even an approximation is the entry left out, and then say which ones were
+  dropped and why. The date field is required and absolute, and no part of this
+  skill licenses inventing one.
 - **Anything implied but not stated goes in the proposal as a question**, not as
   an entry. A design document describing a preference is not a decision, and a
   register's open question is an open item rather than a decision about it. A

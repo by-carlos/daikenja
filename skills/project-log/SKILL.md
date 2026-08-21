@@ -159,6 +159,13 @@ one. That is the higher of:
 The Changelog is what makes retirement stick. A deleted entry lowers the
 section's maximum but never the Changelog's, and a retired ID is never reissued.
 
+**Never renumber an entry that is already written**, and never allocate to make
+the numbers line up with the dates. Allocate in the order the entries appear in
+the proposal and let them fall where they fall: a backfilled entry dated last
+year sitting on a higher ID than one written today is correct, per
+`ledger-format.md` § IDs. Order in the file comes from the insert position in
+Step 7, never from the number.
+
 ## Step 5: build the proposal
 
 ### The same-turn path for dictated facts
@@ -255,6 +262,31 @@ facts.
   append the tail. Resolved items stay where they are.
 - **Genuinely new.** Propose a new entry with the next ID.
 
+### Backfilling an existing project
+
+A backfill is a run whose entries are mostly older than what the ledger already
+holds -- recording a project that has history, usually reached through
+`/daikenja:setup-project`. Classification, attribution, the duplicate check and
+the approval gate are all unchanged. Three things are specific to it.
+
+**Date each entry when its subject was decided or raised, not today.** That is
+what the date field means, and a backfill is the one situation where the two
+differ for every entry.
+
+**A date the source never recorded is asked for, never invented.** If the user
+can only place it approximately, take their approximation, normalize it to the
+first day of the coarsest unit they gave ("March 2026" becomes `2026-03-01`),
+and open that entry's body with the literal `Approximate date.` followed by
+where the approximation came from. The proposal says which entries this applies
+to and what each date was derived from, so the user approves the derivation and
+not just the line. If the user cannot approximate it either, the entry is not
+written: name the ones dropped and why.
+
+**Say what the dates do to the audit before the write.** Entries dated to their
+origin are older than `stale_after_days` the moment they land, so
+`/daikenja:project-gaps` reports the open ones on its next run. That surprises
+people and it is the audit working.
+
 ### Show the proposal
 
 Show exactly what will be written, verbatim, in a fenced block. Every line the
@@ -304,8 +336,19 @@ Silence is not approval. Neither is the user replying about something else.
 
 ## Step 7: write
 
-Insert every new entry **directly under its H2 heading**. That is the single
-insert rule and it is the same in every section, including the Changelog.
+Insert every new entry at its **date position**: directly above the first entry
+in that section whose date is the same as or older than its own, and at the end
+of the section when there is no such entry. See `ledger-format.md` § Ordering.
+
+For an entry dated today -- every ordinary write -- that position is directly
+under the H2 heading, which is what the rule used to say. A backfilled entry
+sorts into the file instead of piling up on top of newer ones. The Changelog
+line is timestamped now, so it is always the newest line and always goes
+directly under its heading; a context link has no ordering rule and goes there
+too.
+
+Insert one line in one place. Do not sort the section, and do not move the
+entries around it.
 
 Edits, resolutions and supersessions change the line in place. Nothing moves.
 
@@ -334,6 +377,14 @@ Context links carry no ID, so they are recorded by label instead: `+link
 "<label>"` for an addition, `-link "<label>"` for a removal. A run that only
 touches links still writes a Changelog line -- it just names links instead of
 IDs.
+
+**A bulk run may compact its summary**, per `ledger-format.md` § Compacting a
+long summary: consecutive IDs taking the same verb become a dense range
+(`+D-006..D-021`), and a summary too long for one line continues on lines
+indented two spaces. Both are lossless and `project-catchup` expands them. Do
+not compact a short summary, and never write a sparse range -- if an ID inside
+the interval was untouched or took a different verb, write two ranges or list
+the IDs.
 
 Then confirm in one or two lines: what was written, where, and the IDs --
 topic first, ID in parentheses, per `response-format.md`.
@@ -366,6 +417,7 @@ missing thing is the task itself.
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
 | A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |
 | Supersession marked on only one of the two entries | Report the mismatch, naming both IDs. The tail is authoritative. Do not repair it as a side effect of another write. |
+| An entry's date cannot be established | Ask for it. An approximation is a real answer and is written with the `Approximate date.` marker. Never invent one, and never fall back to today. If the user cannot approximate it, drop that entry and say so. |
 | Nothing in the material is worth logging | Say so and write nothing. An empty ledger is better than a padded one. |
 
 ## What this skill does not do
