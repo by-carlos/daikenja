@@ -47,6 +47,11 @@ SHIPPED = ["compose", "doc-review", "preflight", "remember-persona", "self-revie
 # A `docs/<name>.md` mention anywhere in the file, in prose or in a link.
 DOC_REF = re.compile(r"docs/([a-z0-9-]+\.md)")
 
+# Fenced code blocks (``` ... ```), stripped before DOC_REF is applied. A worked
+# example can contain a plausible-looking docs/*.md path that is fictional --
+# invented content for the example, not a real reference to resolve.
+FENCED_CODE_BLOCK = re.compile(r"```.*?```", re.DOTALL)
+
 # A `templates/<name>` mention. A skill that scaffolds a file the user does not
 # have yet copies it from here, so the template travels with the skill.
 TEMPLATE_REF = re.compile(r"templates/([a-z0-9-]+\.(?:md|yaml))")
@@ -110,7 +115,7 @@ def add_surface_note(text, skill):
 
 def referenced_docs(text):
     """The doc file names a body of text mentions, as a set."""
-    return set(DOC_REF.findall(text))
+    return set(DOC_REF.findall(FENCED_CODE_BLOCK.sub("", text)))
 
 
 def resolve_docs(skill_md_text):

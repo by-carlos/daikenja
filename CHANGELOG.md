@@ -359,6 +359,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`build-claude-ai-skills.py` failed on a fictional example path and shipped
+  no `remember-persona.zip`.** The `DOC_REF` regex that walks doc-to-doc
+  references matched inside fenced code blocks too, so the invented
+  `./docs/legacy-schema.md` Context-links line in `docs/ledger-format.md`'s
+  worked example was read as a real reference to resolve. The scan now strips
+  fenced code blocks before applying `DOC_REF`, so a worked example can use a
+  plausible-looking path without tripping the build (#143).
 - **`project-log`'s home-directory refusal is unconditional again.** The
   registered-project exemption added alongside the `ledger:` pointer change
   was scoped to the whole of Step 3, which also disabled the refusal that
