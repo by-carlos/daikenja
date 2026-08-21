@@ -120,8 +120,8 @@ without reading it.
 
 - **Voice.** Anything Daikenja drafts or rewrites follows `docs/voice.md`. That
   document is the source of truth for generated output, and
-  `docs/config-contract.md` fixes how a user's own `writing-style.md` layers on
-  top of it. Read both before changing either.
+  `docs/config-resolution.md` § Voice and writing style fixes how a user's own
+  `writing-style.md` layers on top of it. Read both before changing either.
 - **Ledger format.** `docs/ledger-format.md` defines a parsing contract that
   existing ledger files depend on. Treat the field separator and the split bound
   as frozen unless an issue explicitly scopes a format change.

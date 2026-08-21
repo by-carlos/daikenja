@@ -25,7 +25,7 @@ to add a second repository is exactly the shape that split the two apart.
 per upgrade -- not once per person, not once per project. It sits in this skill
 because this is already where `daikenja.yaml`'s non-project keys are written, so
 it needs no new writer and no exception to
-`${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` § Who writes what. The
+`${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` § Who writes what. The
 `disable-model-invocation: true` above works in its favour for the same reason:
 editing stored user data should be something the user triggers deliberately, not
 something a model chains into mid-task because it noticed a version gap.
@@ -83,7 +83,7 @@ second run reconcile instead of clobber.
 This is the only place in Daikenja where an existing configuration is migrated.
 Every other skill that notices a version gap says one line and continues; none
 of them edits anything. See
-`${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` § Version marker and upgrades.
+`${CLAUDE_PLUGIN_ROOT}/docs/config-versioning.md` § Version marker and upgrades.
 
 **Its position is deliberate.** It runs immediately after Step 1's read and
 before anything at all is written, because every step below assumes the current
@@ -181,7 +181,7 @@ If you also want org, team or domain on file, add them now or skip -- they are
 optional and you can fill them in `daikenja.yaml` by hand later.
 ```
 
-`name` is the only required field (per `docs/config-contract.md`). If the user
+`name` is the only required field (per `docs/config-schema.md`). If the user
 skips it, say the config is incomplete until it is set and stop without
 writing a half-filled file -- do not write `profile.name:` empty.
 
@@ -214,7 +214,7 @@ For each of `personas.md` and `writing-style.md`:
 ### Offering Google Drive, without ever requiring it
 
 These two keys are pointers, and a pointer may name a Google Drive file instead
-of a local file (`docs/config-contract.md` § Resolving `writing_style` and
+of a local file (`docs/config-resolution.md` § Resolving `writing_style` and
 `personas`). That is worth one sentence at the end of this step and no more:
 
 ```
@@ -253,7 +253,7 @@ I can create a new file and you can paste your prose into it.
 ```
 
 **First, the `daikenja` folder.** Everything Daikenja puts in Drive lives in one
-folder, per `docs/config-contract.md` § One folder, always. Search the files
+folder, per `docs/config-drive.md` § One folder, always. Search the files
 Daikenja created for a folder named `daikenja`, using the contract's explicit
 page size.
 
@@ -279,8 +279,8 @@ Then, for each key the user chose:
    `daikenja` folder**, with conversion to Google document types disabled, per
    the contract.
 4. **Read it back** with the connector's file-download tool and confirm the
-   content arrived. Never the natural-language extraction tool, per the config
-   contract.
+   content arrived. Never the natural-language extraction tool, per
+   `docs/config-drive.md`.
 5. **Only then set the key** to `drive:<name>`. A pointer is written after the
    file is confirmed, never before.
 
@@ -293,7 +293,7 @@ next to it is that `personas.md` now has a content writer --
 `/daikenja:remember-persona`, which appends an entry for a person the user has
 described, and is the only way content reaches that file from Daikenja. The two
 are different acts on the same file, so neither constrains the other. See
-`docs/config-contract.md` § Who writes what.
+`docs/config-writers.md` § Who writes what.
 
 ## Step 6: report tool availability
 

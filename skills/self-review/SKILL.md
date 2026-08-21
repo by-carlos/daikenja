@@ -46,8 +46,10 @@ produces a short report. Three findings is not a quota.
 
 Read these before doing anything. Do not work from memory of them.
 
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- where `tone` and
-  `norms_doc` resolve, and the failure-behavior table this skill follows.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- where `tone`
+  and `norms_doc` are defined.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- the failure-behavior
+  table this skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The tone modes in Step 7 refine its tone table and stay inside
   its invariants.

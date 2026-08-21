@@ -23,7 +23,7 @@ Read these before doing anything. Do not work from memory of them.
   rewrite. This skill applies them; it does not restate them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` -- the six substance checks
   this skill runs as a silent pre-flight when the goal is a request.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- how `writing_style` and
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- how `writing_style` and
   `personas` resolve, and the failure-behavior table.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. `voice.md` governs the message; this governs everything around it.
@@ -84,7 +84,7 @@ length, word choice, absolute dates, and everything in its `## Fixed` tier.
 ## Step 4: voice
 
 Read the user's `writing_style` prose. Resolve the pointer per
-`config-contract.md` § Resolving `writing_style` and `personas` -- it may name a
+`config-resolution.md` § Resolving `writing_style` and `personas` -- it may name a
 local file or a Google Drive file, and the default is
 `~/.claude/daikenja/writing-style.md`. Whatever it resolves to layers on top of
 `docs/voice.md`; it never replaces it, and it reaches that file's `## Defaults`
@@ -95,7 +95,7 @@ tier only.
   default voice." Name the path the config actually resolved to, so the user
   knows what to fix.
 - **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
-  the file, per `config-contract.md` § Failure behavior. Do not compose. The
+  the file, per `config-resolution.md` § Failure behavior. Do not compose. The
   user asked for their own voice and it was not available, and drafting in the
   default voice would look like it had been applied.
 - **Resolves, but the content is still the blank shipped template.** No notice.
@@ -108,14 +108,14 @@ tier only.
 
 ## Step 5: personas (optional)
 
-If `profile.personas` resolves -- per `config-contract.md` § Resolving
+If `profile.personas` resolves -- per `config-resolution.md` § Resolving
 `writing_style` and `personas`, so a local file or a Google Drive file, default
 `~/.claude/daikenja/personas.md` -- and the message names a recipient who
 matches an entry in it, use that entry's guidance on length, formality and how
 direct to be. A local pointer that does not resolve, or an empty local file,
 proceeds silently -- this is optional input, not a configuration requirement,
 and gets no notice either way. A `drive:` pointer that does not resolve or reads
-back empty is the exception: that stops the run per `config-contract.md`
+back empty is the exception: that stops the run per `config-resolution.md`
 § Failure behavior, and is not silent.
 
 **A named recipient who matches no entry** proceeds without their guidance, but

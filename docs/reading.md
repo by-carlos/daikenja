@@ -8,13 +8,13 @@ document is that shared mechanism, written once so it cannot drift four ways.
 
 A read skill implements this document plus its own filter and output shape. It
 does not restate parsing rules from `ledger-format.md` or resolution rules from
-`config-contract.md` -- those are the contracts. This document is the recipe
+`config-resolution.md` -- those are the contracts. This document is the recipe
 that combines them for a read, not a third contract.
 
 ## Step A: resolve the config
 
-Read `~/.claude/daikenja/daikenja.yaml`, per `config-contract.md` § Resolution
-order.
+Read `~/.claude/daikenja/daikenja.yaml`, per `config-resolution.md` §
+Resolution order.
 
 - **Absent.** Not fatal for a read. Continue on defaults: ledger at
   `.daikenja/ledger.md` under the current directory, `stale_after_days: 21`.
@@ -27,8 +27,8 @@ order.
   skill that registers it, then continue -- an unregistered project still has a
   ledger to read if one exists on disk.
 
-**Then check the version marker**, per `config-contract.md` § Version marker and
-upgrades. That contract defines when the notice fires and how it is worded; this
+**Then check the version marker**, per `config-versioning.md` § Version marker
+and upgrades. That contract defines when the notice fires and how it is worded; this
 step only says that a read skill emits it. It is one line, it never blocks the
 read, and a read skill never migrates anything -- `setup-user` is the only skill
 that does.
@@ -78,7 +78,7 @@ when the fix is obvious.
 Needed only by `project-gaps`, but the resolution order is shared with everything else
 that reads config: the matched project's `stale_after_days`, otherwise the
 profile's, otherwise 21. State which was used whenever the answer changes the
-output, per `config-contract.md` § Precedence.
+output, per `config-resolution.md` § Precedence.
 
 ## Notices, shared wording
 

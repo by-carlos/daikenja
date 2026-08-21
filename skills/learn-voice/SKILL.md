@@ -91,14 +91,16 @@ of, and restating it wastes the only file the user controls.
 
 Read these before deriving anything, and do not work from memory of them:
 
-1. `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- how `profile.writing_style`
-   resolves, including `drive:` pointers and their read-back rule, the failure
-   table, and § Who writes what.
-2. `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice this file layers
+1. `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- how `profile.writing_style`
+   resolves, and the failure table.
+2. `${CLAUDE_PLUGIN_ROOT}/docs/config-drive.md` -- `drive:` pointers and their
+   read-back rule.
+3. `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` § Who writes what.
+4. `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice this file layers
    on top of, and which of its rules are `Fixed` rather than `Defaults`.
-3. `${CLAUDE_PLUGIN_ROOT}/templates/writing-style.md` -- the shape the proposal
+5. `${CLAUDE_PLUGIN_ROOT}/templates/writing-style.md` -- the shape the proposal
    produces.
-4. `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the
+6. `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the
    user is shaped. The report in Step 8 follows it.
 
 If this skill and the config contract ever disagree, the contract wins and you
@@ -213,7 +215,7 @@ medium, and is marked `informal chat only` rather than written as a rule for
 everything.
 
 **Drop anything that contradicts a `Fixed` rule in `docs/voice.md`.** Those
-lines have no effect -- `config-contract.md` § Voice and writing style settles
+lines have no effect -- `config-resolution.md` § Voice and writing style settles
 that -- so writing them in would only mislead the user about what their file
 does. Report them in Step 8 as seen but not written. The common ones:
 
@@ -257,12 +259,12 @@ date, and never a relative one.
 
 ## Step 5: resolve the file and read what is there
 
-Follow `config-contract.md` § Resolution order.
+Follow `config-resolution.md` § Resolution order.
 
 1. Read `~/.claude/daikenja/daikenja.yaml`. Malformed YAML is fatal -- name the
    first line that does not parse and stop. Never rewrite a file you cannot
    parse.
-2. Resolve `profile.writing_style` per `config-contract.md` § Resolving
+2. Resolve `profile.writing_style` per `config-resolution.md` § Resolving
    `writing_style` and `personas`. Default
    `~/.claude/daikenja/writing-style.md`.
 
@@ -330,7 +332,7 @@ once more in full.
 **Local file.** Write the approved content. Create the parent directory if it is
 missing. Nothing else on disk is touched.
 
-**Drive file.** Follow `config-contract.md` § Writing replaces the file --
+**Drive file.** Follow `config-drive.md` § Writing replaces the file --
 download, build the new content, create a new file with the same name **in the
 same `daikenja` folder** with conversion to Google document types disabled, read
 it back and confirm, and only then trash the old one. **Never trash first**: a

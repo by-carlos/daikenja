@@ -21,8 +21,9 @@ Read these before doing anything. Do not work from memory of them.
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Changelog
   grammar.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- `last_checkpoint`'s
-  format and who writes what.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes --
+  `last_checkpoint`'s format.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` -- who writes what.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The report in Step 4 follows it.
 
@@ -125,7 +126,7 @@ Wait for approval. Silence is not approval.
 
 Never write anything else in `daikenja.yaml`. The single-writer rule governs
 the ledger; this carve-out is `last_checkpoint` alone, per
-`config-contract.md` § Who writes what.
+`config-writers.md` § Who writes what.
 
 ## Failure cases
 

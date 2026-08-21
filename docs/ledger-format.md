@@ -11,8 +11,8 @@ spec. A skill that invents its own shape is a bug.
 
 A project may point somewhere else with the `ledger:` key in
 `~/.claude/daikenja/daikenja.yaml`. See
-[`config-contract.md`](config-contract.md) for the lookup order a skill follows
-to find it.
+[`config-resolution.md`](config-resolution.md) for the lookup order a skill
+follows to find it.
 
 ## File skeleton
 

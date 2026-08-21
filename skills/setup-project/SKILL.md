@@ -23,7 +23,7 @@ fire on its own -- the user runs `/daikenja:setup-project` when they mean to.
 **This skill never writes ledger content.** Seeding derives candidate entries
 and hands them to `/daikenja:project-log`, which shows the exact lines and waits
 for approval. `project-log` remains the only writer of a ledger, per
-`docs/config-contract.md` § Who writes what.
+`docs/config-writers.md` § Who writes what.
 
 ## Step 0: the preconditions
 
@@ -44,7 +44,7 @@ Read `~/.claude/daikenja/daikenja.yaml`. Three outcomes and no others:
   incomplete, and `setup-user` is what completes it. Say so and name it.
 
 On a file that exists and parses, also check the version marker and emit the
-one-line notice if it applies, per `docs/config-contract.md` § Version marker
+one-line notice if it applies, per `docs/config-versioning.md` § Version marker
 and upgrades. It never blocks registration. **This skill does not migrate and
 does not write `daikenja_version`**, even though it writes to the same file --
 the upgrade branch lives in `setup-user` and stays there.
@@ -60,7 +60,7 @@ its config file could not exist otherwise.
 Before proposing anything:
 
 - The current directory's **normalized path** -- forward slashes, no trailing
-  slash, compared case-insensitively, per `docs/config-contract.md` § Finding
+  slash, compared case-insensitively, per `docs/config-resolution.md` § Finding
   the current project.
 - Every `projects:` entry's `path`, normalized the same way, and whether any is
   an **exact match** for this directory.
@@ -118,7 +118,7 @@ Registered. Three optional settings for this project -- skip any or all:
 ```
 
 Every one of these is optional and every one has a defined default in
-`docs/config-contract.md` § Field notes. **Write only the keys the user
+`docs/config-schema.md` § Field notes. **Write only the keys the user
 answers.** A key written at its own default value is noise that reads like a
 deliberate override to the next person who opens the file.
 

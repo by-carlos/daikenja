@@ -36,7 +36,7 @@ same config, and its seeding step reads a project working tree that a browser
 session does not have.
 
 **`remember-persona` writes to Drive, and only to Drive.** It appends the entry
-by the replace-and-verify sequence in `docs/config-contract.md` -- download,
+by the replace-and-verify sequence in `docs/config-drive.md` -- download,
 splice, create the replacement in the same folder, read it back, then trash the
 old copy. Verified on 19 August 2026: the template was preserved byte for byte,
 the entry landed below it with its recorded date, and one file was left in the

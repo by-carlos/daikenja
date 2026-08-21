@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`docs/config-contract.md` split into five focused documents** --
+  `config-resolution.md` (the resolution core: location, lookup order,
+  precedence, voice layering, failure behavior), `config-schema.md` (the
+  key-by-key schema, field notes, worked examples), `config-writers.md` (who
+  writes what), `config-drive.md` (Google Drive pointer mechanics), and
+  `config-versioning.md` (the `daikenja_version` marker and upgrade path).
+  Every skill's Step 0 pre-read now names only the sections it actually uses,
+  instead of the whole 611-line contract -- `project-gaps` now loads 148 lines
+  instead of 611. No documented behavior changed; only which file a skill
+  reads and how the sections are grouped.
+
 ### Fixed
 
 - **Plugin author name corrected to "Carlos Eng"** in

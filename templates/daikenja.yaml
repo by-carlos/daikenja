@@ -1,7 +1,7 @@
 # Daikenja configuration.
 #
 # Location: ~/.claude/daikenja/daikenja.yaml
-# Schema:   docs/config-contract.md in the Daikenja plugin.
+# Schema:   docs/config-schema.md in the Daikenja plugin.
 #
 # This file holds your profile and one entry per project Daikenja tracks.
 # Keep it here, not in the plugin directory -- plugin directories are
