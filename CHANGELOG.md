@@ -371,6 +371,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   -- plus walks of a read skill and `project-log` over the older-version file
   (#67).
 
+### Documentation
+
+- **The ledger's known limitations now say plainly that it tracks ownership
+  and staleness, not severity.** `project-gaps` filters only on whether an
+  item is unowned or stale, so an item that blocks everything but is owned and
+  recent is invisible to the audit, while a cosmetic item that has merely sat
+  is reported. `docs/future-work.md` § The ledger names this as current
+  behaviour, and `project-gaps`'s own framing now says the same thing in one
+  line so a reader of a report is not left inferring it
+  (`docs/future-work.md`, `skills/project-gaps/SKILL.md`) (#72).
+
 ## [0.5.1] - 2026-08-20
 
 ### Added

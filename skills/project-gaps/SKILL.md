@@ -77,7 +77,7 @@ group oldest first -- the longest-standing gap is the one that matters most.
 Topic first with the ID in parentheses, per `response-format.md`:
 
 ```
-Gaps in <project> (stale_after_days: 21, using this project's override)
+Gaps in <project> (stale_after_days: 21, using this project's override) -- ownership and staleness, not severity
 
 Unowned (2)
 - Decide who is on call during the cutover window (O-006) -- 2026-08-14
