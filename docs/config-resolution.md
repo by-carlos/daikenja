@@ -146,7 +146,7 @@ minus its Drive form. Two forms are legal:
 
 | Form | Example | Resolves to |
 |---|---|---|
-| Relative path | `.daikenja/ledger.md` | That path, relative to the project's `path`. This is the default and today's only behavior, unchanged. |
+| Relative path | `.daikenja/ledger.md` | That path, relative to the **project root** -- the first path in the entry, per [Finding the ledger](#finding-the-ledger). This is the default. An entry with no paths has no root, so a relative pointer cannot resolve on one; use the absolute form. |
 | Absolute path | `C:/Users/you/daikenja-ledgers/harbor.md` | That path, verbatim -- it may be anywhere, including outside the project directory entirely. |
 
 **`ledger` deliberately does not accept the `drive:` form.** Two reasons, both
