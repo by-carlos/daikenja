@@ -83,6 +83,50 @@ covers the current directory tree three levels deep, plus the same depth under
 the current VCS root. A ledger written somewhere else entirely is not found,
 and the report says where it looked so the absence can be read correctly.
 
+## The ledger
+
+**Relationships are a documented convention, not a parsed form.** `Blocked by
+<id>.` and `Contradicts <id>.` are literal sentences at the front of a body,
+per [`ledger-format.md`](ledger-format.md) § Body markers -- ordinary text to
+the grammar, which is what makes them free to add and free to change. A skill
+finds them by looking; nothing validates them at write time beyond the checks
+`project-log` runs, and a marker a human types by hand with the wrong shape is
+simply body text nobody reads as a relationship. Tightening them into a parsed
+form is deliberately left until real use shows which relationships recur.
+
+**Those two are the only relationships.** "Evidence for", "depends on",
+"reopens" and anything else are prose in the body, exactly as all of them were
+before. The pair shipped is the pair that came out of real use; a third is a
+change to the contract, not a convention a user can add locally and have skills
+understand.
+
+**A relationship is recorded in one direction and never walked further than one
+hop.** The entry it names carries nothing, so a reader finds the other end by
+scanning the file rather than by reading the line -- which is why every skill
+that reports one scans both sections. Nothing walks a chain of blockers to its
+root, and nothing detects a cycle: `O-005` blocked by `O-006` blocked by
+`O-005` is reported as two ordinary blocks. Supersession is still the only
+relationship walked to an end, because it is the only one that has one.
+
+**Nothing retires a marker when what it names is settled.** Resolving an entry
+does not strip the `Blocked by` markers pointing at it, and a reader takes the
+block as lifted from the resolved entry's own checkbox -- `project-gaps` says so
+on the line. Removing the marker is an edit somebody has to ask for. The
+alternative would be a write touching entries the user never named.
+
+**`Imposed.` records that a decision came from outside, not a structured
+source.** Who imposed it is prose after the marker, so nothing can filter or
+group by imposing body, and there is no way to record a decision that was
+partly ours. The marker's absence means "decided here", which is an assumption
+about every entry written before the marker existed -- true in practice, and
+not something the file can distinguish from "nobody said".
+
+**`project-gaps` still reads only Open items.** An unowned imposed decision is
+not reported, on the grounds that `<owner>` on a decision is attribution rather
+than accountability. The work an imposed decision creates on this side is an
+Open item, and that is what the audit sees -- but only once somebody raises it.
+`project-log` offers; nothing enforces.
+
 ## Reviewer personas
 
 **Group-level personas are not supported.** `personas.md` is read as individual

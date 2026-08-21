@@ -111,6 +111,11 @@ follows matches one of those two forms. If it matches, it is a tail and
 everything before it is the body proper. If it does not match, it is ordinary
 body text -- a body is free to contain `->` as punctuation.
 
+**Two tails, and no more.** Everything else an entry needs to record about
+itself -- that it was imposed from outside, that it is blocked by or
+contradicts another entry -- is a **body marker** rather than a third tail
+form. See [Body markers](#body-markers).
+
 | Field | Rule |
 |---|---|
 | `<marker>` | `- ` in Decisions. `- [ ] ` or `- [x] ` in Open items. |
@@ -235,17 +240,142 @@ text, so every skill already reads and shows it, and an approximate date feeds
 `gaps`'s staleness arithmetic exactly like an exact one. Marking it is what
 stops a later reader taking a placeholder for a record.
 
-When an entry needs this and a supersession marking both, `Supersedes D-nnn.`
-comes first: `-- Supersedes D-002. Approximate date. <body>`.
+`Approximate date.` is one of four **body markers** that may open a body. When
+an entry needs more than one, they run in the fixed order
+[Body markers](#body-markers) sets out -- `Supersedes D-nnn.` first and
+`Approximate date.` last: `-- Supersedes D-002. Approximate date. <body>`.
+
+### Body markers
+
+Four literal sentences may open a body, ahead of the body proper. Each records
+something about the entry that the four fields have nowhere to put.
+`Supersedes D-nnn.` and `Approximate date.` are the two this contract has
+always carried; the two below them are the newer pair.
+
+| Marker | Records | Defined in |
+|---|---|---|
+| `Supersedes D-nnn.` | This decision replaces an earlier one. | [Section: Decisions](#section-decisions) |
+| `Imposed.` | The decision was made outside this group and is binding on it. | [A decision imposed from outside](#a-decision-imposed-from-outside) |
+| `Blocked by <id>.` | This entry cannot progress until the named one is settled. | [Relationships between entries](#relationships-between-entries) |
+| `Contradicts <id>.` | This entry and the named one cannot both stand as written. | [Relationships between entries](#relationships-between-entries) |
+| `Approximate date.` | The date field is the user's approximation. | [Approximate dates](#approximate-dates) |
+
+**A marker is ordinary body text.** It sits inside `<body>`, after the third
+` -- `, and nothing about parsing changes: the split is still bounded at three,
+the tail forms are still exactly the two above, and a ledger written before any
+of this existed reads identically. That is the whole reason a relationship is a
+convention rather than a third tail form -- a convention costs nothing in the
+grammar, cannot make a previously valid body parse as a tail, and can be
+tightened into a parsed form later once real use shows which relationships
+actually recur.
+
+**When more than one marker applies, they run in this fixed order:**
+
+1. `Supersedes D-nnn.`
+2. `Imposed.`
+3. relationship markers, in the order they were recorded
+4. `Approximate date.`
+5. the body proper
+
+```markdown
+- 2026-07-04 -- D-009 -- @unassigned -- Supersedes D-003. Imposed. Contradicts O-007. Approximate date. Taken from the architecture board's standards page, which records no dates; it was published in July 2026. Every service writes to the shared audit log.
+```
+
+A fixed order is what lets a reader find a marker without reading the whole
+body, and what stops two entries recording the same thing from reading
+differently.
+
+### Relationships between entries
+
+Supersession is not the only way two entries relate, and it is the only one
+this contract used to be able to express. Two more are recorded as body
+markers:
+
+| Marker | Means |
+|---|---|
+| `Blocked by <id>.` | This entry cannot progress until the named entry is resolved or superseded. |
+| `Contradicts <id>.` | This entry and the named one cannot both be acted on as written. Somebody has to reconcile them. |
+
+`<id>` is a `D-nnn` or an `O-nnn` in this same ledger. A marker may name an
+entry in either section -- an open item contradicting a decision that is
+already in force is the case this exists for -- and one entry may carry several
+markers, each written as its own sentence.
+
+**Recorded in one direction only.** The entry that is *constrained* carries the
+marker; the entry it names carries nothing. This is deliberately unlike
+supersession, which is marked on both entries. Supersession answers "is this
+decision still in force?", which a reader has to be able to settle from the one
+line in front of them. A relationship answers "what else is in play?", which is
+a question about the file rather than about the line, and a reader is already
+holding the whole file. One direction also cannot disagree with itself: there
+is no second marking to fall out of sync, and no second entry for `log` to edit
+under an approval nobody gave it.
+
+**Readers scan both directions.** A skill showing an entry shows the markers on
+that entry *and* any entry elsewhere in the ledger naming it. One-directional
+in the file is not one-directional in the report.
+
+**Recorded only where the source says so.** A relationship is written when the
+material states it, never because two entries look related to whoever is
+writing. Inferring a block or a contradiction produces a graph nobody agreed
+to, and the no-invention rule outranks the convenience of a richer one.
+
+**A marker naming an ID that resolves to no entry is reported, not repaired.**
+Say which entry carries it and which ID it names, then continue -- the same
+handling a Changelog ID that resolves to nothing already gets.
+
+```markdown
+- [ ] 2026-08-19 -- O-008 -- @sam -- Blocked by O-007. Contradicts D-009. Confirm whether the gateway can be exempted from the shared audit log.
+- 2026-07-04 -- D-009 -- @unassigned -- Imposed. Published by the platform programme's architecture board. Every service writes to the shared audit log.
+```
+
+**Settling the named entry does not rewrite the marker.** `O-008` still reads
+`Blocked by O-007.` after `O-007` is resolved, and a reader takes the block as
+lifted from `O-007`'s own checkbox. Nothing sweeps the file to retire markers,
+and removing one is an ordinary edit somebody has to ask for. The alternative
+is a write that touches entries the user never named, which is the same
+objection that keeps relationships one-directional.
+
+### A decision imposed from outside
+
+A body opening with the literal `Imposed.` records that the decision was made
+**outside the group keeping this ledger and is binding on it** -- a platform
+team's published standard, a security policy, a term in a customer contract.
+An entry without the marker was decided by the people keeping the record. There
+is no marker for that case: it is the ordinary one, and marking it would mean
+editing every entry already written.
+
+The marker is followed by **who imposed it**, in ordinary prose, exactly as
+`Approximate date.` is followed by where the approximation came from.
+
+```markdown
+- 2026-07-04 -- D-009 -- @unassigned -- Imposed. Published by the platform programme's architecture board. Every service writes to the shared audit log.
+```
+
+What it changes is the correct response. A decision this group made can be
+reopened by this group; an imposed one can only be complied with, exempted or
+escalated. Written without the marker the two read identically -- and for a
+project embedded in a programme it does not control, most of the record is the
+second kind.
+
+**`<owner>` still means attribution, and `@unassigned` is still not a gap.** An
+imposed decision is frequently unowned, because nobody on this side made it;
+that is the honest attribution rather than a hole in the record. `gaps` reads
+only Open items and that does not change here. What *is* auditable is the work
+the decision creates on this side -- comply, seek an exemption, escalate -- and
+that work is an Open item, which `gaps` already reports when it is unowned.
+`log` offers to raise it and never writes one unasked.
 
 ## Section: Decisions
 
 Settled calls. Plain bullets, newest first.
 
 `<owner>` is who the decision is attributed to. `@unassigned` is valid and means
-no individual is attributed, which is normal for a group call. It is **not** a
-gap: `gaps` reads only the Open items section, so an unowned decision is never
-reported.
+no individual is attributed, which is normal for a group call and normal again
+for a decision marked `Imposed.`, where nobody on this side made it. It is
+**not** a gap: `gaps` reads only the Open items section, so an unowned decision
+is never reported, and attribution is not accountability. See
+[A decision imposed from outside](#a-decision-imposed-from-outside).
 
 A decision is never deleted when it is superseded. Supersession is recorded
 **on both entries**, so that "is this decision still in force?" is answerable by
@@ -421,7 +551,12 @@ names four IDs writes the four IDs.
    the same way, naming the line and what is wrong, then skipped. Rule 4 does
    not reach it: the line itself is well formed, and only the item inside it is
    not. Do not guess at what it meant, and never expand it partially.
-6. Never rewrite the file to normalize it. Only `log` writes.
+6. A **body marker naming an ID that resolves to no entry** -- `Blocked by
+   O-014.` where this ledger has no `O-014` -- is reported the same way, naming
+   the entry that carries it and the ID it names, then read past. Rule 4 does
+   not reach it either: the line is well formed and only the reference inside
+   it is not. Do not guess which entry was meant.
+7. Never rewrite the file to normalize it. Only `log` writes.
 
 ## Worked example
 

@@ -43,6 +43,64 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### Your ledger can now record blocks, contradictions and imposed decisions
+
+**What changed on disk.** Nothing. The entry grammar is untouched -- same
+fields, same separator, same two tails -- and every line in every ledger you
+have means exactly what it meant before. What grew is the set of **body
+markers**: literal sentences that may open a body, joining the
+`Supersedes D-nnn.` and `Approximate date.` markers you already had.
+
+| New marker | Written on | Says |
+|---|---|---|
+| `Blocked by <id>.` | the entry that cannot move | it is waiting on the named entry |
+| `Contradicts <id>.` | the newer of the two entries | both are on record and cannot both stand |
+| `Imposed.` | a decision | it was made outside your group and is binding on you |
+
+**What happens if you do nothing.** Nothing breaks and nothing is lost. Your
+ledger keeps reading exactly as it does today, and every skill keeps behaving
+the same way against it. You only miss the new reporting: `project-decisions`
+showing what contradicts or blocks a decision and whether it was imposed, and
+`project-gaps` naming what is blocking an item it already reports.
+
+**The exact edit.** Optional, and only where you have already written a
+relationship as prose. Move it to the front of the body as a marker, on the
+entry that is *constrained* -- never on both entries:
+
+```markdown
+<!-- before: prose nothing can read -->
+- [ ] 2026-08-19 -- O-008 -- @sam -- Can't start this until the exemption criteria land, see O-004.
+
+<!-- after -->
+- [ ] 2026-08-19 -- O-008 -- @sam -- Blocked by O-004. Start the shared ingress migration.
+```
+
+For a decision another team handed you and you cannot reopen, add `Imposed.`
+and say who imposed it:
+
+```markdown
+<!-- before -->
+- 2026-08-20 -- D-010 -- @unassigned -- Every service writes to the shared audit log. The architecture board published this.
+
+<!-- after -->
+- 2026-08-20 -- D-010 -- @unassigned -- Imposed. Published by the programme's architecture board. Every service writes to the shared audit log.
+```
+
+Where an entry needs several markers they run in one fixed order --
+`Supersedes D-nnn.`, `Imposed.`, the relationship markers, `Approximate
+date.`, then the body. `@unassigned` on an imposed decision is normal and is
+still not reported as a gap.
+
+**Can `setup-user` do it for you?** No, and deliberately. Which of your entries
+block or contradict each other is a judgement about your own work, and
+Daikenja's no-invention rule means nothing may write a relationship you did not
+state. Ask `/daikenja:project-log` to add a marker to an entry by ID, or edit
+the line by hand -- it is a markdown file.
+
+**Reversible?** Yes, completely. Delete the marker sentence and the entry is
+what it was. A ledger with markers is also readable by an older Daikenja, which
+treats them as ordinary body text and shows them.
+
 ### A project can now span several directories, or none
 
 **What changed on disk.** Nothing, unless you want it to. A `projects:` entry

@@ -117,6 +117,14 @@ indented continuation lines to the summary, then expand any
 `<verb><first>..<last>` range into the individual IDs it stands for. A summary
 read without doing both under-reports what a bulk write changed.
 
+**Body markers need no parsing of their own.** `Supersedes D-nnn.`,
+`Imposed.`, `Blocked by <id>.`, `Contradicts <id>.` and `Approximate date.` are
+ordinary body text in a fixed order at the front of `<body>`, per
+`ledger-format.md` § Body markers -- they are not fields and not tails, so
+every skill already reads and shows them without doing anything. A skill that
+acts on one resolves the ID it names against the entries it just parsed, and
+reports a reference that resolves to nothing per § Reading rules, rule 6.
+
 **Never rewrite the file.** Only `project-log` writes. A read skill that finds a
 malformed line reports it in its output and moves on; it does not fix it, even
 when the fix is obvious.
@@ -141,6 +149,7 @@ Daikenja is not configured -- run /daikenja:setup-user.
 This project is not in daikenja.yaml. Using the ledger at <path> anyway.
 No ledger at <path>. Run /daikenja:project-log to create one.
 Line <n>: <what is wrong>. Skipped.
+<topic> (<id>) is marked "<marker>", and this ledger has no <id>.
 Using this project's <N>-day staleness threshold.
 daikenja.yaml was written by Daikenja <recorded>; <installed> is installed -- run /daikenja:setup-user.
 daikenja.yaml predates version tracking; <installed> is installed -- run /daikenja:setup-user.
@@ -152,5 +161,5 @@ daikenja.yaml predates version tracking; <installed> is installed -- run /daiken
 |---|---|---|
 | `project-catchup` | Changelog lines newer than `last_checkpoint` | delta by ID, then proposes advancing the checkpoint |
 | `project-summary` | everything | oriented overview, no assumed context |
-| `project-decisions` | Decisions section, matched against a query | dated entries with links |
-| `project-gaps` | Open items with `- [ ] ` and (`@unassigned` or older than the staleness threshold) | audit list |
+| `project-decisions` | Decisions section, matched against a query | dated entries with links, the supersession chain, and one hop of relationships in both directions |
+| `project-gaps` | Open items with `- [ ] ` and (`@unassigned` or older than the staleness threshold) | audit list, each reported item naming its `Blocked by` entry if it has one |

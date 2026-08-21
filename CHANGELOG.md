@@ -9,6 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The ledger can now say that one entry blocks or contradicts another, and
+  that a decision was imposed from outside.** Supersession was the only
+  relationship the entry grammar could express, so "this open question
+  contradicts that decision" and "this cannot move until that lands" were
+  written as prose nothing could read. Both are now **body markers** --
+  `Blocked by <id>.` and `Contradicts <id>.` -- literal sentences at the front
+  of a body, alongside the `Supersedes D-nnn.` and `Approximate date.` markers
+  that already existed and in a fixed order with them. They are deliberately
+  **not** a third tail form: the two tails are unchanged, so no body that
+  parsed one way before parses differently now, including one containing `->`
+  as punctuation. A relationship is recorded on the constrained entry only and
+  never on both, since one direction cannot disagree with itself; readers scan
+  both. `Imposed.` marks a decision **made outside the group keeping the ledger
+  and binding on it**, which changes the correct response from "reopen it" to
+  "comply, seek an exemption, or escalate" -- most of the record for anyone
+  embedded in a programme they do not control, and previously indistinguishable
+  from a call the group made itself. `project-decisions` reports relationships
+  one hop in both directions and says when a decision was imposed;
+  `project-log` writes a marker **only where the material states it**, never
+  from a relationship it inferred, and never against an ID that does not
+  resolve. Nothing already on disk changes meaning
+  (`docs/ledger-format.md` § Body markers, § Relationships between entries and
+  § A decision imposed from outside, `docs/reading.md`,
+  `skills/project-decisions/SKILL.md`, `skills/project-log/SKILL.md`,
+  `tests/fixtures/ledger-relationships.md`) (#73).
+
 - **An owner handle nobody has seen before is now reported before it is
   written.** `project-log` checks each entry's owner against the handles that
   ledger already uses and -- only for one it cannot account for -- against
@@ -158,6 +184,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`project-gaps` now says what is blocking an item it reports**, naming the
+  blocker topic-first with its ID and whether that blocker is itself still
+  open -- an item waiting on something already resolved is the case worth
+  seeing. **Its filter is unchanged**: unowned or past `stale_after_days`, on
+  `- [ ] ` lines in Open items and nothing else. Being blocked is not a gap and
+  never becomes one, and an unowned decision -- including one marked
+  `Imposed.` -- is still never reported, because `<owner>` on a decision is
+  attribution rather than accountability. What an imposed decision creates on
+  this side is work, which is an Open item the existing filter already audits;
+  `project-log` offers to raise it when the decision is written and never
+  writes one unasked (`skills/project-gaps/SKILL.md`,
+  `skills/project-log/SKILL.md`) (#73).
 - **`project-log` now reads `personas.md`, so a `drive:` pointer that fails can
   stop a run that would previously have written.** The stop is the one already
   in `docs/config-resolution.md` § Failure behavior -- a pointer the user

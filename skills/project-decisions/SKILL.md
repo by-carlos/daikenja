@@ -1,6 +1,6 @@
 ---
 name: project-decisions
-description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not the whole project. Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere, without being in its directory.
+description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history, the entries it is blocked by or contradicts, and whether it was imposed from outside. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not the whole project. Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere, without being in its directory.
 metadata:
   owner: Carlos
   version: 1
@@ -9,9 +9,9 @@ metadata:
 # Decisions
 
 A targeted lookup against the Decisions section. The user names a topic, an
-ID, or a rough description; this skill finds the matching decision and its
-full supersession chain, not just the single entry that happens to match the
-words.
+ID, or a rough description; this skill finds the matching decision, its full
+supersession chain, and everything else in the ledger that relates to it -- not
+just the single entry that happens to match the words.
 
 ## Step 0: read the contracts
 
@@ -19,9 +19,10 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession.
+- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession,
+  and § Body markers for relationships and imposed decisions.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
-  is shaped. The result in Step 5 follows it.
+  is shaped. The result in Step 6 follows it.
 
 ## Step 1: resolve config, project and ledger
 
@@ -36,7 +37,8 @@ Do not restate the resolution here.
 
 Follow `reading.md` § Step C. Only the Decisions section is needed for the
 match, but read the whole file -- a decision's body may reference an open item
-or a context link worth surfacing alongside it.
+or a context link worth surfacing alongside it, and Step 5's relationship scan
+needs both sections regardless.
 
 ## Step 3: match the query
 
@@ -75,7 +77,37 @@ Per `ledger-format.md`, **the tail is authoritative**. If a body claims
 reverse), report the mismatch naming both IDs, and treat the tail as the
 status. Do not repair it.
 
-## Step 5: show the result
+## Step 5: surface relationships and origin
+
+Supersession is one relationship and the ledger records two more, as body
+markers rather than tails, per `ledger-format.md` § Relationships between
+entries. They are written on one entry only, so this step looks **both ways**
+for the decision Step 3 matched -- and for every decision Step 4 pulled in with
+it, since a superseded entry's blockers are part of why it went.
+
+- **Markers on the entry itself.** A body opening `Blocked by <id>.` or
+  `Contradicts <id>.` names what constrains it. Resolve each ID against the
+  entries read in Step 2 and show that entry's topic, not the bare ID.
+- **Markers elsewhere naming it.** Scan **both sections** for entries whose
+  body markers name this decision. An open item contradicting a decision
+  already in force is the case worth surfacing most, and it is invisible from
+  the decision's own line.
+- **`Imposed.`** Say so. A decision this group made can be reopened by this
+  group; an imposed one can only be complied with, exempted or escalated, and
+  the prose after the marker names who imposed it. Never report an unowned
+  imposed decision as a gap -- see `project-gaps`, whose scope is Open items.
+
+**One hop, both directions.** Unlike a supersession chain, a relationship is
+not walked transitively: report what directly relates to the matched decision
+and stop. Two entries may legitimately contradict each other, and a blocked-by
+graph may cycle, so there is no chain to walk to an end the way supersession
+has one.
+
+**Report a marker that resolves to nothing**, naming the entry carrying it and
+the ID it names, per `ledger-format.md` § Reading rules, rule 6. Do not guess
+which entry was meant and do not repair anything.
+
+## Step 6: show the result
 
 Topic first with the ID and status in parentheses, per `response-format.md`:
 
@@ -85,6 +117,18 @@ the rollback window is four hours and nobody wants that on a work night.
 [runbook](https://example.com/atlas/runbook)
   Supersedes:
   Cut over on a weekday evening (D-002) -- @carlos. [thread](https://example.com/t/4417)
+```
+
+Relationships go under the entry they belong to, one line each, still topic
+first. Say which direction each one runs, because the file only records one of
+them:
+
+```
+Every service writes to the shared audit log (D-009, current) -- @unassigned --
+imposed by the platform programme's architecture board.
+  Contradicted by:
+  Confirm whether the gateway can be exempted from the shared audit log (O-008,
+  open) -- @sam -- which also says it is blocked by O-007.
 ```
 
 Include the date on every entry shown. If the decision links a context link or
@@ -100,4 +144,7 @@ an open item by ID in its body, surface that link as-is -- do not go fetch it.
 | The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | Supersession marked on only one of two entries | Report the mismatch, naming both IDs. The tail is authoritative; do not repair it. |
+| A `Blocked by` or `Contradicts` marker names an ID with no entry | Report it -- which entry carries it, which ID it names -- then continue, per `ledger-format.md` § Reading rules, rule 6. Do not guess which entry was meant. |
+| Two entries name each other, or a blocked-by chain cycles | Not an error. Report what directly relates and stop; this skill walks one hop, and only supersession is walked as a chain. |
+| An imposed decision has no owner | Normal, and never a gap. `@unassigned` on an imposed decision is the honest attribution -- nobody on this side made it. Say it was imposed and who by; do not report it as missing an owner. |
 | No decision matches the query | Say so. Offer the closest match, named as a guess, if one exists. |
