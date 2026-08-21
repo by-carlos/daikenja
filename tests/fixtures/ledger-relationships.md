@@ -11,8 +11,9 @@ markers exist for: some of its decisions were made by the team and some were
 handed to it.
 
 The walks are run by hand; this repo has no test runner. **Every walk assumes
-today is 2026-09-15 and `stale_after_days` is 21**, so the staleness arithmetic
-below is fixed rather than drifting with the calendar.
+today is 2026-09-15 and `stale_after_days` is 21** -- the profile's value, with
+no override on this project -- so the staleness arithmetic below is fixed rather
+than drifting with the calendar.
 
 Four things this fixture exists to pin down:
 
@@ -190,6 +191,10 @@ Stale (6, older than 21 days)
 - Decide whether health-check traffic can stay out of the shared audit log (O-006) -- 2026-08-21 (25 days)
 - Publish the exemption request to the architecture board (O-007) -- 2026-08-22 (24 days) -- blocked by confirming which forum publishes the standards (O-003), which was resolved on 2026-08-16
 ```
+
+`D-004`'s broken reference is reported alongside this, per walk 4 -- this skill
+reads the whole file even though only Open items are in scope for the filter, so
+it sees the marker and reading rule 6 applies to it here as anywhere else.
 
 Four things this walk fixes:
 

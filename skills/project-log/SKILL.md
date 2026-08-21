@@ -312,8 +312,8 @@ Do not attribute an imposed decision to whoever forwarded it.
 
 **Offer the open item, never write it.** An imposed decision creates work on
 this side -- comply, seek an exemption, escalate -- and that work is what
-`/daikenja:project-gaps` can actually audit, because it reads Open items and
-not decisions. When the material does not already name that work, offer to
+`/daikenja:project-gaps` can actually audit, because it audits Open items and
+never decisions. When the material does not already name that work, offer to
 raise it in one line, saying that nobody on this side is on the hook yet and
 asking who is. On the propose-then-wait path that line goes in "Questions
 before I write". On the same-turn dictated path it goes alongside the written

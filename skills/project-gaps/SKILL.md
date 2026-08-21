@@ -64,9 +64,11 @@ it.** An item carrying `Blocked by O-007.` is reported exactly as it would be
 without the marker: waiting on something else is not a reason to stop counting
 the days, and an item nobody owns is unowned whether or not it could be worked
 on today. The marker changes the *report*, per Step 4, never the filter.
-Likewise a decision marked `Imposed.` is still a decision, and this skill still
-does not read the Decisions section -- see the failure table for why an unowned
-imposed decision is not a gap.
+Likewise a decision marked `Imposed.` is still a decision, and **no decision
+enters the filter** -- see the failure table for why an unowned imposed decision
+is not a gap. The Decisions section is still read, per Step 2, because a
+`Blocked by` may name a `D-nnn` and a broken reference is reported wherever it
+sits; being read is not being audited.
 
 ## Step 4: report
 

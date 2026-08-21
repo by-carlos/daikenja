@@ -371,9 +371,11 @@ that work is an Open item, which `gaps` already reports when it is unowned.
 Settled calls. Plain bullets, newest first.
 
 `<owner>` is who the decision is attributed to. `@unassigned` is valid and means
-no individual is attributed, which is normal for a group call. It is **not** a
-gap: `gaps` reads only the Open items section, so an unowned decision is never
-reported.
+no individual is attributed, which is normal for a group call and normal again
+for a decision marked `Imposed.`, where nobody on this side made it. It is
+**not** a gap: `gaps` reads only the Open items section, so an unowned decision
+is never reported, and attribution is not accountability. See
+[A decision imposed from outside](#a-decision-imposed-from-outside).
 
 A decision is never deleted when it is superseded. Supersession is recorded
 **on both entries**, so that "is this decision still in force?" is answerable by
