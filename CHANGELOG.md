@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Plugin author name corrected to "Carlos Eng"** in
+  `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
+  the plugin marketplace listing.
+
 ### Added
 
 - **`daikenja.yaml` now records which version of Daikenja last wrote it**, in a

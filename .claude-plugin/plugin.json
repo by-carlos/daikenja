@@ -3,7 +3,7 @@
   "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. The ledger skills are Claude Code only by design -- they read configuration from ~/.claude/daikenja/ and write a ledger inside the project, and Claude Code stays the source of truth. The writing skills run anywhere your settings resolve, including claude.ai, once you build and upload them. Your persona notes and writing style can optionally live in a Google Drive file instead of a local file, which is what lets them follow you between machines and surfaces.",
   "version": "0.5.1",
   "author": {
-    "name": "Carlos",
+    "name": "Carlos Eng",
     "url": "https://github.com/by-carlos"
   },
   "homepage": "https://github.com/by-carlos/daikenja",
