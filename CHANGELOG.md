@@ -56,6 +56,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   restated, since a rule copied into a dozen skills drifts a dozen ways
   (`docs/reading.md`, `skills/project-log/SKILL.md`,
   `skills/setup-project/SKILL.md`) (#67).
+
+### Fixed
+
+- **Three stale references left behind by earlier renames.**
+  `docs/reading.md` still named `project-log` as the skill that registers an
+  unregistered project; it now names `setup-project`, matching
+  `docs/config-contract.md` and `skills/project-log/SKILL.md`.
+  `templates/daikenja.yaml` still called the checkpoint-writing skill
+  `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
+  `.gitignore` now excludes `__pycache__/`, since both
+  `tests/check-invariants.py` and `scripts/prepare_release.py` leave one behind
+  in the working tree.
 - **Invariant (d)** in `tests/check-invariants.py`: `docs/upgrading.md`'s
   version headings are well-formed semver, newest-first, and each names a
   version `CHANGELOG.md` also records. `setup-user` applies those sections in
