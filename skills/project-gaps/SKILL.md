@@ -19,7 +19,9 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Open items.
+- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Open items,
+  and § Body markers for the `Blocked by` marker Step 4 reports alongside an
+  item.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- what
   `stale_after_days` measures.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
@@ -57,6 +59,15 @@ For each open line, evaluate two independent conditions:
 An item can be both, one, or neither. Only items matching at least one
 condition are reported.
 
+**Those two conditions are the whole filter, and body markers do not change
+it.** An item carrying `Blocked by O-007.` is reported exactly as it would be
+without the marker: waiting on something else is not a reason to stop counting
+the days, and an item nobody owns is unowned whether or not it could be worked
+on today. The marker changes the *report*, per Step 4, never the filter.
+Likewise a decision marked `Imposed.` is still a decision, and this skill still
+does not read the Decisions section -- see the failure table for why an unowned
+imposed decision is not a gap.
+
 ## Step 4: report
 
 Two groups, an item may appear in both if it qualifies both ways. Sort each
@@ -73,6 +84,22 @@ Unowned (2)
 Stale (1, older than 21 days)
 - Agree the success criteria for calling the migration done (O-001) -- 2026-08-05 (9 days, also unowned)
 ```
+
+**When a reported item says what is blocking it, say so on its line** -- the
+marker is already on the line being read, and "stale because it is waiting on
+something also stale" is a different problem from "stale because nobody picked
+it up". Name the blocker topic first with its ID, and say whether it is still
+open:
+
+```
+- Confirm whether the gateway can be exempted (O-008) -- 2026-08-19 (24 days)
+  -- blocked by getting the audit-log exemption criteria published (O-007,
+  still open)
+```
+
+Add nothing when the blocker resolves to no entry beyond the one-line report
+`ledger-format.md` § Reading rules, rule 6 already requires. Do not chase a
+blocker's own blockers: one hop, exactly as `project-decisions` does.
 
 If nothing qualifies, say so plainly rather than omitting the report:
 
@@ -91,3 +118,6 @@ No gaps. Every open item in <project> has an owner and is within 21 days.
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A line inside Open items does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |
 | A decision has no owner | Not a gap. Do not report it; this skill's scope is Open items only. |
+| A decision marked `Imposed.` has no owner | Still not a gap, and this is the common shape for an imposed decision -- nobody on this side made it, so `@unassigned` is the honest attribution rather than a hole. `<owner>` on a decision is attribution, not accountability. What is auditable is the work it creates here -- comply, seek an exemption, escalate -- and that is an Open item this skill already reports when it is unowned. `project-log` offers to raise it at the moment the decision is written. |
+| An open item is marked `Blocked by <id>.` | Report it exactly as the filter says. Being blocked neither exempts an item nor makes it a gap on its own; it goes on the item's line as context, per Step 4. |
+| A `Blocked by` or `Contradicts` marker names an ID with no entry | Report it -- which entry carries it, which ID it names -- then continue, per `ledger-format.md` § Reading rules, rule 6. |
