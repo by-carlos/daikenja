@@ -359,6 +359,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`templates/ledger.md` shipped a live `## Sources` heading the format
+  contract says must not exist yet.** The section's own commented-out example
+  lines were correctly hidden, but the heading above them was not, so every
+  ledger scaffolded from the template was born contradicting
+  `docs/ledger-format.md`'s "the heading is never added on its own" rule and
+  `docs/upgrading.md`'s "four sections you have today" description of an
+  unmigrated ledger. The heading is now commented out like the rest of the
+  section; `project-log` still adds it, live, together with the first
+  recorded source (#144).
 - **`build-claude-ai-skills.py` failed on a fictional example path and shipped
   no `remember-persona.zip`.** The `DOC_REF` regex that walks doc-to-doc
   references matched inside fenced code blocks too, so the invented
