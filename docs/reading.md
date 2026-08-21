@@ -18,10 +18,11 @@ All four skills take an **optional project key** as an argument:
 "summarize atlas-migration", "what's open on the platform programme" -- when
 the words match a registered key. Treat both the same way.
 
-- **A key was given.** Resolve it per `config-contract.md` § Finding the
-  project, by key. It is decisive: skip directory matching entirely, and
-  **never fall back to the current directory** if the key does not exist. Say
-  which key was not found, list the registered ones, and stop.
+- **A key was given.** Carry it into Step A, which reads the file, and match it
+  there per `config-contract.md` § Finding the project, by key. It is decisive:
+  skip directory matching entirely, and **never fall back to the current
+  directory** if the key does not exist. Say which key was not found, list the
+  registered ones, and stop.
 - **No key was given.** Continue to Step A and resolve by directory, exactly as
   before. This is the ordinary case and it is unchanged.
 
