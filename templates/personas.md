@@ -25,11 +25,26 @@ Write in prose. There is no schema. One section per persona works well, and
 what matters is what changes how you write to them: what they already know,
 what they care about, how much detail they want, and how direct you can be.
 
+**One optional convention: `Known as`.** A ledger entry attributes work to a
+short handle -- `@priya` -- and nothing in that line says who `@priya` is. List
+the names a person goes by here and the handle has a referent, which is what
+lets `/daikenja:project-log` tell a genuinely new colleague apart from a second
+spelling of one you already have. Write their full name, then whatever else
+picks them out: other handles, a chat ID, an email address. It is a line of
+prose like the rest, and leaving it out costs nothing except that check.
+
+**It can hold contact details, so keep the file where private notes belong.**
+This was already your own prose about real colleagues; chat IDs and email
+addresses make it worth thinking about before you sync or share it anywhere.
+
 Delete everything below this line once you have written your own.
 
 ---
 
 ## <Name or group>
+
+**Known as.** Their full name, and anything else that means the same person --
+the handle you would write in a ledger entry, a chat ID, an email address.
 
 **Who they are.** Their role and how they relate to your work.
 
