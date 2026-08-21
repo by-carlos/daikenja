@@ -76,7 +76,11 @@ not match the entry grammar.
 
 Parse every Decisions and Open items entry into its four fields (date, id,
 owner, body) plus tail, per `ledger-format.md` § Entry grammar. Parse the
-Changelog into (timestamp, writer, summary) per § Section: Changelog.
+Changelog into (timestamp, writer, summary) per § Section: Changelog, and
+resolve the two summary compactions defined there before reading it: join any
+indented continuation lines to the summary, then expand any
+`<verb><first>..<last>` range into the individual IDs it stands for. A summary
+read without doing both under-reports what a bulk write changed.
 
 **Never rewrite the file.** Only `project-log` writes. A read skill that finds a
 malformed line reports it in its output and moves on; it does not fix it, even

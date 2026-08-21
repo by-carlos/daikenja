@@ -85,6 +85,51 @@ changes where it looks, never the ledger's own format. It does not move the
 file for you: if you already have content at the absolute location, moving it
 back under the project (or updating the key to point at wherever you leave it)
 is yours to do by hand.
+### Ledger entries may carry an approximate date, and a Changelog line may be compacted
+
+**What changed on disk.** Nothing, until you write one. Two things a ledger may
+now contain were not valid before:
+
+- An entry whose date is only approximately known opens its body with the
+  literal `Approximate date.`, followed by where the approximation came from.
+- A Changelog summary may compact a run of consecutive IDs taking the same verb
+  into a dense range (`+D-004..D-007`), and may continue onto lines indented two
+  spaces when it is too long to read on one.
+
+Both are additive. **No ledger already on your disk becomes invalid**, no
+existing line changes meaning, and nothing is rewritten.
+
+**What happens if you do nothing.** Nothing at all. Your existing ledgers are
+already valid and every skill reads them exactly as before. You will only meet
+either form when you record a project that already has history -- normally
+through `/daikenja:setup-project` -- and even then `project-log` shows you the
+exact lines before writing them.
+
+**The exact edit.** There is none to make. For reference, this is what the new
+forms look like:
+
+```markdown
+- 2026-04-01 -- D-006 -- @souei -- Approximate date. The wiki page recording this carries no date; it was created in April 2026. Cap query fan-out at 32 shards.
+```
+
+```
+- 2026-08-21T10:15Z -- project-log via setup-project -- +D-004..D-007, +O-003..O-005,
+  +link "Architecture wiki"
+```
+
+**Can `setup-user` make it for you.** There is nothing for it to make. This
+section exists so that a ledger written by 0.6.0 or later, opened on an older
+install, has a name.
+
+**Is it reversible.** Yes, and by hand. Expanding a range back into
+comma-separated IDs, joining a continued summary onto one line, or deleting the
+`Approximate date.` marker all leave a ledger every version reads. Only the
+readability is lost.
+
+**One consequence worth knowing before you seed a project.** Entries dated to
+when they were actually decided are older than `stale_after_days` the moment
+they land, so `/daikenja:project-gaps` reports the open ones as stale on its
+very next run. That is the audit working, not a fault in the entries.
 
 ### Your configuration now records which version wrote it
 

@@ -112,6 +112,10 @@ section ships off. Configuring it is what turns the section on.
 stale. It measures age from the entry's date field, which is when the item was
 raised -- not when it was last touched. Daikenja does not track last-touched,
 and "this has been open five weeks" is the signal worth having. Default 21 days.
+Because it reads the date field, **a backfilled item dated to its true origin is
+usually stale the moment it is written**, and `project-gaps` reports it on the
+very first run after a seed. That is the threshold working as specified rather
+than a fault in the entries, and `setup-project` warns about it before seeding.
 
 **`last_checkpoint`** is `YYYY-MM-DDThh:mmZ`, UTC, minute precision -- the same
 timestamp format the ledger's Changelog uses. It marks how far `project-catchup` has

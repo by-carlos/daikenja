@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The ledger's ordering rule is now a position, not a location.** A new entry
+  goes directly above the first entry whose date is the same as or older than
+  its own, and at the end of the section when there is none. For an entry dated
+  today -- every entry an incremental write produces -- that resolves to
+  directly under the H2 heading, so nothing about an ordinary `project-log` run
+  changes. It only differs for a backfill, where the old wording ("insert
+  directly under the H2 heading") broke newest-first on the very first entry
+  and left each session to invent its own way out
+  (`docs/ledger-format.md` § Ordering, `skills/project-log/SKILL.md` Step 7)
+  (#71).
+- **A written ledger entry is never renumbered**, stated outright rather than
+  left to be derived from the Changelog-completeness rule. IDs are allocated in
+  proposal order and carry identity; the date field carries chronology. A
+  backfill decorrelates the two on purpose, and a second backfill arriving later
+  would break any attempt to keep them aligned anyway
+  (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
+
 ### Fixed
 
 - **Plugin author name corrected to "Carlos Eng"** in
@@ -28,6 +47,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/ledger-format.md` § Location, `docs/reading.md` § Step B,
   `skills/project-log/SKILL.md`, `skills/setup-project/SKILL.md`,
   `templates/daikenja.yaml`) (#69).
+- **An approximate date has a marker.** An entry whose date the source never
+  recorded opens its body with the literal `Approximate date.` and says where
+  the approximation came from. The user's approximation is normalized to the
+  first day of the coarsest unit they gave, and the proposal states the
+  derivation before the write. This does not weaken the rule that a date is
+  never invented -- `project-log` still refuses to choose one, to fall back to
+  today, or to read one off a file's timestamp, and an entry the user cannot
+  even approximate is still dropped. What it adds is somewhere for a run to go
+  once the user does supply an approximation, instead of stalling
+  (`docs/ledger-format.md` § Approximate dates,
+  `skills/setup-project/SKILL.md` Step 4c) (#71).
+- **A Changelog summary may be compacted, losslessly, two ways.** Consecutive
+  IDs taking the same verb become a dense range (`+D-004..D-007`), and a summary
+  too long for one line continues on lines indented two spaces -- which is what
+  makes context links readable, since a link is named by its quoted label and
+  has no order to range over. A bulk write that produced a nine-hundred-character
+  unbroken line now produces a readable one naming exactly the same changes.
+  `project-catchup` joins continuations and expands ranges before computing its
+  delta, and `docs/reading.md` requires that of every read skill: a compaction a
+  skill cannot read would drop changes from the report with nothing saying so
+  (`docs/ledger-format.md` § Compacting a long summary,
+  `skills/project-catchup/SKILL.md` Step 3) (#71).
+- **`tests/fixtures/ledger-backfill.md`**, three hand-run walks over one ledger:
+  a bulk write of entries older than everything already in the file, a second
+  bulk write three days later that supersedes an entry the first one wrote, and
+  a `project-catchup` run that has to recover twelve changes from two compacted
+  lines. Its "what must not happen" lists carry the weight -- a sparse range, a
+  renumbering and an invented date are each shown as the wrong answer (#71).
 - **`daikenja.yaml` now records which version of Daikenja last wrote it**, in a
   top-level `daikenja_version` key. It sits at the top level rather than under
   `profile:` because it describes the file, not the person -- a profile key
