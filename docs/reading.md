@@ -1,10 +1,11 @@
 # Reading a ledger
 
-Shared mechanism for the four read skills: `project-catchup`, `project-summary`,
-`project-decisions`, `project-gaps`. All four take the same optional project-key
-argument, resolve config, find a ledger, and parse it the same way.
-They differ only in what they filter for and how they format the result. This
-document is that shared mechanism, written once so it cannot drift four ways.
+Shared mechanism for the five read skills: `project-catchup`,
+`project-summary`, `project-decisions`, `project-gaps`, `project-sources`. All
+five take the same optional project-key argument, resolve config, find a
+ledger, and parse it the same way. They differ only in what they filter for
+and how they format the result. This document is that shared mechanism,
+written once so it cannot drift five ways.
 
 A read skill implements this document plus its own filter and output shape. It
 does not restate parsing rules from `ledger-format.md` or resolution rules from
@@ -13,7 +14,7 @@ that combines them for a read, not a third contract.
 
 ## Step A0: did the user name a project?
 
-All four skills take an **optional project key** as an argument:
+All five skills take an **optional project key** as an argument:
 `/daikenja:project-summary atlas-migration`. A key may also arrive in prose --
 "summarize atlas-migration", "what's open on the platform programme" -- when
 the words match a registered key. Treat both the same way.
@@ -103,14 +104,21 @@ is not repeated. Reading is not the skill that creates the file.
 
 ## Step C: read and parse
 
-Read the whole ledger. Locate each of the four H2 sections by its exact
-heading, per `ledger-format.md` § Reading rules. Apply those rules verbatim:
+Read the whole ledger. Locate each H2 section by its exact heading, per
+`ledger-format.md` § Reading rules. The original four are always present;
+`## Sources` may legitimately be absent, per `ledger-format.md` § File
+skeleton -- a ledger without the heading tracks no sources, and no skill
+reports the absence as a defect. Apply those rules verbatim:
 ignore comments and blank lines, treat a two-space indented markerless line as
 a continuation, and report -- not silently skip -- any other line that does
 not match the entry grammar.
 
 Parse every Decisions and Open items entry into its four fields (date, id,
-owner, body) plus tail, per `ledger-format.md` § Entry grammar. Parse the
+owner, body) plus tail, per `ledger-format.md` § Entry grammar. When the
+ledger has a Sources section, parse each source per § Section: Sources: the
+head line splits on ` -- ` at most twice (id, label, target), and its field
+lines are ordinary continuation lines read as `<name>: <value>` -- an absent
+field means unknown, never a default. Parse the
 Changelog into (timestamp, writer, summary) per § Section: Changelog, and
 resolve the two summary compactions defined there before reading it: join any
 indented continuation lines to the summary, then expand any
@@ -148,6 +156,7 @@ No project called <key> in daikenja.yaml. Registered: <key>, <key>, <key>.
 Daikenja is not configured -- run /daikenja:setup-user.
 This project is not in daikenja.yaml. Using the ledger at <path> anyway.
 No ledger at <path>. Run /daikenja:project-log to create one.
+This ledger has no Sources section. /daikenja:project-log records the first source.
 Line <n>: <what is wrong>. Skipped.
 <topic> (<id>) is marked "<marker>", and this ledger has no <id>.
 Using this project's <N>-day staleness threshold.
@@ -163,3 +172,4 @@ daikenja.yaml predates version tracking; <installed> is installed -- run /daiken
 | `project-summary` | everything | oriented overview, no assumed context |
 | `project-decisions` | Decisions section, matched against a query | dated entries with links, the supersession chain, and one hop of relationships in both directions |
 | `project-gaps` | Open items with `- [ ] ` and (`@unassigned` or older than the staleness threshold) | audit list, each reported item naming its `Blocked by` entry if it has one |
+| `project-sources` | Sources section | staleness report -- which sources moved, comparing each stored `modified:` against what the source's system reports now; offers to record a re-read through `project-log` |

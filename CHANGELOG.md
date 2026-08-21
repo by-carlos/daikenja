@@ -9,6 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The ledger can now record the documents a project is tracked from, and a
+  new skill says which of them moved.** A context link is a label and an
+  address, so for work that consists largely of tracking documents other
+  people own, the one thing a person needs -- has this changed since I read
+  it, and did it ever answer my question -- had nowhere to live, and finding
+  out what moved meant opening every source again. The ledger gains an
+  optional fifth section, `## Sources`: per-source `S-nnn` IDs (the never-reuse
+  rule applies), a head line splitting on ` -- ` at most twice (id, label,
+  target), and up to four field lines riding on indented continuation lines,
+  which every existing reader already skips -- `modified:` (the last-modified
+  value the source's own system reports, stored verbatim), `read:`, `covers:`
+  and `does not answer:`, the field that saves the most re-reading. The frozen
+  entry-grammar split bound is untouched, an absent field means unknown and is
+  never invented, and `modified:`/`read:` move only together, on an actual
+  re-read -- updating the baseline without one would erase the very signal it
+  carries. The new `/daikenja:project-sources` skill -- the mirror image of
+  `project-catchup`, which reports what Daikenja itself wrote -- compares each
+  stored `modified:` against what the system reports now (a comparison for
+  difference, not date arithmetic, so revision numbers work too), degrades to
+  per-source notices when a connector is missing, and on approval records a
+  re-read through `project-log` (`~S-nnn`, writer `project-log via
+  project-sources`). `project-log` registers sources, adds the heading with
+  the first one, and never fetches a target; `project-summary` lists sources
+  without querying anything; `project-catchup` resolves `S-nnn` IDs in its
+  delta. A ledger without the section is complete as it stands and no skill
+  reports the absence. The documents a source points at stay outside every
+  skill's write scope, per the row `config-writers.md` now states explicitly
+  (`docs/ledger-format.md` § File skeleton and § Section: Sources,
+  `docs/reading.md`, `docs/config-writers.md`, `docs/config-resolution.md`,
+  `skills/project-sources/SKILL.md`, `skills/project-log/SKILL.md`,
+  `skills/project-catchup/SKILL.md`, `skills/project-summary/SKILL.md`,
+  `skills/project-list/SKILL.md`, `templates/ledger.md`, `docs/upgrading.md`,
+  `tests/fixtures/sources-ledger.md`) (#70).
 - **Meeting attribution now prefers a handle you have already recorded, instead
   of deriving a fresh one from every transcript.** `meeting-review` minted an
   owner token from the speaker label each time, so a colleague recorded in

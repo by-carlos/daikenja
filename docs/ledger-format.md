@@ -29,8 +29,7 @@ entry grammar, and the write rules are the same wherever the file lives.
 
 ## File skeleton
 
-Four H2 sections, these exact names, always in this order, always all four
-present even when empty:
+Five H2 sections, these exact names, always in this order:
 
 ```markdown
 # <project> ledger
@@ -41,8 +40,18 @@ present even when empty:
 
 ## Context links
 
+## Sources
+
 ## Changelog
 ```
+
+The first three and the Changelog are always present, even when empty.
+`## Sources` is the one exception: it is the newest section, and a ledger
+written before it existed legitimately lacks the heading. Such a ledger tracks
+no sources and reads correctly everywhere -- the absence is not a defect and
+no skill reports it as one. `log` adds the heading, directly above
+`## Changelog`, as part of the approved write that records the first source;
+the heading is never added on its own.
 
 The H1 is free text and carries no meaning. Skills key off the H2 headings.
 
@@ -68,7 +77,8 @@ The Changelog follows the same rule and always resolves to the top, because a
 Changelog line is timestamped when the write happens. It is therefore the newest
 line in the file whatever the entries it names are dated -- a bulk write of
 five-year-old decisions still puts today's Changelog line on top. Context links
-have no ordering rule at all, so a new one goes directly under the heading.
+and Sources have no ordering rule at all, so a new one goes directly under the
+heading.
 
 **No skill may depend on the ordering.** A human is free to reorder Open items
 by priority, and `log` restores nothing. Order is a reading convenience; the
@@ -174,9 +184,10 @@ detail.
 
 ### IDs
 
-`D-` for Decisions, `O-` for Open items, followed by a zero-padded three-digit
-number. Sequences are per section and per ledger. They start at `001`, increase
-by one, and are **never reused** -- a deleted entry's ID stays retired.
+`D-` for Decisions, `O-` for Open items, `S-` for Sources, followed by a
+zero-padded three-digit number. Sequences are per section and per ledger. They
+start at `001`, increase by one, and are **never reused** -- a deleted entry's
+ID stays retired.
 
 `log` allocates the next ID from the highest one **ever used** in that section,
 plus one. That is the higher of the highest ID present in the section and the
@@ -458,6 +469,95 @@ a comma and the Changelog summary field is comma-separated. There is no edit
 verb: a link's target cannot be updated in place, so changing one is a removal
 of the old label and an addition of the new one, in that order.
 
+## Section: Sources
+
+The documents this project is tracked from -- wiki pages, ticket epics,
+threads, repositories, usually owned by somebody else -- each with the reading
+state a context link has nowhere to put. A source records where a thing is,
+when its own system last says it changed, when it was last read, what it
+covers, and what it deliberately does not answer.
+
+A source is a **head line** followed by indented **field lines**:
+
+```
+- <id> -- <label> -- <url or path>
+  modified: <value as reported by the source system>
+  read: <YYYY-MM-DD>
+  covers: <free text>
+  does not answer: <free text>
+```
+
+**The head line splits on ` -- ` at most twice**: id, label, target. The
+target is the last field, so it may contain ` -- `; the label must not, same
+as a context link's. This is deliberately a different line shape from the
+entry grammar: a source carries more fields than the three-split bound allows,
+and that bound is frozen. Nothing about parsing Decisions or Open items
+changes here.
+
+**Field lines are continuation lines** -- indented two spaces, no list marker
+-- which is what makes this section safe to add: every reader already treats
+such lines as continuations (§ Reading rules, rule 3), so a ledger carrying
+sources still reads correctly where nothing knows what a source is. Each field
+line is `<name>: <value>`, one per line, these exact names, in this fixed
+order, each at most once:
+
+| Field | Holds |
+|---|---|
+| `modified:` | The last-modified value the source's own system reports, verbatim -- usually a timestamp, a revision or version where that is what the system exposes. |
+| `read:` | The date the source's content was last actually read, `YYYY-MM-DD`. |
+| `covers:` | What the source answers, one line. |
+| `does not answer:` | What the source deliberately does not answer, one line. This is the field that saves the most re-reading: most of it is re-opening a page to rediscover that it never addressed the question. |
+
+**Every field is optional, and an absent field means unknown.** Nothing ever
+invents a value to fill one: a system that reports no last-modified leaves
+`modified:` unwritten, and a skill says the value is unknown rather than
+substituting a fetch date, a guess, or today. This is the no-invention rule
+dates already follow, applied to two more facts.
+
+**`modified:` and `read:` move together.** `modified:` is the value the
+source's system reported when the source was last read, and `read:` is when
+that was -- together they are the baseline a staleness check compares against.
+The check is a comparison for difference, not date arithmetic: a source has
+moved when the value its system reports now differs from the stored one, which
+is also why `modified:` is stored verbatim rather than normalized. Updating
+`modified:` without the source actually having been re-read would erase
+exactly the signal the field exists to carry, so no skill does it.
+
+A source with no `modified:` has **no baseline**: nothing can say whether it
+moved, only when it was last read. The baseline is established the first time
+a read is recorded together with the value the system reported at that moment.
+
+Sources are written like everything else in the ledger: by `log`, on the
+user's approval, with a Changelog line. Adding one appends `+S-nnn`; editing
+one -- including recording a refresh's new `modified:` and `read:` values --
+appends `~S-nnn`; deleting one appends `-S-nnn` and retires the ID. `resolved`
+and `superseded` never apply to a source: a source is a place, not a question,
+so it is either tracked or it is not.
+
+**A source is not a context link, and neither replaces the other.** The
+Context links section stays exactly what it is -- a flat convenience index
+with no ID and no state. A source is for a document the project is *tracked
+from*, where knowing whether it moved is the point. The same target may
+legitimately appear in both, and nothing migrates a link into a source: that
+is an ordinary pair of user-approved writes, a `+S-nnn` and (only if asked) a
+`-link`, each recorded in the Changelog.
+
+```markdown
+## Sources
+
+- S-002 -- Rollout epic -- https://example.com/tickets/EPIC-204
+  read: 2026-08-15
+  covers: delivery order and the dates each phase is committed to.
+- S-001 -- Platform standards page -- https://example.com/wiki/standards
+  modified: 2026-08-10T09:12Z
+  read: 2026-08-11
+  covers: the mandatory controls and which services they bind.
+  does not answer: rollout timing; the page scopes controls, not schedules.
+```
+
+`S-002` has no baseline -- its system reported no last-modified value when it
+was read -- so a check can say when it was last read, never whether it moved.
+
 ## Section: Changelog
 
 One line per write, newest first:
@@ -478,6 +578,11 @@ contain `--` like any other body text.
 `superseded` is its own verb rather than a plain edit. A decision going out of
 force and a typo fix are not the same event, and a reader of the Changelog alone
 should be able to tell them apart.
+
+A source is named by its ID like any entry and takes exactly the three symbol
+verbs -- `+S-002` (added), `~S-002` (edited), `-S-002` (deleted). `resolved`
+and `superseded` never apply to one, per
+[Section: Sources](#section-sources).
 
 Naming IDs rather than counts is what makes `catchup` cheap. It reads changelog
 lines newer than `last_checkpoint`, collects the IDs, and pulls those entries.

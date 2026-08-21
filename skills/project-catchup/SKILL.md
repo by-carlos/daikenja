@@ -81,8 +81,9 @@ under (`+`, `~`, `resolved`, `superseded`, `-`). The same ID can appear on more
 than one line across the window; keep the most recent verb. Collect
 `+link`/`-link` entries the same way, keyed by label instead of ID.
 
-For every ID still resolvable, look up its **current** text in the Decisions
-or Open items section -- report what the entry says now, not a stale
+For every ID still resolvable, look up its **current** text in its own
+section -- Decisions, Open items, or Sources for an `S-nnn`, whose current
+text is its head line -- and report what the entry says now, not a stale
 snapshot. For an ID that no longer resolves (`-D-nnn` was the verb, or a
 hand-deletion left the Changelog naming something gone), report it as removed
 in one line and move on, per `ledger-format.md`'s rule that an unresolvable

@@ -73,7 +73,7 @@ falls through to the directory.
    named is the failure this route exists to remove, and it is worse than no
    answer, because the reply looks correct.
 
-The skills that accept a key argument are the four read skills, per
+The skills that accept a key argument are the five read skills, per
 [`reading.md`](reading.md) section Step A0, and `project-list`, whose whole job
 is to report them. `project-log` and `setup-project` resolve by directory only;
 they write inside a project root, and a name alone does not say which root.

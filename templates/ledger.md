@@ -16,6 +16,11 @@ Entry shape, Decisions and Open items:
 Two tails may follow a body:
   -> resolved YYYY-MM-DD[, see D-nnn]
   -> superseded by D-nnn
+
+Sources are a head line "- S-001 -- Label -- <url or path>" plus field lines
+indented two spaces, one per line, every field optional: "modified:" (as the
+source's system reports it), "read:" (YYYY-MM-DD), "covers:",
+"does not answer:".
 -->
 
 ## Decisions
@@ -30,6 +35,12 @@ Two tails may follow a body:
 ## Context links
 
 <!-- - Label -- https://example.com -->
+
+## Sources
+
+<!-- - S-001 -- Label -- https://example.com/page -->
+<!-- Field lines follow, indented two spaces, one per line, in this order: -->
+<!-- modified:, read:, covers:, does not answer:. Absent means unknown. -->
 
 ## Changelog
 

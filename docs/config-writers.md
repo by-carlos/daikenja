@@ -14,7 +14,8 @@ live and how a pointer resolves to one.
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. The append is silent only where the user described the person with nothing pasted; a description that arrived with pasted material is offered once and written on a yes. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` -- creating the file | `setup-user` on absence | Copies the blank template if and only if no file exists, and never inspects content. Same rule as `personas.md`. |
 | `writing-style.md` -- content | the user by hand, and `learn-voice` on approval | `learn-voice` derives a proposal from writing samples the user supplies, shows the exact content it would write -- as a diff whenever the file already holds anything -- and writes only what the user approves. Nothing else edits it. |
-| The project's ledger -- wherever `ledger:` resolves to, `<project>/.daikenja/ledger.md` by default | `project-log`, and only `project-log` | `meeting-review` writes through `project-log`. Every other skill reads. Who may write does not change with where the ledger lives, exactly as it does not for the two prose files above. |
+| The project's ledger -- wherever `ledger:` resolves to, `<project>/.daikenja/ledger.md` by default | `project-log`, and only `project-log` | `meeting-review` and `project-sources` write through `project-log`. Every other skill reads. The Sources section is ledger content like any other. Who may write does not change with where the ledger lives, exactly as it does not for the two prose files above. |
+| The documents a source points at -- the tracked wiki page, epic, thread or file itself | nobody | Not a Daikenja write surface. See below. |
 
 **The table names the local defaults, and who may write does not change with
 where the prose lives.** When `personas` or `writing_style` points at a Drive
@@ -40,6 +41,20 @@ follow from the fact that Daikenja can only see Drive files it created itself:
 distinction matters: `project-catchup`'s job is to report a delta and move the
 checkpoint, so it must be able to write that one key. It still never touches
 ledger content.
+
+**A tracked document itself is outside every skill's write scope.** Writes
+*about* a source -- where it is, what its system last reported, when it was
+read -- land in the ledger's Sources section and are ledger content, owned by
+`project-log` like everything else there; `project-sources` proposes a
+refresh and writes it through `project-log`, exactly as `meeting-review` does
+entries. Writes *to* the document a source points at -- editing the wiki page,
+updating the tracked file -- are granted to no skill by this table, and there
+is no config key that grants them. The only path is the offer
+`project-log` § Step 8 already defines: when a written entry names another
+document in the project, the skill offers the follow-up, and the edit happens
+on the user's yes as its own change, never under the ledger write's approval.
+Each such edit is approved where it is made; nothing standing licenses the
+next one.
 
 **`personas.md` has two writers doing two different acts, not one job split in
 two.** `setup-user` owns *creation* as a standing rule -- existence is its only

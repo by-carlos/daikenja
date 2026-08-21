@@ -43,6 +43,71 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### Your ledger can now track the documents it is built from
+
+**What changed on disk.** Nothing, until you record a source. The ledger
+gained an optional fifth section, `## Sources`, sitting between
+`## Context links` and `## Changelog` -- a registry of the documents a project
+is tracked from, each with an `S-nnn` ID and up to four fields: the
+last-modified value the document's own system reports (`modified:`), the date
+you last read it (`read:`), what it covers (`covers:`), and what it
+deliberately does not answer (`does not answer:`). A new read skill,
+`/daikenja:project-sources`, compares each stored `modified:` against what the
+system reports now and tells you which sources moved -- so a staleness check
+across twenty documents is one comparison per source, with re-reads only for
+what actually changed. The entry grammar for Decisions and Open items is
+untouched: a source's fields ride on indented continuation lines, which every
+version already skips.
+
+**What happens if you do nothing.** Nothing breaks and nothing is lost. A
+ledger without the `## Sources` heading is complete as it stands, every skill
+reads it exactly as before, and no notice nags about the missing section. You
+only miss the new behaviour: `project-sources` has nothing to check, and
+finding out what moved stays a re-read of everything.
+
+**The exact edit.** None by hand. Ask `/daikenja:project-log` to track a
+document ("track the standards page as a source") and it adds the heading
+together with the first source, in one approved write:
+
+```markdown
+<!-- before: the four sections you have today -->
+## Context links
+
+- Standards page -- https://example.com/wiki/standards
+
+## Changelog
+
+<!-- after: the heading plus the first source, added by project-log -->
+## Context links
+
+- Standards page -- https://example.com/wiki/standards
+
+## Sources
+
+- S-001 -- Standards page -- https://example.com/wiki/standards
+  modified: 2026-08-10T09:12Z
+  read: 2026-08-11
+  covers: the mandatory controls and which services they bind.
+  does not answer: rollout timing; the page scopes controls, not schedules.
+
+## Changelog
+```
+
+Your context links stay where they are -- a source does not replace a link,
+and the same target may appear in both.
+
+**Can `setup-user` do it for you?** No, and deliberately. Which documents a
+project is tracked from, what each covers and what it does not answer are
+judgements about your work, not a migration -- there is no old shape to
+convert. `/daikenja:project-log` records sources; `/daikenja:project-sources`
+checks them.
+
+**Reversible?** Yes. Delete the section (or ask `project-log` to delete each
+source, which keeps the Changelog complete) and the ledger is the
+four-section file you had. A ledger carrying sources is also readable by an
+older Daikenja: the head lines sit in a section its skills never look for,
+and the field lines are continuation lines it already ignores.
+
 ### Your ledger can now record blocks, contradictions and imposed decisions
 
 **What changed on disk.** Nothing. The entry grammar is untouched -- same
