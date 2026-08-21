@@ -43,7 +43,7 @@ Running on <model>. This loop's adjudication step is materially better on Opus
 -- `/model opus` and re-run if this message matters.
 ```
 
-**This never blocks**, per `config-contract.md`'s standing rule -- one notice
+**This never blocks**, per `config-resolution.md`'s standing rule -- one notice
 line, then continue with reduced behaviour. A weaker model still runs the whole
 loop. It is just likelier to let an invented fact through Step 6, which is the
 one error the user cannot see by reading the output.
@@ -69,8 +69,10 @@ Read these before doing anything. Do not work from memory of them.
   wording fix this skill applies.
 - `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice every rewrite is
   written in.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- how `profile.tone`,
-  `writing_style` and `personas` resolve, and the failure-behavior table.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- how `writing_style` and
+  `personas` resolve, and the failure-behavior table.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- where
+  `profile.tone` is defined.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The report in Step 10 implements it.
 
@@ -130,7 +132,7 @@ see:
 
 - A pasted thread or conversation, if one was given alongside the draft.
 - The project's ledger, if a project is configured and a ledger is found
-  (`~/.claude/daikenja/daikenja.yaml`, resolved per `docs/config-contract.md` §
+  (`~/.claude/daikenja/daikenja.yaml`, resolved per `docs/config-resolution.md` §
   Resolution order; `.daikenja/ledger.md` if unconfigured). Read it the way
   `docs/reading.md` § Step A-C describes, for lookup only -- this skill never
   writes to it.
@@ -184,7 +186,7 @@ an index, not a roster to sweep. This is what stops a large org from exploding
 the reviewer count.
 
 `personas.md` below means whatever `profile.personas` resolves to -- a local
-file or a Google Drive file, per `config-contract.md` § Resolving
+file or a Google Drive file, per `config-resolution.md` § Resolving
 `writing_style` and `personas`. Nothing in this skill changes with the form of
 the pointer except what happens when it fails.
 
@@ -200,7 +202,7 @@ the file; the file wins over the archetype.
 - **A local `personas` pointer does not resolve.** Silent. The `Reviewers:` line
   already names what ran, which makes a notice redundant.
 - **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
-  the file, per `config-contract.md` § Failure behavior. This one is not silent:
+  the file, per `config-resolution.md` § Failure behavior. This one is not silent:
   reviewing without the personas the user configured would look like reviewing
   with them.
 - **More addressees than slots.** Direct addressees beat cc'd. Name who was
@@ -233,7 +235,7 @@ a skimmer would have missed, which is a different signal -- and the risk reader
 is meant to be strong whatever the session is set to.
 
 If the dispatch available to you takes no model, dispatch anyway and say
-nothing. The tier is a preference, not a dependency, per `config-contract.md`'s
+nothing. The tier is a preference, not a dependency, per `config-resolution.md`'s
 standing rule: continue with reduced behaviour rather than stopping.
 
 At the same time, in this context, run the two checks that never dispatch --
@@ -348,7 +350,7 @@ writing style.
 - Apply `docs/voice.md`, layered under the user's `writing_style` prose if the
   pointer resolves -- that prose reaches the file's `## Defaults` tier only, and
   a line contradicting a `## Fixed` rule is not applied
-  (`profile.writing_style`, per `config-contract.md`
+  (`profile.writing_style`, per `config-resolution.md`
   § Resolving `writing_style` and `personas` -- a local file or a Google Drive
   file). A local pointer that does not resolve gets one notice, then the default
   voice alone; a `drive:` pointer that fails stops the run, per that document's
@@ -531,7 +533,7 @@ seen its own cycle-1 finding. What it can settle is whether an edit landed. A
 finding Step 7 never edited for is not its to close, per Step 8, and it stays
 in the report whichever way the reviewers ran.
 
-**Depth keys off `profile.tone`**, per `config-contract.md`:
+**Depth keys off `profile.tone`**, per `docs/config-schema.md` § Field notes:
 
 | `tone` | What the report shows |
 |---|---|
@@ -612,7 +614,7 @@ survived, because it did not.
 | The `personas` pointer does not resolve | Silent. Archetypes only. |
 | Step 9 routed someone and `remember-persona` offered the entry rather than writing it | Report it as the `Not learned:` line and finish. Never wait for the answer, and never write the entry from here. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
-| `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-contract.md`. |
+| `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-resolution.md`. |
 | No ledger at the resolved path | Not fatal. Report "already answered" as not checked and continue. |
 | More addressees than persona slots | Direct beats cc'd. Name who was dropped. |
 | Goal cannot be determined from the input | Ask the one question in Step 2. Do not guess. |

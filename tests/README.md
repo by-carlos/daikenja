@@ -40,6 +40,20 @@ stage's acceptance checks can be re-run later against the same inputs.
   handling: it must report both mismatches, naming both IDs, and never repair
   the ledger.
 
+- [`fixtures/ledger-backfill.md`](fixtures/ledger-backfill.md) -- an
+  incrementally kept `lantern` ledger plus three walks that exercise the four
+  rules a bulk backfill depends on: a first bulk write whose entries are all
+  older than what is already in the file, a second bulk write arriving three
+  days later that supersedes an entry the first one wrote, and a
+  `project-catchup` run over both. It fixes the resulting entry order (IDs and
+  dates deliberately decorrelated, and never renumbered), two `Approximate
+  date.` entries with the derivation the user supplied, a Changelog line
+  carrying both compactions -- a dense ID range and a continuation line -- and
+  the twelve changes `catchup` must recover from them. Its "what must not
+  happen" lists are the point: a sparse range, a renumbering and an invented
+  date are each shown as the wrong answer. Two malformed ranges at the end
+  exercise the report-and-continue path.
+
 ### `meeting-review`
 
 - [`fixtures/sample-transcript.md`](fixtures/sample-transcript.md) -- a
@@ -178,14 +192,17 @@ last released copy of the skill, so a result obtained any other way is void.
 ### Project resolution
 
 - [`fixtures/project-resolution.md`](fixtures/project-resolution.md) -- one
-  `daikenja.yaml` holding all four legal project shapes -- a single-value
-  `path` written before `paths` existed, a three-repository `paths` list, a
-  project with `paths: []`, and a project nested inside another -- plus seven
+  `daikenja.yaml` holding every legal project shape -- a single-value `path`
+  written before `paths` existed, a three-repository `paths` list, a
+  `paths: []` project with an absolute `ledger:`, a `paths: []` project with
+  no ledger location at all, and a project nested inside another -- plus eight
   walks over it. Covers the scalar form resolving unchanged, a multi-path
   project resolving its ledger against its **first** path rather than the path
-  that matched, a pathless project stopping instead of falling back, a project
-  key that resolves from the wrong directory, a key that resolves to nothing,
-  nesting still winning on the longest prefix, and the `project-list` report.
+  that matched, a pathless project resolving through its absolute `ledger:`,
+  the same shape without one stopping on the ledger rather than on the project,
+  a project key that resolves from the wrong directory, a key that resolves to
+  nothing, nesting still winning on the longest prefix, and the `project-list`
+  report.
   The two failures it exists to catch are silent: a ledger resolved against
   whichever repository the user was standing in, and a bad key answered from
   the current directory.

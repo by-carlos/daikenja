@@ -1,7 +1,7 @@
 # Project resolution -- configuration fixtures
 
 <!--
-Fixture: one synthetic `daikenja.yaml` plus seven walks over it. Everything
+Fixture: one synthetic `daikenja.yaml` plus eight walks over it. Everything
 here is invented -- invented projects, invented people, `example.com` links.
 Nothing is read at runtime.
 
@@ -16,9 +16,10 @@ notice fires and the walks stay about resolution alone.
 
 ## The configuration
 
-Four projects, one of each legal shape: a single-value `path` written before
-`paths` existed, a `paths` list of three repositories, a project with no
-directory at all, and a nested project inside one of the others.
+Five projects: a single-value `path` written before `paths` existed, a `paths`
+list of three repositories, a project with no directory at all and an absolute
+`ledger:`, a nested project inside one of the others, and a pathless project
+with no `ledger:` either -- the one shape that cannot resolve.
 
 ```yaml
 daikenja_version: 0.5.1
@@ -46,13 +47,18 @@ projects:
 
   beacon-charter:
     paths: []
+    ledger: C:/Users/rimuru/.claude/daikenja/ledgers/beacon-charter.md
 
   harbor-migrator:
     path: C:/GitHub/harbor/tools/migrator
+
+  tempest-charter:
+    paths: []
 ```
 
 Assume on disk: `C:/GitHub/harbor/.daikenja/ledger.md` exists,
-`C:/GitHub/quill-gateway/.daikenja/ledger.md` exists, and
+`C:/GitHub/quill-gateway/.daikenja/ledger.md` exists,
+`C:/Users/rimuru/.claude/daikenja/ledgers/beacon-charter.md` exists, and
 `C:/GitHub/quill-web/.daikenja/ledger.md` does **not**.
 
 ## Walk 1 -- a single-value `path`, resolved by directory
@@ -93,17 +99,35 @@ Run `/daikenja:project-summary beacon-charter` from anywhere -- the directory
 is irrelevant and that is the point.
 
 1. Step A0 matches the key `beacon-charter`. Directory resolution never runs.
-2. The entry has no paths, so there is no root and no ledger location.
-3. The run stops with one line and reads nothing:
-
-   ```
-   beacon-charter has no path in daikenja.yaml, so its ledger has no location yet.
-   ```
+2. The entry has no paths, so nothing relative could resolve. Its `ledger:` is
+   **absolute**, so it resolves verbatim.
+3. `Project: beacon-charter` and
+   `Ledger: C:/Users/rimuru/.claude/daikenja/ledgers/beacon-charter.md`, and
+   the overview follows.
 
 **The failure this catches:** treating `paths: []` as malformed, or falling
 back to `.daikenja/ledger.md` under the current directory -- which would answer
 about whatever repository the user happened to be in, under the name of the
-project they asked for.
+project they asked for. This is also the shape the two changes only work as a
+pair for: `paths: []` makes the project reachable without a directory, and the
+absolute `ledger:` gives its record somewhere to live.
+
+## Walk 3b -- a pathless project with no ledger either
+
+Run `/daikenja:project-summary tempest-charter`.
+
+1. The key matches, so the project resolves. That part must succeed:
+   `paths: []` is legal, not malformed.
+2. There is no root and no absolute `ledger:`, so there is no location at all.
+   The run stops with one line and reads nothing:
+
+   ```
+   tempest-charter has no path and no absolute ledger in daikenja.yaml, so its ledger has no location.
+   ```
+
+**The failure this catches:** confusing "cannot resolve a ledger" with "is not
+a project". The entry is valid and `project-list` must list it; only the ledger
+lookup fails, and the message has to say which of the two is missing.
 
 ## Walk 4 -- a key that resolves, from the wrong directory
 
@@ -129,7 +153,8 @@ Run `/daikenja:project-catchup quil-programme` -- one letter short.
 
    ```
    No project called quil-programme in daikenja.yaml. Registered:
-   harbor-rollout, quill-programme, beacon-charter, harbor-migrator.
+   harbor-rollout, quill-programme, beacon-charter, harbor-migrator,
+   tempest-charter.
    ```
 
 3. Nothing is read and no checkpoint is written.
@@ -160,14 +185,17 @@ Run `/daikenja:project-list` from `C:\GitHub\quill-web`.
 
 Expected, in this order:
 
-1. A count and the current project: four projects, `quill-programme` marked.
+1. A count and the current project: five projects, `quill-programme` marked.
 2. `harbor-rollout` -- one path, ledger exists.
 3. `quill-programme` -- three paths with the first marked as the root, ledger
    exists at `C:/GitHub/quill-gateway/.daikenja/ledger.md`.
-4. `beacon-charter` -- no paths, reachable by name only, no ledger location.
+4. `beacon-charter` -- no paths, reachable by name only, ledger at its absolute
+   location, which exists.
 5. `harbor-migrator` -- one path, and its ledger reported as not existing, with
    `/daikenja:project-log` named as what creates one.
-6. The bounded scan under `C:/GitHub/quill-web`, and what it found or did not.
+6. `tempest-charter` -- no paths and no ledger location at all, with
+   `/daikenja:setup-project` named as where an absolute `ledger:` is set.
+7. The bounded scan under `C:/GitHub/quill-web`, and what it found or did not.
 
 **The failure this catches:** a report that hides the two states a person
 actually needs -- a project whose ledger is missing, and a project that has

@@ -3,7 +3,7 @@
 Daikenja ships one default voice for anything it drafts or rewrites. A user's
 `writing-style.md` layers on top of this file; it does not replace it. The
 default applies except where the user's file says otherwise, per
-`config-contract.md` § Voice and writing style. This document is the default
+`config-resolution.md` § Voice and writing style. This document is the default
 itself. `compose` is its main consumer.
 
 The rules sit in two tiers, and the tier is what decides how much of a rule a
@@ -181,5 +181,5 @@ A `writing-style.md` that still is the blank shipped template carries zero
 overrides. That is a valid configured state, the same as if every optional
 field in `daikenja.yaml` were left unset, and gets no special notice. A missing
 `writing-style.md` file is a different case, covered by
-`config-contract.md` § Failure behavior: one notice line naming the path, then
+`config-resolution.md` § Failure behavior: one notice line naming the path, then
 continue on this default alone.

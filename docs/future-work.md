@@ -36,7 +36,7 @@ same config, and its seeding step reads a project working tree that a browser
 session does not have.
 
 **`remember-persona` writes to Drive, and only to Drive.** It appends the entry
-by the replace-and-verify sequence in `docs/config-contract.md` -- download,
+by the replace-and-verify sequence in `docs/config-drive.md` -- download,
 splice, create the replacement in the same folder, read it back, then trash the
 old copy. Verified on 19 August 2026: the template was preserved byte for byte,
 the entry landed below it with its recorded date, and one file was left in the
@@ -60,17 +60,20 @@ Enterprise plan. Without it a custom skill does not load at all.
 
 ## Projects
 
-**A project with no directory has nowhere to keep a ledger.** `paths: []` makes
-a project addressable by name from anywhere, which is what a programme spanning
-a wiki, a tracker and a chat space needs. It does not give that project a
-ledger: `ledger:` is resolved relative to the project root, a project with no
-paths has no root, and a ledger cannot yet be given a location outside a
-project directory. Such a project lists, resolves and reports; a read skill
-asked for its ledger says so in one line and stops.
+**A project with no directory needs an absolute `ledger:`, and nothing enforces
+that it has one.** `paths: []` makes a project addressable by name from
+anywhere, which is what a programme spanning a wiki, a tracker and a chat space
+needs; an absolute `ledger:` is what gives its record a location once there is
+no root to be relative to. The two keys are independent, so a pathless entry
+written without one resolves as a project and then fails at the ledger. Every
+skill reports which of the two is missing rather than guessing a location, and
+`setup-project` offers the key when it registers such a project -- but a
+hand-edited file can still hold the half-configured shape.
 
-**A project has exactly one ledger, in its first path.** For a project spanning
-three repositories that means the decisions of all three live in the first one,
-and the other two carry nothing. Reordering `paths` afterwards repoints the
+**A project has exactly one ledger, in its first path** unless `ledger:` says
+otherwise. For a project spanning three repositories that means the decisions
+of all three live in the first one by default, and the other two carry
+nothing. Reordering `paths` afterwards repoints the
 ledger at a different file, which is why `setup-project` appends and never
 reorders. There is no way to split one project's ledger across its
 directories, and no way to merge two ledgers into one project.

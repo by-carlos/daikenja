@@ -58,8 +58,9 @@ maintainer's Code Owner approval.
 ## Conventions that are easy to trip over
 
 - **Voice.** Anything Daikenja drafts or rewrites follows [`docs/voice.md`](docs/voice.md),
-  and [`docs/config-contract.md`](docs/config-contract.md) fixes how a user's own
-  `writing-style.md` layers on top of it. Read both before changing either.
+  and [`docs/config-resolution.md`](docs/config-resolution.md) § Voice and
+  writing style fixes how a user's own `writing-style.md` layers on top of it.
+  Read both before changing either.
 - **Ledger format.** [`docs/ledger-format.md`](docs/ledger-format.md) is a
   parsing contract that existing ledger files depend on. The field separator and
   the split bound are frozen unless an issue explicitly scopes a format change.

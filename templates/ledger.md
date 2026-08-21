@@ -3,7 +3,8 @@
 <!--
 Daikenja ledger. Format spec: docs/ledger-format.md in the Daikenja plugin.
 
-Newest entries go directly under their heading, in every section.
+Newest first, in every section. An entry goes directly above the first one
+dated the same or older -- for an entry dated today that is under the heading.
 Only the `project-log` skill writes this file. Every other Daikenja skill
 reads it.
 

@@ -97,7 +97,7 @@ an open item by ID in its body, surface that link as-is -- do not go fetch it.
 | `daikenja.yaml` absent | One notice, continue on ledger defaults. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
-| The named project has no path | **Stop.** One line: "`<key>` has no path in daikenja.yaml, so its ledger has no location yet." |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | Supersession marked on only one of two entries | Report the mismatch, naming both IDs. The tail is authoritative; do not repair it. |
 | No decision matches the query | Say so. Offer the closest match, named as a guess, if one exists. |

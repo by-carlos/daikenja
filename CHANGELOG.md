@@ -7,8 +7,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The ledger's ordering rule is now a position, not a location.** A new entry
+  goes directly above the first entry whose date is the same as or older than
+  its own, and at the end of the section when there is none. For an entry dated
+  today -- every entry an incremental write produces -- that resolves to
+  directly under the H2 heading, so nothing about an ordinary `project-log` run
+  changes. It only differs for a backfill, where the old wording ("insert
+  directly under the H2 heading") broke newest-first on the very first entry
+  and left each session to invent its own way out
+  (`docs/ledger-format.md` § Ordering, `skills/project-log/SKILL.md` Step 7)
+  (#71).
+- **A written ledger entry is never renumbered**, stated outright rather than
+  left to be derived from the Changelog-completeness rule. IDs are allocated in
+  proposal order and carry identity; the date field carries chronology. A
+  backfill decorrelates the two on purpose, and a second backfill arriving later
+  would break any attempt to keep them aligned anyway
+  (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
+- **`docs/config-contract.md` split into five focused documents** --
+  `config-resolution.md` (the resolution core: location, lookup order,
+  precedence, voice layering, failure behavior), `config-schema.md` (the
+  key-by-key schema, field notes, worked examples), `config-writers.md` (who
+  writes what), `config-drive.md` (Google Drive pointer mechanics), and
+  `config-versioning.md` (the `daikenja_version` marker and upgrade path).
+  Every skill's Step 0 pre-read now names only the sections it actually uses,
+  instead of the whole 611-line contract -- `project-gaps` now loads 148 lines
+  instead of 611. No documented behavior changed; only which file a skill
+  reads and how the sections are grouped.
+
 ### Fixed
 
+- **`project-log`'s home-directory refusal is unconditional again.** The
+  registered-project exemption added alongside the `ledger:` pointer change
+  was scoped to the whole of Step 3, which also disabled the refusal that
+  stops a ledger being scaffolded in `~` or `~/.claude`. Because project
+  matching takes the longest prefix and `daikenja.yaml` is hand-editable, an
+  entry whose `path` is the home directory's parent made the home directory
+  resolve to a project and silently bypassed the guard. The exemption now
+  covers only the `.git`/`.daikenja/` heuristic it was meant for, which is
+  what a project with no repository of its own actually needs
+  (`skills/project-log/SKILL.md`, `tests/fixtures/ledger-location.md`
+  Config E) (#69).
+- **`tests/fixtures/ledger-location.md` Config D asserted the wrong outcome.**
+  It described `project-log` scaffolding into an absolute path on a volume
+  that does not exist, where the skill's own failure table says an unwritable
+  ledger path is a stop. It now splits the writable and unwritable cases and
+  states the stop, since a fixture encoding the wrong expectation is worse
+  than no fixture (#69).
+- **Three write-scope references still said the ledger is always
+  `<project>/.daikenja/ledger.md`** -- `project-log`'s frontmatter `writes:`
+  key, `docs/config-writers.md` § Who writes what, and `README.md`'s file
+  table. All three now say the ledger is wherever `ledger:` resolves to, with
+  that path as the default (#69).
 - **Plugin author name corrected to "Carlos Eng"** in
   `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
   the plugin marketplace listing.
@@ -25,8 +76,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   had to be recorded against whichever folder happened to be open. The project
   root, which a relative `ledger:` resolves against, is the **first** path in
   the entry rather than the path that matched, so one project keeps one ledger
-  from every direction (`docs/config-contract.md` § Schema and § Finding the
-  project, `templates/daikenja.yaml`) (#68).
+  from every direction, and a pathless project keeps one by pairing `paths: []`
+  with an absolute `ledger:` (`docs/config-schema.md` § Schema and § Field
+  notes, `docs/config-resolution.md` § Finding the project and § Finding the
+  ledger, `templates/daikenja.yaml`) (#68).
 - **The four read skills take an optional project name.**
   `/daikenja:project-summary harbor-rollout` reads that project from anywhere
   on disk. A named key is decisive: it skips directory matching entirely and
@@ -43,6 +96,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   wrong directory -- through a bounded scan that says where it looked. It is
   read-only, and names the skill that fixes each finding rather than fixing
   anything itself (#68).
+- **A project's `ledger:` key now accepts an absolute path**, not only a path
+  relative to the project's `path`. A project with no repository of its own
+  -- work tracked across a wiki, a chat space or a ticket system -- has no
+  natural folder for its ledger to sit in, and previously had nowhere else to
+  put it. The recommended convention for that case is
+  `~/.claude/daikenja/ledgers/<project-key>.md`. The `drive:` form is
+  deliberately not extended to `ledger:` -- a ledger is written far more often
+  than `personas.md` or `writing-style.md`, and "a ledger found on disk wins
+  over the config" has no meaning for a file that is not on disk
+  (`docs/config-resolution.md` § Resolving `ledger` and § Finding the ledger,
+  `docs/ledger-format.md` § Location, `docs/reading.md` § Step B,
+  `skills/project-log/SKILL.md`, `skills/setup-project/SKILL.md`,
+  `templates/daikenja.yaml`) (#69).
+- **An approximate date has a marker.** An entry whose date the source never
+  recorded opens its body with the literal `Approximate date.` and says where
+  the approximation came from. The user's approximation is normalized to the
+  first day of the coarsest unit they gave, and the proposal states the
+  derivation before the write. This does not weaken the rule that a date is
+  never invented -- `project-log` still refuses to choose one, to fall back to
+  today, or to read one off a file's timestamp, and an entry the user cannot
+  even approximate is still dropped. What it adds is somewhere for a run to go
+  once the user does supply an approximation, instead of stalling
+  (`docs/ledger-format.md` § Approximate dates,
+  `skills/setup-project/SKILL.md` Step 4c) (#71).
+- **A Changelog summary may be compacted, losslessly, two ways.** Consecutive
+  IDs taking the same verb become a dense range (`+D-004..D-007`), and a summary
+  too long for one line continues on lines indented two spaces -- which is what
+  makes context links readable, since a link is named by its quoted label and
+  has no order to range over. A bulk write that produced a nine-hundred-character
+  unbroken line now produces a readable one naming exactly the same changes.
+  `project-catchup` joins continuations and expands ranges before computing its
+  delta, and `docs/reading.md` requires that of every read skill: a compaction a
+  skill cannot read would drop changes from the report with nothing saying so
+  (`docs/ledger-format.md` § Compacting a long summary,
+  `skills/project-catchup/SKILL.md` Step 3) (#71).
+- **`tests/fixtures/ledger-backfill.md`**, three hand-run walks over one ledger:
+  a bulk write of entries older than everything already in the file, a second
+  bulk write three days later that supersedes an entry the first one wrote, and
+  a `project-catchup` run that has to recover twelve changes from two compacted
+  lines. Its "what must not happen" lists carry the weight -- a sparse range, a
+  renumbering and an invented date are each shown as the wrong answer (#71).
 - **`daikenja.yaml` now records which version of Daikenja last wrote it**, in a
   top-level `daikenja_version` key. It sits at the top level rather than under
   `profile:` because it describes the file, not the person -- a profile key
@@ -53,7 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   simply landed and they found out when it stopped resolving. That has already
   happened once: the five skills renamed in 0.3.0 were handled by shipping the
   change before anyone was using it, which is timing, not a mechanism
-  (`docs/config-contract.md` § Version marker and upgrades,
+  (`docs/config-versioning.md` § Version marker and upgrades,
   `templates/daikenja.yaml`) (#67).
 - **`docs/upgrading.md`**, the document that says what a user has to do when a
   release changes something already on their disk. One file, newest-version
@@ -86,7 +180,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when `docs/upgrading.md` actually names a version later than the recorded one,
   so a patch release that changes nothing on disk stays silent; a line that
   fired on every bump would teach the user to ignore the one that matters. The
-  rule is defined once in `docs/config-contract.md` and inherited rather than
+  rule is defined once in `docs/config-versioning.md` and inherited rather than
   restated, since a rule copied into a dozen skills drifts a dozen ways
   (`docs/reading.md`, `skills/project-log/SKILL.md`,
   `skills/setup-project/SKILL.md`) (#67).
@@ -96,7 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Three stale references left behind by earlier renames.**
   `docs/reading.md` still named `project-log` as the skill that registers an
   unregistered project; it now names `setup-project`, matching
-  `docs/config-contract.md` and `skills/project-log/SKILL.md`.
+  `docs/config-resolution.md` and `skills/project-log/SKILL.md`.
   `templates/daikenja.yaml` still called the checkpoint-writing skill
   `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
   `.gitignore` now excludes `__pycache__/`, since both

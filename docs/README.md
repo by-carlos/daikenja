@@ -5,9 +5,17 @@ redefines one. When a contract changes, it changes here and the skills follow.
 
 - [`ledger-format.md`](ledger-format.md) -- the ledger file layout, the entry
   line shape, and how skills read it.
-- [`config-contract.md`](config-contract.md) -- the `daikenja.yaml` schema, the
-  lookup order, how the `writing_style` and `personas` pointers resolve,
-  precedence, and failure behavior.
+- [`config-resolution.md`](config-resolution.md) -- the resolution core: where
+  `daikenja.yaml` lives, the lookup order, how the `writing_style` and
+  `personas` pointers resolve, precedence, and failure behavior.
+- [`config-schema.md`](config-schema.md) -- the `daikenja.yaml` schema, key by
+  key, and two worked examples.
+- [`config-writers.md`](config-writers.md) -- which skill writes which key or
+  file.
+- [`config-drive.md`](config-drive.md) -- the Google Drive-specific mechanics
+  for a `drive:` pointer.
+- [`config-versioning.md`](config-versioning.md) -- the `daikenja_version`
+  marker and what `upgrading.md` is for.
 - [`upgrading.md`](upgrading.md) -- what a user has to do when a release changes
   something already on their disk. One section per version that needs action,
   newest first, written by the change and promoted by the release. The only
@@ -18,7 +26,7 @@ redefines one. When a contract changes, it changes here and the skills follow.
 - [`voice.md`](voice.md) -- the default writing voice, in two tiers: `Fixed`,
   which a user cannot switch off, and `Defaults`, which a user's own
   `writing-style.md` layers on top of. The layering contract is fixed in
-  `config-contract.md`.
+  `config-resolution.md` § Voice and writing style.
 - [`response-format.md`](response-format.md) -- how a skill reports to the
   user in the conversation: answer first, findings itemised, entries named
   topic-first with the ID in parentheses, `profile.tone` scaling narration,

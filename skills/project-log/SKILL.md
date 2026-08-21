@@ -4,7 +4,7 @@ description: Records decisions and open items in a project's Daikenja ledger. Us
 metadata:
   owner: Carlos
   version: 1
-  writes: <project>/.daikenja/ledger.md
+  writes: the project's ledger, wherever `ledger:` resolves to (default <project>/.daikenja/ledger.md)
 ---
 
 # Log
@@ -34,13 +34,15 @@ entry runs this one. The Changelog then records the writer as
 
 ## Step 0: read the contracts
 
-Read these two files before writing anything. They are binding, and they are the
+Read these before writing anything. They are binding, and they are the
 only place their detail lives. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- section names, entry grammar,
   IDs, tails, Changelog, and the reading rules.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- where the config lives, how
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- where the config lives, how
   a project and its ledger are resolved, and what to do when config is missing.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-versioning.md` -- the version-marker notice
+  this skill emits and never migrates.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. Proposed ledger lines stay in file grammar; the talk around them
   follows this.
@@ -62,7 +64,7 @@ at the content of something you could not read.
 
 ## Step 2: resolve the config, the project and the ledger
 
-Follow `config-contract.md` § Resolution order exactly. In short:
+Follow `config-resolution.md` § Resolution order exactly. In short:
 
 1. Read `~/.claude/daikenja/daikenja.yaml`. Absent is not fatal here -- this
    skill works on defaults. Malformed YAML **is** fatal: report the first line
@@ -72,12 +74,14 @@ Follow `config-contract.md` § Resolution order exactly. In short:
    list -- normalized and longest prefix wins across all of them. An entry with
    no paths is skipped; it is reachable only by key, and this skill does not
    resolve by key.
-3. Resolve the ledger: the matched project's `ledger:` key, otherwise
-   `.daikenja/ledger.md` under the project root. **The root is the first path
-   in the entry**, not the path that matched -- a project spanning three
-   repositories has one ledger, in the first of them.
+3. Resolve the ledger: the matched project's `ledger:` key if it has one --
+   relative or absolute, per `config-resolution.md` § Resolving `ledger` -- and
+   that resolved path is authoritative. Otherwise `.daikenja/ledger.md` under
+   the project root. **The root is the first path in the entry**, not the path
+   that matched -- a project spanning three repositories has one ledger, in the
+   first of them.
 4. Check the version marker and emit the one-line notice if it applies, per
-   `config-contract.md` § Version marker and upgrades. It never blocks a write,
+   `config-versioning.md` § Version marker and upgrades. It never blocks a write,
    and this skill never migrates anything -- `/daikenja:setup-user` does that.
 
 **This skill resolves by directory only, and takes no project key.** The read
@@ -111,8 +115,9 @@ That is the project root when a `projects:` entry matched, which for a
 multi-path project is the first path in the entry and need not be the
 directory you are standing in. Name that directory in every question and every
 refusal, so nobody approves a write to a folder they did not have in mind. A
-registered project root passes the two plausibility checks by definition --
-the user registered it -- so a matched project scaffolds directly.
+match does not excuse a check: `daikenja.yaml` is hand-editable and matching
+takes the longest prefix, so a matched project is not evidence that the
+directory is one.
 
 **Refuse outright** when the current directory is the user's home directory
 (the real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do
@@ -124,11 +129,26 @@ Won't create a ledger in <path> -- that's your home directory, not a project.
 Run this from the project you mean to log.
 ```
 
+**This refusal is unconditional.** A `projects:` entry matching the home
+directory does not license scaffolding there. Matching takes the longest
+prefix, so an entry whose `path` is the home directory's parent makes the home
+directory itself resolve to a project, and `daikenja.yaml` is hand-editable --
+so a matched project is not evidence that this directory is one.
+`setup-project` refuses to register either path for the same reason.
+
 **Otherwise, if the directory is neither a VCS root** (no `.git`) **nor
-already holds a `.daikenja/`**, it still is not obviously a project. Ask,
-naming the exact absolute path, before doing anything else -- this
-confirmation is separate from the Step 5 write approval, because it settles
-whether a ledger belongs here at all, not what goes in it:
+already holds a `.daikenja/`**, it still is not obviously a project -- unless
+it is **already registered in `daikenja.yaml`**, in which case skip this check
+and go straight to the "otherwise" branch below. Registration is a deliberate
+act that settles the question these two markers only guess at, and a project
+with no repository of its own has neither marker: no `.git`, and no
+`.daikenja/` until its first log. Without this exemption such a project is
+asked to confirm itself on every first log.
+
+For an unregistered directory carrying neither marker, ask, naming the exact
+absolute path, before doing anything else -- this confirmation is separate
+from the Step 5 write approval, because it settles whether a ledger belongs
+here at all, not what goes in it:
 
 ```
 <path> doesn't look like a project (no .git, no .daikenja/). Create a ledger
@@ -138,8 +158,8 @@ there anyway?
 Wait for a yes before continuing. A no ends the run here; say nothing was
 written.
 
-**Otherwise** (a VCS root, or a directory that already has `.daikenja/`), say
-so plainly before doing anything else:
+**Otherwise** (a VCS root, a directory that already has `.daikenja/`, or a
+registered project), say so plainly before doing anything else:
 
 ```
 No ledger at <path>. I will create one from the Daikenja template.
@@ -176,6 +196,13 @@ one. That is the higher of:
 
 The Changelog is what makes retirement stick. A deleted entry lowers the
 section's maximum but never the Changelog's, and a retired ID is never reissued.
+
+**Never renumber an entry that is already written**, and never allocate to make
+the numbers line up with the dates. Allocate in the order the entries appear in
+the proposal and let them fall where they fall: a backfilled entry dated last
+year sitting on a higher ID than one written today is correct, per
+`ledger-format.md` § IDs. Order in the file comes from the insert position in
+Step 7, never from the number.
 
 ## Step 5: build the proposal
 
@@ -273,6 +300,31 @@ facts.
   append the tail. Resolved items stay where they are.
 - **Genuinely new.** Propose a new entry with the next ID.
 
+### Backfilling an existing project
+
+A backfill is a run whose entries are mostly older than what the ledger already
+holds -- recording a project that has history, usually reached through
+`/daikenja:setup-project`. Classification, attribution, the duplicate check and
+the approval gate are all unchanged. Three things are specific to it.
+
+**Date each entry when its subject was decided or raised, not today.** That is
+what the date field means, and a backfill is the one situation where the two
+differ for every entry.
+
+**A date the source never recorded is asked for, never invented.** If the user
+can only place it approximately, take their approximation, normalize it to the
+first day of the coarsest unit they gave ("March 2026" becomes `2026-03-01`),
+and open that entry's body with the literal `Approximate date.` followed by
+where the approximation came from. The proposal says which entries this applies
+to and what each date was derived from, so the user approves the derivation and
+not just the line. If the user cannot approximate it either, the entry is not
+written: name the ones dropped and why.
+
+**Say what the dates do to the audit before the write.** Entries dated to their
+origin are older than `stale_after_days` the moment they land, so
+`/daikenja:project-gaps` reports the open ones on its next run. That surprises
+people and it is the audit working.
+
 ### Show the proposal
 
 Show exactly what will be written, verbatim, in a fenced block. Every line the
@@ -322,8 +374,19 @@ Silence is not approval. Neither is the user replying about something else.
 
 ## Step 7: write
 
-Insert every new entry **directly under its H2 heading**. That is the single
-insert rule and it is the same in every section, including the Changelog.
+Insert every new entry at its **date position**: directly above the first entry
+in that section whose date is the same as or older than its own, and at the end
+of the section when there is no such entry. See `ledger-format.md` § Ordering.
+
+For an entry dated today -- every ordinary write -- that position is directly
+under the H2 heading, which is what the rule used to say. A backfilled entry
+sorts into the file instead of piling up on top of newer ones. The Changelog
+line is timestamped now, so it is always the newest line and always goes
+directly under its heading; a context link has no ordering rule and goes there
+too.
+
+Insert one line in one place. Do not sort the section, and do not move the
+entries around it.
 
 Edits, resolutions and supersessions change the line in place. Nothing moves.
 
@@ -353,6 +416,14 @@ Context links carry no ID, so they are recorded by label instead: `+link
 touches links still writes a Changelog line -- it just names links instead of
 IDs.
 
+**A bulk run may compact its summary**, per `ledger-format.md` § Compacting a
+long summary: consecutive IDs taking the same verb become a dense range
+(`+D-006..D-021`), and a summary too long for one line continues on lines
+indented two spaces. Both are lossless and `project-catchup` expands them. Do
+not compact a short summary, and never write a sparse range -- if an ID inside
+the interval was untouched or took a different verb, write two ranges or list
+the IDs.
+
 Then confirm in one or two lines: what was written, where, and the IDs --
 topic first, ID in parentheses, per `response-format.md`.
 
@@ -376,14 +447,15 @@ missing thing is the task itself.
 |---|---|
 | `daikenja.yaml` absent | One notice, then continue on the defaults (`.daikenja/ledger.md`, owner `@unassigned` unless the user names one). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. |
-| Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. |
+| Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. Unconditional -- a matching `projects:` entry does not license it. |
+| Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the directory is a registered project. |
 | Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
 | Ledger missing a required H2 section | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
 | A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |
 | Supersession marked on only one of the two entries | Report the mismatch, naming both IDs. The tail is authoritative. Do not repair it as a side effect of another write. |
+| An entry's date cannot be established | Ask for it. An approximation is a real answer and is written with the `Approximate date.` marker. Never invent one, and never fall back to today. If the user cannot approximate it, drop that entry and say so. |
 | Nothing in the material is worth logging | Say so and write nothing. An empty ledger is better than a padded one. |
 
 ## What this skill does not do

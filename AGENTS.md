@@ -43,8 +43,9 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
   content, personal data, or organization data there. There is no test runner —
   fixtures are exercised by hand through the skills.
 - **Voice is contractual.** Anything Daikenja drafts or rewrites follows
-  `docs/voice.md`, and `docs/config-contract.md` fixes how a user's own
-  `writing-style.md` layers on top. Read both before changing either.
+  `docs/voice.md`, and `docs/config-resolution.md` § Voice and writing style
+  fixes how a user's own `writing-style.md` layers on top. Read both before
+  changing either.
 - **Never move `release` without bumping `version` in
   `.claude-plugin/plugin.json`.** Claude Code compares version strings to decide
   whether to update an installed plugin, so an unbumped fast-forward ships

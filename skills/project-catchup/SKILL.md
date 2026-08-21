@@ -21,8 +21,9 @@ Read these before doing anything. Do not work from memory of them.
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Changelog
   grammar.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- `last_checkpoint`'s
-  format and who writes what.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes --
+  `last_checkpoint`'s format.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` -- who writes what.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The report in Step 4 follows it.
 
@@ -60,6 +61,20 @@ Collect every Changelog line whose timestamp is **strictly newer** than
 timestamps, not by stopping at the first older line -- a human may have
 reordered other sections, and even the Changelog itself makes no ordering
 guarantee a skill may depend on, per `ledger-format.md` § Ordering.
+
+**Join continuation lines before reading a summary.** A Changelog summary may
+run onto lines indented two spaces carrying no list marker. Strip each one's
+indent and join it to the summary with a single space, then split on commas as
+usual, per `ledger-format.md` § Compacting a long summary. A continuation line
+left unjoined is a set of changes dropped from the delta with nothing saying so.
+
+**Then expand ranges.** A summary item of the form `<verb><first>..<last>` --
+`+D-006..D-009`, `resolved O-004..O-006` -- stands for every ID from `<first>`
+to `<last>` inclusive, each carrying that verb. Expand it and treat the results
+exactly as if the IDs had been named one by one. A bulk write is where this
+happens, so one line can expand to thirty changes. Reporting a range as a single
+change, or skipping it because it does not look like an ID, is the same data
+loss.
 
 From those lines, collect the IDs named, each with the verb it was recorded
 under (`+`, `~`, `resolved`, `superseded`, `-`). The same ID can appear on more
@@ -109,6 +124,12 @@ Context links
 Call out unowned new open items -- they are what `project-gaps` would also
 flag, and the user is seeing them for the first time.
 
+**A delta that follows a bulk write is long, and nothing in it is truncated.**
+Grouping consecutive entries that took the same verb is fine and reads better
+(`Decisions D-006 to D-021, all new -- seeded from the architecture wiki`), as
+long as every ID is still accounted for. Say how many changes the window holds
+before the list, so a long report is expected rather than alarming.
+
 ## Step 5: propose and write the checkpoint
 
 Propose the new checkpoint as **now**, UTC, minute precision
@@ -130,7 +151,7 @@ Wait for approval. Silence is not approval.
 
 Never write anything else in `daikenja.yaml`. The single-writer rule governs
 the ledger; this carve-out is `last_checkpoint` alone, per
-`config-contract.md` § Who writes what.
+`config-writers.md` § Who writes what.
 
 ## Failure cases
 
@@ -139,7 +160,8 @@ the ledger; this carve-out is `last_checkpoint` alone, per
 | `daikenja.yaml` absent | Treat as a first run against ledger defaults. Note that no checkpoint can be written until `/daikenja:setup-user` has configured Daikenja and `/daikenja:setup-project` has registered this project. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
-| The named project has no path | **Stop.** One line: "`<key>` has no path in daikenja.yaml, so its ledger has no location yet." |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A Changelog ID resolves to no entry | One line saying so, then continue with the rest of the delta. |
+| A Changelog range is malformed -- endpoints in different sections, or running backwards | Report the line and what is wrong, then continue with the rest of the delta. Do not guess what it meant, and do not rewrite it. |
 | Project unregistered | Show the delta from the ledger on disk (it still resolves per "ledger on disk wins"), but say the checkpoint cannot be saved until the project is registered. |

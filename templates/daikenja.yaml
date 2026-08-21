@@ -1,7 +1,7 @@
 # Daikenja configuration.
 #
 # Location: ~/.claude/daikenja/daikenja.yaml
-# Schema:   docs/config-contract.md in the Daikenja plugin.
+# Schema:   docs/config-schema.md in the Daikenja plugin.
 #
 # This file holds your profile and one entry per project Daikenja tracks.
 # Keep it here, not in the plugin directory -- plugin directories are
@@ -68,7 +68,10 @@ projects: {}
 # projects:
 #   atlas-migration:
 #     path: C:/GitHub/atlas          # absolute
-#     ledger: .daikenja/ledger.md     # optional, relative to the root. This is the default.
+#     ledger: .daikenja/ledger.md     # optional, pointer -- relative to the root
+#                                     # (default) or absolute, e.g. for a project
+#                                     # with no directory of its own: see
+#                                     # docs/config-resolution.md, Resolving `ledger`.
 #     last_checkpoint:               # written by `project-catchup`, leave empty
 #     stale_after_days: 30           # optional, overrides the profile value
 #     norms_doc:                     # optional, overrides the profile value
@@ -85,8 +88,9 @@ projects: {}
 #       - C:/GitHub/platform-infra
 #
 # A project with no directory at all -- a programme that lives in a wiki, a
-# tracker and a chat space. It is reachable only by name, and having no root it
-# has nowhere to keep a ledger yet:
+# tracker and a chat space. It is reachable only by name. Having no root, a
+# relative ledger has nothing to be relative to, so give it an absolute one:
 #
 #   q4-planning:
 #     paths: []
+#     ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md

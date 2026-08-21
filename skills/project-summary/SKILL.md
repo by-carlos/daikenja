@@ -93,6 +93,6 @@ best-effort default location.
 | `daikenja.yaml` absent | One notice, continue on ledger defaults. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
-| The named project has no path | **Stop.** One line: "`<key>` has no path in daikenja.yaml, so its ledger has no location yet." |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |

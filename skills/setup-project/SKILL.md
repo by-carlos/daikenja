@@ -23,7 +23,7 @@ fire on its own -- the user runs `/daikenja:setup-project` when they mean to.
 **This skill never writes ledger content.** Seeding derives candidate entries
 and hands them to `/daikenja:project-log`, which shows the exact lines and waits
 for approval. `project-log` remains the only writer of a ledger, per
-`docs/config-contract.md` § Who writes what.
+`docs/config-writers.md` § Who writes what.
 
 ## Step 0: the preconditions
 
@@ -44,7 +44,7 @@ Read `~/.claude/daikenja/daikenja.yaml`. Three outcomes and no others:
   incomplete, and `setup-user` is what completes it. Say so and name it.
 
 On a file that exists and parses, also check the version marker and emit the
-one-line notice if it applies, per `docs/config-contract.md` § Version marker
+one-line notice if it applies, per `docs/config-versioning.md` § Version marker
 and upgrades. It never blocks registration. **This skill does not migrate and
 does not write `daikenja_version`**, even though it writes to the same file --
 the upgrade branch lives in `setup-user` and stays there.
@@ -60,7 +60,7 @@ its config file could not exist otherwise.
 Before proposing anything:
 
 - The current directory's **normalized path** -- forward slashes, no trailing
-  slash, compared case-insensitively, per `docs/config-contract.md` § Finding
+  slash, compared case-insensitively, per `docs/config-resolution.md` § Finding
   the project.
 - **Every path of every `projects:` entry** -- its `paths` list, or its `path`
   scalar read as a one-element list -- normalized the same way, and whether any
@@ -116,9 +116,24 @@ project and leave the ledger exactly as it is.
 **Registering a project with no directory at all is a legal, and asked-for,
 outcome.** A programme that spans a wiki, a tracker and a chat space has no
 folder to register. Write the entry with `paths: []` when the user says the
-project has no directory, and say plainly what that buys and costs: it is
-reachable by name from anywhere, and it has no root, so it has nowhere to keep
-a ledger yet. Never invent a path to fill the gap.
+project has no directory, and never invent a path to fill the gap.
+
+**Such an entry needs an absolute `ledger:` in the same write, and it is not
+optional here.** With no root there is nothing for a relative pointer to
+resolve against, so a pathless entry without one resolves as a project and then
+fails the moment anything asks for its ledger. Propose the convention from
+`docs/config-resolution.md` § Resolving `ledger` --
+`~/.claude/daikenja/ledgers/<project-key>.md` -- as part of the same entry:
+
+```yaml
+<key>:
+  paths: []
+  ledger: <home>/.claude/daikenja/ledgers/<key>.md
+```
+
+Say what the pair buys: reachable by name from anywhere, with its record kept
+outside any repository. Step 3's `ledger` question is then already answered and
+is not asked again.
 
 **A prefix match that is not exact is a nested project.** The current directory
 sits inside a registered one. Say which project it resolves to today and ask
@@ -141,8 +156,10 @@ Ask in one short round, and take silence as "leave them all unset":
 ```
 Registered. Three optional settings for this project -- skip any or all:
 
-1. ledger -- where the ledger file lives, relative to the project root.
-   Default .daikenja/ledger.md.
+1. ledger -- where the ledger file lives: a path relative to the project root,
+   or an absolute path (useful for a project with no repository of its own --
+   the convention is ~/.claude/daikenja/ledgers/<project-key>.md). Default
+   .daikenja/ledger.md.
 2. stale_after_days -- how long an open item may sit before project-gaps calls
    it stale. Inherits <the profile value> if you skip it.
 3. norms_doc -- your team's ways-of-working document, as a path or a URL.
@@ -150,7 +167,7 @@ Registered. Three optional settings for this project -- skip any or all:
 ```
 
 Every one of these is optional and every one has a defined default in
-`docs/config-contract.md` § Field notes. **Write only the keys the user
+`docs/config-schema.md` § Field notes. **Write only the keys the user
 answers.** A key written at its own default value is noise that reads like a
 deliberate override to the next person who opens the file.
 
@@ -273,9 +290,12 @@ worth saying because a seed run hits them and a normal log run does not:
   today. That is what the date field means, and a backfill is the one situation
   where the two differ for every entry.
 - **An entry whose date cannot be established is not proposed.** Ask the user
-  for it. If they cannot supply one either, leave the entry out and say which
-  ones were dropped and why. The date field is required and absolute, and no
-  part of this skill licenses inventing one.
+  for it. An approximation is a real answer: take it, and `project-log` writes
+  the entry with the `Approximate date.` marker and the derivation in the body,
+  per `ledger-format.md` § Approximate dates. Only when the user cannot supply
+  even an approximation is the entry left out, and then say which ones were
+  dropped and why. The date field is required and absolute, and no part of this
+  skill licenses inventing one.
 - **Anything implied but not stated goes in the proposal as a question**, not as
   an entry. A design document describing a preference is not a decision, and a
   register's open question is an open item rather than a decision about it. A
@@ -339,7 +359,7 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | An exact path match already exists | Say which key, leave it alone, and carry on to Steps 3 and 4. Registration is idempotent. |
 | An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval; never rewrite it silently. |
 | The user names an existing project to add this directory to, and the key does not exist | Ask again, listing the registered keys. Never create a new entry under a key the user only half-remembered. |
-| The user says the project has no directory | Not a failure. Write `paths: []` and say what that means: reachable by name, with nowhere to keep a ledger yet. |
+| The user says the project has no directory | Not a failure. Write `paths: []` **and** an absolute `ledger:` in the same entry, per Step 2 -- a pathless entry without one has nowhere to keep its record. |
 | The current directory is inside an already-registered project | Say which project it resolves to and ask before adding a second entry. Never assume a nested registration is wanted. |
 | The current directory is the user's home directory or `~/.claude` | **Stop.** Neither is a project. Say so and write nothing. |
 | `daikenja.yaml` is not writable | **Stop.** Name the path and the error. Do not write the entry anywhere else. |

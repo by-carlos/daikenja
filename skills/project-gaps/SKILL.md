@@ -20,8 +20,8 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Open items.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- `stale_after_days`
-  resolution order.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- what
+  `stale_after_days` measures.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The report in Step 4 follows it.
 
@@ -52,7 +52,7 @@ For each open line, evaluate two independent conditions:
 - **Stale.** Today's date minus the entry's `<date>` field is greater than the
   resolved `stale_after_days`. Age is measured from when the item was raised,
   not from when it was last touched -- the ledger does not track that, per
-  `config-contract.md`.
+  `config-schema.md`.
 
 An item can be both, one, or neither. Only items matching at least one
 condition are reported.
@@ -87,7 +87,7 @@ No gaps. Every open item in <project> has an owner and is within 21 days.
 | `daikenja.yaml` absent | One notice, continue on the 21-day default. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
-| The named project has no path | **Stop.** One line: "`<key>` has no path in daikenja.yaml, so its ledger has no location yet." |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A line inside Open items does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |
 | A decision has no owner | Not a gap. Do not report it; this skill's scope is Open items only. |

@@ -22,9 +22,13 @@ of the report; performing the fix is not.
 
 Read these before doing anything. Do not work from memory of them.
 
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-contract.md` -- § Schema, § Finding the
-  project and § Finding the ledger. This skill reports what that document
-  defines; it does not define anything itself.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` -- § Schema and § Field notes.
+  The shapes a `projects:` entry may take are what this skill reports back.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- § Finding the project,
+  § Finding the ledger and § Resolving `ledger`. This skill reports what that
+  document defines; it does not define anything itself.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-versioning.md` -- the version-marker notice
+  this skill emits and never acts on.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply is shaped.
 
 ## Step 1: read the configuration
@@ -37,7 +41,8 @@ Read `~/.claude/daikenja/daikenja.yaml`.
   guess the intent and never rewrite the file -- the same rule every Daikenja
   skill follows.
 - **Present and valid.** Also check the version marker and emit the one-line
-  notice if it applies, per `config-contract.md` § Version marker and upgrades.
+  notice if it applies, per `config-versioning.md` § Version marker and
+  upgrades.
 
 **`projects:` absent or empty is not a failure.** Say there are no registered
 projects and name `/daikenja:setup-project`, then still run Step 3 -- an
@@ -55,11 +60,12 @@ nothing more:
 2. **Whether each path exists on disk.** A path that does not exist is
    reported, not corrected. It is often a detached drive or a machine the
    config is shared with, and neither is a mistake.
-3. **Its ledger path** -- the `ledger:` key resolved against the project root,
-   otherwise `.daikenja/ledger.md` under it. The root is the **first** path in
-   the entry, per `config-contract.md` § Finding the ledger. An entry with no
-   paths has no root and therefore no ledger path; say that rather than
-   inventing one.
+3. **Its ledger path** -- the `ledger:` key resolved per its pointer form,
+   relative or absolute, otherwise `.daikenja/ledger.md` under the project
+   root. The root is the **first** path in the entry, per
+   `config-resolution.md` § Finding the ledger. An entry with no paths has no
+   root, so only an **absolute** `ledger:` gives it a path at all; where there
+   is neither, say there is no location rather than inventing one.
 4. **Whether that ledger file exists.**
 
 Then resolve the current directory the ordinary way -- longest matching prefix
@@ -114,7 +120,7 @@ billing-api
 
 q4-planning
   paths   none -- reachable by name only
-  ledger  none yet: a project with no path has nowhere to keep one
+  ledger  C:/Users/rimuru/.claude/daikenja/ledgers/q4-planning.md
 
 Unregistered ledger found under C:/GitHub:
   C:/GitHub/scratch-notes/.daikenja/ledger.md
@@ -140,7 +146,7 @@ at the top when it is true.
 | `projects:` absent or empty | Not a failure. Say there are none, name `/daikenja:setup-project`, and still run the Step 3 scan. |
 | An entry has both `path` and `paths` | Report it as one finding naming the key, list the union, and name `/daikenja:setup-project` as where it is fixed. Never rewrite the file. |
 | A path in `paths` does not exist on disk | Report it beside that path. Not an error -- a detached drive and a shared config both look like this. |
-| An entry has no paths | Report it as reachable by name only, with no ledger location. Not an error. |
+| An entry has no paths | Report it as reachable by name only. Its ledger is whatever an absolute `ledger:` points at; with no such key, report that it has no ledger location and name `/daikenja:setup-project`. Not an error either way. |
 | A ledger path is unreadable (permissions) | Report the error text beside the ledger line and carry on to the next entry. One bad entry never ends the listing. |
 | The Step 3 scan cannot read a directory | Skip it silently and say the scan was partial. Never stop the report for it. |
-| The user names one project | Report just that entry, in the same shape. An unknown key stops with the registered keys listed, per `config-contract.md` § Finding the project. |
+| The user names one project | Report just that entry, in the same shape. An unknown key stops with the registered keys listed, per `config-resolution.md` § Finding the project. |
