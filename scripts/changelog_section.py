@@ -10,9 +10,8 @@ import re
 import sys
 from pathlib import Path
 
-from changelog_lib import section_body
+from changelog_lib import repo_slug, section_body
 
-REPO = "by-carlos/daikenja"
 CHANGELOG = Path("CHANGELOG.md")
 
 
@@ -32,7 +31,8 @@ def main():
         sys.exit(f"CHANGELOG.md has no section for {args.version}")
 
     body = section_body(text, heading.end())
-    output = f"{body}\n\nFull history: https://github.com/{REPO}/blob/main/CHANGELOG.md\n"
+    repo = repo_slug()
+    output = f"{body}\n\nFull history: https://github.com/{repo}/blob/main/CHANGELOG.md\n"
 
     if args.output_file:
         Path(args.output_file).write_text(output, encoding="utf-8")

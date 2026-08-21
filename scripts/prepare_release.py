@@ -22,9 +22,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from changelog_lib import section_body
+from changelog_lib import repo_slug, section_body
 
-REPO = "by-carlos/daikenja"
 PLUGIN_JSON = Path(".claude-plugin/plugin.json")
 CHANGELOG = Path("CHANGELOG.md")
 UPGRADING = Path("docs/upgrading.md")
@@ -98,9 +97,10 @@ def rotate_changelog(new_version):
     link = UNRELEASED_LINK_RE.search(text)
     if not link:
         sys.exit("CHANGELOG.md has no [Unreleased] compare link")
+    repo = repo_slug()
     replacement = (
-        f"[Unreleased]: https://github.com/{REPO}/compare/v{new_version}...HEAD\n"
-        f"[{new_version}]: https://github.com/{REPO}/releases/tag/v{new_version}"
+        f"[Unreleased]: https://github.com/{repo}/compare/v{new_version}...HEAD\n"
+        f"[{new_version}]: https://github.com/{repo}/releases/tag/v{new_version}"
     )
     text = text[: link.start()] + replacement + text[link.end() :]
 
