@@ -85,11 +85,12 @@ Stale (1, older than 21 days)
 - Agree the success criteria for calling the migration done (O-001) -- 2026-08-05 (9 days, also unowned)
 ```
 
-**When a reported item says what is blocking it, say so on its line** -- the
+**When a reported item carries `Blocked by <id>.`, say so on its line** -- the
 marker is already on the line being read, and "stale because it is waiting on
 something also stale" is a different problem from "stale because nobody picked
-it up". Name the blocker topic first with its ID, and say whether it is still
-open:
+it up". A blocker whose own entry is already resolved is worth more than either:
+the item is not waiting on anything any more and is still sitting. Name the
+blocker topic first with its ID, and say whether it is still open:
 
 ```
 - Confirm whether the gateway can be exempted (O-008) -- 2026-08-19 (24 days)
@@ -100,6 +101,11 @@ open:
 Add nothing when the blocker resolves to no entry beyond the one-line report
 `ledger-format.md` § Reading rules, rule 6 already requires. Do not chase a
 blocker's own blockers: one hop, exactly as `project-decisions` does.
+
+**`Blocked by` is the only marker this report annotates.** A `Contradicts`
+marker is a reconciliation somebody owes, not an explanation of why an item sat,
+and this report is short on purpose -- `/daikenja:project-decisions` is where a
+contradiction surfaces, from both directions.
 
 If nothing qualifies, say so plainly rather than omitting the report:
 

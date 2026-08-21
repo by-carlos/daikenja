@@ -68,6 +68,19 @@ stage's acceptance checks can be re-run later against the same inputs.
   that a handle the ledger already knows never reads `personas.md`, and that
   the notice is a notice rather than a question the run waits on.
 
+- [`fixtures/ledger-relationships.md`](fixtures/ledger-relationships.md) -- a
+  `lattice` gateway ledger built by one team inside a programme run by others,
+  plus nine walks over the body markers `docs/ledger-format.md` § Body markers
+  defines. It fixes the four things easiest to get wrong: a `Contradicts`
+  marker found from both ends although the file records only one, a `Blocked
+  by` whose blocker is already resolved and which nothing rewrites, an imposed
+  decision with no owner that is never a gap, and a body containing `->` as
+  punctuation that must not parse as a tail. One entry carries a marker naming
+  an ID the ledger does not have, so the report-and-continue path of reading
+  rule 6 has something to report. The walks pin today to 2026-09-15 and the
+  threshold to 21 days, so the `project-gaps` output is exact rather than
+  drifting with the calendar.
+
 ### `meeting-review`
 
 - [`fixtures/sample-transcript.md`](fixtures/sample-transcript.md) -- a
