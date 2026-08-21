@@ -1,10 +1,10 @@
 ---
 name: setup-project
-description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has. Use when the user says "register this project", "add this repo to Daikenja", "set this project up", or "seed the ledger from our Confluence space". Run explicitly with /daikenja:setup-project -- it never fires on its own. Personal setup stays in /daikenja:setup-user and is not repeated here. Seeding writes nothing itself -- proposed entries go to /daikenja:project-log, which shows the exact lines and waits for approval.
+description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has. Use when the user says "register this project", "add this repo to Daikenja", "set this project up", "this repo is part of the platform programme", or "seed the ledger from our Confluence space". A project may span several directories or none at all, so this skill also adds the directory you are in to a project you already track, and registers a project that has no directory. Run explicitly with /daikenja:setup-project -- it never fires on its own. Personal setup stays in /daikenja:setup-user and is not repeated here. Seeding writes nothing itself -- proposed entries go to /daikenja:project-log, which shows the exact lines and waits for approval.
 metadata:
   owner: Carlos
   version: 1
-  writes: ~/.claude/daikenja/daikenja.yaml -- the projects entry for the current directory only
+  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one
 disable-model-invocation: true
 ---
 
@@ -61,13 +61,14 @@ Before proposing anything:
 
 - The current directory's **normalized path** -- forward slashes, no trailing
   slash, compared case-insensitively, per `docs/config-resolution.md` § Finding
-  the current project.
-- Every `projects:` entry's `path`, normalized the same way, and whether any is
-  an **exact match** for this directory.
+  the project.
+- **Every path of every `projects:` entry** -- its `paths` list, or its `path`
+  scalar read as a one-element list -- normalized the same way, and whether any
+  is an **exact match** for this directory.
 - Whether a ledger already exists on disk at the resolved path -- the matched
   project's `ledger:` key, otherwise `.daikenja/ledger.md` under the project
-  root. This decides whether Step 4 is a first seed or a top-up, and it is
-  read-only here.
+  root, which is the **first** path in the entry. This decides whether Step 4
+  is a first seed or a top-up, and it is read-only here.
 
 **A ledger on disk with no matching `projects:` entry is a normal state**, not
 an error. The file on disk is the fact and the config is the index. Register the
@@ -75,26 +76,72 @@ project and leave the ledger exactly as it is.
 
 ## Step 2: register the project
 
-- **An exact path match already exists.** Say which key it is registered under
-  and leave the entry alone. Registration is idempotent, and it is not a place
-  to silently change a key someone chose. Go to Step 3 -- an already-registered
-  project can still want its keys set or its ledger seeded.
+- **An exact path match already exists**, on any path of any entry. Say which
+  key it is registered under and leave the entry alone. Registration is
+  idempotent, and it is not a place to silently change a key someone chose. Go
+  to Step 3 -- an already-registered project can still want its keys set or its
+  ledger seeded.
 
-- **No match.** Propose a new entry, key defaulting to the directory's own name,
-  and ask if the user wants a different label. The key is a human label and is
-  never matched on, so it may be anything that reads well:
+- **No match.** Ask one question before proposing anything, because there are
+  now two answers and only the user knows which one is meant:
 
-  ```yaml
-  <dir-name>:
-    path: <normalized absolute path>
   ```
+  Is this a new project, or another directory of one you already track?
+  Registered: <key>, <key>, <key>.
+  ```
+
+  - **A new project.** Propose a new entry, key defaulting to the directory's
+    own name, and ask if the user wants a different label. The key is a human
+    label and is never matched against a directory, so it may be anything that
+    reads well -- but it is what a read skill accepts as an argument, so short
+    and typeable beats decorative:
+
+    ```yaml
+    <dir-name>:
+      paths:
+        - <normalized absolute path>
+    ```
+
+  - **Another directory of an existing project.** Append this path to that
+    entry's `paths`, and change nothing else. **Appending never reorders the
+    list**: the first path is the project root and therefore where the ledger
+    lives, so moving it would silently repoint the ledger at a different file.
+    Say which directory stays the root.
+
+    An entry written in the single-value `path:` form is converted to a
+    two-element `paths:` list, with the existing value first. Say so in the
+    proposal -- it is the same project resolving the same way, but the file
+    now looks different from how the user left it.
+
+**Registering a project with no directory at all is a legal, and asked-for,
+outcome.** A programme that spans a wiki, a tracker and a chat space has no
+folder to register. Write the entry with `paths: []` when the user says the
+project has no directory, and never invent a path to fill the gap.
+
+**Such an entry needs an absolute `ledger:` in the same write, and it is not
+optional here.** With no root there is nothing for a relative pointer to
+resolve against, so a pathless entry without one resolves as a project and then
+fails the moment anything asks for its ledger. Propose the convention from
+`docs/config-resolution.md` § Resolving `ledger` --
+`~/.claude/daikenja/ledgers/<project-key>.md` -- as part of the same entry:
+
+```yaml
+<key>:
+  paths: []
+  ledger: <home>/.claude/daikenja/ledgers/<key>.md
+```
+
+Say what the pair buys: reachable by name from anywhere, with its record kept
+outside any repository. Step 3's `ledger` question is then already answered and
+is not asked again.
 
 **A prefix match that is not exact is a nested project.** The current directory
 sits inside a registered one. Say which project it resolves to today and ask
 before registering a second entry -- resolution takes the longest matching
 prefix, so a new inner entry silently takes over every skill run in this
 subtree. That is sometimes exactly what the user wants and is never something
-to assume.
+to assume. Adding this directory to the outer project instead is the other
+answer, and it is often the one meant.
 
 Add the entry with the Edit tool, under `projects:`. **Never rewrite the file.**
 Hand-added keys, other projects and the template's comments all survive an edit
@@ -290,8 +337,8 @@ If seeding was declined or produced nothing, say that plainly and name
 
 ## Re-running this skill
 
-Safe at any time, and expected. An exact path match leaves the entry and its key
-untouched, Step 3 shows what is already set before asking, and seeding a project
+Safe at any time, and expected. An exact path match -- against any path of any
+entry -- leaves the entry and its key untouched, Step 3 shows what is already set before asking, and seeding a project
 that already has a ledger proposes only what is not already recorded --
 `project-log`'s duplicate check is what enforces that, and an entry it matches
 comes back as a proposed edit rather than a near copy.
@@ -310,6 +357,9 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
 | `profile.name` unset or empty | **Stop.** The configuration is incomplete. Point at `/daikenja:setup-user`. |
 | An exact path match already exists | Say which key, leave it alone, and carry on to Steps 3 and 4. Registration is idempotent. |
+| An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval; never rewrite it silently. |
+| The user names an existing project to add this directory to, and the key does not exist | Ask again, listing the registered keys. Never create a new entry under a key the user only half-remembered. |
+| The user says the project has no directory | Not a failure. Write `paths: []` **and** an absolute `ledger:` in the same entry, per Step 2 -- a pathless entry without one has nowhere to keep its record. |
 | The current directory is inside an already-registered project | Say which project it resolves to and ask before adding a second entry. Never assume a nested registration is wanted. |
 | The current directory is the user's home directory or `~/.claude` | **Stop.** Neither is a project. Say so and write nothing. |
 | `daikenja.yaml` is not writable | **Stop.** Name the path and the error. Do not write the entry anywhere else. |

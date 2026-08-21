@@ -1,8 +1,8 @@
 # Reading a ledger
 
 Shared mechanism for the four read skills: `project-catchup`, `project-summary`,
-`project-decisions`, `project-gaps`. All four resolve config, find a ledger, and
-parse it the same way.
+`project-decisions`, `project-gaps`. All four take the same optional project-key
+argument, resolve config, find a ledger, and parse it the same way.
 They differ only in what they filter for and how they format the result. This
 document is that shared mechanism, written once so it cannot drift four ways.
 
@@ -11,6 +11,25 @@ does not restate parsing rules from `ledger-format.md` or resolution rules from
 `config-resolution.md` -- those are the contracts. This document is the recipe
 that combines them for a read, not a third contract.
 
+## Step A0: did the user name a project?
+
+All four skills take an **optional project key** as an argument:
+`/daikenja:project-summary atlas-migration`. A key may also arrive in prose --
+"summarize atlas-migration", "what's open on the platform programme" -- when
+the words match a registered key. Treat both the same way.
+
+- **A key was given.** Carry it into Step A, which reads the file, and match it
+  there per `config-resolution.md` § Finding the project, by key. It is decisive:
+  skip directory matching entirely, and **never fall back to the current
+  directory** if the key does not exist. Say which key was not found, list the
+  registered ones, and stop.
+- **No key was given.** Continue to Step A and resolve by directory, exactly as
+  before. This is the ordinary case and it is unchanged.
+
+**Name the project in the answer whenever a key was given**, alongside the
+`Ledger:` line from Step B -- the user is reading about a project they are not
+standing in, so the reply has to say which one.
+
 ## Step A: resolve the config
 
 Read `~/.claude/daikenja/daikenja.yaml`, per `config-resolution.md` §
@@ -18,14 +37,20 @@ Resolution order.
 
 - **Absent.** Not fatal for a read. Continue on defaults: ledger at
   `.daikenja/ledger.md` under the current directory, `stale_after_days: 21`.
+  A key given in Step A0 has nothing to resolve against: say the configuration
+  is missing, name `/daikenja:setup-user`, and stop.
 - **Malformed YAML.** Stop. Name the first line that does not parse. Never
   guess the intent and never rewrite the file.
-- **Present and valid.** Match the current directory against every
-  `projects:` entry's `path`, normalized (forward slashes, no trailing slash,
-  case-insensitive) and longest-prefix-wins. No match means the project is
-  unregistered: say so in one line and name `/daikenja:setup-project` as the
-  skill that registers it, then continue -- an unregistered project still has a
-  ledger to read if one exists on disk.
+- **Present and valid, with a key from Step A0.** The project is already
+  resolved. Go to Step B.
+- **Present and valid, no key.** Match the current directory against every
+  path of every `projects:` entry -- its `paths` list, or its `path` scalar
+  read as a one-element list -- normalized (forward slashes, no trailing slash,
+  case-insensitive) and longest-prefix-wins across all of them. An entry with
+  no paths is not a candidate; it is reachable only by key. No match means the
+  project is unregistered: say so in one line and name
+  `/daikenja:setup-project` as the skill that registers it, then continue -- an
+  unregistered project still has a ledger to read if one exists on disk.
 
 **Then check the version marker**, per `config-versioning.md` § Version marker
 and upgrades. That contract defines when the notice fires and how it is worded; this
@@ -40,12 +65,22 @@ that does.
    `ledger`. An explicit key is authoritative: the default filename in the
    next step is not also checked.
 2. Otherwise `.daikenja/ledger.md` under the project root (or under the
-   current directory, when nothing matched).
+   current directory, when nothing matched). **The project root is the first
+   path in the entry**, not the path that matched: one project has one ledger,
+   per `config-resolution.md` § Finding the ledger.
 3. **A ledger found on disk wins over the config.** This applies only when no
    project matched at all -- check the default path even then. It does not
    apply to a matched project's explicit `ledger:` key: that key's resolved
    path is the ledger, whether or not a file happens to sit at the default
    location too.
+4. **A project with no paths has no root**, so nothing relative can be
+   resolved against it. An **absolute** `ledger:` key resolves normally and is
+   how such a project keeps a ledger at all. Without one, stop with one line
+   and read nothing:
+
+   ```
+   <key> has no path and no absolute ledger in daikenja.yaml, so its ledger has no location.
+   ```
 
 **Name the resolved path before the answer**, every time, success or failure
 -- one line, so someone who ran a read skill from the wrong directory can
@@ -99,6 +134,9 @@ Use these exact shapes so the four skills read as one system:
 
 ```
 Ledger: <path>
+Project: <key>  (only when the user named one)
+No project called <key> in daikenja.yaml. Registered: <key>, <key>, <key>.
+<key> has no path and no absolute ledger in daikenja.yaml, so its ledger has no location.
 Daikenja is not configured -- run /daikenja:setup-user.
 This project is not in daikenja.yaml. Using the ledger at <path> anyway.
 No ledger at <path>. Run /daikenja:project-log to create one.

@@ -18,7 +18,7 @@ body:
       options:
         - Message drafting (/compose, /preflight, /thread)
         - Reviews (/doc-review, /self-review, /meeting-review)
-        - Project ledger (/project-log, /project-summary, /project-catchup, /project-decisions, /project-gaps)
+        - Project ledger (/project-log, /project-summary, /project-catchup, /project-decisions, /project-gaps, /project-list)
         - Setup and personas (/setup-user, /setup-project, /remember-persona)
         - Install / marketplace
         - Other / not sure

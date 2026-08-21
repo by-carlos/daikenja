@@ -1,6 +1,6 @@
 ---
 name: project-catchup
-description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. Use when the user says "catch me up", "what changed since I last looked", "what's new", "what did I miss", or "bring me up to speed" -- personal, delta-shaped asks about a project they already know. Not for a first look at a project (that is /daikenja:project-summary) or a lookup of one specific decision (that is /daikenja:project-decisions). This is the only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content.
+description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. Use when the user says "catch me up", "what changed since I last looked", "what's new", "what did I miss", or "bring me up to speed" -- personal, delta-shaped asks about a project they already know. Not for a first look at a project (that is /daikenja:project-summary) or a lookup of one specific decision (that is /daikenja:project-decisions). This is the only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content. Accepts an optional project key -- `/daikenja:project-catchup <key>` reads that project from anywhere, without being in its directory.
 metadata:
   owner: Carlos
   version: 1
@@ -29,7 +29,12 @@ Read these before doing anything. Do not work from memory of them.
 
 ## Step 1: resolve config, project and ledger
 
-Follow `reading.md` § Step A and § Step B.
+Follow `reading.md` § Step A0, § Step A and § Step B.
+
+**The user may name a project** -- `/daikenja:project-catchup <key>`, or the key in
+prose. `reading.md` § Step A0 is the whole rule: a named key resolves that
+project from anywhere on disk and never falls back to the current directory.
+Do not restate the resolution here.
 
 **No project match, or the project matches but carries no `last_checkpoint`.**
 This is a first run. There is no baseline to diff against, so the "delta" is
@@ -154,6 +159,8 @@ the ledger; this carve-out is `last_checkpoint` alone, per
 |---|---|
 | `daikenja.yaml` absent | Treat as a first run against ledger defaults. Note that no checkpoint can be written until `/daikenja:setup-user` has configured Daikenja and `/daikenja:setup-project` has registered this project. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
+| The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A Changelog ID resolves to no entry | One line saying so, then continue with the rest of the delta. |
 | A Changelog range is malformed -- endpoints in different sections, or running backwards | Report the line and what is wrong, then continue with the rest of the delta. Do not guess what it meant, and do not rewrite it. |

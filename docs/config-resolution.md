@@ -55,17 +55,43 @@ alone. Nothing else writes this file. See
 1. `~/.claude/daikenja/daikenja.yaml`. There is no search path and no
    project-local config file. One location, always.
 
-### Finding the current project
+### Finding the project
 
-A skill resolves which `projects:` entry applies to the directory it is running
-in:
+**Two routes, and the named one wins.** A skill resolves which `projects:`
+entry applies either from a project key the user named, or from the directory
+it is running in. The key route is checked first and is decisive: it never
+falls through to the directory.
+
+#### By key, when the user named one
+
+1. Compare the given key against every `projects:` key, case-insensitively.
+2. **Exactly one match: use it.** Directory resolution does not run at all --
+   the current directory is irrelevant to the rest of the run.
+3. **No match: say so and stop.** Name the key that was given, list the
+   registered keys, and write nothing. **Never fall back to the current
+   directory.** Silently answering about a different project than the one
+   named is the failure this route exists to remove, and it is worse than no
+   answer, because the reply looks correct.
+
+The skills that accept a key argument are the four read skills, per
+[`reading.md`](reading.md) section Step A0, and `project-list`, whose whole job
+is to report them. `project-log` and `setup-project` resolve by directory only;
+they write inside a project root, and a name alone does not say which root.
+
+#### By directory, otherwise
 
 1. Normalize the current directory: forward slashes, no trailing slash,
    case-insensitive comparison. (Windows paths compare case-insensitively and
    arrive in both slash styles; normalizing first avoids both traps.)
-2. Compare against every `projects:` entry's `path`, normalized the same way.
-3. Take the **longest matching prefix**. Nested projects therefore resolve to
-   the innermost one.
+2. Compare against **every path of every `projects:` entry**, normalized the
+   same way. An entry's paths are its `paths` list, or its `path` scalar read
+   as a one-element list. An entry with no paths is skipped -- it is reachable
+   only by key, and that is a legal state, not a match failure.
+3. Take the **longest matching prefix**, across all paths of all entries. The
+   entry owning that path is the match. Nested projects therefore resolve to
+   the innermost one, whichever entry it belongs to, and two paths of the same
+   project cannot compete with each other -- they resolve to the same project
+   either way.
 4. No match means the project is unregistered. Every skill says so in one line
    and then continues -- an unregistered project still has a ledger to read if
    one exists on disk, and a ledger on disk wins over the config (see
@@ -87,6 +113,21 @@ in:
    [`../templates/ledger.md`](../templates/ledger.md) after the user approves.
    Read skills do not scaffold; they report that no ledger exists and name the
    skill that creates one.
+
+**The project root is the first path in the entry**, not the path that matched.
+A project has one ledger, so its root cannot depend on which of its directories
+the user happened to be standing in -- resolving relative to the matched path
+would give a three-repository project three ledgers and no way to tell which
+one holds the decision. The first path is therefore the root from every
+direction: from any of the project's own directories, and from the key route,
+which has no matched path at all. Order the list deliberately; the first entry
+is where a relative `ledger:` lands.
+
+**A project with no paths has no root, so nothing relative resolves against
+it.** An **absolute** `ledger:` key resolves normally and is exactly how such a
+project keeps a ledger -- see [Resolving `ledger`](#resolving-ledger). Without
+one there is no location at all: a skill that needs a ledger says so in one
+line and stops, per [Failure behavior](#failure-behavior).
 
 **A ledger found on disk wins over the config.** This is a rule about an
 **unmatched project**, not about overriding an explicit `ledger:` key. If
@@ -119,24 +160,28 @@ Drive support for the ledger is wanted later, it is its own change.
 
 **A project with no repository of its own** -- work tracked across a wiki, a
 chat space, a ticket system, with no folder that is naturally "the project" --
-has nowhere for a relative `ledger:` to be relative *to* in spirit, even though
-`path` still requires some directory. The recommended convention is an absolute
-pointer into Daikenja's own configuration directory:
+has nowhere for a relative `ledger:` to be relative *to*. Give it no paths and
+an absolute pointer into Daikenja's own configuration directory:
 
 ```yaml
 projects:
   vendor-onboarding-programme:
-    path: C:/Users/you/daikenja-projects/vendor-onboarding-programme
+    paths: []
     ledger: C:/Users/you/.claude/daikenja/ledgers/vendor-onboarding-programme.md
 ```
 
-`path` is still required and still what resolution matches the current
-directory against, so a repository-less project needs some directory to be
-"in" when a skill runs -- typically a scratch folder created for the purpose.
-The `ledger:` key is what keeps the record itself out of that folder and inside
-`~/.claude/daikenja/ledgers/<project-key>.md`, alongside every other file
-Daikenja manages for the user rather than for a repository. Nothing about the
-ledger's own format changes -- it is read and written exactly as
+**The two keys do different halves of the same job, and both are needed.**
+`paths: []` is what stops the project needing a directory to be resolved from
+-- it is reached by name instead, from anywhere. The absolute `ledger:` is what
+gives the record a location once there is no root to be relative to. Either one
+alone leaves a gap: a pathless project without an absolute `ledger:` has
+nowhere to keep its record, and an absolute `ledger:` on an entry that still
+carries a scratch-folder `path` means the user has to stand in that folder to
+be answered.
+
+The convention is `~/.claude/daikenja/ledgers/<project-key>.md`, alongside every
+other file Daikenja manages for the user rather than for a repository. Nothing
+about the ledger's own format changes -- it is read and written exactly as
 [`ledger-format.md`](ledger-format.md) specifies, regardless of where it lives.
 
 ### Resolving `writing_style` and `personas`
@@ -227,6 +272,10 @@ One rule covers the common cases:
 | `daikenja_version` absent, empty, or different from the installed version | One notice line naming both versions and `/daikenja:setup-user`, then continue -- and only when [`upgrading.md`](upgrading.md) names a version later than the recorded one. Never a stop, and never a migration performed by the skill that noticed. See [Version marker and upgrades](config-versioning.md#version-marker-and-upgrades). |
 | The installed version cannot be read (`plugin.json` missing or unparsing) | No notice, continue silently. The marker is a diagnostic, and a diagnostic that cannot run is not a failure of the task. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. `setup-project` is what registers one. |
+| A named project key matches no entry | **Stop.** Name the key, list the registered keys, and write nothing. Never fall back to the current directory -- an answer about the wrong project reads exactly like a correct one. |
+| A project entry has neither `path` nor `paths`, or an empty `paths` | Not an error. The project is reachable only by key and is skipped by directory resolution. With no root, only an absolute `ledger:` can resolve; without one a skill that needs a ledger stops with one line naming the key. |
+| A project entry has both `path` and `paths` | Read the entry as the union of the two, and say so in one line naming the key. Do not guess which was meant, and do not rewrite the file to remove one -- `setup-project` is where the user fixes it. |
+| A path in `paths` does not exist on disk | Not an error for resolution: a path that matches nothing simply never matches. `project-list` reports it; every other skill stays silent, because a detached network drive is not a configuration mistake. |
 | `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. |
 | A pointed-at local prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per [Who writes what](config-writers.md#who-writes-what)) rather than treating the file as unreadable. |
 | A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, the `daikenja` folder is missing or duplicated, no file in it carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per [Who writes what](config-writers.md#who-writes-what)). |

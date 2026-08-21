@@ -24,7 +24,10 @@ profile:
 
 projects:
   <project-key>:
-    path: <absolute path>             # required
+    paths:                            # optional, a list of absolute paths
+      - <absolute path>
+      - <absolute path>
+    path: <absolute path>             # optional, the single-value form of paths
     ledger: .daikenja/ledger.md        # optional, pointer -- relative (default) or absolute
     last_checkpoint: 2026-08-14T09:12Z  # optional, written by project-catchup
     stale_after_days: <int>           # optional, overrides the profile value
@@ -83,8 +86,57 @@ and "this has been open five weeks" is the signal worth having. Default 21 days.
 timestamp format the ledger's Changelog uses. It marks how far `project-catchup` has
 already reported.
 
-**The `<project-key>` is a human label and is never used for matching.** Call it
-whatever reads well. Matching is by `path`; see below.
+**`paths` is the list of directories that resolve to this project**, and `path`
+is its single-value form. A project may have several roots -- a programme
+spanning three repositories is one project, not three -- and it may have none.
+The three legal shapes are:
+
+```yaml
+projects:
+  atlas:                       # one root, the single-value form
+    path: C:/GitHub/atlas
+
+  platform-programme:          # several roots, all resolving to one project
+    paths:
+      - C:/GitHub/platform-api
+      - C:/GitHub/platform-web
+      - C:/GitHub/platform-infra
+
+  q4-planning:                 # no root at all, reachable only by key
+    paths: []
+    ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md
+```
+
+**`path` and `paths` mean the same thing and are read as one list.** A `path`
+scalar is exactly a one-element `paths`, so every configuration written before
+`paths` existed resolves identically after it. Nothing is deprecated and
+nothing has to be rewritten. Writing both keys on one entry is a
+[failure case](config-resolution.md#failure-behavior): the entry is read as the
+union of the two and the run says so, because guessing which one the user meant
+is worse than naming the contradiction.
+
+**The first path is the project root**, which is what a relative `ledger:`
+resolves against, per
+[Finding the ledger](config-resolution.md#finding-the-ledger). It is the root
+whichever of the project's directories the run started in, so one project keeps
+one ledger. Order the list deliberately, and do not reorder it afterwards.
+
+**A project with no roots is legal, not malformed.** `paths: []`, an empty
+`paths:`, or neither key present all mean the same thing: this project is
+reachable only by name. That is what a programme with no directory of its own
+needs -- a body of work that lives across a wiki, a tracker and a chat space
+has no folder to be, and before this it had to be recorded against whichever
+folder happened to be open. Directory resolution skips such an entry silently;
+it is not a match failure and never a warning. Give it an **absolute**
+`ledger:`, since with no root there is nothing for a relative one to resolve
+against; the convention is in
+[Resolving `ledger`](config-resolution.md#resolving-ledger).
+
+**The `<project-key>` is the project's name, and naming it resolves it.** Call
+it whatever reads well -- it is still never matched against a directory. What
+changed is that a skill accepts it as an argument, so a project can be read
+from anywhere on disk rather than only from inside it. See
+[Finding the project](config-resolution.md#finding-the-project).
 
 **`ledger`** is a **pointer**, not a fixed path. A pointer is a relative path or
 an absolute path -- the same two forms `writing_style` and `personas` accept,
@@ -94,8 +146,10 @@ a project with no repository of its own, is
 
 ## Worked example
 
-A filled `daikenja.yaml` with two projects, one of which overrides the global
-staleness threshold and points its ledger somewhere other than the default:
+A filled `daikenja.yaml` with four projects: one single-root, one that
+overrides the global staleness threshold and points its ledger somewhere other
+than the default, one spanning three repositories, and one with no repository
+at all.
 
 ```yaml
 daikenja_version: 0.5.1
@@ -122,18 +176,44 @@ projects:
     last_checkpoint: 2026-08-13T17:40Z
     stale_after_days: 30
     norms_doc: https://example.com/platform/ways-of-working
+
+  platform-programme:
+    paths:
+      - C:/GitHub/platform-api
+      - C:/GitHub/platform-web
+      - C:/GitHub/platform-infra
+
+  q4-planning:
+    paths: []
+    ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md
 ```
 
 Resolving from `C:\GitHub\atlas\services\ingest`:
 
 1. Normalized: `c:/github/atlas/services/ingest`.
-2. `c:/github/atlas` is a prefix; `c:/github/billing-api` is not.
+2. `c:/github/atlas` is a prefix; no other path of any entry is.
 3. Longest match is `atlas-migration`.
 4. It has no `ledger:` key, so the ledger is `C:/GitHub/atlas/.daikenja/ledger.md`.
 5. It has no `stale_after_days`, so `project-gaps` uses the profile's 21 days
    and says so.
 6. It has no `norms_doc` and neither does the profile, so `self-review` skips
    ROLE CHECK.
+
+Resolving from `C:\GitHub\platform-web\src`:
+
+1. Normalized: `c:/github/platform-web/src`.
+2. `c:/github/platform-web` is a prefix, and it is the second path of
+   `platform-programme`.
+3. The project is `platform-programme`. Its root is the **first** path,
+   `C:/GitHub/platform-api`, so the ledger is
+   `C:/GitHub/platform-api/.daikenja/ledger.md` -- the same file a run from
+   `platform-infra` reads, which is the point of one project having one ledger.
+
+Resolving `q4-planning` by name, from anywhere:
+
+1. The key matches, so directory resolution never runs.
+2. The entry has no paths, so nothing relative could resolve; its absolute
+   `ledger:` is what gives it a location, and that is the file read.
 
 ### Minimal valid file
 

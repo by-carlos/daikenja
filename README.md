@@ -75,9 +75,15 @@ track. It registers the directory, sets that project's own settings, and can
 seed its ledger from a decision log, a wiki space or a Slack channel you already
 have. `setup-user` is once per person; `setup-project` is once per project.
 
+**A project does not have to be one directory.** A programme spanning three
+repositories is registered once and every one of its directories resolves to
+it; a body of work with no repository at all is registered with no directory,
+reached by name, and keeps its ledger wherever its `ledger:` key points.
+`/daikenja:project-list` shows the whole index back to you.
+
 ## Skills
 
-Fifteen skills, grouped by what they do.
+Sixteen skills, grouped by what they do.
 
 **Writing a reply**
 
@@ -111,6 +117,14 @@ Fifteen skills, grouped by what they do.
   topic, including its supersession history.
 - `/daikenja:project-gaps` -- audits a project's ledger for open items with no
   owner or that have sat too long.
+- `/daikenja:project-list` -- lists every project Daikenja knows about, says
+  which one you are standing in, and reports whether each ledger actually
+  exists. The one to run when a read skill answered about a project you did not
+  expect.
+
+All four reading skills take an **optional project name**:
+`/daikenja:project-summary atlas-migration` reads that project from anywhere,
+without being in its directory.
 
 **Reviewing things**
 
@@ -151,7 +165,7 @@ and get overwritten on update.
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` for a proposal you approve |
-| A project's decision ledger | `<project>/.daikenja/ledger.md`, or wherever that project's `ledger:` key points -- including outside the project, for work with no repository of its own | `project-log` only |
+| A project's decision ledger | `<project root>/.daikenja/ledger.md`, or wherever that project's `ledger:` key points -- including outside the project. For a project spanning several directories the root is the first one registered | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
 your directories; the copies are the live files.

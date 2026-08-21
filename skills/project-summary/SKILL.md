@@ -1,6 +1,6 @@
 ---
 name: project-summary
-description: Gives a full-state overview of a project's Daikenja ledger, written for someone with no prior context. Use when the user says "what's the state of this project", "give me an overview", "summarize this project", "brief a new person on this", "where do things stand", or is opening a project they have not looked at before. Not for a personal delta since last time (that is /daikenja:project-catchup) or a single decision lookup (that is /daikenja:project-decisions). Read-only; writes nothing.
+description: Gives a full-state overview of a project's Daikenja ledger, written for someone with no prior context. Use when the user says "what's the state of this project", "give me an overview", "summarize this project", "brief a new person on this", "where do things stand", or is opening a project they have not looked at before. Not for a personal delta since last time (that is /daikenja:project-catchup) or a single decision lookup (that is /daikenja:project-decisions). Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-summary <key>` reads that project from anywhere, without being in its directory.
 metadata:
   owner: Carlos
   version: 1
@@ -24,7 +24,12 @@ Read these before doing anything. Do not work from memory of them.
 
 ## Step 1: resolve config, project and ledger
 
-Follow `reading.md` § Step A and § Step B.
+Follow `reading.md` § Step A0, § Step A and § Step B.
+
+**The user may name a project** -- `/daikenja:project-summary <key>`, or the key in
+prose. `reading.md` § Step A0 is the whole rule: a named key resolves that
+project from anywhere on disk and never falls back to the current directory.
+Do not restate the resolution here.
 
 ## Step 2: read the ledger
 
@@ -87,5 +92,7 @@ best-effort default location.
 |---|---|
 | `daikenja.yaml` absent | One notice, continue on ledger defaults. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
+| The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |

@@ -53,20 +53,44 @@ profile:
   # Measured from the date the item was raised.
   stale_after_days: 21
 
-# One entry per project. The key is a label for you -- Daikenja never matches on
-# it. Matching is by `path`, longest prefix wins.
+# One entry per project. The key is the project's name: Daikenja never matches a
+# directory against it, but you can type it -- `/daikenja:project-summary
+# atlas-migration` reads that project from anywhere. Directory matching is by
+# `paths`, longest prefix wins.
 projects: {}
 
-# Example of a filled entry. Copy it above, inside `projects:`, and drop the
-# leading "# " from each line.
+# Examples of filled entries. Copy what you need above, inside `projects:`, and
+# drop the leading "# " from each line.
+#
+# A project that is one directory. `path` is the single-value form of `paths`
+# and keeps working exactly as it always has:
 #
 # projects:
 #   atlas-migration:
-#     path: C:/GitHub/atlas          # required, absolute
-#     ledger: .daikenja/ledger.md     # optional, pointer -- relative to path (default)
-#                                     # or absolute, e.g. for a project with no
-#                                     # repository of its own: see
-#                                     # docs/config-resolution.md § Resolving `ledger`.
+#     path: C:/GitHub/atlas          # absolute
+#     ledger: .daikenja/ledger.md     # optional, pointer -- relative to the root
+#                                     # (default) or absolute, e.g. for a project
+#                                     # with no directory of its own: see
+#                                     # docs/config-resolution.md, Resolving `ledger`.
 #     last_checkpoint:               # written by `project-catchup`, leave empty
 #     stale_after_days: 30           # optional, overrides the profile value
 #     norms_doc:                     # optional, overrides the profile value
+#
+# A project spanning several directories. Any of them resolves to this one
+# project. The FIRST path is the root -- it is where the ledger lives -- so put
+# the repository you think of as the main one at the top, and do not reorder the
+# list afterwards:
+#
+#   platform-programme:
+#     paths:
+#       - C:/GitHub/platform-api     # the root: the ledger lives here
+#       - C:/GitHub/platform-web
+#       - C:/GitHub/platform-infra
+#
+# A project with no directory at all -- a programme that lives in a wiki, a
+# tracker and a chat space. It is reachable only by name. Having no root, a
+# relative ledger has nothing to be relative to, so give it an absolute one:
+#
+#   q4-planning:
+#     paths: []
+#     ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md

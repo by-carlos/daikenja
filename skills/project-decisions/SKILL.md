@@ -1,6 +1,6 @@
 ---
 name: project-decisions
-description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not the whole project. Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). Read-only; writes nothing.
+description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not the whole project. Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere, without being in its directory.
 metadata:
   owner: Carlos
   version: 1
@@ -25,7 +25,12 @@ Read these before doing anything. Do not work from memory of them.
 
 ## Step 1: resolve config, project and ledger
 
-Follow `reading.md` § Step A and § Step B.
+Follow `reading.md` § Step A0, § Step A and § Step B.
+
+**The user may name a project** -- `/daikenja:project-decisions <key>`, or the key in
+prose. `reading.md` § Step A0 is the whole rule: a named key resolves that
+project from anywhere on disk and never falls back to the current directory.
+Do not restate the resolution here.
 
 ## Step 2: read the ledger
 
@@ -91,6 +96,8 @@ an open item by ID in its body, surface that link as-is -- do not go fetch it.
 |---|---|
 | `daikenja.yaml` absent | One notice, continue on ledger defaults. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
+| The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
+| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | Supersession marked on only one of two entries | Report the mismatch, naming both IDs. The tail is authoritative; do not repair it. |
 | No decision matches the query | Say so. Offer the closest match, named as a guess, if one exists. |

@@ -66,6 +66,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A project may now span several directories, or none at all.** `projects:`
+  gains `paths:`, a list; `path:` is its single-value form and keeps working
+  exactly as it did, so every configuration already on disk resolves
+  identically. Directory matching runs across every path of every entry,
+  longest prefix still winning. An entry with no paths -- `paths: []` -- is
+  legal and means the project is reachable only by name, which is what a
+  programme spanning a wiki, a tracker and a chat space needs: before this it
+  had to be recorded against whichever folder happened to be open. The project
+  root, which a relative `ledger:` resolves against, is the **first** path in
+  the entry rather than the path that matched, so one project keeps one ledger
+  from every direction, and a pathless project keeps one by pairing `paths: []`
+  with an absolute `ledger:` (`docs/config-schema.md` § Schema and § Field
+  notes, `docs/config-resolution.md` § Finding the project and § Finding the
+  ledger, `templates/daikenja.yaml`) (#68).
+- **The four read skills take an optional project name.**
+  `/daikenja:project-summary harbor-rollout` reads that project from anywhere
+  on disk. A named key is decisive: it skips directory matching entirely and
+  **never** falls back to the current directory, because an answer about the
+  wrong project reads exactly like a right one. An unknown key stops and lists
+  the registered ones. The rule lives once, in `docs/reading.md` § Step A0, and
+  the four skills defer to it. `project-log` and `setup-project` deliberately
+  do not take a key: a name does not say which of a project's roots a write
+  belongs in (#68).
+- **`/daikenja:project-list`**, the index read back: every registered project,
+  its paths, which one the current directory resolves to, and whether each
+  ledger actually exists. It also reports ledgers found on disk that no entry
+  points at -- what a person is left with after logging decisions from the
+  wrong directory -- through a bounded scan that says where it looked. It is
+  read-only, and names the skill that fixes each finding rather than fixing
+  anything itself (#68).
 - **A project's `ledger:` key now accepts an absolute path**, not only a path
   relative to the project's `path`. A project with no repository of its own
   -- work tracked across a wiki, a chat space or a ticket system -- has no
@@ -183,6 +213,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`setup-project` asks whether a directory is a new project or another root
+  of one already tracked**, and appends to that entry's `paths` when it is the
+  second. Appending never reorders the list, since the first path is where the
+  ledger lives; an entry in the `path:` scalar form is converted to a list with
+  the existing value first, and the proposal says so. It can also register a
+  project with no directory at all, and never invents a path to fill that gap
+  (#68).
 - **Upgrade notes are written as-you-go, exactly like changelog entries.** A
   pull request that changes the `daikenja.yaml` schema, the ledger grammar or
   location, a skill name, or any path the plugin reads adds its section under

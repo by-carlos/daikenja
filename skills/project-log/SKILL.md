@@ -69,16 +69,26 @@ Follow `config-resolution.md` § Resolution order exactly. In short:
 1. Read `~/.claude/daikenja/daikenja.yaml`. Absent is not fatal here -- this
    skill works on defaults. Malformed YAML **is** fatal: report the first line
    that does not parse and stop.
-2. Match the current directory against the `projects:` entries by `path`,
-   normalized and longest prefix wins. The project key is a label and is never
-   matched on.
+2. Match the current directory against **every path of every `projects:`
+   entry** -- its `paths` list, or its `path` scalar read as a one-element
+   list -- normalized and longest prefix wins across all of them. An entry with
+   no paths is skipped; it is reachable only by key, and this skill does not
+   resolve by key.
 3. Resolve the ledger: the matched project's `ledger:` key if it has one --
    relative or absolute, per `config-resolution.md` § Resolving `ledger` -- and
    that resolved path is authoritative. Otherwise `.daikenja/ledger.md` under
-   the project root.
+   the project root. **The root is the first path in the entry**, not the path
+   that matched -- a project spanning three repositories has one ledger, in the
+   first of them.
 4. Check the version marker and emit the one-line notice if it applies, per
    `config-versioning.md` § Version marker and upgrades. It never blocks a write,
    and this skill never migrates anything -- `/daikenja:setup-user` does that.
+
+**This skill resolves by directory only, and takes no project key.** The read
+skills take one because reading is location-free; writing is not. A key names a
+project, and a project may have three roots or none, so a key alone does not
+say where a ledger entry belongs. To log against a project you are not in, go
+to it first.
 
 **A ledger on disk wins over the config.** If `.daikenja/ledger.md` exists but
 no project matches, use it and carry on.
@@ -99,6 +109,15 @@ If the ledger file does not exist, check first whether this directory is
 plausibly a project. Nothing about a missing ledger says it is -- the current
 directory could just as easily be the user's home directory or a scratch
 folder they happened to be in.
+
+**The checks below run against the directory the ledger would be created in.**
+That is the project root when a `projects:` entry matched, which for a
+multi-path project is the first path in the entry and need not be the
+directory you are standing in. Name that directory in every question and every
+refusal, so nobody approves a write to a folder they did not have in mind. A
+match does not excuse a check: `daikenja.yaml` is hand-editable and matching
+takes the longest prefix, so a matched project is not evidence that the
+directory is one.
 
 **Refuse outright** when the current directory is the user's home directory
 (the real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do

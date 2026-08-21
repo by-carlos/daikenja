@@ -58,6 +58,31 @@ is Anthropic's design, not something Daikenja can package around.
 **Code execution must be enabled** on the account, on a Pro, Max, Team or
 Enterprise plan. Without it a custom skill does not load at all.
 
+## Projects
+
+**A project with no directory needs an absolute `ledger:`, and nothing enforces
+that it has one.** `paths: []` makes a project addressable by name from
+anywhere, which is what a programme spanning a wiki, a tracker and a chat space
+needs; an absolute `ledger:` is what gives its record a location once there is
+no root to be relative to. The two keys are independent, so a pathless entry
+written without one resolves as a project and then fails at the ledger. Every
+skill reports which of the two is missing rather than guessing a location, and
+`setup-project` offers the key when it registers such a project -- but a
+hand-edited file can still hold the half-configured shape.
+
+**A project has exactly one ledger, in its first path** unless `ledger:` says
+otherwise. For a project spanning three repositories that means the decisions
+of all three live in the first one by default, and the other two carry
+nothing. Reordering `paths` afterwards repoints the
+ledger at a different file, which is why `setup-project` appends and never
+reorders. There is no way to split one project's ledger across its
+directories, and no way to merge two ledgers into one project.
+
+**`project-list` does not search your disk.** Its scan for unregistered ledgers
+covers the current directory tree three levels deep, plus the same depth under
+the current VCS root. A ledger written somewhere else entirely is not found,
+and the report says where it looked so the absence can be read correctly.
+
 ## Reviewer personas
 
 **Group-level personas are not supported.** `personas.md` is read as individual
