@@ -665,7 +665,7 @@ missing thing is the task itself.
 | An entry's date cannot be established | Ask for it. An approximation is a real answer and is written with the `Approximate date.` marker. Never invent one, and never fall back to today. If the user cannot approximate it, drop that entry and say so. |
 | An owner handle appears neither in this ledger nor in `personas.md` | One line in the proposal naming the handle, and the near miss if there is one. Never a block, never a rewrite of the handle. |
 | `personas` is not configured, or its local file is missing | Check the ledger alone, with one notice saying the comparison was narrower for it. Not an error -- the file is optional prose, not a roster. |
-| `personas` is a `drive:` pointer that does not resolve, or reads back empty | **Stop** before writing, per `config-resolution.md` § Failure behavior. Show the proposal so the user keeps it, say nothing was written, and never fall back to a local file. Reached only when a run has a handle this ledger does not already know. |
+| `personas` is a `drive:` pointer that does not resolve, or reads back empty | **Stop** before writing, per `config-resolution.md` § Failure behavior. Show the lines that would have been written so the user keeps them, say nothing was written, and never fall back to a local file. Reached only when a run has a handle this ledger does not already know. |
 | Nothing in the material is worth logging | Say so and write nothing. An empty ledger is better than a padded one. |
 
 ## What this skill does not do

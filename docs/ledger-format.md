@@ -257,17 +257,17 @@ text, so every skill already reads and shows it, and an approximate date feeds
 `gaps`'s staleness arithmetic exactly like an exact one. Marking it is what
 stops a later reader taking a placeholder for a record.
 
-`Approximate date.` is one of four **body markers** that may open a body. When
+`Approximate date.` is one of five **body markers** that may open a body. When
 an entry needs more than one, they run in the fixed order
 [Body markers](#body-markers) sets out -- `Supersedes D-nnn.` first and
 `Approximate date.` last: `-- Supersedes D-002. Approximate date. <body>`.
 
 ### Body markers
 
-Four literal sentences may open a body, ahead of the body proper. Each records
+Five literal sentences may open a body, ahead of the body proper. Each records
 something about the entry that the four fields have nowhere to put.
 `Supersedes D-nnn.` and `Approximate date.` are the two this contract has
-always carried; the two below them are the newer pair.
+always carried; the three below them are the newer set.
 
 | Marker | Records | Defined in |
 |---|---|---|
