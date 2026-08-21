@@ -146,6 +146,11 @@ alone is not enough: delete the newest entry and the section's maximum drops,
 which would reissue a retired ID. The Changelog names every ID ever created, so
 it is what makes retirement stick.
 
+A compacted Changelog line is covered by that scan without special handling. A
+range writes both of its endpoints in full and its maximum is always the upper
+one, so the highest ID in `+D-004..D-017` is the `D-017` written on the line.
+Expanding first is harmless and never necessary here.
+
 **A written entry is never renumbered.** IDs record allocation order, not
 chronology, and in a backfill the two come apart: entries dated earlier than
 everything already in the file still take the next free IDs, so an old entry
@@ -192,7 +197,10 @@ approximation, instead of stalling on a date nobody can produce exactly.
 **An approximation is normalized to the first day of the coarsest unit given**,
 and the proposal says so before anything is written: "March 2026" becomes
 `2026-03-01`, "sometime in 2025" becomes `2025-01-01`. That is arithmetic on
-what the user said, not a guess at what they meant.
+what the user said, not a guess at what they meant. Because the derivation has
+to be approved rather than announced afterwards, **an approximate date is never
+written on `log`'s same-turn dictated path** -- a run that needs this marker
+proposes and waits like any other.
 
 **Nothing downstream treats the entry differently.** The marker is ordinary body
 text, so every skill already reads and shows it, and an approximate date feeds
@@ -380,7 +388,12 @@ names four IDs writes the four IDs.
 4. Any other line inside a section that does not match the grammar is
    **reported, not silently skipped**. Say which line and what is wrong, then
    continue.
-5. Never rewrite the file to normalize it. Only `log` writes.
+5. A Changelog summary item that **looks like a range and cannot be expanded**
+   -- endpoints in two different sections, or running backwards -- is reported
+   the same way, naming the line and what is wrong, then skipped. Rule 4 does
+   not reach it: the line itself is well formed, and only the item inside it is
+   not. Do not guess at what it meant, and never expand it partially.
+6. Never rewrite the file to normalize it. Only `log` writes.
 
 ## Worked example
 

@@ -7,33 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **The ledger's ordering rule is now a position, not a location.** A new entry
-  goes directly above the first entry whose date is the same as or older than
-  its own, and at the end of the section when there is none. For an entry dated
-  today -- every entry an incremental write produces -- that resolves to
-  directly under the H2 heading, so nothing about an ordinary `project-log` run
-  changes. It only differs for a backfill, where the old wording ("insert
-  directly under the H2 heading") broke newest-first on the very first entry
-  and left each session to invent its own way out
-  (`docs/ledger-format.md` § Ordering, `skills/project-log/SKILL.md` Step 7)
-  (#71).
-- **A written ledger entry is never renumbered**, stated outright rather than
-  left to be derived from the Changelog-completeness rule. IDs are allocated in
-  proposal order and carry identity; the date field carries chronology. A
-  backfill decorrelates the two on purpose, and a second backfill arriving later
-  would break any attempt to keep them aligned anyway
-  (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
-
-### Fixed
-
-- **Plugin author name corrected to "Carlos Eng"** in
-  `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
-  the plugin marketplace listing.
-
 ### Added
 
+- **`tests/check-invariants.py` now checks the backfill fixture against the
+  ledger contract**, replaying its two bulk writes through the stated insert
+  rule and its Changelog lines through the continuation-join and range
+  expansion. The insert rule is the only part of the ledger contract that is
+  arithmetic rather than judgement, which is what makes it worth checking by
+  script; every other fixture is still exercised by hand. Verified by mutation:
+  a swapped entry, a backwards range, a range crossing sections, and a
+  well-formed line filed as malformed are each caught (#71).
 - **A project's `ledger:` key now accepts an absolute path**, not only a path
   relative to the project's `path`. A project with no repository of its own
   -- work tracked across a wiki, a chat space or a ticket system -- has no
@@ -123,33 +106,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`docs/reading.md`, `skills/project-log/SKILL.md`,
   `skills/setup-project/SKILL.md`) (#67).
 
-### Fixed
-
-- **Three stale references left behind by earlier renames.**
-  `docs/reading.md` still named `project-log` as the skill that registers an
-  unregistered project; it now names `setup-project`, matching
-  `docs/config-contract.md` and `skills/project-log/SKILL.md`.
-  `templates/daikenja.yaml` still called the checkpoint-writing skill
-  `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
-  `.gitignore` now excludes `__pycache__/`, since both
-  `tests/check-invariants.py` and `scripts/prepare_release.py` leave one behind
-  in the working tree.
-- **Invariant (d)** in `tests/check-invariants.py`: `docs/upgrading.md`'s
-  version headings are well-formed semver, newest-first, and each names a
-  version `CHANGELOG.md` also records. `setup-user` applies those sections in
-  the order it reads them, so an out-of-order heading migrates in the wrong
-  sequence. The rule that matters most -- that a pull request touching
-  user-side data adds a section -- is deliberately **not** checked: whether a
-  diff changes something on a user's disk is a judgement, not a pattern, and a
-  check that guessed would either pass everything or block everything. The
-  docstring says so rather than adding a check that does not check (#67).
-- **`tests/fixtures/setup-user-upgrade.md`**, five synthetic configurations
-  with the walk each is for -- no version key, an older version, the current
-  version, a file that does not parse, and a version ahead of the installed one
-  -- plus walks of a read skill and `project-log` over the older-version file
-  (#67).
-
 ### Changed
+
+- **A Changelog summary item that looks like a range and cannot be expanded**
+  -- endpoints in two different sections, or running backwards -- is now
+  covered by `docs/ledger-format.md` § Reading rules as rule 5: report the
+  line, skip the item, never expand it partially. It had been stated only in
+  `project-catchup`'s failure table, which is a skill restating a property of
+  the format -- the layering this repo's own rules forbid, and the reason
+  Option B was rejected on #71 in the first place. The old rule 5 is now rule
+  6; nothing cross-references it by number (#71).
+- **An approximate date is never written on `project-log`'s same-turn dictated
+  path.** The marker's contract says the normalization is stated *before* the
+  write, and the dictated path has no proposal -- it writes first and shows the
+  lines afterwards. Since "some time in March" resolves to a real date only by
+  a derivation the user should approve rather than be shown, a run needing the
+  marker now proposes and waits like any other. Condition 3 of that path
+  already dropped a run for any field needing judgement; this names the case
+  (#71).
+- **The ledger's ordering rule is now a position, not a location.** A new entry
+  goes directly above the first entry whose date is the same as or older than
+  its own, and at the end of the section when there is none. For an entry dated
+  today -- every entry an incremental write produces -- that resolves to
+  directly under the H2 heading, so nothing about an ordinary `project-log` run
+  changes. It only differs for a backfill, where the old wording ("insert
+  directly under the H2 heading") broke newest-first on the very first entry
+  and left each session to invent its own way out
+  (`docs/ledger-format.md` § Ordering, `skills/project-log/SKILL.md` Step 7)
+  (#71).
+- **A written ledger entry is never renumbered**, stated outright rather than
+  left to be derived from the Changelog-completeness rule. IDs are allocated in
+  proposal order and carry identity; the date field carries chronology. A
+  backfill decorrelates the two on purpose, and a second backfill arriving later
+  would break any attempt to keep them aligned anyway
+  (`docs/ledger-format.md` § IDs, `skills/project-log/SKILL.md` Step 4) (#71).
 
 - **Upgrade notes are written as-you-go, exactly like changelog entries.** A
   pull request that changes the `daikenja.yaml` schema, the ledger grammar or
@@ -176,8 +166,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it now is not free either, so the two costs get compared rather than one being
   assumed (`.claude/reference/github-issues.md`).
 
-### Changed
-
 - **The release scripts derive `owner/repo` instead of hardcoding it.**
   `scripts/changelog_lib.py` gains a `repo_slug()` helper that reads
   `GITHUB_REPOSITORY`, which Actions always sets, and falls back to the origin
@@ -190,6 +178,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the three script files impossible to keep in step. Two of the three are now
   byte-identical between the repositories and the third differs only in
   docstrings.
+
+### Fixed
+
+- **Plugin author name corrected to "Carlos Eng"** in
+  `.claude-plugin/plugin.json`, which was showing the shortened "Carlos" in
+  the plugin marketplace listing.
+
+- **Three stale references left behind by earlier renames.**
+  `docs/reading.md` still named `project-log` as the skill that registers an
+  unregistered project; it now names `setup-project`, matching
+  `docs/config-contract.md` and `skills/project-log/SKILL.md`.
+  `templates/daikenja.yaml` still called the checkpoint-writing skill
+  `catchup`; it now says `project-catchup`, matching the 0.3.0 rename.
+  `.gitignore` now excludes `__pycache__/`, since both
+  `tests/check-invariants.py` and `scripts/prepare_release.py` leave one behind
+  in the working tree.
+- **Invariant (d)** in `tests/check-invariants.py`: `docs/upgrading.md`'s
+  version headings are well-formed semver, newest-first, and each names a
+  version `CHANGELOG.md` also records. `setup-user` applies those sections in
+  the order it reads them, so an out-of-order heading migrates in the wrong
+  sequence. The rule that matters most -- that a pull request touching
+  user-side data adds a section -- is deliberately **not** checked: whether a
+  diff changes something on a user's disk is a judgement, not a pattern, and a
+  check that guessed would either pass everything or block everything. The
+  docstring says so rather than adding a check that does not check (#67).
+- **`tests/fixtures/setup-user-upgrade.md`**, five synthetic configurations
+  with the walk each is for -- no version key, an older version, the current
+  version, a file that does not parse, and a version ahead of the installed one
+  -- plus walks of a read skill and `project-log` over the older-version file
+  (#67).
 
 ## [0.5.1] - 2026-08-20
 

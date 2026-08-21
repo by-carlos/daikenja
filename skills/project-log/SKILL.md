@@ -200,12 +200,14 @@ the run follows propose-then-wait below.
    ("log the decision that...", "add an open item...") or the statement
    classifies without judgement. If you have to weigh decision against open
    item, it is not dictated.
-3. **Every field resolves without a question.** The date is today, or a date
-   the user gave. The owner is who the user named, the user for their own
+3. **Every field resolves without a question.** The date is today, or an exact
+   date the user gave. The owner is who the user named, the user for their own
    call, else `@unassigned` -- a valid value, not a gap to ask about. The body
    is the user's statement fitted to the line grammar, not rephrased. The
    moment a clarifying question is genuinely needed, drop to
-   propose-then-wait.
+   propose-then-wait. **An approximate date drops the run too**: normalizing
+   "some time in March" to a real date is a derivation the user approves, not
+   one they are shown afterwards, per `ledger-format.md` § Approximate dates.
 4. **The operation is byte-determined.** New entries, and operations the user
    names by ID ("mark O-003 resolved", "delete D-002"). The duplicate check
    below still runs first: a hit the user did not name themselves drops the

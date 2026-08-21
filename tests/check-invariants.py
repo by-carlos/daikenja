@@ -8,6 +8,12 @@
     load time while the skill still appears to load).
 (d) docs/upgrading.md's version headings are well-formed, newest-first, and
     each names a version CHANGELOG.md also records.
+(e) tests/fixtures/ledger-backfill.md agrees with docs/ledger-format.md. The
+    fixture's two bulk writes are replayed through the insert rule the contract
+    states, and its Changelog lines through the continuation-join and range
+    expansion it defines. This is the one part of the ledger contract that is
+    arithmetic rather than judgement, so it is the one part worth checking
+    mechanically -- every other fixture in tests/ is still exercised by hand.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
@@ -39,6 +45,15 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 UPGRADING = REPO_ROOT / "docs" / "upgrading.md"
 CHANGELOG = REPO_ROOT / "CHANGELOG.md"
+BACKFILL_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "ledger-backfill.md"
+
+ENTRY_RE = re.compile(
+    r"^(- \[[ x]\] |- )(\d{4}-\d{2}-\d{2}) -- ([DO]-\d{3,}) -- (@\S+) -- (.*)$"
+)
+CHANGELOG_LINE_RE = re.compile(
+    r"^- (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z) -- (.+?) -- (.*)$"
+)
+RANGE_RE = re.compile(r"^(\+|~|-|resolved |superseded )([DO])-(\d+)\.\.([DO])-(\d+)$")
 
 BRACKET_HEADING_RE = re.compile(
     r"^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?[ \t]*$", re.MULTILINE
@@ -195,10 +210,179 @@ def check_upgrading_headings():
             )
 
 
+def fenced_blocks(lines, heading):
+    """Every fenced block under `heading`, up to the next heading of its level."""
+    level = len(heading) - len(heading.lstrip("#"))
+    try:
+        index = lines.index(heading) + 1
+    except ValueError:
+        return None
+    blocks, current = [], None
+    while index < len(lines):
+        line = lines[index]
+        if current is None and line.startswith("#"):
+            if len(line) - len(line.lstrip("#")) <= level:
+                break
+        if line.startswith("```"):
+            if current is None:
+                current = []
+            else:
+                blocks.append(current)
+                current = None
+        elif current is not None:
+            current.append(line)
+        index += 1
+    return blocks
+
+
+def insert_at_date_position(section, entry):
+    """docs/ledger-format.md § Ordering: directly above the first entry whose
+    date is the same as or older than the new one, else at the end."""
+    for index, existing in enumerate(section):
+        if existing.group(2) <= entry.group(2):
+            return section[:index] + [entry] + section[index:]
+    return section + [entry]
+
+
+def expand_summary(block, location):
+    """Join continuation lines, then expand ranges, per § Compacting a long
+    summary. Returns the changes in order, or None if an item cannot be read."""
+    joined, changes = [], []
+    for line in block:
+        match = CHANGELOG_LINE_RE.match(line)
+        if match:
+            joined.append([match.group(1), list(match.groups())[2]])
+        elif joined and line.startswith("  ") and not line.strip().startswith("- "):
+            joined[-1][1] += " " + line.strip()
+    for timestamp, summary in joined:
+        for item in [part.strip() for part in summary.split(",") if part.strip()]:
+            found = RANGE_RE.match(item)
+            if not found:
+                changes.append((timestamp, item))
+                continue
+            verb, first_section, first, last_section, last = found.groups()
+            if first_section != last_section:
+                fail("e: ledger fixture", location, f"range crosses sections: {item}")
+                return None
+            if int(first) >= int(last):
+                fail("e: ledger fixture", location, f"range does not run forwards: {item}")
+                return None
+            for number in range(int(first), int(last) + 1):
+                changes.append((timestamp, f"{verb}{first_section}-{number:03d}"))
+    return changes
+
+
+def check_ledger_backfill_fixture():
+    location = str(BACKFILL_FIXTURE)
+    if not BACKFILL_FIXTURE.exists():
+        fail("e: ledger fixture", location, "file is missing")
+        return
+
+    lines = BACKFILL_FIXTURE.read_text(encoding="utf-8").splitlines()
+    walks = [
+        ("## The starting ledger", 1),
+        ("## Walk 1: the first bulk write", 2),
+        ("## Walk 2: a second bulk write, three days later", 2),
+    ]
+    blocks = {}
+    for heading, wanted in walks:
+        found = fenced_blocks(lines, heading)
+        if found is None:
+            fail("e: ledger fixture", location, f"heading not found: {heading}")
+            return
+        if len(found) < wanted:
+            fail(
+                "e: ledger fixture",
+                location,
+                f"'{heading}' has {len(found)} fenced blocks, expected at least {wanted}",
+            )
+            return
+        blocks[heading] = found
+
+    def entries(block):
+        return [ENTRY_RE.match(line) for line in block if ENTRY_RE.match(line)]
+
+    state = {"D": [], "O": []}
+    for entry in entries(blocks["## The starting ledger"][0]):
+        state[entry.group(3)[0]].append(entry)
+
+    changes, allocated = [], set()
+    for heading, _ in walks[1:]:
+        proposal, expected = blocks[heading][0], blocks[heading][1]
+
+        for entry in entries(proposal):
+            key = entry.group(3)
+            section = state[key[0]]
+            existing = [item.group(3) for item in section]
+            if key in existing:
+                section[existing.index(key)] = entry      # edit in place
+            else:
+                if key in allocated:
+                    fail("e: ledger fixture", location, f"{key} allocated twice")
+                    return
+                allocated.add(key)
+                state[key[0]] = insert_at_date_position(section, entry)
+
+        for kind in ("D", "O"):
+            want = [e.group(0) for e in entries(expected) if e.group(3)[0] == kind]
+            if not want:
+                continue                                   # that walk shows one section
+            got = [e.group(0) for e in state[kind]]
+            if got != want:
+                fail(
+                    "e: ledger fixture",
+                    location,
+                    f"'{heading}' {kind} section does not match the insert rule.\n"
+                    f"      contract gives: {[l.split(' -- ')[1] for l in got]}\n"
+                    f"      fixture states: {[l.split(' -- ')[1] for l in want]}",
+                )
+                return
+
+        expanded = expand_summary(proposal, location)
+        if expanded is None:
+            return
+        changes += expanded
+
+    if not changes:
+        fail("e: ledger fixture", location, "no Changelog changes recovered from the walks")
+        return
+
+    present = {e.group(3) for e in state["D"] + state["O"]}
+    for _, item in changes:
+        named = re.match(r"^(?:\+|~|-|resolved |superseded )([DO]-\d+)$", item)
+        if named and named.group(1) not in present:
+            fail(
+                "e: ledger fixture",
+                location,
+                f"Changelog names {named.group(1)}, which no entry in the walks creates",
+            )
+
+    malformed = fenced_blocks(lines, "### Malformed compactions, for the failure path")
+    if not malformed:
+        fail(
+            "e: ledger fixture",
+            location,
+            "the malformed-compaction block is missing -- reading rule 5 is unexercised",
+        )
+        return
+    for line in malformed[0]:
+        match = CHANGELOG_LINE_RE.match(line)
+        if not match:
+            continue
+        found = RANGE_RE.match(match.group(3).strip())
+        if found and found.group(2) == found.group(4) and int(found.group(3)) < int(found.group(5)):
+            fail(
+                "e: ledger fixture",
+                location,
+                f"'{match.group(3)}' is filed as malformed but expands cleanly",
+            )
+
+
 def main():
     check_plugin_validate()
     check_skill_frontmatter()
     check_upgrading_headings()
+    check_ledger_backfill_fixture()
 
     if failures:
         print("Invariant checks failed:", file=sys.stderr)

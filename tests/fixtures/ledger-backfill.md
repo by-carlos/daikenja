@@ -259,8 +259,9 @@ lines. Dropping any of them is not.
 
 ### Malformed compactions, for the failure path
 
-Neither of these is repaired or guessed at. `project-catchup` reports the line
-and what is wrong with it, then continues with the rest of the delta.
+Neither of these is repaired or guessed at. Per `ledger-format.md` § Reading
+rules, rule 5, the line is reported with what is wrong, that item is skipped,
+and the rest of the delta continues. Neither is expanded partially.
 
 ```
 - 2026-08-24T11:40Z -- project-log -- +D-009..D-004

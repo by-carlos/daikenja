@@ -155,5 +155,5 @@ the ledger; this carve-out is `last_checkpoint` alone, per
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A Changelog ID resolves to no entry | One line saying so, then continue with the rest of the delta. |
-| A Changelog range is malformed -- endpoints in different sections, or running backwards | Report the line and what is wrong, then continue with the rest of the delta. Do not guess what it meant, and do not rewrite it. |
+| A Changelog range is malformed -- endpoints in different sections, or running backwards | Report the line and what is wrong, then skip that item and continue with the rest of the delta, per `ledger-format.md` § Reading rules, rule 5. Do not guess what it meant, do not expand it partially, and do not rewrite it. |
 | Project unregistered | Show the delta from the ledger on disk (it still resolves per "ledger on disk wins"), but say the checkpoint cannot be saved until the project is registered. |
