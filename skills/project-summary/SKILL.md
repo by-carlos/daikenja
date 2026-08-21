@@ -18,7 +18,8 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession,
-  resolution tails.
+  resolution tails, and § Body markers for relationships and imposed
+  decisions.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The overview in Step 3 follows it.
 
@@ -44,6 +45,11 @@ carrying `-> superseded by D-nnn`, since the entry that supersedes it is
 already in the list and says so in its own body. State the count of
 superseded decisions in one line rather than showing dead ones: "2 earlier
 decisions were superseded; ask `/daikenja:project-decisions` for the history."
+A decision carrying `Imposed.` is reported as imposed, not as an ordinary
+one -- name who imposed it, per `ledger-format.md` § A decision imposed from
+outside. A `Blocked by <id>.` or `Contradicts <id>.` marker on an entry shown
+here is carried into its reworded line, not dropped -- this overview reports
+what the marker says, not the relationship scan `project-decisions` performs.
 
 **Open items.** Two groups: open (`- [ ] `) and resolved (`- [x] `). Lead with
 open, since that is what someone new needs to act on. For resolved, a count is
@@ -104,3 +110,4 @@ best-effort default location.
 | The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |
+| A `Blocked by` or `Contradicts` marker names an ID with no entry | Report it -- which entry carries it, which ID it names -- then continue, per `ledger-format.md` § Reading rules, rule 6. |
