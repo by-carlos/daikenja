@@ -359,6 +359,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Four skills handled a missing local `writing_style`/`personas` file four
+  different ways, all citing the same contract.** `docs/config-resolution.md`'s
+  failure table said a pointed-at local prose file that's missing gets "one
+  notice naming the path, then continue" -- but `compose` was silent for
+  `personas` while noticing for `writing_style`, `preflight` was silent by
+  design ("the Reviewers: line already names what ran"), and
+  `learn-voice`/`remember-persona` retried at the tool's default path instead,
+  an undocumented redirect that risked silently splitting a user's prose
+  across two files. The contract now distinguishes an absent key (unchanged:
+  default path, scaffolded on first use) from a *configured* pointer that
+  fails to resolve, and states two things it did not before: a skill may
+  substitute an equivalent disclosure already required elsewhere in its own
+  report for the standalone notice (`compose` and `preflight` now cite this
+  instead of restating it), and a writer skill facing its own unresolvable
+  local pointer stops -- write nothing, never redirect to the default path --
+  exactly as it already does for a broken Drive pointer. `learn-voice` and
+  `remember-persona`'s behavior changes; `compose` and `preflight`'s wording is
+  clarified to match what they already did (#157).
 - **The owner-handles fixture contradicted itself about whether a new handle
   holds up a dictated write.** `tests/fixtures/owner-handles.md` walks 3 and 6
   said the write "proceeds on approval" and walk 7 inherited that framing,

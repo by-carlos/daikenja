@@ -394,8 +394,8 @@ missing thing is the task itself -- the same rule every Daikenja skill follows.
 | The samples include messages Daikenja drafted | Ask for them to be excluded. Deriving from them describes the default voice, not the user. |
 | `daikenja.yaml` absent | One notice, then continue on the default path (`~/.claude/daikenja/writing-style.md`). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| `profile.writing_style` names a local path that does not resolve | Treat as an absent key, per the contract. One notice naming the path, then use the default path. |
-| The local file does not exist | Nothing to diff. The approved write creates it, and its parent directory. |
+| `profile.writing_style` names a local path that does not resolve | Not the absent-key case above -- the user pointed here specifically. Per `config-resolution.md` § Failure behavior, one notice naming the path, then **stop**: write nothing, and show the derived proposal so the user keeps it, same as the Drive-failure row below. Never write it to the default path instead. |
+| The local file does not exist, and no custom `profile.writing_style` pointer was given (or the config is entirely absent) | Nothing to diff. The approved write creates it, and its parent directory. |
 | The local file is still the shipped template, byte for byte | No user content. Propose the whole file without a diff, and say why. |
 | The local file has content | Diff it, always. Never overwrite without showing what goes. |
 | `profile.writing_style` names a Drive file that resolves | Read it with the download tool and write by replacement, per Step 7. |
