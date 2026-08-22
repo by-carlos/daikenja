@@ -80,6 +80,20 @@ stage's acceptance checks can be re-run later against the same inputs.
   rule 6 has something to report. The walks pin today to 2026-09-15 and the
   threshold to 21 days, so the `project-gaps` output is exact rather than
   drifting with the calendar.
+- [`fixtures/dictated-log-requests.md`](fixtures/dictated-log-requests.md) --
+  four scenarios walking `project-log`'s same-turn dictated-write path against
+  `sample-ledger.md`: a clean write, an unnamed owner that must default to
+  `@unassigned` rather than asking, a duplicate that drops to
+  propose-then-wait, and a pasted thread whose two ambiguities land in one
+  "Questions before I write" round instead of being asked one at a time.
+- [`fixtures/sources-ledger.md`](fixtures/sources-ledger.md) -- a `meridian`
+  compliance-programme ledger carrying a Sources section, plus a
+  connector-report table, exercising `docs/ledger-format.md` § Section:
+  Sources against `project-sources`, `project-summary`, `project-catchup` and
+  `project-log`. Pins four cases: a fully-populated source, one with no
+  `modified:` baseline (read date only, never "moved" or "unchanged"), one
+  that moved since its recorded read, and the no-Sources-section case, which
+  is covered instead by `sample-ledger.md`. Walks assume today is 2026-09-15.
 
 ### `meeting-review`
 
@@ -166,6 +180,13 @@ last released copy of the skill, so a result obtained any other way is void.
 
 ### `self-review`
 
+Walking any fixture below against a real session needs a scratch
+`daikenja.yaml`: `profile.name`'s first token must match the fixture's
+invoker (`rimuru`), and `profile.norms_doc` must point at
+`fixtures/self-review-norms.md`. Run it against your live configuration
+instead and the walk either stops on "which participant are you" or reads
+your own norms document in place of the fixture's.
+
 - [`fixtures/self-review-norms.md`](fixtures/self-review-norms.md) -- a
   synthetic Quill-team norms document covering direct-question answering,
   stating what has been verified, not committing another team's dates,
@@ -233,6 +254,14 @@ last released copy of the skill, so a result obtained any other way is void.
   The two failures it exists to catch are silent: a ledger resolved against
   whichever repository the user was standing in, and a bad key answered from
   the current directory.
+- [`fixtures/ledger-location.md`](fixtures/ledger-location.md) -- five
+  `daikenja.yaml` configurations walking `ledger:` key resolution: no key, a
+  relative key, an absolute key outside the project root, an absolute key that
+  does not exist on this machine, and a registered project that resolves to
+  the user's home directory. Pins that an authoritative `ledger:` key never
+  falls back to the default path even when it cannot be written, and that the
+  home-directory refusal is a distinct check from "is this a registered
+  project?", not a collapse of the two.
 
 ### `learn-voice`
 
