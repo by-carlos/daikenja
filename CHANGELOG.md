@@ -371,6 +371,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Two walks of the owner-handles fixture read as the same case.** Once #156
+  put walk 3 on the same-turn path, walk 8's heading -- "a dictated write
+  carrying a new handle" -- described walk 3 just as accurately, leaving
+  nothing in the headings to say why the file has both. Walk 8 is now titled
+  for the job only it does, "why the notice does not demote a dictated run";
+  its body and expectations are unchanged. The fixture's `Depends on:` line
+  also gains `config-resolution.md "Failure behavior"`, the rule walk 7's stop
+  actually rests on and the one section its expectation cites in prose but the
+  header did not name (#156).
 - **`preflight` asked the sender to supply facts that either weren't missing or
   weren't needed.** Step 3 treated every failing substance check as a content
   gap -- "the missing piece is a fact only the user has" -- but two of the six
