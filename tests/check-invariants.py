@@ -22,6 +22,14 @@
     file, and the quoted title matches a `#`/`##`/`###` heading in that file,
     verbatim after stripping the leading `#`s and whitespace. A fixture with no
     `Depends on:` line at all is not an error here -- only a malformed one is.
+(i) Every `Depends-on (reverse index ...):` block found in docs/*.md resolves:
+    each `§ Heading -- name "Section Title"` entry names a real heading in the
+    doc's own file, a real skills/*/SKILL.md file, and a quoted title matching
+    a `#`/`##`/`###` heading in that skill file. This is the reverse of (h) --
+    a doc names the skill sections that cite one of its own headings, instead
+    of a fixture naming the doc/skill sections it exercises -- and reuses the
+    same `name "Section Title"` pair grammar. A doc with no `Depends-on:` block
+    at all is not an error here -- only a malformed one is.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
@@ -76,6 +84,11 @@ SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 DEPENDS_ON_RE = re.compile(r"^Depends on: (.+)$", re.MULTILINE)
 DEPENDS_ITEM_RE = re.compile(r'([A-Za-z0-9_.-]+)\s+"([^"]+)"')
 HEADING_RE = re.compile(r"^(#{1,3})\s+(.+?)\s*$", re.MULTILINE)
+
+REVERSE_DEPENDS_HEADER_RE = re.compile(
+    r"^Depends-on \(reverse index[\s\S]*?\):[ \t]*\n", re.MULTILINE
+)
+REVERSE_DEPENDS_ITEM_RE = re.compile(r"^- § (.+?) -- (.+)$")
 
 failures = []
 
@@ -452,6 +465,85 @@ def check_fixture_dependencies():
                 )
 
 
+def check_reference_dependencies():
+    if not DOCS_DIR.is_dir():
+        fail("i: reference dependencies", str(DOCS_DIR), "directory is missing")
+        return
+
+    heading_cache = {}
+
+    def headings_for(path):
+        if path not in heading_cache:
+            if path.is_file():
+                text = path.read_text(encoding="utf-8")
+                heading_cache[path] = {
+                    heading.strip() for _, heading in HEADING_RE.findall(text)
+                }
+            else:
+                heading_cache[path] = None
+        return heading_cache[path]
+
+    for doc in sorted(DOCS_DIR.glob("*.md")):
+        text = doc.read_text(encoding="utf-8")
+        header_match = REVERSE_DEPENDS_HEADER_RE.search(text)
+        if not header_match:
+            continue  # not every doc has one -- that is not an error
+
+        doc_headings = headings_for(doc)
+        for line in text[header_match.end():].splitlines():
+            if line.strip() == "":
+                break
+
+            item_match = REVERSE_DEPENDS_ITEM_RE.match(line)
+            if not item_match:
+                fail(
+                    "i: reference dependencies",
+                    str(doc),
+                    f"'Depends-on:' block has a line that doesn't parse: {line!r}",
+                )
+                continue
+
+            heading, pairs_text = item_match.groups()
+            heading = heading.strip()
+            if heading not in doc_headings:
+                fail(
+                    "i: reference dependencies",
+                    str(doc),
+                    f"'Depends-on:' indexes '§ {heading}', which has no matching "
+                    f"#/##/### heading in {doc.name} itself",
+                )
+
+            pairs = DEPENDS_ITEM_RE.findall(pairs_text)
+            if not pairs:
+                fail(
+                    "i: reference dependencies",
+                    str(doc),
+                    f"'§ {heading}' entry has no 'name \"Section Title\"' pairs "
+                    f"parsed: {pairs_text!r}",
+                )
+                continue
+
+            for skill, title in pairs:
+                target = SKILLS_DIR / skill / "SKILL.md"
+                skill_headings = headings_for(target)
+                if skill_headings is None:
+                    fail(
+                        "i: reference dependencies",
+                        str(doc),
+                        f"'§ {heading}' names skill '{skill}', which does not "
+                        f"resolve to {target}",
+                    )
+                    continue
+
+                if title not in skill_headings:
+                    fail(
+                        "i: reference dependencies",
+                        str(doc),
+                        f"'§ {heading}' quotes \"{title}\" for '{skill}', which "
+                        f"has no matching #/##/### heading in {target}",
+                    )
+
+
 def check_claude_ai_build():
     if not BUILD_SCRIPT.is_file():
         fail("f: claude.ai build", str(BUILD_SCRIPT), "script is missing")
@@ -514,6 +606,7 @@ def main():
     check_claude_ai_build()
     check_fixture_inventory()
     check_fixture_dependencies()
+    check_reference_dependencies()
 
     if failures:
         print("Invariant checks failed:", file=sys.stderr)
