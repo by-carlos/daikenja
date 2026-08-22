@@ -19,9 +19,11 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Open items,
-  and § Body markers for the `Blocked by` marker Step 4 reports alongside an
-  item.
+- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Section: Open items, §
+  Body markers, § Relationships between entries, § A decision imposed from
+  outside, § Section: Decisions and § Reading rules for skills -- the
+  checkbox/`@unassigned`/resolution grammar, the one-hop blocker chase, and
+  why an unowned imposed decision is excluded.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- what
   `stale_after_days` measures.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user

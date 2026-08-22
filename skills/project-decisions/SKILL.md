@@ -19,8 +19,11 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession,
-  and § Body markers for relationships and imposed decisions.
+- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § IDs, § Body markers, §
+  Relationships between entries, § A decision imposed from outside, §
+  Section: Decisions, § Section: Open items and § Reading rules for skills --
+  exact-ID matching, the supersession tail, the one-hop relationship scan, and
+  the reopen-vs-comply rule for an imposed decision.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The result in Step 6 follows it.
 
