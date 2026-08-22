@@ -28,7 +28,7 @@ speaker recorded nowhere, and a speaker two personas could both be.
 The walks are run by hand; this repo has no test runner. Each states the user's
 message and what the run must and must not do.
 
-Depends on: project-log "Say when a handle is new", project-log "The same-turn path for dictated facts", meeting-review "Step 4: attribute", config-resolution.md "Resolving `writing_style` and `personas`"
+Depends on: project-log "Say when a handle is new", project-log "The same-turn path for dictated facts", meeting-review "Step 4: attribute", config-resolution.md "Resolving `writing_style` and `personas`", config-resolution.md "Failure behavior"
 
 ---
 
@@ -205,7 +205,7 @@ pointer writes normally, because the handle never leaves the ledger check. The
 stop bites only on a run that both has an unfamiliar handle and cannot read the
 file that would settle it.
 
-## Walk 8: a dictated write carrying a new handle
+## Walk 8: why the notice does not demote a dictated run
 
 User message:
 
