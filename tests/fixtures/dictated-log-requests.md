@@ -5,6 +5,8 @@ Synthetic requests for walking `project-log`'s same-turn path by hand, against
 `example.com` only. Each scenario states the user's message and the path the
 skill must take.
 
+Depends on: project-log "The same-turn path for dictated facts", project-log "Check for duplicates first", project-log "Classify before you write"
+
 ```yaml
 profile:
   name: rimuru

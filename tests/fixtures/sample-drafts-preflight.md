@@ -1,6 +1,8 @@
 Synthetic drafts for `preflight` acceptance. Invented people and project.
 Not real work content.
 
+Depends on: preflight "Step 3: cycle 0 -- the substance checks", substance-checks.md "The six checks"
+
 ## Draft 1 -- should pass
 
 To: diablo

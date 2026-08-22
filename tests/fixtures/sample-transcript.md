@@ -18,6 +18,8 @@ at the same time:
 - the mess: three speaker labels for one person, the same point made three
   times, a side conversation, and an inaudible passage
 
+Depends on: meeting-review "Step 2: reduce it in two passes", meeting-review "Step 3: classify", meeting-review "Step 4: attribute"
+
 ---
 
 **Harbor rate limiter -- rollout sync**

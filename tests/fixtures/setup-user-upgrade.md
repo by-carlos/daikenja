@@ -17,6 +17,8 @@ There is no test runner. Walk `setup-user` by hand against each configuration
 and compare against the expected result stated under it.
 -->
 
+Depends on: setup-user "Step 2: the upgrade branch", setup-user "Proposing the upgrade", config-versioning.md "The mismatch notice"
+
 ## Config A -- no version key
 
 The file every user who installed before the key existed will have. This is the

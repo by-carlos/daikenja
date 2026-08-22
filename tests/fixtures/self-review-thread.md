@@ -9,6 +9,8 @@ severity tiers, including one that misled others into acting on a wrong fact,
 and enough of them in total to exercise the findings cap and the parked
 remainder.
 
+Depends on: self-review "Step 4: build each finding", self-review "Step 6: order and cap"
+
 ---
 
 **#quill-search** -- 14 messages, 2026-08-11 09-14 to 2026-08-11 18-02

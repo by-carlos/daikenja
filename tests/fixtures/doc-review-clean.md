@@ -3,6 +3,8 @@
 This runbook explains how the Beacon telemetry service is rolled out to a new
 region, and what to do if something goes wrong.
 
+Depends on: doc-review "Step 2: run the checklist"
+
 ## Background
 
 Beacon collects usage metrics from every service. It is rolled out one region

@@ -13,6 +13,8 @@ when something is left alone.
 The walks are run by hand -- this repo has no test runner. Walk 1 and Walk 2 are
 `project-log` runs entered from `setup-project`; Walk 3 is `project-catchup`.
 
+Depends on: ledger-format.md "Ordering", ledger-format.md "Compacting a long summary", project-catchup "Step 3: compute the delta"
+
 ---
 
 ## The starting ledger

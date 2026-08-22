@@ -22,6 +22,8 @@ mechanism as `docs/ledger-format.md`'s worked example -- so a skill that
 reports the two mismatches above is not also flagging a pair that is fine.
 -->
 
+Depends on: ledger-format.md "Section: Decisions", project-decisions "Step 4: follow the supersession chain"
+
 ## Decisions
 
 - 2026-08-15 -- D-006 -- @benimaru -- Supersedes D-003. Deploy the ingest worker as three replicas, not one.

@@ -13,6 +13,8 @@ The `O-001` continuation line is NOT a defect. It is a legal continuation and
 must never be reported as malformed.
 -->
 
+Depends on: ledger-format.md "Entry grammar", ledger-format.md "Reading rules for skills", project-log "Step 4: read what is already there"
+
 ## Decisions
 
 - 2026-08-14 -- D-002 -- Ramp the rollout over three days.

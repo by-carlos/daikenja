@@ -10,6 +10,8 @@ register the project already keeps, a source with no recoverable date, a
 proposal nobody agreed to, a standing policy that reads like one of the project
 decisions without being the same fact, and a source no connector can reach.
 
+Depends on: setup-project "Step 2: register the project", setup-project "Step 4c: propose in tranches, through `project-log`"
+
 ---
 
 ## The starting `daikenja.yaml`

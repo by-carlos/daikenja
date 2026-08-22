@@ -8,6 +8,8 @@ Built to exercise the `thread` -> `compose` handoff: a request with a real
 deadline, a position that pushes back on it, and a runbook link that must
 survive into the reply untouched.
 
+Depends on: thread "Step 5: hand off", rewrite-rules.md "Copy these across untouched"
+
 ---
 
 **#beacon-migration** -- 4 messages

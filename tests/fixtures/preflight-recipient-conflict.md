@@ -5,6 +5,8 @@ Two real recipients want incompatible things from one message. A third
 conflict, between two archetypes, is seeded as a control and must not be
 reported.
 
+Depends on: preflight "Conflicts", preflight "A finding is resolved only where Step 7 changed something", preflight "Step 9: learned personas"
+
 ## What the user says at invocation
 
 "This goes to both Milim and Gabiru. Milim is the director who signs off on the slip -- she

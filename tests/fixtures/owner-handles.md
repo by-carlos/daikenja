@@ -28,6 +28,8 @@ speaker recorded nowhere, and a speaker two personas could both be.
 The walks are run by hand; this repo has no test runner. Each states the user's
 message and what the run must and must not do.
 
+Depends on: project-log "Say when a handle is new", project-log "The same-turn path for dictated facts", meeting-review "Step 4: attribute", config-resolution.md "Resolving `writing_style` and `personas`"
+
 ---
 
 ## The personas file these walks assume
