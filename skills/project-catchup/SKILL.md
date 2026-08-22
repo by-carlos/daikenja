@@ -19,8 +19,12 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, Changelog
-  grammar, and § Body markers for relationships and imposed decisions.
+- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § IDs, § Body markers, §
+  Section: Decisions, § Section: Open items, § Section: Context links, §
+  Section: Sources, § Section: Changelog, § Compacting a long summary and §
+  Reading rules for skills -- ID range expansion, the markers this skill
+  carries through unchanged, each section's own grammar for looking up a
+  changed ID's current text, and the delta-reporting rules.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes --
   `last_checkpoint`'s format.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` -- who writes what.

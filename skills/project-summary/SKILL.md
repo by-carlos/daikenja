@@ -17,9 +17,11 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
   mechanism every read skill follows.
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` -- entry grammar, supersession,
-  resolution tails, and § Body markers for relationships and imposed
-  decisions.
+- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Section: Decisions, §
+  Section: Open items, § Section: Context links, § Section: Sources, §
+  Body markers and § Reading rules for skills -- this is the one read skill
+  that genuinely wants every section's own grammar, plus the markers it
+  carries through unresolved.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. The overview in Step 3 follows it.
 
