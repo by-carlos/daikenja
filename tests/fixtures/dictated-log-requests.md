@@ -53,6 +53,8 @@ User message: a pasted thread --
 > **gobta:** ok let's see
 
 Expected: pasted material, so propose-then-wait. Two questions exist (is the
-canary hold agreed or still open? should the budget page become a context
-link?) and both land in one "Questions before I write" block in the same
-round. If the user then edits the proposal, neither question is asked again.
+canary hold agreed or still open? the budget page needs a link, but the
+material does not say whether the project is tracked from it -- source or
+context link?) and both land in one "Questions before I write" block in the
+same round. If the user then edits the proposal, neither question is asked
+again.

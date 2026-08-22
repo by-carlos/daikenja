@@ -359,6 +359,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`project-log`'s classify step had no test for telling a source from a
+  context link.** Since the ledger learned to track source documents, a link
+  in pasted material has two possible homes, but the classify bullet only
+  named the source case and the distinguishing rule lived unreferenced in
+  `docs/ledger-format.md`. Two runs could classify the same link differently
+  depending on which document the session happened to weight. The bullet now
+  states the test inline -- tracked from it and staleness matters: a source;
+  a useful address: a context link; the material doesn't say: ask -- and
+  `tests/fixtures/sample-thread.md` and `dictated-log-requests.md` scenario 4
+  now name the choice and its resolution (#155).
 - **`project-log`'s missing-section stop reported only the first defect it
   found.** A ledger missing one of the four required H2 sections stops the
   run, but the failure table's wording said only to name the missing section

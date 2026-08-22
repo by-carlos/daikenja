@@ -275,7 +275,10 @@ reads.
 - A **question is not a decision**, and a **proposal is not a decision**. If the
   material shows a proposal and no agreement, that is an open item at most.
 - A **document to track is a source**, not a decision and not an open item --
-  it goes in the Sources section per § Record a source below.
+  it goes in the Sources section per § Record a source below. The test: tracked
+  from it and staleness matters, it is a source; a useful address, it is a
+  context link. When the material does not say which, ask -- it is a field
+  needing judgement, so the run proposes rather than dictates.
 
 When you cannot tell, ask -- but never serially. Collect every clarifying
 question the run needs -- classification, owners, links, anything -- after
