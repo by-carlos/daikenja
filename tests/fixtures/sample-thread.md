@@ -7,6 +7,11 @@ The thread is built to exercise the classification rules: one clear decision, on
 proposal nobody agreed to, one open question, one task with no owner, and one
 link worth keeping.
 
+Starting ledger: none -- this is harbor's first log, so `project-log` scaffolds
+one. No `personas.md` is configured, so every handle logged (`@diablo`,
+`@benimaru`, `@souei`) is new, and the proposal's `New owner handles:` block
+lists all three, each noting no personas.md is configured.
+
 ---
 
 **#harbor-rollout** -- 7 messages

@@ -5,6 +5,11 @@ Synthetic requests for walking `project-log`'s same-turn path by hand, against
 `example.com` only. Each scenario states the user's message and the path the
 skill must take.
 
+```yaml
+profile:
+  name: rimuru
+```
+
 ## Scenario 1: clean dictated write (same-turn path)
 
 User message:

@@ -12,7 +12,8 @@ at a time so a bad region can be paused without affecting the rest.
 
 Traffic in a new region ramps in three steps: 5%, then 25%, then 100%, each
 held for at least one day before moving to the next step. This rule was set on
-2026-07-20 by @diablo and applies to every region rollout.
+2026-07-20 by @diablo, who reviews and signs off on the rollout plan for every
+region before it starts, rejecting one that skips a step.
 
 ## Rollback
 
