@@ -14,6 +14,9 @@
     expansion it defines. This is the one part of the ledger contract that is
     arithmetic rather than judgement, so it is the one part worth checking
     mechanically -- every other fixture in tests/ is still exercised by hand.
+(f) `python scripts/build-claude-ai-skills.py` exits zero.
+(g) The set of files under tests/fixtures/ equals the set of fixture names
+    tests/README.md mentions, reported in both directions.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
@@ -46,6 +49,9 @@ SKILLS_DIR = REPO_ROOT / "skills"
 UPGRADING = REPO_ROOT / "docs" / "upgrading.md"
 CHANGELOG = REPO_ROOT / "CHANGELOG.md"
 BACKFILL_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "ledger-backfill.md"
+BUILD_SCRIPT = REPO_ROOT / "scripts" / "build-claude-ai-skills.py"
+FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
+FIXTURES_README = REPO_ROOT / "tests" / "README.md"
 
 ENTRY_RE = re.compile(
     r"^(- \[[ x]\] |- )(\d{4}-\d{2}-\d{2}) -- ([DO]-\d{3,}) -- (@\S+) -- (.*)$"
@@ -54,6 +60,7 @@ CHANGELOG_LINE_RE = re.compile(
     r"^- (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z) -- (.+?) -- (.*)$"
 )
 RANGE_RE = re.compile(r"^(\+|~|-|resolved |superseded )([DO])-(\d+)\.\.([DO])-(\d+)$")
+FIXTURE_REF_RE = re.compile(r"fixtures/([a-zA-Z0-9_-]+\.md)")
 
 BRACKET_HEADING_RE = re.compile(
     r"^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?[ \t]*$", re.MULTILINE
@@ -378,11 +385,67 @@ def check_ledger_backfill_fixture():
             )
 
 
+def check_claude_ai_build():
+    if not BUILD_SCRIPT.is_file():
+        fail("f: claude.ai build", str(BUILD_SCRIPT), "script is missing")
+        return
+
+    try:
+        result = subprocess.run(
+            [sys.executable, str(BUILD_SCRIPT)],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    except OSError as exc:
+        fail("f: claude.ai build", str(BUILD_SCRIPT), f"could not run: {exc}")
+        return
+
+    if result.returncode != 0:
+        fail(
+            "f: claude.ai build",
+            str(BUILD_SCRIPT),
+            f"exited {result.returncode}\n{result.stdout}\n{result.stderr}",
+        )
+
+
+def check_fixture_inventory():
+    if not FIXTURES_README.exists():
+        fail("g: fixture inventory", str(FIXTURES_README), "file is missing")
+        return
+    if not FIXTURES_DIR.is_dir():
+        fail("g: fixture inventory", str(FIXTURES_DIR), "directory is missing")
+        return
+
+    on_disk = {path.name for path in FIXTURES_DIR.glob("*.md")}
+    named = set(FIXTURE_REF_RE.findall(FIXTURES_README.read_text(encoding="utf-8")))
+
+    undocumented = sorted(on_disk - named)
+    if undocumented:
+        fail(
+            "g: fixture inventory",
+            str(FIXTURES_README),
+            f"fixtures on disk but not named in tests/README.md: {undocumented}",
+        )
+
+    nonexistent = sorted(named - on_disk)
+    if nonexistent:
+        fail(
+            "g: fixture inventory",
+            str(FIXTURES_DIR),
+            f"tests/README.md names fixtures that do not exist on disk: {nonexistent}",
+        )
+
+
 def main():
     check_plugin_validate()
     check_skill_frontmatter()
     check_upgrading_headings()
     check_ledger_backfill_fixture()
+    check_claude_ai_build()
+    check_fixture_inventory()
 
     if failures:
         print("Invariant checks failed:", file=sys.stderr)

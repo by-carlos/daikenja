@@ -6,16 +6,18 @@ stage's acceptance checks can be re-run later against the same inputs.
 
 - [`check-invariants.py`](check-invariants.py) -- enforces the invariants
   every v2 build stage checked by hand: `claude plugin validate .` exits
-  clean, every `skills/*/SKILL.md` frontmatter block parses as YAML with
-  a `name` matching its directory and a `description`, and
-  `docs/upgrading.md`'s version headings are well-formed, newest-first and
-  each named in `CHANGELOG.md` too, and `fixtures/ledger-backfill.md` agrees
-  with `docs/ledger-format.md` -- its two bulk writes replayed through the
-  stated insert rule, and its Changelog lines through the continuation-join
-  and range expansion. That last one is the only fixture checked by script
-  rather than by hand, because the ordering rule is the only part of the
-  ledger contract that is arithmetic instead of judgement. Requires `pyyaml`
-  (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
+  clean; every `skills/*/SKILL.md` frontmatter block parses as YAML with
+  a `name` matching its directory and a `description`; `docs/upgrading.md`'s
+  version headings are well-formed, newest-first and each named in
+  `CHANGELOG.md` too; `fixtures/ledger-backfill.md` agrees with
+  `docs/ledger-format.md` -- its two bulk writes replayed through the stated
+  insert rule, and its Changelog lines through the continuation-join and
+  range expansion, the only fixture checked by script rather than by hand,
+  because the ordering rule is the only part of the ledger contract that is
+  arithmetic instead of judgement; `scripts/build-claude-ai-skills.py` exits
+  clean; and this directory's own index agrees with what's on disk -- every
+  file under `fixtures/` is named in this README and vice versa. Requires
+  `pyyaml` (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
   `python tests/check-invariants.py`; CI runs it on every push and pull
   request via `.github/workflows/ci.yml`.
 
