@@ -142,10 +142,31 @@ happened: "Already answered: not checked -- no thread or ledger was available
 to check against." That is not a pass and not a fail; it is an honest gap,
 reported alongside the other five.
 
-**A failing check does not stop the loop.** It is a content gap by definition --
-the missing piece is a fact only the user has -- so it joins the questions list
-in Step 10 and the loop carries on. Never invent the missing piece to turn a fail
-into a pass.
+**A failing check does not stop the loop, but not every failure is a content
+gap.** Where it lands depends on what closing it actually needs -- checks 4
+and 6 fail in ways the other four cannot.
+
+- **Checks 1, 2, 3 and 5** fail only when the message needs a fact the sender
+  has not stated -- background, a prior attempt, the options on the table, or
+  the right person to ask. Nothing expressible from the draft alone supplies
+  any of those, so a failure here is always a content gap: it joins the
+  questions list in Step 10 and the loop carries on. Never invent the missing
+  piece to turn a fail into a pass.
+- **Check 4, one specific question**, fails two different ways and they are
+  not the same kind of gap. A message with no ask at all ("any thoughts?")
+  needs the sender to say what they actually want -- a content gap, routed
+  like the four above. A message carrying several asks at once needs no new
+  fact: splitting or labelling what is already there so each reader can tell
+  which part is theirs is expressible from the draft alone, so fix it
+  directly in Step 7 like any other wording fix and report it there, never in
+  the questions list.
+- **Check 6, already answered**, fails by finding an answer, not by missing
+  one -- the opposite of every check above. Report the pre-existing answer,
+  named topic-first with its decision ID in parentheses when it comes from
+  the ledger (`docs/response-format.md` § Entries are named topic-first), and
+  ask only whether the draft should defer to it. That is a question about
+  which way to resolve a known answer, not a fact gap, and it is reported
+  as such rather than folded into the questions list as an unstated fact.
 
 ## Step 4: select the reviewers
 
@@ -468,6 +489,8 @@ director), S (named in the draft)
 
 Reviewed: dispatched, each reviewer reading cold.
 Applied: 4 wording fixes across 2 cycles.
+Already answered: the events-table schema freeze (D-003) says hold off until
+the rollout completes. Defer to it?
 Conflict: R needs the rollback detail kept and M needs this under ten lines.
 No fix serves both -- this may want to be two messages.
 Learned: added S to ~/.claude/daikenja/personas.md.
@@ -475,6 +498,15 @@ Learned: added S to ~/.claude/daikenja/personas.md.
 
 The verdict line is `ready to send` or `needs <n> facts from you before it
 goes`. Nothing else.
+
+**`Already answered:` reports a check-6 hit, not a content gap.** Name the
+pre-existing answer topic-first with its ID in parentheses when it comes from
+the ledger, state what it settled, and ask only whether the draft should
+defer to it. It never joins the `Needs you` list and never counts toward the
+verdict's fact count -- the sender is not missing a fact, they are being
+asked which way to resolve one they already have. One line per hit, reported
+alongside `Conflict:` for the same reason that line is: it is something only
+the user can settle, but it is not an unstated fact.
 
 **`Learned:` has a counterpart that says nothing was written.** Where Step 9
 routed someone and `remember-persona` offered the entry instead of writing it,
@@ -620,6 +652,9 @@ survived, because it did not.
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-resolution.md`. |
 | No ledger at the resolved path | Not fatal. Report "already answered" as not checked and continue. |
+| Check 4 fails because the message carries several asks at once | Split or label them directly in Step 7, like any other wording fix. Report it in `Applied:`, never in `Needs you`. |
+| Check 4 fails because there is no specific ask at all | Content gap. The sender has to say what they want; nothing in the draft supplies it. |
+| Check 6 finds a pre-existing answer | Report it topic-first with its ID in `Already answered:`, and ask only whether to defer. Never add it to `Needs you`, and never count it toward the verdict's fact count. |
 | More addressees than persona slots | Direct beats cc'd. Name who was dropped. |
 | Goal cannot be determined from the input | Ask the one question in Step 2. Do not guess. |
 | The user asks for the message to be sent | Decline. This skill has no send action. |

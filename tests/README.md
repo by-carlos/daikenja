@@ -124,7 +124,9 @@ stage's acceptance checks can be re-run later against the same inputs.
   owner and a dated ask that should pass; one with no context and no
   specific ask; and one asking a question already settled by
   `sample-ledger.md`'s `D-003` schema-freeze decision. Exercises the
-  verdict, not the wording, including the check against a supplied ledger.
+  verdict, not the wording, including the check against a supplied ledger --
+  the third draft must come back naming `D-003` topic-first and asking only
+  whether to defer to it, never as a missing fact.
 
 The three below exercise the review loop rather than the verdict, and are
 only meaningful under `claude --plugin-dir .` -- a normal session loads the
@@ -139,7 +141,11 @@ last released copy of the skill, so a result obtained any other way is void.
   -- a cutover message addressed to a director who stops reading after ten
   lines and to the engineer who has to run the five-step rollback, with the
   inline briefs that make both of them real recipients. No fix serves both,
-  so the conflict is reported and not resolved. A third conflict, between
+  so the conflict is reported and not resolved. A second, seeded conflict --
+  the closing line asking both of them different things at once -- is
+  substance check 4's compound-ask failure rather than a recipient conflict:
+  splitting the line is a wording fix `preflight` applies directly, and it
+  must not surface as a second conflict. A third conflict, between
   the busy reader and the fact-checker over an error code neither of them
   receives, is seeded as a control and must stay unreported. This is also the
   draft that catches a cycle-2 reviewer closing a finding on untouched text:
