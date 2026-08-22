@@ -10,7 +10,7 @@ live and how a pointer resolves to one.
 | `daikenja.yaml` -- `daikenja_version` | `setup-user` | Stamped on every successful run, in the same approved write as whatever else that run changed. No other skill writes it, and no skill writes it because it noticed a mismatch. See [Version marker and upgrades](config-versioning.md#version-marker-and-upgrades). |
 | `daikenja.yaml` -- a project's entry under `projects:` | `setup-project` | Only on user approval, and only the entry matching the directory it runs in, or an entry the user names to add this directory to. Registration is idempotent: an exact normalized-path match anywhere in the entry's `paths` leaves the existing entry and its key alone. Never writes `last_checkpoint`. |
 | `daikenja.yaml` -- `last_checkpoint` | `project-catchup` | Proposes advancing it after reporting; writes on approval. |
-| `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. |
+| `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists at the resolved **default** path, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the default file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. This scaffold never runs against a path the user named explicitly in `profile.personas` -- see the note below on a configured pointer that fails to resolve. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. The append is silent only where the user described the person with nothing pasted; a description that arrived with pasted material is offered once and written on a yes. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` -- creating the file | `setup-user` on absence | Copies the blank template if and only if no file exists, and never inspects content. Same rule as `personas.md`. |
 | `writing-style.md` -- content | the user by hand, and `learn-voice` on approval | `learn-voice` derives a proposal from writing samples the user supplies, shows the exact content it would write -- as a diff whenever the file already holds anything -- and writes only what the user approves. Nothing else edits it. |
@@ -31,11 +31,19 @@ follow from the fact that Daikenja can only see Drive files it created itself:
   This is not a convention about tidiness. A file Daikenja did not create cannot
   be seen at all, so creating it is the only way one can exist to point at.
 - **`remember-persona` does not create Drive files, and never redirects a
-  write.** Its scaffold-on-absence rule covers local files only. If `personas`
-  is a Drive pointer that does not resolve, it writes nothing, says so, and
-  keeps the entry in the conversation. Falling back to the local default would
-  split the user's notes across two stores without telling them, which is worse
-  than not writing.
+  write.** Its scaffold-on-absence rule covers the local default path only. If
+  `personas` is a Drive pointer that does not resolve, it writes nothing, says
+  so, and keeps the entry in the conversation. Falling back to the local
+  default would split the user's notes across two stores without telling them,
+  which is worse than not writing. The same rule holds one level down: if
+  `personas` names a **local** path the user chose and that specific file does
+  not resolve, `remember-persona` still writes nothing and keeps the entry in
+  the conversation, rather than falling back to the default local path instead
+  -- per [`config-resolution.md`](config-resolution.md#failure-behavior). Only
+  the default path scaffolds; a path the user named is never silently swapped
+  for a different one. `learn-voice` follows the same rule for
+  `writing-style.md`: an unresolvable `writing_style` path stops the write and
+  shows the proposal instead of saving it elsewhere.
 
 **The single-writer rule governs the ledger, not `daikenja.yaml`.** This
 distinction matters: `project-catchup`'s job is to report a delta and move the

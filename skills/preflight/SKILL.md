@@ -196,11 +196,15 @@ if one matches, plus whatever the user said inline this run. Inline wins over
 the file; the file wins over the archetype.
 
 - **Named, with nothing known about them.** Not in `personas.md`, nothing said
-  inline. Archetypes only. Not an error, but name the capture path: one line in
-  the report that no `personas.md` entry exists for them and `/daikenja:remember-persona`
-  is how to add one.
-- **A local `personas` pointer does not resolve.** Silent. The `Reviewers:` line
-  already names what ran, which makes a notice redundant.
+  inline -- including because the `personas` pointer itself never resolved, in
+  which case every named reviewer lands here. Archetypes only. Not an error,
+  but name the capture path: one line in the report that no `personas.md`
+  entry exists for them and `/daikenja:remember-persona` is how to add one.
+  This line is the report substitution `config-resolution.md` § Failure
+  behavior allows in place of a standalone notice for a local pointer failure.
+- **A local `personas` pointer does not resolve, and no reviewer is named
+  explicitly.** Silent -- there is nothing to disclose when nothing was going
+  to use the file.
 - **A `drive:` pointer does not resolve, or reads back empty.** Stop and name
   the file, per `config-resolution.md` § Failure behavior. This one is not silent:
   reviewing without the personas the user configured would look like reviewing

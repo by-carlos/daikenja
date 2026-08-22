@@ -276,8 +276,9 @@ One rule covers the common cases:
 | A project entry has neither `path` nor `paths`, or an empty `paths` | Not an error. The project is reachable only by key and is skipped by directory resolution. With no root, only an absolute `ledger:` can resolve; without one a skill that needs a ledger stops with one line naming the key. |
 | A project entry has both `path` and `paths` | Read the entry as the union of the two, and say so in one line naming the key. Do not guess which was meant, and do not rewrite the file to remove one -- `setup-project` is where the user fixes it. |
 | A path in `paths` does not exist on disk | Not an error for resolution: a path that matches nothing simply never matches. `project-list` reports it; every other skill stays silent, because a detached network drive is not a configuration mistake. |
-| `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. |
-| A pointed-at local prose file is missing | One notice naming the path, then continue without it. The exception is `remember-persona`: when it has an entry to write and `personas.md` is missing, it scaffolds the file from the template (per [Who writes what](config-writers.md#who-writes-what)) rather than treating the file as unreadable. |
+| `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. For a writer skill with an entry to write (`remember-persona`), reduced behavior means the default path itself: if `personas.md` does not exist there yet, it scaffolds the file from the template (per [Who writes what](config-writers.md#who-writes-what)) before writing the entry, rather than treating the absent key as a reason to stop. |
+| A local pointer names a path, and that specific file is missing | Not the absent-key case above -- the user pointed here specifically. For a read skill, one notice naming the path, then continue without it. A skill may substitute an equivalent disclosure already required elsewhere in its own report for the standalone notice, when that disclosure covers the same fact (`compose` § personas and `preflight` § the named personas do this); plain silence with nothing said anywhere does not qualify. A writer skill (`learn-voice`, `remember-persona`) does not get this softer treatment -- see the row below. |
+| A writer skill's own configured local pointer does not resolve | **Stop.** One notice naming the path, then write nothing -- not to that path, and not to any other. `learn-voice` still shows the derived proposal so the user keeps it; `remember-persona` keeps the entry in the conversation. Never redirect the write to the default path instead: that creates or changes a file the user did not point at, and splits their prose across two files without telling them. Mirrors the Drive row below, and each skill's own "file is not writable" row. |
 | A configured `drive:` pointer does not resolve, or its download comes back empty | **Stop.** Name the file and the reason: the connector is not in the session, the `daikenja` folder is missing or duplicated, no file in it carries that name, more than one does, or the download returned nothing. Never treat it as an unconfigured key, and never fall back to a local file. `remember-persona` additionally holds the entry in the conversation (per [Who writes what](config-writers.md#who-writes-what)). |
 | `norms_doc` absent | Not an error. `self-review` skips ROLE CHECK silently -- this is the documented default. |
 
@@ -287,8 +288,15 @@ the user what to fix. "Config incomplete" does not.
 
 **Not configured and configured-but-broken are different situations.** A key the
 user never set means they did not ask for that behavior, so continuing without
-it is right. A `drive:` pointer means they did ask, and the request failed. The
-two rows above keep them apart on purpose. Local paths keep the older, softer
-handling because a missing local file is a fact you can establish: the path is
-there or it is not, and an empty file is a file the user emptied. Drive gives no
-such certainty, which is why only that form stops.
+it is right. A `drive:` pointer -- or a writer skill's own local pointer --
+means they did ask, and the request failed; both stop rather than substitute
+something the user did not choose. The rows above keep these apart on purpose.
+
+**Read skills keep the older, softer handling for a broken local pointer**,
+because a missing local file is a fact you can establish: the path is there or
+it is not, and an empty file is a file the user emptied. Continuing without it
+costs nothing that was not already optional. Drive gives no such certainty for
+anyone, which is why that form always stops. A writer skill cannot take the
+same softness for a local pointer either, because "continue" would mean picking
+a different file to write to on the user's behalf -- which is exactly the
+undocumented retry this row exists to rule out.

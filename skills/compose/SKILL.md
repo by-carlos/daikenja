@@ -112,15 +112,22 @@ If `profile.personas` resolves -- per `config-resolution.md` § Resolving
 `writing_style` and `personas`, so a local file or a Google Drive file, default
 `~/.claude/daikenja/personas.md` -- and the message names a recipient who
 matches an entry in it, use that entry's guidance on length, formality and how
-direct to be. A local pointer that does not resolve, or an empty local file,
-proceeds silently -- this is optional input, not a configuration requirement,
-and gets no notice either way. A `drive:` pointer that does not resolve or reads
-back empty is the exception: that stops the run per `config-resolution.md`
-§ Failure behavior, and is not silent.
+direct to be.
 
-**A named recipient who matches no entry** proceeds without their guidance, but
-is not silent: one line in the report that no `personas.md` entry exists for
-them and `/daikenja:remember-persona` is how to add one.
+**A local `personas` pointer that does not resolve, or an empty local file**,
+is not itself announced with a standalone notice. If no recipient is named
+there is nothing to disclose. If a recipient is named, they necessarily match
+no entry -- there is no file to match against -- so the line below already
+covers it; this is the report substitution `config-resolution.md` § Failure
+behavior allows in place of a separate notice. A `drive:` pointer that does not
+resolve or reads back empty is the exception: that stops the run per
+`config-resolution.md` § Failure behavior, and is not silent.
+
+**A named recipient who matches no entry** -- whether the file resolved and
+simply has nothing for them, or the pointer never resolved at all -- proceeds
+without their guidance, but is not silent: one line in the report that no
+`personas.md` entry exists for them and `/daikenja:remember-persona` is how to
+add one.
 
 **If the user described a recipient inline and that person has no entry**, route
 what they said to `/daikenja:remember-persona`, which is the only skill that

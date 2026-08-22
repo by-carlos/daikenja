@@ -413,14 +413,14 @@ missing thing is the task itself.
 
 | Situation | What to do |
 |---|---|
-| The personas file does not exist | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
+| The personas file does not exist, and no custom `profile.personas` pointer was given (or the config is entirely absent) | Scaffold it from the template, then write the entry. One notice naming the path, then continue -- not a stop. Routed callers get the same one-line report. |
 | `profile.personas` names a Drive file that resolves | Write to it by replacement, per Step 5. Same prose work as a local file, same report. |
 | `profile.personas` names a Drive file that cannot be reached, or whose download is empty | Write nothing, anywhere. One notice naming the file and the reason, then show the entry so the user keeps it. Never create a Drive file and never fall back to the local default. |
 | More than one Drive file carries the pointer's name | **Stop.** Name both and say an earlier write was probably interrupted. Never guess which is current -- picking wrong loses whichever entries are in the other one. |
 | The Drive replacement fails after the new file was created | The old file is still there and untouched. Say both files now carry the name, name the one just written, and stop. Never trash the old file to tidy up an unverified write. |
 | `daikenja.yaml` absent | One notice, then continue on the default path (`~/.claude/daikenja/personas.md`). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| `profile.personas` names a path that does not resolve | Treat as an absent key, per the contract. One notice naming the path, then fall back to the default path. |
+| `profile.personas` names a local path that does not resolve | Not the absent-key case above -- the user pointed here specifically. Per `config-resolution.md` § Failure behavior, one notice naming the path, then **stop**: write nothing, and keep the entry in the conversation, same as the Drive-failure row above. Never write it to the default path instead. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the entry somewhere else. |
 | A person is named with nothing said about them | Write nothing. One line saying a name alone is not a persona. |
 | The user gave only an identifier for them -- a full name, a handle, a chat ID, an address | Material, not a bare mention. Write the entry with `Known as` and no other field. |
