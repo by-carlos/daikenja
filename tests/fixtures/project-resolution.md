@@ -1,7 +1,7 @@
 # Project resolution -- configuration fixtures
 
 <!--
-Fixture: one synthetic `daikenja.yaml` plus eight walks over it. Everything
+Fixture: one synthetic `daikenja.yaml` plus ten walks over it. Everything
 here is invented -- invented projects, invented people, `example.com` links.
 Nothing is read at runtime.
 
@@ -200,3 +200,51 @@ Expected, in this order:
 **The failure this catches:** a report that hides the two states a person
 actually needs -- a project whose ledger is missing, and a project that has
 nowhere to put one. Everything else on the list is a line of confirmation.
+
+## Walk 8 -- `project-list` narrowed by key
+
+Run `/daikenja:project-list harbor-migrator` from `C:\GitHub\quill-web` -- the
+directory is irrelevant and that is the point.
+
+1. Step 1a matches the key `harbor-migrator`. Directory resolution never
+   runs -- `quill-programme`, which would have matched by directory, is not
+   consulted.
+2. Step 2 resolves only that entry: one path, `C:/GitHub/harbor/tools/migrator`,
+   and a ledger at the default location, which does not exist.
+3. Step 3's scan is rooted at `C:/GitHub/harbor/tools/migrator` -- the entry's
+   own path, not `C:/GitHub/quill-web` -- and finds nothing.
+4. Report:
+
+   ```
+   Project: harbor-migrator
+
+   harbor-migrator
+     path    C:/GitHub/harbor/tools/migrator
+     ledger  C:/GitHub/harbor/tools/migrator/.daikenja/ledger.md    no such file
+
+   no unregistered ledgers under C:/GitHub/harbor/tools/migrator
+   ```
+
+**The failure this catches:** scanning around the current directory for a
+keyed lookup, which would report on whatever repository the user happened to
+be standing in instead of the project they asked about -- or silently listing
+every entry instead of narrowing to the one requested.
+
+## Walk 9 -- `project-list` with a key that does not resolve
+
+Run `/daikenja:project-list quil-programme` -- one letter short.
+
+1. Step 1a finds no entry under that key.
+2. The run stops, names the key and lists the registered ones:
+
+   ```
+   No project called quil-programme in daikenja.yaml. Registered:
+   harbor-rollout, quill-programme, beacon-charter, harbor-migrator,
+   tempest-charter.
+   ```
+
+3. Nothing is read and no scan runs.
+
+**The failure this catches:** falling back to listing every project, or to the
+current directory, on an unknown key -- either answers confidently about
+something other than what was asked, with nothing in the reply to say so.

@@ -467,6 +467,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `preflight` also reads through it, for lookup. `setup-user`'s Step 2 never
   said whether "section" meant a version heading or one change note under it,
   so a heading with several notes could migrate only the first (#151).
+- **`project-list` promised a named-project filter no step implemented.** The
+  failure table said naming one project narrows the report to that entry, and
+  `config-resolution.md` already listed `project-list` as a key-accepting
+  skill, but the frontmatter description never advertised the key and no step
+  resolved or acted on one -- unlike the five read skills, which all defer to
+  `docs/reading.md`'s Step A0 for the same resolution. `project-list` gains a
+  Step 1a that resolves a given key per `config-resolution.md` § Finding the
+  project (decisive, no directory fallback, unknown key lists the registered
+  ones), and Steps 2-4 now narrow to that one entry -- including scoping the
+  unregistered-ledger scan to the entry's own paths instead of the current
+  directory, since a keyed lookup may run from anywhere (#154).
 
 ### Documentation
 
