@@ -1,6 +1,6 @@
 ---
 name: project-list
-description: Lists every project registered in daikenja.yaml, says which one the current directory resolves to, and reports whether each project's ledger actually exists. Use when the user says "what projects does Daikenja know about", "list my projects", "which project am I in", "why can't it find my ledger", "check my Daikenja setup", or asks anything shaped like a doctor or health check. Also the skill to reach for when a read skill reported a project it did not expect, or reported none. Read-only; writes nothing, and never repairs what it reports.
+description: Lists every project registered in daikenja.yaml, says which one the current directory resolves to, and reports whether each project's ledger actually exists. Use when the user says "what projects does Daikenja know about", "list my projects", "which project am I in", "why can't it find my ledger", "check my Daikenja setup", or asks anything shaped like a doctor or health check. Also the skill to reach for when a read skill reported a project it did not expect, or reported none. Read-only; writes nothing, and never repairs what it reports. Accepts an optional project key -- `/daikenja:project-list <key>` reports just that entry, without being in its directory.
 metadata:
   owner: Carlos
   version: 1
@@ -49,7 +49,26 @@ projects and name `/daikenja:setup-project`, then still run Step 3 -- an
 unregistered ledger on disk is exactly what the user needs to hear about in
 that state.
 
+## Step 1a: did the user name a project?
+
+**The user may name a project** -- `/daikenja:project-list <key>`, or the key
+in prose. A key was given: resolve it per `config-resolution.md` § Finding the
+project, by key -- decisive, skip directory matching entirely, and never fall
+back to the current directory. No match: say which key was not found, list the
+registered keys, and stop -- Step 2 does not run and no report follows.
+
+A key that resolves narrows the rest of this skill to that one entry: Step 2
+runs only against it and the directory resolution it otherwise performs does
+not run at all -- the key is decisive and the current directory is irrelevant,
+per `config-resolution.md` -- and Step 3's scan is rooted at the entry's own
+paths instead of the current directory, per Step 3 below. No key given:
+continue exactly as before.
+
 ## Step 2: resolve every entry
+
+**When a key was given (Step 1a), this step runs only for that one entry** --
+skip every other entry, including their disk and ledger checks, since they
+will not appear in the report.
 
 For each entry, in the order the file lists them, work out four facts and
 nothing more:
@@ -71,6 +90,9 @@ nothing more:
 Then resolve the current directory the ordinary way -- longest matching prefix
 across every path of every entry -- and mark which entry it lands in. Marking
 the current project is the point of running this from a terminal at all.
+**Skip this directory resolution entirely when a key was given** -- the entry
+is already decided, and the current directory plays no further part in the
+run.
 
 **Never open a ledger.** Existence is the whole question here. Reading content
 is what the five read skills are for, and this skill has no business knowing
@@ -94,6 +116,16 @@ directories nobody asked about. Look in exactly two places:
 Report every hit that no registered project's ledger path already accounts
 for. If the scan found nothing, say so in one line -- "no unregistered ledgers
 under `<dir>`" is a result, and it tells the user the search happened.
+
+**When a key was given (Step 1a), scope the scan to the named entry's own
+paths instead.** The run may not be standing anywhere near the project it was
+asked about, so the current directory has nothing to do with this. For each of
+the entry's paths, scan to the same three-directory depth for
+`.daikenja/ledger.md`, and report any hit that is not the ledger path already
+resolved for it in Step 2. Skip the VCS-root leg entirely -- there is no VCS
+root relationship to a directory this run never visited. An entry with no
+paths has nothing to scan; say so in one line rather than running an empty
+search.
 
 ## Step 4: report
 
@@ -137,6 +169,22 @@ finishes reading.
 exists" is the answer to the question the user actually asked, and it belongs
 at the top when it is true.
 
+**When a key was given (Step 1a), the report covers only that entry.** No
+project count, no "You are in" framing -- there is no current directory in
+play -- and no `<- you are here` marker. Lead with `Project: <key>`, then the
+one entry's block exactly as Step 2 produces it, then Step 3's scoped scan
+result:
+
+```
+Project: harbor-migrator
+
+harbor-migrator
+  path    C:/GitHub/harbor/tools/migrator
+  ledger  C:/GitHub/harbor/tools/migrator/.daikenja/ledger.md    no such file
+
+no unregistered ledgers under C:/GitHub/harbor/tools/migrator
+```
+
 ## Failure cases
 
 | Situation | What to do |
@@ -149,4 +197,4 @@ at the top when it is true.
 | An entry has no paths | Report it as reachable by name only. Its ledger is whatever an absolute `ledger:` points at; with no such key, report that it has no ledger location and name `/daikenja:setup-project`. Not an error either way. |
 | A ledger path is unreadable (permissions) | Report the error text beside the ledger line and carry on to the next entry. One bad entry never ends the listing. |
 | The Step 3 scan cannot read a directory | Skip it silently and say the scan was partial. Never stop the report for it. |
-| The user names one project | Report just that entry, in the same shape. An unknown key stops with the registered keys listed, per `config-resolution.md` § Finding the project. |
+| The user names one project | Step 1a resolves it by key and Step 4 reports just that entry, in the same shape. An unknown key stops with the registered keys listed, per `config-resolution.md` § Finding the project. |

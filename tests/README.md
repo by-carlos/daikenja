@@ -245,14 +245,15 @@ your own norms document in place of the fixture's.
   `daikenja.yaml` holding every legal project shape -- a single-value `path`
   written before `paths` existed, a three-repository `paths` list, a
   `paths: []` project with an absolute `ledger:`, a `paths: []` project with
-  no ledger location at all, and a project nested inside another -- plus eight
+  no ledger location at all, and a project nested inside another -- plus ten
   walks over it. Covers the scalar form resolving unchanged, a multi-path
   project resolving its ledger against its **first** path rather than the path
   that matched, a pathless project resolving through its absolute `ledger:`,
   the same shape without one stopping on the ledger rather than on the project,
   a project key that resolves from the wrong directory, a key that resolves to
-  nothing, nesting still winning on the longest prefix, and the `project-list`
-  report.
+  nothing, nesting still winning on the longest prefix, the `project-list`
+  report over the whole file, and `project-list` narrowed to one entry by a
+  valid key and refused on an unknown one.
   The two failures it exists to catch are silent: a ledger resolved against
   whichever repository the user was standing in, and a bad key answered from
   the current directory.
