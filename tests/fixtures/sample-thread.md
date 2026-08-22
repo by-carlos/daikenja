@@ -5,7 +5,10 @@ from real work. Used by the `project-log` skill's acceptance checks.
 
 The thread is built to exercise the classification rules: one clear decision, one
 proposal nobody agreed to, one open question, one task with no owner, and one
-link worth keeping.
+link worth keeping. The runbook link is the source-versus-context-link case:
+souei offers it as a useful address ("here if anyone needs it"), not as
+something the project is tracked from or whose staleness matters, so it
+resolves as a context link, not a source.
 
 Starting ledger: none -- this is harbor's first log, so `project-log` scaffolds
 one. `@diablo` is the only owner any entry gets (the rollback question and the
