@@ -1,6 +1,6 @@
 ---
 name: project-log
-description: Records decisions, open items and sources in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", "track this page as a source", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Not for checking whether tracked sources moved -- that is /daikenja:project-sources, which records a refresh through this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. A short fact the user dictates is written in the same turn and shown verbatim; everything else is proposed first and written only on approval.
+description: Records decisions, open items and sources in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", "track this page as a source", or pastes a thread or a plain description and asks for what was settled to be written down. Not for a meeting transcript -- that is /daikenja:meeting-review, which classifies it in two passes before handing entries to this skill. Not for checking whether tracked sources moved -- that is /daikenja:project-sources, which records a refresh through this skill. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. A short fact the user dictates is written in the same turn and shown verbatim; everything else is proposed first and written only on approval. Accepts a project key only when that project has no paths -- `/daikenja:project-log <key>` logs against it from anywhere; a key naming a project that has paths is refused.
 metadata:
   owner: Carlos
   version: 1
@@ -77,26 +77,45 @@ Follow `config-resolution.md` § Resolution order exactly. In short:
 1. Read `~/.claude/daikenja/daikenja.yaml`. Absent is not fatal here -- this
    skill works on defaults. Malformed YAML **is** fatal: report the first line
    that does not parse and stop.
-2. Match the current directory against **every path of every `projects:`
-   entry** -- its `paths` list, or its `path` scalar read as a one-element
-   list -- normalized and longest prefix wins across all of them. An entry with
-   no paths is skipped; it is reachable only by key, and this skill does not
-   resolve by key.
+2. **A project key was named** ("log this against vendor-onboarding-programme",
+   or `/daikenja:project-log <key> ...`). Compare it against every `projects:`
+   key, case-insensitively, per `config-resolution.md` § Finding the project,
+   by key.
+   - **No match.** Say so, name the key, list the registered keys, and stop.
+     Never fall back to directory matching -- writing against the wrong
+     project is worse than no write.
+   - **Matches an entry that has paths** (a `paths` list or a `path` scalar).
+     Refuse -- a key alone does not say which of several roots the write
+     belongs in, and that is still true here. Name the key in one line and say
+     that logging against it means running from one of its own directories.
+     Do not fall back to directory matching either: a named key is decisive,
+     per `config-resolution.md` § Finding the project.
+   - **Matches an entry with no paths.** Use it. This is the one case a key is
+     unambiguous -- there is exactly one place the write can go -- and
+     directory matching does not run.
+   - **No key was named.** Match the current directory against **every path of
+     every `projects:` entry** -- its `paths` list, or its `path` scalar read
+     as a one-element list -- normalized and longest prefix wins across all of
+     them. An entry with no paths is skipped; it is reachable only by key.
 3. Resolve the ledger: the matched project's `ledger:` key if it has one --
    relative or absolute, per `config-resolution.md` § Resolving `ledger` -- and
    that resolved path is authoritative. Otherwise `.daikenja/ledger.md` under
    the project root. **The root is the first path in the entry**, not the path
    that matched -- a project spanning three repositories has one ledger, in the
-   first of them.
+   first of them. **A pathless entry has no root**, so only an absolute
+   `ledger:` can resolve for it: a relative or absent `ledger:` on a pathless
+   entry is a config error, not a missing default -- stop, name the key, and
+   say it has no path and no absolute ledger, per `config-resolution.md` §
+   Finding the ledger.
 4. Check the version marker and emit the one-line notice if it applies, per
    `config-versioning.md` § Version marker and upgrades. It never blocks a write,
    and this skill never migrates anything -- `/daikenja:setup-user` does that.
 
-**This skill resolves by directory only, and takes no project key.** The read
-skills take one because reading is location-free; writing is not. A key names a
-project, and a project may have three roots or none, so a key alone does not
-say where a ledger entry belongs. To log against a project you are not in, go
-to it first.
+**This skill resolves by directory, plus the one narrow key exception above.**
+The read skills take a key freely because reading is location-free; writing is
+not -- a key names a project, and a project may have several roots, so a key
+alone does not say where a ledger entry belongs **unless it has none**. To log
+against a rooted project you are not in, go to it first.
 
 **A ledger on disk wins over the config.** If `.daikenja/ledger.md` exists but
 no project matches, use it and carry on.
@@ -113,36 +132,42 @@ Registration is optional. Never block a ledger write on it.
 
 ## Step 3: scaffold the ledger when it is missing
 
-If the ledger file does not exist, check first whether this directory is
-plausibly a project. Nothing about a missing ledger says it is -- the current
+If the ledger file does not exist, check first whether its location is
+plausibly a project. Nothing about a missing ledger says it is -- the
 directory could just as easily be the user's home directory or a scratch
 folder they happened to be in.
 
 **The checks below run against the directory the ledger would be created in.**
-That is the project root when a `projects:` entry matched, which for a
-multi-path project is the first path in the entry and need not be the
-directory you are standing in. Name that directory in every question and every
-refusal, so nobody approves a write to a folder they did not have in mind. A
-match does not excuse a check: `daikenja.yaml` is hand-editable and matching
-takes the longest prefix, so a matched project is not evidence that the
-directory is one.
+That is the project root when a `projects:` entry matched by directory, which
+for a multi-path project is the first path in the entry and need not be the
+directory you are standing in. **For an entry matched by key** (Step 2's one
+exception, a pathless project) **there is no root at all** -- the directory
+these checks run against is the parent of the resolved absolute `ledger:`
+path instead. Name that directory in every question and every refusal, so
+nobody approves a write to a folder they did not have in mind. A match does
+not excuse a check: `daikenja.yaml` is hand-editable and matching takes the
+longest prefix, so a matched project is not evidence that the directory is
+one.
 
-**Refuse outright** when the current directory is the user's home directory
-(the real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do
-not scaffold, and do not fold this into the Step 5 proposal -- there is
-nothing to propose:
+**Refuse outright** when that directory is the user's home directory (the
+real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do not
+scaffold, and do not fold this into the Step 5 proposal -- there is nothing to
+propose:
 
 ```
 Won't create a ledger in <path> -- that's your home directory, not a project.
 Run this from the project you mean to log.
 ```
 
-**This refusal is unconditional.** A `projects:` entry matching the home
-directory does not license scaffolding there. Matching takes the longest
-prefix, so an entry with a path that is the home directory's parent makes the
-home directory itself resolve to a project, and `daikenja.yaml` is hand-editable --
-so a matched project is not evidence that this directory is one.
-`setup-project` refuses to register either path for the same reason.
+**This refusal is unconditional**, and it applies the same way to a
+key-resolved pathless entry: a `ledger:` pointer that resolves straight into
+`~` or `~/.claude` refuses exactly like a directory match would, even though
+no directory was ever compared. A `projects:` entry matching the home
+directory does not license scaffolding there either way. Matching takes the
+longest prefix, so an entry with a path that is the home directory's parent
+makes the home directory itself resolve to a project, and `daikenja.yaml` is
+hand-editable -- so a matched project is not evidence that this directory is
+one. `setup-project` refuses to register either path for the same reason.
 
 **Otherwise, if the directory is neither a VCS root** (no `.git`) **nor
 already holds a `.daikenja/`**, it still is not obviously a project -- unless
@@ -150,8 +175,10 @@ it is **already registered in `daikenja.yaml`**, in which case skip this check
 and go straight to the "otherwise" branch below. Registration is a deliberate
 act that settles the question these two markers only guess at, and a project
 with no repository of its own has neither marker: no `.git`, and no
-`.daikenja/` until its first log. Without this exemption such a project is
-asked to confirm itself on every first log.
+`.daikenja/` until its first log. **A pathless entry reached by key is always
+in this registered case** -- Step 2 only ever resolves one by matching it in
+`daikenja.yaml`, so this check never has to guess for it. Without this
+exemption such a project is asked to confirm itself on every first log.
 
 For an unregistered directory carrying neither marker, ask, naming the exact
 absolute path, before doing anything else -- this confirmation is separate
@@ -673,8 +700,11 @@ missing thing is the task itself.
 |---|---|
 | `daikenja.yaml` absent | One notice, then continue on the defaults (`.daikenja/ledger.md`, owner `@unassigned` unless the user names one). Do not stop. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| Ledger missing and the current directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. Unconditional -- a matching `projects:` entry does not license it. |
-| Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the directory is a registered project. |
+| A named project key matches no entry | **Stop.** Name the key, list the registered keys, and write nothing. Never fall back to directory matching. |
+| A named project key matches an entry that has paths | **Refuse.** Name the key and say logging against it means running from one of its own directories. Never fall back to directory matching -- the named key is decisive. |
+| A named project key matches a pathless entry whose `ledger:` is relative or absent | **Stop.** Name the key and say it has no path and no absolute ledger, so it has no location. Never invent one. |
+| Ledger missing and the directory it would be created in is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. Unconditional -- a matching `projects:` entry does not license it, and neither does a key-resolved pathless entry whose `ledger:` lands there. |
+| Ledger missing and the directory it would be created in is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the project is already registered -- which a key-resolved pathless entry always is. |
 | Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
 | Ledger missing one of the four original H2 sections | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. Report any other defect already seen while reading the whole ledger alongside the stop -- the run still writes nothing. |

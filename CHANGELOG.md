@@ -371,6 +371,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A pathless project could be registered and read but never written to.**
+  `docs/config-resolution.md` and `docs/config-schema.md` document `paths: []`
+  plus an absolute `ledger:` as how a project with no directory of its own --
+  work tracked across a wiki, a tracker and a chat space -- keeps a ledger, and
+  the five read skills already reached such a project by key. `project-log`
+  Step 2 skipped any pathless entry outright and took no key at all, so the
+  ledger could be created and browsed and never grow. Step 2 now accepts a
+  project key too, but narrowly: only when the named entry has no paths, the
+  one case a key alone is unambiguous about where the write belongs -- any
+  other key is refused with the same multi-root rationale the read skills
+  already use, and never falls back to the directory you happen to be
+  standing in. The resolved ledger is the entry's absolute `ledger:`; a
+  pathless entry with a relative or absent one is a config error, named and
+  stopped rather than guessed at. Step 3's unconditional home-directory
+  refusal now checks the directory the ledger would actually land in rather
+  than "the current directory you are standing in," so a `ledger:` pointer
+  that resolves straight into `~` or `~/.claude` still refuses, key-resolved
+  or not (`skills/project-log/SKILL.md`, `docs/config-resolution.md`,
+  `docs/config-schema.md`, `tests/fixtures/project-resolution.md`) (#160).
 - **A meeting reviewed after the fact got entries dated to the review, not the
   meeting -- silently.** `meeting-review` handed `project-log` classified
   entries with no date, and `project-log` dated an ordinary write to today by

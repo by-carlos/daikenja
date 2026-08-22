@@ -73,10 +73,15 @@ falls through to the directory.
    named is the failure this route exists to remove, and it is worse than no
    answer, because the reply looks correct.
 
-The skills that accept a key argument are the five read skills, per
+The skills that accept a key argument freely are the five read skills, per
 [`reading.md`](reading.md) section Step A0, and `project-list`, whose whole job
-is to report them. `project-log` and `setup-project` resolve by directory only;
-they write inside a project root, and a name alone does not say which root.
+is to report them. `project-log` accepts one too, but narrowly: only when the
+named entry has no paths, the one case a key alone is enough to say where the
+write belongs. Any other key -- naming an entry that has paths -- is refused,
+with the same rationale: a name alone does not say which root the write
+belongs in. See `project-log`'s own `SKILL.md` § Step 2 for the exact rule.
+`setup-project` still resolves by directory only; it registers a *new* entry's
+own root, and a name alone cannot say what that root should be.
 
 #### By directory, otherwise
 
@@ -127,7 +132,11 @@ is where a relative `ledger:` lands.
 it.** An **absolute** `ledger:` key resolves normally and is exactly how such a
 project keeps a ledger -- see [Resolving `ledger`](#resolving-ledger). Without
 one there is no location at all: a skill that needs a ledger says so in one
-line and stops, per [Failure behavior](#failure-behavior).
+line and stops, per [Failure behavior](#failure-behavior). This governs a
+*write* the same way it governs a read -- `project-log`, reaching a pathless
+entry by key per [Finding the project](#finding-the-project), resolves its
+ledger by this same rule and stops the same way when no absolute `ledger:` is
+there to resolve.
 
 **A ledger found on disk wins over the config.** This is a rule about an
 **unmatched project**, not about overriding an explicit `ledger:` key. If

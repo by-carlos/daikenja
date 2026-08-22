@@ -1,7 +1,7 @@
 # Project resolution -- configuration fixtures
 
 <!--
-Fixture: one synthetic `daikenja.yaml` plus ten walks over it. Everything
+Fixture: one synthetic `daikenja.yaml` plus thirteen walks over it. Everything
 here is invented -- invented projects, invented people, `example.com` links.
 Nothing is read at runtime.
 
@@ -129,6 +129,63 @@ Run `/daikenja:project-summary tempest-charter`.
 a project". The entry is valid and `project-list` must list it; only the ledger
 lookup fails, and the message has to say which of the two is missing.
 
+## Walk 3c -- `project-log` writes to a pathless project by key
+
+Run `/daikenja:project-log beacon-charter` from anywhere -- again, the
+directory is irrelevant.
+
+1. Step 2's key check matches `beacon-charter`, and it has no paths, so the
+   key is accepted. Directory resolution never runs.
+2. `Ledger: C:/Users/rimuru/.claude/daikenja/ledgers/beacon-charter.md` -- the
+   same file Walk 3 read. The file exists, so Step 3's scaffold check never
+   runs either.
+3. The proposal, wait and write happen exactly as an ordinary run; only how
+   the project was found differs.
+
+**The failure this catches:** the original bug. `beacon-charter` could be
+created (`setup-project`) and read (Walk 3), but never written to -- Step 2
+used to skip any entry with no paths outright and take no key at all, so its
+ledger could only ever grow by hand.
+
+## Walk 3d -- `project-log` refuses a key that has paths
+
+Run `/daikenja:project-log quill-programme` from `C:\GitHub\harbor`.
+
+1. Step 2's key check matches `quill-programme`, but the entry has paths.
+   Refused: one line naming the key and saying that logging against it means
+   running from one of its own directories.
+2. Directory resolution does not run as a fallback. `harbor-rollout` would
+   have matched `C:\GitHub\harbor` by directory, and it is not consulted --
+   the named key is decisive, per `config-resolution.md` § Finding the
+   project, the same as a read skill's Step A0.
+3. Nothing is written.
+
+**The failure this catches:** two ways a rooted project could still be
+written to the wrong root -- silently falling back to whatever directory the
+user happens to be standing in once the named key is refused, or accepting
+the key anyway and guessing which of `quill-programme`'s three paths is
+meant. Both are worse than refusing and saying why.
+
+## Walk 3e -- `project-log` on a pathless project with no ledger location
+
+Run `/daikenja:project-log tempest-charter`.
+
+1. Step 2's key check matches `tempest-charter`. It has no paths, so the key
+   is accepted.
+2. Step 3 (ledger resolution) finds no `ledger:` key and no root to resolve a
+   relative default against. This is the config error, not a missing
+   default: the run stops with one line and writes nothing:
+
+   ```
+   tempest-charter has no path and no absolute ledger in daikenja.yaml, so its ledger has no location.
+   ```
+
+**The failure this catches:** scaffolding `.daikenja/ledger.md` somewhere
+arbitrary -- the current directory, or Daikenja's own config folder --
+because a location was missing and a default had to come from somewhere. A
+pathless entry has no such fallback; the same message Walk 3b showed for a
+read applies unchanged to a write.
+
 ## Walk 4 -- a key that resolves, from the wrong directory
 
 Run `/daikenja:project-decisions quill-programme` from `C:\GitHub\harbor`.
@@ -171,8 +228,10 @@ Run `/daikenja:project-log` from `C:\GitHub\harbor\tools\migrator\src`.
    `c:/github/harbor/tools/migrator`.
 2. The longest wins, so the project is `harbor-migrator` and the ledger is
    `C:/GitHub/harbor/tools/migrator/.daikenja/ledger.md`.
-3. `project-log` takes no key argument, so there is no way to redirect this
-   from the command line -- and it says nothing about keys.
+3. No key was named here, so this is unaffected by `project-log`'s key
+   exception either way. Had one been named, `harbor-migrator` has a path, so
+   `/daikenja:project-log harbor-migrator` from anywhere else would refuse
+   rather than redirect here -- see Walk 3d.
 
 **The failure this catches:** letting the multi-path change disturb nesting.
 Longest-prefix-wins now runs across every path of every entry, and an entry's
