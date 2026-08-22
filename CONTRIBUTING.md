@@ -75,6 +75,14 @@ maintainer's Code Owner approval.
   content, personal data or organization data there.
 - **Line endings.** `.gitattributes` pins LF. Check your staged diff is in
   proportion to your edit before committing.
+- **Shared-document size.** If a change touches a document under `docs/` that
+  is read in full by more than three skills and the file crosses roughly 500
+  lines, the change should include a split review: does it divide along
+  read/write or per-skill lines with zero duplicated sentences, the way the
+  #130 split of the config docs did? The outcome is allowed to be "no split" --
+  this is a prompt to look, not a size cap. `docs/ledger-format.md` growing 328
+  to 773 lines in two days while seven skills read it in full (measured on
+  #117) is the case that motivated this.
 
 ## Validation
 
