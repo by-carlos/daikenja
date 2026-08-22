@@ -66,6 +66,10 @@ Once a decision is found, check both directions:
   anyway, but lead with the current one and say the match is historical.
 - **Another decision's body opens `Supersedes D-nnn.` naming this one.** Same
   case from the other side -- lead with the new decision.
+- **Another decision carries `-> superseded by D-nnn` naming this one.** Same
+  case again, found from the tail instead of the body -- check whether the
+  matched entry's own body opens `Supersedes <that decision's ID>.` to confirm
+  it. If not, this is the mismatch below, found from the tail side.
 - **Neither.** It is a single decision with no history. Show it alone.
 
 Walk the whole chain if it is more than one hop -- a decision can be
