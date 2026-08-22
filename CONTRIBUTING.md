@@ -83,6 +83,13 @@ maintainer's Code Owner approval.
   this is a prompt to look, not a size cap. `docs/ledger-format.md` growing 328
   to 773 lines in two days while seven skills read it in full (measured on
   #117) is the case that motivated this.
+- **`SKILL.md` size.** CI's `validate` job runs `tests/check-skill-size.py` on
+  every pull request: if a `skills/*/SKILL.md` you touch reaches 2x its size at
+  the last release tag, it posts a comment on the PR naming the file, the
+  baseline size and the current size. It's warn-only -- never fails the build,
+  never edits the file -- and it means do a section-level pass like the one on
+  #164 (worked examples and rationale vs. step instructions) and confirm the
+  growth is still muscle, not that anything must be cut.
 
 ## Validation
 

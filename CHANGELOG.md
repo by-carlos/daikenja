@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CI now warns when a `SKILL.md` doubles in size since the last release.**
+  `skills/project-log/SKILL.md` and `skills/preflight/SKILL.md` more than
+  doubled between releases with nobody prompted to look again (measured on
+  #164), so `tests/check-skill-size.py` runs as a new `validate` step on every
+  pull request: it compares each changed `skills/*/SKILL.md` against its size
+  at the most recent release tag, and posts (or updates) one PR comment naming
+  any file at 2x that baseline or more. Warn-level only -- it never fails the
+  build and never edits the file -- and the baseline moves with each release,
+  so a file reviewed and accepted at its new size isn't flagged again until it
+  doubles past the next tag (#194).
 - **The ledger can now record the documents a project is tracked from, and a
   new skill says which of them moved.** A context link is a label and an
   address, so for work that consists largely of tracking documents other
