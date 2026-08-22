@@ -371,6 +371,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`preflight` asked the sender to supply facts that either weren't missing or
+  weren't needed.** Step 3 treated every failing substance check as a content
+  gap -- "the missing piece is a fact only the user has" -- but two of the six
+  checks don't fit that mold. A check-4 failure over a compound ask (two asks
+  tangled into one line) needs no new fact, only a split; and a check-6 hit
+  (the question is already answered) fails by finding an answer, not by
+  missing one. Both used to land in the `Needs you` list as if the sender had
+  left something out. Step 3 now routes by failure kind: checks 1, 2, 3 and 5
+  stay content gaps; a check-4 compound-ask failure is fixed directly in
+  Step 7 as an ordinary wording fix and reported there, never as a question; a
+  check-6 hit reports the pre-existing answer topic-first with its ledger ID
+  in parentheses and asks only whether the draft should defer to it. The
+  `preflight-recipient-conflict.md` fixture's second seeded conflict --
+  Milim and Gabiru asked different things in the same closing line -- is
+  re-staged to match: it is the check-4 wording fix above, not a
+  recipient-versus-recipient conflict, and must not surface as one
+  (`skills/preflight/SKILL.md`,
+  `tests/fixtures/preflight-recipient-conflict.md`,
+  `tests/fixtures/sample-drafts-preflight.md`, `tests/README.md`) (#161).
 - **A pathless project could be registered and read but never written to.**
   `docs/config-resolution.md` and `docs/config-schema.md` document `paths: []`
   plus an absolute `ledger:` as how a project with no directory of its own --

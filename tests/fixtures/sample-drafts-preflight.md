@@ -23,3 +23,8 @@ To: diablo
 "Hey diablo, quick one -- should we hold off on schema changes to the events
 table until after the beacon rollout finishes, or is it fine to land them
 now?"
+
+Check 6 fails by finding an answer, not by missing one: `sample-ledger.md`'s
+`D-003` already settled this. The report must name it topic-first -- "the
+events-table schema freeze (D-003)" -- and ask only whether the draft should
+defer to it, not add a "you have not stated X" item to the questions list.

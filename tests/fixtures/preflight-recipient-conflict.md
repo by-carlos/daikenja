@@ -36,21 +36,31 @@ running the cutover means accepting a rollback we have not proven.
 Milim -- can you approve the move to the 25th? Gabiru -- can you confirm the replay
 offset is recorded automatically or whether that is a manual step?"
 
-## The three conflicts
+## The three seeded conflicts, two different fates
 
-**Milim versus Gabiru, and no fix serves both.** Milim needs this under ten lines. Gabiru needs
-the five rollback steps kept in order. Cutting the rollback detail serves Milim and
-breaks Gabiru; keeping it serves Gabiru and loses Milim. Both are real addressees.
+**Milim versus Gabiru, on length versus detail -- must report.** Milim needs
+this under ten lines. Gabiru needs the five rollback steps kept in order.
+Cutting the rollback detail serves Milim and breaks Gabiru; keeping it serves
+Gabiru and loses Milim. Both are real addressees and no fix serves both, so
+this is the one conflict Step 6 § Conflicts case 3 reports and leaves
+unresolved.
 
-**Milim versus Gabiru, again, on the ask.** Milim is asked to approve and Gabiru is asked a
-factual question, in the same closing line. Neither can tell at a glance which
-half is theirs.
+**Milim versus Gabiru again, on the ask -- a check-4 wording fix, not a
+conflict.** Milim is asked to approve and Gabiru is asked a factual question,
+in the same closing line, and neither can tell at a glance which half is
+theirs. This is substance check 4's compound-ask failure, not a
+recipient-versus-recipient conflict: splitting the closing line into two
+lines, each led by the name it is for, is expressible from the draft alone
+and serves both readers. `preflight` fixes it directly in Step 7 and reports
+it as an applied wording fix. It must not appear in the conflict line or the
+questions list.
 
-**The control, between two archetypes.** The busy reader wants
-`ERR_SHARD_LOCK_TIMEOUT` and the two dates cut as noise; the fact-checker wants
-them kept because "the same failure as last time" is unsupported without them.
-Neither archetype is a recipient here, so this one resolves toward the real
-audience and is never reported.
+**The control, between two archetypes -- never reported.** The busy reader
+wants `ERR_SHARD_LOCK_TIMEOUT` and the two dates cut as noise; the
+fact-checker wants them kept because "the same failure as last time" is
+unsupported without them. Neither archetype is a recipient here, so this one
+resolves toward the real audience per Step 6 § Conflicts case 2 and is never
+reported.
 
 ## What must happen to the personas file
 
