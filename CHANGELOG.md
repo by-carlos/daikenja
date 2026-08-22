@@ -234,6 +234,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   restated, since a rule copied into a dozen skills drifts a dozen ways
   (`docs/reading.md`, `skills/project-log/SKILL.md`,
   `skills/setup-project/SKILL.md`) (#67).
+- **A ledger missing one of its four required sections now has a defined
+  reader behaviour.** The stop rule existed only for `project-log`'s write
+  path; the five read skills shared a contract that never mentioned the case,
+  so each session improvised -- report and continue, stop, or silently treat
+  the section as empty -- and a user repairing a file got a different story
+  from every command. `docs/ledger-format.md` § Reading rules gains rule 8: a
+  read skill reports which heading is missing, then asks the user whether to
+  continue over the sections that are present, and waits for the answer.
+  `/daikenja:project-log` is named as the repair path. `project-log`'s own
+  hard stop on the same defect is unchanged, and the rule does not reach
+  `## Sources`, whose absence was already not a defect
+  (`docs/ledger-format.md` § Reading rules, `docs/reading.md` § Step C) (#158).
 
 ### Changed
 

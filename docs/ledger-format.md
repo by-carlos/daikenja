@@ -668,6 +668,17 @@ names four IDs writes the four IDs.
    not reach it either: the line is well formed and only the reference inside
    it is not. Do not guess which entry was meant.
 7. Never rewrite the file to normalize it. Only `log` writes.
+8. A ledger **missing one of the four required H2 sections** (Decisions, Open
+   items, Context links, Changelog) is not read past silently. Report which
+   heading is missing, then ask the user whether to continue over the sections
+   that are present, and wait for the answer before reading any further. A
+   "no" ends the run without reading anything else. Name
+   `/daikenja:project-log` as the repair path -- it is the only skill that
+   writes a missing heading. This rule governs the read skills
+   (`project-summary`, `project-gaps`, `project-decisions`, `project-catchup`,
+   `project-sources`); `project-log`'s own hard stop on the same defect, in its
+   failure table, is unchanged. It does not reach `## Sources`, whose absence
+   is never a defect -- see § File skeleton.
 
 ## Worked example
 
