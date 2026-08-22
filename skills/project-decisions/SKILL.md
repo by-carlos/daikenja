@@ -132,7 +132,7 @@ Every service writes to the shared audit log (D-009, current) -- @unassigned --
 imposed by the platform programme's architecture board.
   Contradicted by:
   Confirm whether the gateway can be exempted from the shared audit log (O-008,
-  open) -- @sam -- which also says it is blocked by O-007.
+  open) -- @sam.
 ```
 
 Include the date on every entry shown. If the decision links a context link or

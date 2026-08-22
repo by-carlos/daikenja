@@ -122,10 +122,12 @@ Four cases and no others:
 
 1. **Read `${CLAUDE_PLUGIN_ROOT}/docs/upgrading.md`.** One file, newest-version
    first.
-2. **Select every section whose version is later than the recorded one.** If the
-   recorded version is absent or empty, that is every section in the file.
-   Sections under `## [Unreleased]` never count -- an unreleased note is not a
-   version anyone can be on.
+2. **Select every version heading (`## [x.y.z]`) later than the recorded
+   version, and every change note (`### ...`) under each selected heading.** If
+   the recorded version is absent or empty, that is every heading in the file.
+   `## [Unreleased]` never counts -- an unreleased note is not a version anyone
+   can be on. A heading can hold several change notes; select all of them, not
+   just the first.
 3. **Nothing selected.** Nothing to propose. Say nothing here; Step 4 stamps the
    version, which is what stops the notice.
 4. **Something selected.** Show them **oldest first**, which is the order they

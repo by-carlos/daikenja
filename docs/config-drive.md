@@ -110,8 +110,9 @@ ambiguous state above, and the next resolution stops rather than guessing. That
 is the intended outcome: the user deletes the older copy and the name resolves
 again.
 
-Only `remember-persona` writes prose content, and the pointer's form does not
-change that; see [Who writes what](config-writers.md#who-writes-what).
+Only `remember-persona` and `learn-voice` write prose content, and the
+pointer's form does not change that; see
+[Who writes what](config-writers.md#who-writes-what).
 
 **The pointer names one ordinary file.** Daikenja reads the file it resolved and
 follows nothing out of it -- no folders, no linked documents, no second file.

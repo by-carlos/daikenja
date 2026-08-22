@@ -64,6 +64,8 @@ If they ever disagree with this skill, the contract wins and you say so.
   enough material. Use it.
 - **Nothing was given.** Ask what to log. Do not search for it, and do not go
   reading the repository to guess what happened.
+- **Material handed over by another skill** (a `project-log via <skill>` run).
+  Use what that skill classified. It was already classified, not dictated.
 
 If a fetch fails, say what failed in one line and ask for a paste. Never guess
 at the content of something you could not read.

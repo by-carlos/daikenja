@@ -5,7 +5,9 @@ Shared mechanism for the five read skills: `project-catchup`,
 five take the same optional project-key argument, resolve config, find a
 ledger, and parse it the same way. They differ only in what they filter for
 and how they format the result. This document is that shared mechanism,
-written once so it cannot drift five ways.
+written once so it cannot drift five ways. `preflight` also reads a ledger
+through this document, for lookup only -- it is not one of the five and never
+writes.
 
 A read skill implements this document plus its own filter and output shape. It
 does not restate parsing rules from `ledger-format.md` or resolution rules from
