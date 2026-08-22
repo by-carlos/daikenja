@@ -653,7 +653,7 @@ missing thing is the task itself.
 | Ledger missing and the current directory is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the directory is a registered project. |
 | Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
 | Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
-| Ledger missing one of the four original H2 sections | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. |
+| Ledger missing one of the four original H2 sections | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. Report any other defect already seen while reading the whole ledger alongside the stop -- the run still writes nothing. |
 | Ledger has no `## Sources` heading and the run records a source | Not a missing section -- the heading is optional until the first source. Add it directly above `## Changelog` as part of the same write, and say so. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
 | A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |

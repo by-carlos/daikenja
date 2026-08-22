@@ -6,8 +6,9 @@ written -- NOT produced by `project-log`, which keeps the two supersession
 markers in sync and cannot generate this defect.
 
 Two mismatches, both of which `project-decisions` must report rather than
-silently resolve one way or the other (`docs/ledger-format.md:153-156`,
-`skills/project-decisions/SKILL.md:66-68`):
+silently resolve one way or the other (`docs/ledger-format.md` § Section:
+Decisions, `skills/project-decisions/SKILL.md` § Step 4: follow the
+supersession chain):
 
 1. D-006 opens its body with "Supersedes D-003." but D-003 carries no
    "-> superseded by D-006" tail -- the body claims a supersession the tail

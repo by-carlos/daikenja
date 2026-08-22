@@ -8,6 +8,9 @@ it after `sample-thread.md` must update the existing entries rather than append
 near copies: the rollback trigger question gets answered (resolving an open item)
 and the ramp decision is narrowed, not repeated.
 
+Starting ledger: the one `sample-thread.md` produces. No new handles appear in
+this pass, so the proposal carries no `New owner handles:` block.
+
 ---
 
 **#harbor-rollout** -- 9 messages

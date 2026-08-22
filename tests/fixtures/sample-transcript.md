@@ -11,7 +11,7 @@ at the same time:
 - one decision the meeting only restates, which is not a new decision (the
   5 / 25 / 100 ramp shape, already settled in `sample-thread.md`)
 - one suggestion nobody agreed to (the per-tenant override switch)
-- one action item with a clear owner and a date (dan, customer comms)
+- one action item with a clear owner and a date (souei, customer comms)
 - one action item nobody picked up (the runbook dates)
 - one unresolved question (who pulls the ramp at 100%)
 - one vague "we should probably" line that is discussion, not an action item

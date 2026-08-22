@@ -359,6 +359,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`project-log`'s missing-section stop reported only the first defect it
+  found.** A ledger missing one of the four required H2 sections stops the
+  run, but the failure table's wording said only to name the missing section
+  -- read literally, a ledger that was also malformed elsewhere got that one
+  defect reported and the rest silently dropped when the run stopped. The row
+  now says to report any other defect already seen while reading the whole
+  ledger alongside the stop; the run still writes nothing (#150).
 - **`project-decisions` missed a broken supersession pair when queried from
   one particular side.** Step 4 checked whether the matched entry's own tail
   claimed supersession, or whether another entry's body named the matched

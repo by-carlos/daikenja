@@ -7,6 +7,12 @@ The thread is built to exercise the classification rules: one clear decision, on
 proposal nobody agreed to, one open question, one task with no owner, and one
 link worth keeping.
 
+Starting ledger: none -- this is harbor's first log, so `project-log` scaffolds
+one. `@diablo` is the only owner any entry gets (the rollback question and the
+comms task are both unassigned, and the runbook link carries no owner field),
+so with no `personas.md` configured the proposal's `New owner handles:` block
+names only `@diablo`, noting no personas.md is configured.
+
 ---
 
 **#harbor-rollout** -- 7 messages
