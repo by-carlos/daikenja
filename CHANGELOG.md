@@ -247,6 +247,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `## Sources`, whose absence was already not a defect
   (`docs/ledger-format.md` § Reading rules, `docs/reading.md` § Step C) (#158).
 
+### Removed
+
+- **claude.ai / Chat / Cowork support is removed. Daikenja is Claude Code
+  only.** The same six skills were being delivered twice -- once as the local
+  plugin, once as zips uploaded to claude.ai Skills -- and account-side skills
+  and plugins are also materialized into Claude Code desktop sessions, so the
+  duplicate showed up under two different namespaces there with no setting
+  able to suppress it (`skillOverrides` is a confirmed no-op for this,
+  anthropics/claude-code#50631). There is also no per-surface scoping
+  mechanism anywhere a plugin could use to keep the two disjoint. Removed:
+  `scripts/build-claude-ai-skills.py` and the invariant that ran it; the
+  claude.ai upload instructions in `README.md`, replaced with one line stating
+  the supported surface; the detailed claude.ai limitations in
+  `docs/future-work.md`, reduced to one paragraph; the `dist/` build output and
+  its `.gitignore` entry. Google Drive support for your own files (`personas.md`,
+  `writing-style.md`) is unchanged and continues to work from Claude Code. If
+  you previously uploaded the six writing skills to claude.ai Skills, delete
+  them there -- they will keep duplicating into Claude Code otherwise. Resolves
+  #191 (#198).
+
 ### Changed
 
 - **License changed from MIT to FSL-1.1-ALv2** (Functional Source License).

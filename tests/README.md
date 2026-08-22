@@ -14,11 +14,11 @@ stage's acceptance checks can be re-run later against the same inputs.
   insert rule, and its Changelog lines through the continuation-join and
   range expansion, the only fixture checked by script rather than by hand,
   because the ordering rule is the only part of the ledger contract that is
-  arithmetic instead of judgement; `scripts/build-claude-ai-skills.py` exits
-  clean; this directory's own index agrees with what's on disk -- every
-  file under `fixtures/` is named in this README and vice versa; every
-  fixture's `Depends on:` line names a real doc/skill section, quoted verbatim
-  from its heading; and every reference doc's `Depends-on (reverse index
+  arithmetic instead of judgement; this directory's own index agrees with
+  what's on disk -- every file under `fixtures/` is named in this README and
+  vice versa; every fixture's `Depends on:` line names a real doc/skill
+  section, quoted verbatim from its heading; and every reference doc's
+  `Depends-on (reverse index
   ...):` block names a real heading in the doc itself, paired with real
   `skills/*/SKILL.md` sections that cite it. Requires
   `pyyaml` (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with

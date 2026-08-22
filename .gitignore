@@ -36,9 +36,5 @@ desktop.ini
 .superpowers/
 docs/superpowers/
 
-# Generated claude.ai upload zips. Rebuild with
-# scripts/build-claude-ai-skills.py -- docs/ is the source of truth.
-dist/
-
 # Python bytecode from tests/check-invariants.py and scripts/prepare_release.py.
 __pycache__/

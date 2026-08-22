@@ -134,8 +134,8 @@ not on Opus.
 - **`CLAUDE_CODE_SUBAGENT_MODEL`.** If it is set, Claude Code pins every
   subagent to that model and it wins over the tier dispatched here. It is the
   clean way to force the whole roster onto one model.
-- **No dispatch, no tiers.** Where subagents are unavailable -- claude.ai --
-  every reviewer runs in `preflight`'s own context on the session's model. The
+- **No dispatch, no tiers.** Where subagent dispatch is unavailable, every
+  reviewer runs in `preflight`'s own context on the session's model. The
   mandatory `Reviewed:` line already reports that the run went that way.
 
 ## The roster

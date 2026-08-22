@@ -15,51 +15,11 @@ The writing and remembering side of a working week.
 
 **Status:** in active development. Seventeen skills ship today.
 
-## Where each half runs
+## Where it runs
 
-**The `project-*` skills, plus `meeting-review`, are Claude Code only**, and
-this is by design rather than a gap waiting to be closed. They read and write a
-ledger inside the project you are working in, and a project working tree is not
-something a browser session has. Claude Code is where the state lives, and it
-stays the source of truth: it accumulates a ledger and a config, claude.ai does
-not, so the drift only ever runs one way.
-
-Both setup skills are Claude Code only for the same reason. `setup-user`'s
-whole job is creating `~/.claude/daikenja/`, and `setup-project` registers a
-directory in it and can seed a ledger inside that directory -- neither a home
-directory nor a project working tree exists in a browser session. A plugin
-manifest has no field that can restrict which surface loads a plugin, so
-`setup-user` checks at runtime and stops with an explanation if the environment
-cannot give it a home directory. `setup-project` needs no check of its own: it
-stops when there is no `daikenja.yaml`, which is the same fact one step later.
-
-**The writing skills also run on claude.ai.** `compose`, `doc-review`,
-`preflight`, `remember-persona`, `self-review` and `thread` need your settings
-and something you paste in, never project state. Build the upload zips and add
-them there yourself:
-
-```
-python scripts/build-claude-ai-skills.py
-```
-
-That writes one zip per skill into `dist/claude-ai/`. Upload each at
-**Settings > Customize > Skills > Add > Upload a skill**. It needs code
-execution enabled, on a Pro, Max, Team or Enterprise plan.
-
-Settings come from the `daikenja` folder in your Google Drive, which
-`/daikenja:setup-user` creates when you ask it to -- so the files follow you
-without anything to upload or keep in sync. Skills do not sync between
-surfaces, so re-upload a zip when a skill changes.
-
-`remember-persona` writes its entry into the Drive file rather than a local
-one, and asks for connector approval at each step.
-
-`learn-voice` is not in that set yet. It writes `writing-style.md`, which on
-claude.ai exists only as a Drive file, and that path has not been exercised
-there -- so it ships to Claude Code alone for now.
-
-What claude.ai cannot do -- no reviewer dispatch for `preflight`, no ledger, no
-`setup-user` -- is recorded in [`docs/future-work.md`](docs/future-work.md).
+**Daikenja is a Claude Code plugin.** claude.ai, the desktop-app Chat surface,
+and Cowork are not supported surfaces. Settings come from `~/.claude/daikenja/`,
+or the `daikenja` folder in your Google Drive if you opt into that -- see below.
 
 ## Install
 
