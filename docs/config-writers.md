@@ -1,5 +1,9 @@
 # Who writes what
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Who writes what -- learn-voice "Step 0: read the contracts", setup-project "Setup project", setup-user "Setup user", setup-user "Offering Google Drive, without ever requiring it"
+
 Which skill owns which file, and which part of it. Companion to
 [`config-resolution.md`](config-resolution.md), which holds where the files
 live and how a pointer resolves to one.

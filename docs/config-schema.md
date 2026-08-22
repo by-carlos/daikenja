@@ -1,5 +1,10 @@
 # Config schema
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Schema -- project-list "Step 0: read the contracts"
+- § Field notes -- preflight "Step 0: read the shared docs", preflight "The `Reviewed:` line is mandatory", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", self-review "Step 0: read the shared docs", setup-project "Step 3: offer the per-project keys"
+
 The full `daikenja.yaml` shape, key by key, and two worked examples. Companion
 to [`config-resolution.md`](config-resolution.md), which holds where the file
 lives and how a project, a ledger and a pointer resolve -- this document only

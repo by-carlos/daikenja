@@ -1,5 +1,9 @@
 # Response format
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Entries are named topic-first, ID in parentheses -- preflight "Step 3: cycle 0 -- the substance checks"
+
 How a skill reports to the user in the conversation. `ledger-format.md` fixes
 what the record file looks like, `voice.md` fixes how a drafted message reads,
 and this file fixes the third surface: the reply the user actually gets back

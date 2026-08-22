@@ -15,17 +15,26 @@ stage's acceptance checks can be re-run later against the same inputs.
   range expansion, the only fixture checked by script rather than by hand,
   because the ordering rule is the only part of the ledger contract that is
   arithmetic instead of judgement; `scripts/build-claude-ai-skills.py` exits
-  clean; and this directory's own index agrees with what's on disk -- every
-  file under `fixtures/` is named in this README and vice versa; and every
+  clean; this directory's own index agrees with what's on disk -- every
+  file under `fixtures/` is named in this README and vice versa; every
   fixture's `Depends on:` line names a real doc/skill section, quoted verbatim
-  from its heading. Requires
+  from its heading; and every reference doc's `Depends-on (reverse index
+  ...):` block names a real heading in the doc itself, paired with real
+  `skills/*/SKILL.md` sections that cite it. Requires
   `pyyaml` (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
   `python tests/check-invariants.py`; CI runs it on every push and pull
   request via `.github/workflows/ci.yml`. A new fixture must carry a
   `Depends on:` line in its prose header naming the contract sections it
   exercises, e.g. `Depends on: ledger-format.md "Body markers", project-log
   "Say when a handle is new"` -- bare doc/skill names, section titles quoted
-  verbatim from the `#`/`##`/`###` heading they name.
+  verbatim from the `#`/`##`/`###` heading they name. A reference doc cited by
+  section from a skill's `Depends-on:`-eligible citation carries the reverse:
+  `Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+  headings by tests/check-invariants.py):` right after its title, then one
+  bullet per cited heading, e.g. `- § Body markers -- project-catchup "Step 0:
+  read the contracts"` -- the heading name and the pairs list are separated by
+  ` -- ` rather than `:`, since several of this repo's own headings (`Section:
+  Decisions`, `Step A: resolve the config`) already contain a colon.
 
 - [`fixtures/sample-thread.md`](fixtures/sample-thread.md) -- a thread with one
   agreed decision, one proposal nobody agreed to, and two unresolved items.

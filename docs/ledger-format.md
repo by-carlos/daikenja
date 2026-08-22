@@ -1,5 +1,20 @@
 # Ledger format
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Who an owner handle refers to -- remember-persona "The `Known as` field"
+- § IDs -- project-catchup "Step 0: read the contracts", project-decisions "Step 0: read the contracts"
+- § Body markers -- project-catchup "Step 0: read the contracts", project-decisions "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Relationships between entries -- project-decisions "Step 0: read the contracts", project-gaps "Step 0: read the contracts"
+- § A decision imposed from outside -- project-decisions "Step 0: read the contracts", project-gaps "Step 0: read the contracts"
+- § Section: Decisions -- project-catchup "Step 0: read the contracts", project-decisions "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Section: Open items -- project-catchup "Step 0: read the contracts", project-decisions "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Section: Context links -- project-catchup "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Section: Sources -- project-catchup "Step 0: read the contracts", project-sources "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Section: Changelog -- project-catchup "Step 0: read the contracts"
+- § Compacting a long summary -- project-catchup "Step 0: read the contracts"
+- § Reading rules for skills -- project-catchup "Step 0: read the contracts", project-decisions "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+
 The ledger is the per-project record of what was decided, what is still open,
 where the context lives, and what changed it. This document is the contract.
 Every Daikenja skill reads a ledger by this spec, and `log` writes one by this
