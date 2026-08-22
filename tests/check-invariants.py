@@ -14,7 +14,6 @@
     expansion it defines. This is the one part of the ledger contract that is
     arithmetic rather than judgement, so it is the one part worth checking
     mechanically -- every other fixture in tests/ is still exercised by hand.
-(f) `python scripts/build-claude-ai-skills.py` exits zero.
 (g) The set of files under tests/fixtures/ equals the set of fixture names
     tests/README.md mentions, reported in both directions.
 (h) Every `Depends on:` line found in tests/fixtures/*.md resolves: each
@@ -63,7 +62,6 @@ SKILLS_DIR = REPO_ROOT / "skills"
 UPGRADING = REPO_ROOT / "docs" / "upgrading.md"
 CHANGELOG = REPO_ROOT / "CHANGELOG.md"
 BACKFILL_FIXTURE = REPO_ROOT / "tests" / "fixtures" / "ledger-backfill.md"
-BUILD_SCRIPT = REPO_ROOT / "scripts" / "build-claude-ai-skills.py"
 FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
 FIXTURES_README = REPO_ROOT / "tests" / "README.md"
 
@@ -544,32 +542,6 @@ def check_reference_dependencies():
                     )
 
 
-def check_claude_ai_build():
-    if not BUILD_SCRIPT.is_file():
-        fail("f: claude.ai build", str(BUILD_SCRIPT), "script is missing")
-        return
-
-    try:
-        result = subprocess.run(
-            [sys.executable, str(BUILD_SCRIPT)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
-    except OSError as exc:
-        fail("f: claude.ai build", str(BUILD_SCRIPT), f"could not run: {exc}")
-        return
-
-    if result.returncode != 0:
-        fail(
-            "f: claude.ai build",
-            str(BUILD_SCRIPT),
-            f"exited {result.returncode}\n{result.stdout}\n{result.stderr}",
-        )
-
-
 def check_fixture_inventory():
     if not FIXTURES_README.exists():
         fail("g: fixture inventory", str(FIXTURES_README), "file is missing")
@@ -603,7 +575,6 @@ def main():
     check_skill_frontmatter()
     check_upgrading_headings()
     check_ledger_backfill_fixture()
-    check_claude_ai_build()
     check_fixture_inventory()
     check_fixture_dependencies()
     check_reference_dependencies()

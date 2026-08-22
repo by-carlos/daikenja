@@ -223,10 +223,9 @@ user's prose changes. The name is the only handle that survives a write.
 **Local paths are the default and stay the default.** The shipped template
 points both keys at local files, and a user who never mentions Drive sees
 exactly the behavior described everywhere else in this document. Drive buys one
-thing: reaching these settings from a machine or a session other than the one
-that wrote them. The connector's grant spans surfaces, so a file created in a
-Claude Code session is readable from claude.ai and the other way round
-(verified 17 August 2026).
+thing: reaching these settings from a machine other than the one that wrote
+them. The connector's grant spans machines, so a file created in one Claude
+Code session is readable from another (verified 17 August 2026).
 
 **The two keys resolve independently.** Pointing `writing_style` at a Drive file
 while `personas` stays on a local file is a normal configuration, not a

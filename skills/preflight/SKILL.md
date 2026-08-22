@@ -610,11 +610,11 @@ and should go out now.
 
 ## When dispatch is unavailable
 
-**This path is weaker than a dispatched run, and it is the only path on
-claude.ai**, where nothing dispatches. It was run against the `preflight`
-fixtures on 19 August 2026 and found the planted content gaps and the
-unresolvable recipient conflict, so it is no longer untested -- but what it
-cannot produce is isolation, and no amount of testing changes that.
+**This path is weaker than a dispatched run**, for whatever reason subagent
+dispatch did not run. It was run against the `preflight` fixtures on
+19 August 2026 and found the planted content gaps and the unresolvable
+recipient conflict, so it is no longer untested -- but what it cannot produce
+is isolation, and no amount of testing changes that.
 
 Run the reviewers in this context, sequentially, one brief at a time, and
 report it in the mandatory `Reviewed:` line of Step 10. That line, not a
