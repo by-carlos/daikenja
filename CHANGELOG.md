@@ -486,6 +486,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   needs a scratch `daikenja.yaml` whose `profile.name` matches the fixture
   cast and whose `norms_doc` points at `self-review-norms.md`, never a live
   configuration (#148).
+- `CONTRIBUTING.md` now records a shared-document size review trigger: a
+  `docs/` file read by more than three skills that crosses roughly 500 lines
+  prompts a split review on its next change, outcome allowed to be "no
+  split". The trigger came out of a cost measurement on #117
+  (`docs/ledger-format.md` growing 328 to 773 lines in two days while seven
+  skills read it in full) but had lived only in that closed issue's comment
+  until now (#153).
 
 ## [0.5.1] - 2026-08-20
 
