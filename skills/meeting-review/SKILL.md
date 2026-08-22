@@ -123,6 +123,10 @@ already recorded a handle for that person, it is derived from the speaker label
 in the transcript (`Priya Nair` becomes `@priya`).
 
 - A person who accepted a task owns it.
+- A decision is owned by whoever closed it out loud, per Step 3's test for
+  what counts as a decision -- the same person the Step 5 template's
+  `<who closed it>` field names, and what `ledger-format.md`'s Section:
+  Decisions calls `<owner>`.
 - What the user says is theirs is theirs. Use the first token of `profile.name`
   from `~/.claude/daikenja/daikenja.yaml`.
 - Nobody identifiable means `@unassigned`.
@@ -231,8 +235,14 @@ is written.
 ```
 
 On a go-ahead, run `/daikenja:project-log` and give it the classified entries,
-their owners and their anchors. From there `project-log` does its own job --
-resolving the project and the ledger, allocating IDs, checking for
+their owners, their anchors, and the meeting's own date. Establish that date
+from whatever the material itself states -- a header line, an invite subject,
+a timestamp on the opening turn -- never from today's date and never by asking
+the user to recall it. When nothing in the material states one, say so
+explicitly in the handoff instead of omitting it: `project-log` treats an
+absent meeting date as unestablished, not as "log today", and asks for it or
+records it as approximate per its own rules. From there `project-log` does its
+own job -- resolving the project and the ledger, allocating IDs, checking for
 duplicates, showing the exact lines, waiting for approval, and writing. The
 Changelog writer is `project-log via meeting-review`.
 
@@ -261,6 +271,7 @@ missing thing is the task itself.
 | A speaker matches a persona whose `Known as` records a different handle | Use the recorded handle, not the one the label would give, and say so in one line under `Notes`. |
 | Two personas could both be one speaker | Do not guess. Use the transcript's label and name both personas in one line under `Notes`. |
 | The `personas` pointer does not resolve, or `daikenja.yaml` is missing | One notice, then continue. Neither is needed to read a transcript. |
+| The transcript never states its own date | Say so explicitly in the Step 6 handoff instead of omitting it. Never invent one and never substitute today's date. |
 | Nothing was settled | Say so and propose nothing. A meeting with no decisions is a normal meeting. |
 | User asks you to write the ledger directly | Decline per the hard rule. Run `/daikenja:project-log`. |
 | User asks who was at fault or how someone performed | Decline. Report positions and quotes only. `/daikenja:self-review` coaches the user on their own moves, nobody else's. |

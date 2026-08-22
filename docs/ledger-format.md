@@ -129,7 +129,7 @@ form. See [Body markers](#body-markers).
 | Field | Rule |
 |---|---|
 | `<marker>` | `- ` in Decisions. `- [ ] ` or `- [x] ` in Open items. |
-| `<date>` | `YYYY-MM-DD`, absolute, never relative. The best known date the entry's subject was decided or raised. For an incremental write that is the day it is written; for a backfill it is the original date. See [Approximate dates](#approximate-dates). |
+| `<date>` | `YYYY-MM-DD`, absolute, never relative. The best known date the entry's subject was decided or raised. For an incremental write that is the day it is written; for a backfill it is the original date; for a run handed classified material by another skill (`project-log via <skill>`) it is the date that skill established, when it established one. See [Approximate dates](#approximate-dates). |
 | `<id>` | `D-001` in Decisions, `O-001` in Open items. See [IDs](#ids). |
 | `<owner>` | `@` plus one token, no spaces. `@unassigned` when there is none. |
 | `<body>` | Free text on one line. May contain `--`. May end with markdown links. |
