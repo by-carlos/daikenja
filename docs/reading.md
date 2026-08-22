@@ -107,8 +107,9 @@ is not repeated. Reading is not the skill that creates the file.
 ## Step C: read and parse
 
 Read the whole ledger. Locate each H2 section by its exact heading, per
-`ledger-format.md` § Reading rules. The original four are always present;
-`## Sources` may legitimately be absent, per `ledger-format.md` § File
+`ledger-format.md` § Reading rules. The original four are always present; if
+one is missing, report it and ask before continuing over what remains, per
+rule 8. `## Sources` may legitimately be absent, per `ledger-format.md` § File
 skeleton -- a ledger without the heading tracks no sources, and no skill
 reports the absence as a defect. Apply those rules verbatim:
 ignore comments and blank lines, treat a two-space indented markerless line as
