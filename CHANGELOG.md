@@ -371,6 +371,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A meeting reviewed after the fact got entries dated to the review, not the
+  meeting -- silently.** `meeting-review` handed `project-log` classified
+  entries with no date, and `project-log` dated an ordinary write to today by
+  default; a transcript reviewed a week late landed a week young against
+  `stale_after_days`. `meeting-review` Step 6 now carries the meeting's own
+  date in the handoff -- taken from whatever the material states, never
+  invented, and stated as unknown when the material never gives one --
+  and `project-log` gains a rule treating a handed-over meeting date like a
+  user-supplied one, falling back to its existing ask / `Approximate date.`
+  machinery when none was handed over. Separately, `meeting-review` Step 4
+  never stated how a decision's owner is derived; it now names the rule the
+  Step 5 report template and `ledger-format.md`'s Section: Decisions already
+  implied -- whoever closed the decision out loud (#159).
 - **Four skills handled a missing local `writing_style`/`personas` file four
   different ways, all citing the same contract.** `docs/config-resolution.md`'s
   failure table said a pointed-at local prose file that's missing gets "one

@@ -517,6 +517,23 @@ origin are older than `stale_after_days` the moment they land, so
 `/daikenja:project-gaps` reports the open ones on its next run. That surprises
 people and it is the audit working.
 
+### A meeting date handed over by `meeting-review`
+
+A run entered via `project-log via meeting-review` carries the meeting's own
+date in the handoff, or states that the transcript never gave one. Treat a
+handed-over meeting date exactly like a date the user supplied directly: it is
+the entry's date field for everything this run writes, not today's date
+pulled from the environment. This is not the backfill path above -- the
+writer stays `project-log via meeting-review`, and nothing else about
+backfilling applies -- but the reason is the same one: the date field means
+when the thing happened, and a meeting reviewed after the fact is exactly the
+case where that differs from today.
+
+**No meeting date was handed over** is treated as an entry whose date cannot
+be established, per the failure case below: ask for it, and an approximation
+is a real answer, written with the `Approximate date.` marker. Never invent
+one and never fall back to today.
+
 ### Show the proposal
 
 Show exactly what will be written, verbatim, in a fenced block. Every line the
@@ -548,8 +565,10 @@ a heading with nothing under it.
 
 Get both dates from the environment, not from memory:
 
-- `date +%Y-%m-%d` -- **local** date, for the entry's date field. That is the
-  day the user means by "today".
+- `date +%Y-%m-%d` -- **local** date, for an ordinary write's entry date
+  field. That is the day the user means by "today". A backfilled date or a
+  meeting date handed over by `meeting-review` overrides it, per the sections
+  above.
 - `date -u +%Y-%m-%dT%H:%MZ` -- **UTC** timestamp, for the Changelog line. The
   contract fixes this one as UTC.
 
