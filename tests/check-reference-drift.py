@@ -74,7 +74,13 @@ def parse_reverse_index(text):
 
 def heading_body(text, heading_name):
     """The body of `heading_name` -- from just after its heading line to the
-    next heading of equal-or-higher level, or EOF. None if not found."""
+    next heading of equal-or-higher level, or EOF. None if not found.
+
+    Strips the doc's own Depends-on: block out of the returned body. That
+    block sits inside the title heading's body span, so for a doc whose only
+    heading is its title (config-writers.md, config-versioning.md), editing
+    the index itself -- adding an entry when a new skill starts citing it --
+    would otherwise always register as that heading's content changing."""
     lines = text.splitlines()
     start = level = None
     for i, line in enumerate(lines):
@@ -91,7 +97,17 @@ def heading_body(text, heading_name):
         if match and len(match.group(1)) <= level:
             end = j
             break
-    return "\n".join(lines[start:end])
+    body = "\n".join(lines[start:end])
+
+    header_match = REVERSE_DEPENDS_HEADER_RE.search(body)
+    if header_match:
+        block_end = header_match.end()
+        for line in body[block_end:].splitlines(keepends=True):
+            if line.strip() == "":
+                break
+            block_end += len(line)
+        body = body[: header_match.start()] + body[block_end:]
+    return body
 
 
 def normalize(text):
