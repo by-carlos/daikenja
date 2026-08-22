@@ -1,5 +1,11 @@
 # Reading a ledger
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Step A: resolve the config -- preflight "Step 3: cycle 0 -- the substance checks"
+- § Step B: resolve the ledger path -- preflight "Step 3: cycle 0 -- the substance checks"
+- § Step C: read and parse -- preflight "Step 3: cycle 0 -- the substance checks"
+
 Shared mechanism for the five read skills: `project-catchup`,
 `project-summary`, `project-decisions`, `project-gaps`, `project-sources`. All
 five take the same optional project-key argument, resolve config, find a

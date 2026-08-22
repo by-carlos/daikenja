@@ -1,5 +1,11 @@
 # Reviewer personas
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § How a brief is assembled -- preflight "The named personas"
+- § The critique contract -- preflight "Step 5: cycle 1 -- dispatch"
+- § What each reviewer runs on -- preflight "The model this context runs on", preflight "Step 5: cycle 1 -- dispatch"
+
 The reviewers `preflight` dispatches to challenge a draft, the model tier each
 one runs on, the two checks it always runs itself, and the contract every
 finding comes back in.

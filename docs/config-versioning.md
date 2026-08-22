@@ -1,5 +1,9 @@
 # Version marker and upgrades
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Version marker and upgrades -- setup-project "Step 0: the preconditions", setup-user "Step 2: the upgrade branch"
+
 The `daikenja_version` key in `daikenja.yaml`, what makes a skill notice it is
 behind, and what `upgrading.md` is for. Companion to
 [`config-resolution.md`](config-resolution.md), which holds where the file

@@ -1,5 +1,10 @@
 # Reading and writing a Drive pointer
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § One folder, always -- setup-user "Offering Google Drive, without ever requiring it"
+- § Writing replaces the file -- learn-voice "Step 7: write", remember-persona "Step 5: write"
+
 The Google Drive-specific mechanics for a `drive:` pointer: finding the
 `daikenja` folder, reading a file safely, and the replace sequence a write
 follows. Companion to

@@ -1,5 +1,9 @@
 # Rewrite rules
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Prior conversation context has a hard boundary -- preflight "Step 6: adjudicate -- the safety hinge"
+
 The rules that bound any rewrite of a user's message. Written once and shared
 by two consumers, the same way `substance-checks.md` is:
 

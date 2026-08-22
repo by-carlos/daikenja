@@ -1,5 +1,13 @@
 # Config resolution
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § Resolution order -- preflight "Step 3: cycle 0 -- the substance checks"
+- § Finding the project -- project-list "Step 0: read the contracts", setup-project "Step 1: read what already exists"
+- § Finding the ledger -- project-list "Step 0: read the contracts"
+- § Resolving `ledger` -- project-list "Step 0: read the contracts", setup-project "Step 2: register the project"
+- § Resolving `writing_style` and `personas` -- preflight "The named personas", setup-user "Offering Google Drive, without ever requiring it"
+
 Daikenja reads user configuration from **one YAML file** outside the plugin
 directory. This document is the resolution core: where that file lives, how a
 skill finds the current project and its ledger, how the `writing_style` and
