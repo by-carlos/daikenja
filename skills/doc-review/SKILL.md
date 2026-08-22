@@ -59,12 +59,14 @@ short report, not a padded one.
 
 ## Step 3: cap and order
 
-Findings are capped at 5, hardest first, matching the ordering `self-review`
-uses -- consistency between the two review skills is worth more than either
-skill inventing its own scale. "Hardest" here means most likely to cause real
-harm if unfixed: a contradiction or an unenforced rule outranks a wording
-nit. Within a tier, order by where the finding sits in the document (earliest
-first), since that is the order a reader will hit them.
+Findings are capped at a flat 5, hardest first, using the same hardest-first
+ordering and parked-by-title treatment as `self-review` -- consistency in how
+the two review skills order and park findings is worth more than either skill
+inventing its own scheme. This skill's cap does not tone-scale the way
+`self-review`'s does. "Hardest" here means most likely to cause real harm if
+unfixed: a contradiction or an unenforced rule outranks a wording nit. Within
+a tier, order by where the finding sits in the document (earliest first),
+since that is the order a reader will hit them.
 
 If there are more than 5, name the count and list the rest by one-line title
 only, the same parked-by-title treatment `self-review` uses.
@@ -73,8 +75,9 @@ only, the same parked-by-title treatment `self-review` uses.
 
 The report follows `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- read it
 before writing the reply; `profile.tone` scales any narration around the
-findings, never the findings themselves. One entry per finding, in the order
-fixed by Step 3:
+findings, never the findings themselves. Lead with a one-line summary: how
+many findings, and whether anything is parked. Then one entry per finding, in
+the order fixed by Step 3:
 
 ```
 1. [checklist category] -- <one-line title>
@@ -82,9 +85,6 @@ fixed by Step 3:
    Why it matters: <what goes wrong if this ships as-is>
    Fix: <a concrete, specific fix -- not "make this clearer">
 ```
-
-Close with a one-line summary: how many findings, and whether anything is
-parked.
 
 If nothing qualifies, say so plainly rather than omitting the report:
 

@@ -452,6 +452,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   version, a file that does not parse, and a version ahead of the installed one
   -- plus walks of a read skill and `project-log` over the older-version file
   (#67).
+- **Eight small self-contradictions across five skills and two docs.**
+  `doc-review`'s cap sentence claimed parity with `self-review`'s tone-scaled
+  cap when its own cap is a flat 5; it now says so without claiming parity.
+  `doc-review`'s report closed with its summary line instead of leading with
+  it, unlike every other reporting skill. `project-decisions`' Step 6 example
+  named an ID bare and showed a second hop past the one hop Step 5 allows.
+  `project-gaps`' example override used the same value as the profile
+  default, showing nothing. `config-drive.md` named only `remember-persona`
+  as a prose writer where `config-writers.md` also names `learn-voice`.
+  `project-log`'s Step 1 input list was missing the fifth kind ("material
+  handed over by another skill") that a later step already depends on.
+  `docs/reading.md` scoped its shared mechanism to five read skills while
+  `preflight` also reads through it, for lookup. `setup-user`'s Step 2 never
+  said whether "section" meant a version heading or one change note under it,
+  so a heading with several notes could migrate only the first (#151).
 
 ### Documentation
 
