@@ -14,6 +14,8 @@ Every walk assumes the **installed** version -- `version` in
 notice fires and the walks stay about resolution alone.
 -->
 
+Depends on: config-resolution.md "Finding the project", config-resolution.md "Resolving `ledger`", config-resolution.md "Precedence", project-list "Step 2: resolve every entry", project-list "Step 4: report"
+
 ## The configuration
 
 Five projects: a single-value `path` written before `paths` existed, a `paths`

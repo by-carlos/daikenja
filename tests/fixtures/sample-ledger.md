@@ -1,5 +1,7 @@
 # beacon ledger
 
+Depends on: ledger-format.md "File skeleton", ledger-format.md "Ordering"
+
 ## Decisions
 
 - 2026-08-13 -- D-004 -- @rimuru -- Supersedes D-002. Roll the beacon service out region by region, not all at once -- a bad region can be paused without a global rollback.

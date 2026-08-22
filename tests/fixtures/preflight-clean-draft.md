@@ -9,6 +9,8 @@ question by ownership without the phrasing reading as blame -- an earlier versio
 opened the ask with "You own the migration --" and the tone-sensitive reader
 caught it, so the draft was never the clean control it claimed to be.
 
+Depends on: preflight "Step 3: cycle 0 -- the substance checks", preflight "Step 6: adjudicate -- the safety hinge"
+
 ## Draft 1 -- nothing to find
 
 To: Geld

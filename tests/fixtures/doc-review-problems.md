@@ -2,6 +2,8 @@
 
 This runbook covers the Harbor rate limiter rollout.
 
+Depends on: doc-review "Step 2: run the checklist", doc-review "Step 3: cap and order", doc-review "Step 4: report"
+
 ## Background
 
 Harbor replaces the old GKR pipeline. All services must migrate before the

@@ -4,6 +4,8 @@ Not real work content.
 The window, the replica impact and the date exist nowhere in this file. Any
 run that produces a number for them has invented it.
 
+Depends on: preflight "Step 6: adjudicate -- the safety hinge", substance-checks.md "The six checks"
+
 ## Draft -- a content gap a rewrite cannot close
 
 To: Ramiris

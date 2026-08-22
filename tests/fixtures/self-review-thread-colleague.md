@@ -13,6 +13,8 @@ was not achievable without saying what would be dropped to hit it.
 The correct output blames nobody but the invoker. `gobta` may appear only as the
 situation `rimuru` was responding to.
 
+Depends on: self-review "Hard rules"
+
 ---
 
 **#tern-cutover** -- 9 messages, 2026-08-13 14-20 to 2026-08-13 15-48

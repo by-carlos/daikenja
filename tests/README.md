@@ -16,10 +16,16 @@ stage's acceptance checks can be re-run later against the same inputs.
   because the ordering rule is the only part of the ledger contract that is
   arithmetic instead of judgement; `scripts/build-claude-ai-skills.py` exits
   clean; and this directory's own index agrees with what's on disk -- every
-  file under `fixtures/` is named in this README and vice versa. Requires
+  file under `fixtures/` is named in this README and vice versa; and every
+  fixture's `Depends on:` line names a real doc/skill section, quoted verbatim
+  from its heading. Requires
   `pyyaml` (`pip install pyyaml`) and the `claude` CLI on `PATH`. Run it with
   `python tests/check-invariants.py`; CI runs it on every push and pull
-  request via `.github/workflows/ci.yml`.
+  request via `.github/workflows/ci.yml`. A new fixture must carry a
+  `Depends on:` line in its prose header naming the contract sections it
+  exercises, e.g. `Depends on: ledger-format.md "Body markers", project-log
+  "Say when a handle is new"` -- bare doc/skill names, section titles quoted
+  verbatim from the `#`/`##`/`###` heading they name.
 
 - [`fixtures/sample-thread.md`](fixtures/sample-thread.md) -- a thread with one
   agreed decision, one proposal nobody agreed to, and two unresolved items.

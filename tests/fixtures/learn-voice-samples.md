@@ -26,6 +26,8 @@ Traits are seeded so a run can be marked. Six must appear in the file, four
 exercise the `Fixed`-rule check in `docs/voice.md`, and two must not be recorded
 at all.
 
+Depends on: learn-voice "Step 1: get the samples, and settle authorship", learn-voice "Step 2: check the corpus is enough", learn-voice "Step 3: pass 1 -- evidence", learn-voice "Step 4: pass 2 -- synthesis", learn-voice "Step 5: resolve the file and read what is there", voice.md "Fixed", voice.md "Spelling variant", voice.md "Length"
+
 ---
 
 ## Source 1 -- `#harbor-rollout`, broad channel, peers

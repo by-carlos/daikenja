@@ -17,6 +17,11 @@
 (f) `python scripts/build-claude-ai-skills.py` exits zero.
 (g) The set of files under tests/fixtures/ equals the set of fixture names
     tests/README.md mentions, reported in both directions.
+(h) Every `Depends on:` line found in tests/fixtures/*.md resolves: each
+    `name "Section Title"` pair names a real docs/*.md file or skills/*/SKILL.md
+    file, and the quoted title matches a `#`/`##`/`###` heading in that file,
+    verbatim after stripping the leading `#`s and whitespace. A fixture with no
+    `Depends on:` line at all is not an error here -- only a malformed one is.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
@@ -45,6 +50,7 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+DOCS_DIR = REPO_ROOT / "docs"
 SKILLS_DIR = REPO_ROOT / "skills"
 UPGRADING = REPO_ROOT / "docs" / "upgrading.md"
 CHANGELOG = REPO_ROOT / "CHANGELOG.md"
@@ -66,6 +72,10 @@ BRACKET_HEADING_RE = re.compile(
     r"^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?[ \t]*$", re.MULTILINE
 )
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
+
+DEPENDS_ON_RE = re.compile(r"^Depends on: (.+)$", re.MULTILINE)
+DEPENDS_ITEM_RE = re.compile(r'([A-Za-z0-9_.-]+)\s+"([^"]+)"')
+HEADING_RE = re.compile(r"^(#{1,3})\s+(.+?)\s*$", re.MULTILINE)
 
 failures = []
 
@@ -385,6 +395,63 @@ def check_ledger_backfill_fixture():
             )
 
 
+def check_fixture_dependencies():
+    if not FIXTURES_DIR.is_dir():
+        fail("h: fixture dependencies", str(FIXTURES_DIR), "directory is missing")
+        return
+
+    heading_cache = {}
+
+    def headings_for(path):
+        if path not in heading_cache:
+            if path.is_file():
+                text = path.read_text(encoding="utf-8")
+                heading_cache[path] = {
+                    heading.strip() for _, heading in HEADING_RE.findall(text)
+                }
+            else:
+                heading_cache[path] = None
+        return heading_cache[path]
+
+    for fixture in sorted(FIXTURES_DIR.glob("*.md")):
+        text = fixture.read_text(encoding="utf-8")
+        match = DEPENDS_ON_RE.search(text)
+        if not match:
+            continue  # not every fixture has one yet -- that is not an error
+
+        items = DEPENDS_ITEM_RE.findall(match.group(1))
+        if not items:
+            fail(
+                "h: fixture dependencies",
+                str(fixture),
+                f"'Depends on:' line found but no 'name \"Section Title\"' pairs parsed: {match.group(1)!r}",
+            )
+            continue
+
+        for name, title in items:
+            if name.endswith(".md"):
+                target = DOCS_DIR / name
+            else:
+                target = SKILLS_DIR / name / "SKILL.md"
+
+            headings = headings_for(target)
+            if headings is None:
+                fail(
+                    "h: fixture dependencies",
+                    str(fixture),
+                    f"'Depends on:' names '{name}', which does not resolve to {target}",
+                )
+                continue
+
+            if title not in headings:
+                fail(
+                    "h: fixture dependencies",
+                    str(fixture),
+                    f"'Depends on:' quotes \"{title}\" for '{name}', which has no matching "
+                    f"#/##/### heading in {target}",
+                )
+
+
 def check_claude_ai_build():
     if not BUILD_SCRIPT.is_file():
         fail("f: claude.ai build", str(BUILD_SCRIPT), "script is missing")
@@ -446,6 +513,7 @@ def main():
     check_ledger_backfill_fixture()
     check_claude_ai_build()
     check_fixture_inventory()
+    check_fixture_dependencies()
 
     if failures:
         print("Invariant checks failed:", file=sys.stderr)

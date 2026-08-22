@@ -12,6 +12,8 @@ directory named in each walk, and compare against the expected result stated
 under it.
 -->
 
+Depends on: config-resolution.md "Resolving `ledger`"
+
 ## Config A -- no `ledger:` key
 
 The common case, and unchanged by this fixture's subject.

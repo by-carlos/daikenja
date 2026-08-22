@@ -4,6 +4,8 @@ Synthetic. Invented team, invented rules. Nothing here comes from a real
 ways-of-working document. Used by the `self-review` skill's acceptance check
 for ROLE CHECK being on, by pointing `norms_doc` at this file.
 
+Depends on: self-review "Step 8: ROLE CHECK (off by default)"
+
 ---
 
 # Quill team -- ways of working

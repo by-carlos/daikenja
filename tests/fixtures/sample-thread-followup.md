@@ -11,6 +11,8 @@ and the ramp decision is narrowed, not repeated.
 Starting ledger: the one `sample-thread.md` produces. No new handles appear in
 this pass, so the proposal carries no `New owner handles:` block.
 
+Depends on: project-log "Check for duplicates first"
+
 ---
 
 **#harbor-rollout** -- 9 messages
