@@ -13,7 +13,7 @@ you have not approved.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Fifteen skills ship today.
+**Status:** in active development. Seventeen skills ship today.
 
 ## Where each half runs
 
@@ -83,7 +83,7 @@ reached by name, and keeps its ledger wherever its `ledger:` key points.
 
 ## Skills
 
-Sixteen skills, grouped by what they do.
+Seventeen skills, grouped by what they do.
 
 **Writing a reply**
 

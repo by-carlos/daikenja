@@ -448,6 +448,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   behaviour, and `project-gaps`'s own framing now says the same thing in one
   line so a reader of a report is not left inferring it
   (`docs/future-work.md`, `skills/project-gaps/SKILL.md`) (#72).
+- `README.md` now says seventeen skills ship, matching the `skills/`
+  directory; it previously stated two different, both wrong, counts.
+  `tests/README.md` now lists `dictated-log-requests.md`, `ledger-location.md`
+  and `sources-ledger.md`, all present in `tests/fixtures/` and previously
+  unindexed, and its `self-review` fixture entries now say that walking them
+  needs a scratch `daikenja.yaml` whose `profile.name` matches the fixture
+  cast and whose `norms_doc` points at `self-review-norms.md`, never a live
+  configuration (#148).
 
 ## [0.5.1] - 2026-08-20
 
