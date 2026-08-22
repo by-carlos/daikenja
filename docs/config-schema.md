@@ -139,7 +139,10 @@ against; the convention is in
 **The `<project-key>` is the project's name, and naming it resolves it.** Call
 it whatever reads well -- it is still never matched against a directory. What
 changed is that a skill accepts it as an argument, so a project can be read
-from anywhere on disk rather than only from inside it. See
+from anywhere on disk rather than only from inside it. `project-log` accepts
+one too, but only when the named entry has no paths -- the one case a key
+alone is enough to say where a *write* belongs; naming a key that has paths is
+refused rather than falling back to the directory you are standing in. See
 [Finding the project](config-resolution.md#finding-the-project).
 
 **`ledger`** is a **pointer**, not a fixed path. A pointer is a relative path or
@@ -218,6 +221,9 @@ Resolving `q4-planning` by name, from anywhere:
 1. The key matches, so directory resolution never runs.
 2. The entry has no paths, so nothing relative could resolve; its absolute
    `ledger:` is what gives it a location, and that is the file read.
+3. `project-log q4-planning` writes there the same way: the entry has no
+   paths, so the key is unambiguous, and the same absolute `ledger:` is what
+   the entry lands in.
 
 ### Minimal valid file
 
