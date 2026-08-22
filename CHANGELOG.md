@@ -359,6 +359,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`project-decisions` missed a broken supersession pair when queried from
+  one particular side.** Step 4 checked whether the matched entry's own tail
+  claimed supersession, or whether another entry's body named the matched
+  entry -- but not the mirror case, where another entry's tail names the
+  matched entry without the matched entry's body confirming it. A user
+  querying that side got a clean "no history" answer for a decision the
+  ledger format's own mismatch rule says should be flagged. Step 4 gains a
+  third bullet for that direction.
 - **`project-summary` and `project-catchup` could drop the one word that
   changes the correct reaction to a decision.** Both reword entries
   topic-first rather than quoting them, and neither Step 0 named
