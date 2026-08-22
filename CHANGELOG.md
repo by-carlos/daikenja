@@ -359,6 +359,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The owner-handles fixture contradicted itself about whether a new handle
+  holds up a dictated write.** `tests/fixtures/owner-handles.md` walks 3 and 6
+  said the write "proceeds on approval" and walk 7 inherited that framing,
+  while walk 8 took a message of the same shape and correctly said the entry
+  is written in the same turn. Every message in walks 1-8 is dictated and
+  `skills/project-log/SKILL.md` § Say when a handle is new states that the
+  check "produces a notice, not a question, so it does not fail condition 3"
+  -- so the three walks were teaching the wrong side of a boundary the skill
+  had already settled in #74. Walks 3 and 6 now assert the same-turn path with
+  the notice shown beside the written lines, walk 7 keeps its stop but shows
+  the lines that would have been written rather than "the proposal", and the
+  file's opening now says the same-turn path is the baseline across walks 1-8
+  and that walks 9-11 never take it because they enter from another skill.
+  Walk 8 and the skill are unchanged (#156).
 - **`project-log`'s classify step had no test for telling a source from a
   context link.** Since the ledger learned to track source documents, a link
   in pasted material has two possible homes, but the classify bullet only

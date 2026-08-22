@@ -8,8 +8,17 @@ Exercises the two halves of handle drift, against
 
 Walks 1-8 cover `project-log` § Say when a handle is new: a handle the ledger
 already knows, a handle only `personas.md` knows, a handle neither knows, two
-spellings of one person, `@unassigned`, and the three configuration states --
-no personas file, a broken `drive:` pointer, and a dictated write.
+spellings of one person, `@unassigned`, and two configuration states -- no
+personas file and a broken `drive:` pointer.
+
+Every message in walks 1-8 is a fact the user dictated, so the same-turn path is
+the baseline across all eight and none of them waits for approval. Walk 8 is
+where that is spelled out: an unfamiliar handle produces a notice, not a
+question, so it never demotes a dictated run to propose-then-wait. Walk 7 is the
+only stop, and it comes from the config failure rather than from the handle.
+Walks 9-11 are not dictated -- they enter `project-log` from another skill,
+which per that skill's § The same-turn path for dictated facts never takes this
+path at all.
 
 Walks 9-11 cover `meeting-review` § Step 4: attribute, which runs *before* that
 check and is what stops most second spellings being minted at all: a speaker the
@@ -95,8 +104,10 @@ User message:
 
 > Add an open item: @gobta writes the canary abort criteria.
 
-Expected: neither place has `@gobta`. One notice, in the proposal, and the write
-proceeds on approval exactly as it would have without the check:
+Expected: neither place has `@gobta`. The four same-turn conditions all hold and
+the notice is a notice, not a question, so it fails none of them. The entry is
+written in the same turn and the notice is shown beside the written lines and
+the Changelog line, exactly as the run would have gone without the check:
 
 ~~~
 New owner handles:
@@ -105,9 +116,10 @@ New owner handles:
 
 Offering `/daikenja:remember-persona` alongside it is fine. Running it is not.
 
-Must not happen: blocking the write, asking who `@gobta` is as a question the
-run waits on, rewriting the handle, or writing anything at all to
-`personas.md`.
+Must not happen: blocking the write, holding it for approval, dropping the run
+to propose-then-wait because the handle was unfamiliar, asking who `@gobta` is
+as a question the run waits on, rewriting the handle, or writing anything at all
+to `personas.md`.
 
 ## Walk 4: two spellings of one person
 
@@ -159,10 +171,13 @@ New owner handles:
   comparison.
 ~~~
 
-The write proceeds on approval.
+The entry is still written in the same turn. An unset key is an absent key, and
+an absent key fails no same-turn condition -- the narrower comparison changes
+what the notice says, not which path the run takes.
 
-Must not happen: a stop, a scaffold of `personas.md` from `project-log`, or a
-silent notice that does not say the comparison was narrower.
+Must not happen: a stop, a drop to propose-then-wait, a scaffold of
+`personas.md` from `project-log`, or a silent notice that does not say the
+comparison was narrower.
 
 ## Walk 7: a `drive:` pointer that does not resolve
 
@@ -172,8 +187,13 @@ connector absent from the session.
 Expected: **stop, before anything is written.** A `drive:` pointer means the
 user asked for that behavior and the request failed, which
 `docs/config-resolution.md` § Failure behavior separates from a key nobody set.
-Name the file and the reason, show the proposal so the entries are not lost,
-and say plainly that nothing was written.
+Name the file and the reason, show the lines that would have been written so
+the entries are not lost, and say plainly that nothing was written.
+
+This is the one thing that does stop a run Walk 3 shows writing in the same
+turn. The stop comes from the config failure, not from the handle: a `drive:`
+pointer that does not resolve halts the whole run whichever path it was on, so
+it is not the same-turn conditions failing.
 
 Must not happen: falling back to the local default path, treating it as an
 unconfigured key, or writing the entry and reporting the failure afterwards.
