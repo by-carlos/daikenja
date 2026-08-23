@@ -16,8 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   failure cases, and what the skill does not do -- now live in
   `docs/project-log-reference.md`, read at the point each branch opens instead
   of on every invocation. The always-read steps stay inline. No behaviour
-  changes: the moved text is verbatim, and each step names its section where
-  the branch opens. `SKILL.md` goes from 745 to 533 lines (#214).
+  changes: the moved text is verbatim bar one stranded "below" that now names
+  its file, and each step names its section where the branch opens. `SKILL.md`
+  goes from 745 to 534 lines, 43,240 to 28,223 bytes (#214).
 - **README says auto-invocation needs a 1M-token context window.** On a
   200K-context model the harness's 8,000-character skill-listing budget drops
   every plugin skill's description, so Daikenja is name-only there and only the
