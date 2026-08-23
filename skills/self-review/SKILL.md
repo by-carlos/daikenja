@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: Reviews how the user themselves handled a thread they took part in, and gives private, direct, evidence-backed coaching on their own moves. Use when the user says "how did I handle that", "review my messages in this thread", "what could I have done better", "was I out of line", or pastes a thread they participated in and asks for feedback on their part in it. Findings are about the user alone, never about anyone else's failings, and nothing is written, logged or sent. Not a review of a document (that is /daikenja:doc-review), not a review of what a meeting settled (that is /daikenja:meeting-review), and not a pre-send check on a draft message (that is /daikenja:preflight).
+description: Reviews how the user themselves handled a thread they took part in, and gives private, direct, evidence-backed coaching on their own moves -- not a review of a document, a meeting's outcome, or a draft message's substance. Use when the user says "how did I handle that", "review my messages in this thread", "what could I have done better", "was I out of line", or pastes a thread they participated in and asks for feedback on their part in it. Findings are about the user alone, never about anyone else's failings, and nothing is written, logged or sent.
 metadata:
   owner: Carlos
   version: 1

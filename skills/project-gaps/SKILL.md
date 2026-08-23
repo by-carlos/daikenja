@@ -1,6 +1,6 @@
 ---
 name: project-gaps
-description: Audits a project's Daikenja ledger for open items with no owner or that have sat too long. Use when the user says "what's still open", "what needs an owner", "what's stale", "what's falling through the cracks", "audit the open items", or "what should we be worried about". Not for a full project overview (that is /daikenja:project-summary) or a delta since last time (that is /daikenja:project-catchup). An unowned decision is never reported here -- only Open items are in scope. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-gaps <key>` reads that project from anywhere, without being in its directory.
+description: Audits a project's Daikenja ledger for open items with no owner or that have sat too long -- not a full project overview or a delta since last time. Use when the user says "what's still open", "what needs an owner", "what's stale", "what's falling through the cracks", "audit the open items", or "what should we be worried about". An unowned decision is never reported here -- only Open items are in scope. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-gaps <key>` reads that project from anywhere, without being in its directory.
 metadata:
   owner: Carlos
   version: 1
