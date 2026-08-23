@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`/daikenja:project-log`'s branch-only sections moved out of `SKILL.md`.**
+  Eight sections a run reaches only on some branches -- scaffolding a missing
+  ledger, marking a decision imposed, recording a relationship, recording a
+  source, backfilling, a meeting date handed over by `meeting-review`, the
+  failure cases, and what the skill does not do -- now live in
+  `docs/project-log-reference.md`, read at the point each branch opens instead
+  of on every invocation. The always-read steps stay inline. No behaviour
+  changes: the moved text is verbatim bar one stranded "below" that now names
+  its file, and each step names its section where the branch opens. `SKILL.md`
+  goes from 745 to 534 lines, 43,240 to 28,223 bytes. The same pass as the
+  `preflight` split below (#214).
 - **`/daikenja:preflight`'s branch-only sections moved out of `SKILL.md`.**
   Seven sections a run reaches only on some branches -- re-running on the same
   draft, an unresolvable recipient conflict, learned personas, reporting a

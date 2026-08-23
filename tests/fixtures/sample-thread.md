@@ -16,7 +16,7 @@ comms task are both unassigned, and the runbook link carries no owner field),
 so with no `personas.md` configured the proposal's `New owner handles:` block
 names only `@diablo`, noting no personas.md is configured.
 
-Depends on: project-log "Classify before you write", project-log "Step 3: scaffold the ledger when it is missing"
+Depends on: project-log "Classify before you write", project-log-reference.md "Step 3: scaffold the ledger when it is missing"
 
 ---
 

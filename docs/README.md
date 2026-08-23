@@ -3,15 +3,20 @@
 Specifications the skills agree on. A skill implements a contract; it never
 redefines one. When a contract changes, it changes here and the skills follow.
 
-One file here is a different kind. `preflight-reference.md` belongs to a single
-skill rather than to an agreement between several: it holds the sections of
-`preflight/SKILL.md` that a run reaches only on some branches, kept out of line
-so a run that never reaches one never pays to read it. It is that skill's own
-instructions and binds exactly as if it sat in its `SKILL.md`; no other skill
-reads it.
+Two files here are a different kind. `preflight-reference.md` and
+`project-log-reference.md` each belong to a single skill rather than to an
+agreement between several: each holds the sections of its own `SKILL.md` that a
+run reaches only on some branches, kept out of line so a run that never reaches
+one never pays to read it. Each is its own skill's instructions and binds
+exactly as if it sat in that `SKILL.md`; no other skill reads them.
 
 - [`ledger-format.md`](ledger-format.md) -- the ledger file layout, the entry
   line shape, and how skills read it.
+- [`project-log-reference.md`](project-log-reference.md) -- `project-log`'s own
+  branch-only sections: scaffolding a missing ledger, an imposed decision, a
+  relationship marker, a source, a backfill, a meeting date handed over by
+  `meeting-review`, the failure cases, and what that skill does not do. Read at
+  the point of use, never on every run.
 - [`config-resolution.md`](config-resolution.md) -- the resolution core: where
   `daikenja.yaml` lives, the lookup order, how the `writing_style` and
   `personas` pointers resolve, precedence, and failure behavior.
