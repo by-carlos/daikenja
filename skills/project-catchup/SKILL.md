@@ -17,8 +17,12 @@ config key, never the ledger.
 
 Read these before doing anything. Do not work from memory of them.
 
-- `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
-  mechanism every read skill follows.
+- `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` § Step A0, § Step A, § Step B, §
+  Step C and § Notices, shared wording -- the shared resolve-and-parse
+  mechanism Steps 1 and 2 below follow, plus the exact notice text they reuse
+  without restating it (a config marked absent or a project left unregistered
+  has no literal wording inline in Step A -- only in § Notices, shared
+  wording).
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § IDs, § Body markers, §
   Section: Decisions, § Section: Open items, § Section: Context links, §
   Section: Sources, § Section: Changelog, § Compacting a long summary and §
@@ -27,9 +31,14 @@ Read these before doing anything. Do not work from memory of them.
   changed ID's current text, and the delta-reporting rules.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes --
   `last_checkpoint`'s format.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` -- who writes what.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-writers.md` -- who writes what. This doc
+  has no subsections to narrow to -- the whole file is that one topic.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
-  is shaped. The report in Step 4 follows it.
+  is shaped. Read in full and not narrowed to a section: Step 4 explicitly
+  follows only § Entries are named topic-first, ID in parentheses, but the
+  contract's own scope says a skill "implements it; it never redefines it" --
+  every rule in the file (tone scaling, the clean-result line, itemised
+  findings) governs this skill's replies whether or not Step 4 names it.
 
 ## Step 1: resolve config, project and ledger
 
