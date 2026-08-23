@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`/daikenja:project-summary` now runs in an isolated subagent.** Its Step 0
+  reads three shared contracts in full plus the whole ledger before writing a
+  word, and none of that has any bearing on the report once it's built -- so
+  it now carries `context: fork` and `background: false`, keeping every
+  intermediate read out of the calling conversation's context and returning
+  only the finished overview, synchronously, exactly as before. A prototype
+  for the other three read-only report skills (`project-gaps`,
+  `project-decisions`, `project-catchup`); those are unchanged (#193).
 - **`/daikenja:project-list` no longer fires on a natural-language ask.**
   Nothing in `skills/` or `docs/` routed into it by prose -- every reference
   was already the explicit `/daikenja:project-list` command -- so it now
