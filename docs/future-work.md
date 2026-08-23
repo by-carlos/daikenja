@@ -149,3 +149,38 @@ non-native English check run in `preflight`'s own context, which has already
 read the draft, the thread and the conversation around it. They know what the
 message means, which makes them weak judges of whether the words alone carry
 it. Only the dispatched reviewers read cold.
+
+## Running a skill in its own subagent
+
+**Only `project-summary` runs forked.** It carries `context: fork` and
+`background: false`, so its contract reads and its whole pass over the ledger
+stay out of the calling conversation and only the finished overview comes back.
+Nothing else does, and two skills were evaluated and deliberately left inline.
+
+**`preflight` cannot fork, because a fork has no conversation.** Claude Code's
+own documentation is explicit that a forked skill has no access to the calling
+conversation's history, and three parts of this skill are defined over it:
+Step 1's re-run rule, which fires on a draft this skill already reported on in
+this conversation and works by collecting the directions the user has given
+since; Step 9, which routes a person the user described inline; and Steps 1 and
+2, which stop and ask the user a question mid-run. Forked, the first two become
+dead text and the third cannot happen at all.
+
+**`project-log` cannot usefully fork either, including by halves.** Forking the
+classify-and-propose half and keeping the approval loop inline is the obvious
+boundary and it does not pay: Step 7's insert rule and body-marker order and
+Step 8's Changelog verbs all live in [`ledger-format.md`](ledger-format.md),
+much the largest contract this skill reads, and they all execute in the parent
+after the user approves -- so the parent reads that file whatever the boundary
+is. Two mid-run questions also sit inside the proposed fork: Step 1's "nothing
+was given, ask what to log", and Step 3's confirmation before scaffolding a
+ledger, which is a separate approval from Step 5's.
+
+**What would change this.** A forked context that carried the calling
+conversation would answer all three of `preflight`'s objections at once, and a
+way for a forked skill to put a question to the user and resume would answer
+two of `project-log`'s. Neither exists. Until one does, the cost these two
+skills used to pay per invocation is addressed by keeping only always-read
+material in `SKILL.md`, with each skill's branch-only sections in
+[`preflight-reference.md`](preflight-reference.md) and
+[`project-log-reference.md`](project-log-reference.md).
