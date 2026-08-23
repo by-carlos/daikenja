@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`docs/future-work.md` records why only `project-summary` runs forked.**
+  `preflight` and `project-log` were evaluated for `context: fork` alongside
+  the size work and deliberately left inline: a forked skill has no access to
+  the calling conversation, which three parts of `preflight` are defined over,
+  and forking `project-log`'s classify half saves little because the parent
+  still reads `ledger-format.md` for the write. The entry names the two changes
+  that would reopen it (#214).
 - **`/daikenja:project-log`'s branch-only sections moved out of `SKILL.md`.**
   Eight sections a run reaches only on some branches -- scaffolding a missing
   ledger, marking a decision imposed, recording a relationship, recording a
