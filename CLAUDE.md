@@ -38,6 +38,13 @@ Instructions for Claude Code and other agents working in this repo.
   records *what* changed without declaring a version. Never write a
   dated/versioned heading or bump the version file mid-batch -- that
   recreates version drift.
+- **Optional codename, hand-added per release.** After `release-prepare.yml`
+  dates a section, a `**Codename:** <name>` line may be added as the first
+  line of that section's body, before merging the release PR.
+  `release-publish.yml` strips it from the release notes and folds it into
+  the release title as `vX.Y.Z (<name>)`. This never touches the tag, the
+  heading, or `plugin.json` -- those stay plain semver -- and it's a one-off
+  per release, not something `release-prepare.yml` prompts for.
 - **Upgrade notes as-you-go too, in `docs/upgrading.md`.** A change that touches
   something already on a user's disk -- the `daikenja.yaml` schema, the ledger
   grammar or location, a skill name, any path the plugin reads -- adds its
