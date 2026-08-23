@@ -15,15 +15,21 @@ context, no "since last time" framing -- that is `project-catchup`'s job.
 
 Read these before doing anything. Do not work from memory of them.
 
-- `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
-  mechanism every read skill follows.
+- `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` § Step A0, § Step A, § Step B, §
+  Step C and § Notices, shared wording -- the shared resolve-and-parse
+  mechanism Steps 1 and 2 below follow, and the exact notice wording Step 4
+  reuses without restating it.
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Section: Decisions, §
   Section: Open items, § Section: Context links, § Section: Sources, §
   Body markers and § Reading rules for skills -- this is the one read skill
   that genuinely wants every section's own grammar, plus the markers it
   carries through unresolved.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
-  is shaped. The overview in Step 3 follows it.
+  is shaped. Read in full and not narrowed to a section: Step 3 explicitly
+  follows only § Entries are named topic-first, ID in parentheses, but the
+  contract's own scope says a skill "implements it; it never redefines it" --
+  every rule in the file (tone scaling, the clean-result line, itemised
+  findings) governs this skill's replies whether or not Step 3 names it.
 
 ## Step 1: resolve config, project and ledger
 
