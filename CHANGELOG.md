@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`/daikenja:project-log`'s branch-only sections moved out of `SKILL.md`.**
+  Eight sections a run reaches only on some branches -- scaffolding a missing
+  ledger, marking a decision imposed, recording a relationship, recording a
+  source, backfilling, a meeting date handed over by `meeting-review`, the
+  failure cases, and what the skill does not do -- now live in
+  `docs/project-log-reference.md`, read at the point each branch opens instead
+  of on every invocation. The always-read steps stay inline. No behaviour
+  changes: the moved text is verbatim, and each step names its section where
+  the branch opens. `SKILL.md` goes from 745 to 533 lines (#214).
 - **README says auto-invocation needs a 1M-token context window.** On a
   200K-context model the harness's 8,000-character skill-listing budget drops
   every plugin skill's description, so Daikenja is name-only there and only the

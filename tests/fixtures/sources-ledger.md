@@ -36,7 +36,7 @@ Four things this fixture exists to pin down:
 `S-005` names a system no connector serves, so the reduced-behaviour path has
 something to report.
 
-Depends on: ledger-format.md "Section: Sources", project-sources "Step 3: check each source", project-summary "Step 3: build the overview", project-catchup "Step 3: compute the delta", project-log "Record a source"
+Depends on: ledger-format.md "Section: Sources", project-sources "Step 3: check each source", project-summary "Step 3: build the overview", project-catchup "Step 3: compute the delta", project-log-reference.md "Record a source"
 
 ---
 
