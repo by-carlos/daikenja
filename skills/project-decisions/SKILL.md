@@ -17,15 +17,23 @@ just the single entry that happens to match the words.
 
 Read these before doing anything. Do not work from memory of them.
 
-- `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` -- the shared resolve-and-parse
-  mechanism every read skill follows.
+- `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` § Step A0, § Step A, § Step B, §
+  Step C and § Notices, shared wording -- the shared resolve-and-parse
+  mechanism Steps 1 and 2 below follow, plus the exact notice text they reuse
+  without restating it (a config marked absent or a project left unregistered
+  has no literal wording inline in Step A -- only in § Notices, shared
+  wording).
 - `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § IDs, § Body markers, §
   Relationships between entries, § A decision imposed from outside, §
   Section: Decisions, § Section: Open items and § Reading rules for skills --
   exact-ID matching, the supersession tail, the one-hop relationship scan, and
   the reopen-vs-comply rule for an imposed decision.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
-  is shaped. The result in Step 6 follows it.
+  is shaped. Read in full and not narrowed to a section: Step 6 explicitly
+  follows only § Entries are named topic-first, ID in parentheses, but the
+  contract's own scope says a skill "implements it; it never redefines it" --
+  every rule in the file (tone scaling, the clean-result line, itemised
+  findings) governs this skill's replies whether or not Step 6 names it.
 
 ## Step 1: resolve config, project and ledger
 
