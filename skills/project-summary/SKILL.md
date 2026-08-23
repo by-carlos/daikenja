@@ -4,6 +4,8 @@ description: Gives a full-state overview of a project's Daikenja ledger, written
 metadata:
   owner: Carlos
   version: 1
+context: fork
+background: false
 ---
 
 # Summary
