@@ -21,6 +21,21 @@ The writing and remembering side of a working week.
 and Cowork are not supported surfaces. Settings come from `~/.claude/daikenja/`,
 or the `daikenja` folder in your Google Drive if you opt into that -- see below.
 
+**Auto-invocation needs a 1M-token context window.** Claude Code gives the
+always-on skill listing a budget of 1% of the model's context window and, when
+it overflows, drops whole descriptions starting with the skills used least. On
+a 200K-context model that budget is 8,000 characters; Daikenja's thirteen
+auto-invocable descriptions alone are about 8,600, and a typical install with a
+couple of other plugins plus the bundled skills measures over 21,000 (measured
+24 Aug 2026 on Claude Code 2.1.240, by-carlos/daikenja#199). On such a model
+Claude sees Daikenja's skill *names* only: asking "help me answer this thread"
+in plain language will not start `/daikenja:thread`, and no trimming of the
+descriptions on this side can change that. The slash form (`/daikenja:<skill>`)
+always works on every model. To get description-driven invocation on a
+200K-context model, raise `skillListingBudgetFraction` in your Claude Code
+settings (`0.03` covers the listing above); on a 1M-context model nothing is
+cut and no setting is needed.
+
 ## Install
 
 ```bash

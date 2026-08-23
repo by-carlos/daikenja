@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **README says auto-invocation needs a 1M-token context window.** On a
+  200K-context model the harness's 8,000-character skill-listing budget drops
+  every plugin skill's description, so Daikenja is name-only there and only the
+  slash form works; the note gives the measured numbers and the
+  `skillListingBudgetFraction` workaround (#199).
 - **`/daikenja:project-summary` now runs in an isolated subagent.** Its Step 0
   reads three shared contracts in full plus the whole ledger before writing a
   word, and none of that has any bearing on the report once it's built -- so
