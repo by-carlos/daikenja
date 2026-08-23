@@ -2,12 +2,12 @@
 
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
-- § Step A0: did the user name a project? -- project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
-- § Step A: resolve the config -- preflight "Step 3: cycle 0 -- the substance checks", project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
-- § Step B: resolve the ledger path -- preflight "Step 3: cycle 0 -- the substance checks", project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
-- § Step C: read and parse -- preflight "Step 3: cycle 0 -- the substance checks", project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Step A0: did the user name a project? -- project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts", project-sources "Step 0: read the contracts"
+- § Step A: resolve the config -- preflight "Step 3: cycle 0 -- the substance checks", project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts", project-sources "Step 0: read the contracts"
+- § Step B: resolve the ledger path -- preflight "Step 3: cycle 0 -- the substance checks", project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts", project-sources "Step 0: read the contracts"
+- § Step C: read and parse -- preflight "Step 3: cycle 0 -- the substance checks", project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts", project-sources "Step 0: read the contracts"
 - § Step D: resolve the staleness threshold -- project-gaps "Step 0: read the contracts"
-- § Notices, shared wording -- project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts"
+- § Notices, shared wording -- project-decisions "Step 0: read the contracts", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-summary "Step 0: read the contracts", project-sources "Step 0: read the contracts"
 
 Shared mechanism for the five read skills: `project-catchup`,
 `project-summary`, `project-decisions`, `project-gaps`, `project-sources`. All
