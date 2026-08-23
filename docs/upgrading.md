@@ -43,6 +43,21 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### `project-list` no longer answers a natural-language ask
+
+**What changed.** `/daikenja:project-list` used to fire on its own when you
+asked something shaped like "which project am I in" or "check my Daikenja
+setup". It now only runs when you type the command, same as `setup-user`,
+`setup-project` and `learn-voice` already do.
+
+**What happens if you do nothing.** The command itself is unchanged --
+`/daikenja:project-list` and `/daikenja:project-list <key>` work exactly as
+before. You only lose the auto-trigger: a natural-language ask that used to
+reach it now needs the explicit command.
+
+**Reversible?** Not by you -- this is a skill-frontmatter setting, not
+something recorded in your configuration.
+
 ### Your ledger can now track the documents it is built from
 
 **What changed on disk.** Nothing, until you record a source. The ledger
