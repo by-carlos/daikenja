@@ -7,7 +7,7 @@ headings by tests/check-invariants.py):
 - § Finding the ledger -- project-list "Step 0: read the contracts"
 - § Resolving `ledger` -- project-list "Step 0: read the contracts", setup-project "Step 2: register the project"
 - § Resolving `writing_style` and `personas` -- preflight "Step 0: read the shared docs", setup-user "Offering Google Drive, without ever requiring it"
-- § Failure behavior -- preflight "Step 0: read the shared docs"
+- § Failure behavior -- preflight "Step 0: read the shared docs", self-review "Step 0: read the shared docs"
 
 Daikenja reads user configuration from **one YAML file** outside the plugin
 directory. This document is the resolution core: where that file lives, how a
