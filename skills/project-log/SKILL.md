@@ -252,7 +252,8 @@ where none does reads none of them.
 - **The material states that one entry blocks or contradicts another.** Read
   § Record a relationship only where the source says so. Two entries that
   merely look related to you are not a relationship and never become a marker.
-- **The run records a source.** Read § Record a source, per the bullet above.
+- **The run records a source.** Read § Record a source, the section the
+  bullet above already names.
 
 When you cannot tell, ask -- but never serially. Collect every clarifying
 question the run needs -- classification, owners, links, anything -- after

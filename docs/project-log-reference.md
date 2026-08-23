@@ -194,11 +194,11 @@ names it (`+S-nnn`, `~S-nnn`, `-S-nnn` -- never `resolved` or `superseded`).
 - **A dictated source takes the same-turn path** under the same four
   conditions as any entry: the fields are the user's own statement, nothing is
   fetched, and the operation is byte-determined.
-- **The duplicate check below covers sources too.** The same target already
-  recorded as a source is an edit to that `S-nnn`, not a second source. A
-  context link with the same target is *not* a duplicate -- the two sections
-  record different things, and nothing migrates a link into a source unless
-  the user asks for the pair of writes.
+- **The duplicate check covers sources too**, in `SKILL.md` § Check for
+  duplicates first. The same target already recorded as a source is an edit to
+  that `S-nnn`, not a second source. A context link with the same target is
+  *not* a duplicate -- the two sections record different things, and nothing
+  migrates a link into a source unless the user asks for the pair of writes.
 
 ## Backfilling an existing project
 
