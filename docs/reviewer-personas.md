@@ -2,9 +2,12 @@
 
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
-- § How a brief is assembled -- preflight "The named personas"
-- § The critique contract -- preflight "Step 5: cycle 1 -- dispatch"
-- § What each reviewer runs on -- preflight "The model this context runs on", preflight "Step 5: cycle 1 -- dispatch"
+- § How a brief is assembled -- preflight "Step 0: read the shared docs"
+- § What every reviewer is told -- preflight "Step 0: read the shared docs"
+- § The critique contract -- preflight "Step 0: read the shared docs"
+- § What each reviewer runs on -- preflight "Step 0: read the shared docs"
+- § The roster -- preflight "Step 0: read the shared docs"
+- § The two checks that never dispatch -- preflight "Step 0: read the shared docs"
 
 The reviewers `preflight` dispatches to challenge a draft, the model tier each
 one runs on, the two checks it always runs itself, and the contract every
