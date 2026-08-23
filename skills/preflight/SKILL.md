@@ -96,6 +96,13 @@ Read these before doing anything. Do not work from memory of them.
   § Entries are named topic-first, ID in parentheses, the one heading Step 3
   cites by name.
 
+One more, read only when the run actually needs it:
+`${CLAUDE_PLUGIN_ROOT}/docs/preflight-reference.md`, which holds this skill's
+own branch-only sections -- a re-run, an unresolvable recipient conflict, a
+person described inline, a run without dispatch, the failure cases, and what
+this skill does not do. Every rule there binds exactly as if it sat here, and
+each step below names its section at the moment that branch opens.
+
 ## Step 1: take the input as given
 
 - **A pasted draft.** The normal case, and the only shape the loop runs on.
@@ -110,24 +117,10 @@ Read these before doing anything. Do not work from memory of them.
 Do not invent or fill in anything absent from what was given. A gap is a
 finding, never something to guess at.
 
-### Re-running on the same draft
-
-If this skill already produced a report on a draft in this conversation, and
-the input now is a revision of that same draft rather than a new one, this run
-does not start cold.
-
-First, collect every direction the user has given since that report -- an
-answer to a `Needs you` question, a fact supplied outright, a conflict
-resolved by choosing one side. State each as **settled** in one line and never
-raise it again in this run, whether or not the revised draft's wording
-visibly reflects it.
-
-Then continue the loop from Step 2 as normal, and raise only what the earlier
-report did not already ask: a genuinely new question, or a fact none of the
-user's directions answered.
-
-A draft with no earlier report in this conversation is not a re-run, whatever
-it contains. Do not search for or assume a report that is not in front of you.
+**A revision of a draft this skill already reported on in this conversation
+does not start cold**: read `preflight-reference.md` § Re-running on the same
+draft now, and § Reporting a re-run at Step 10. A draft with no earlier report
+in front of you is not a re-run, whatever it contains.
 
 ## Step 2: determine the goal
 
@@ -298,7 +291,7 @@ not worth applying is not worth mentioning either.
 **Discarding is not overruling the reviewer.** Both bars are part of the brief
 every reviewer was given, so a finding that misses one was never within the
 contract to begin with. This is not the same as disagreeing with a finding that
-clears both, which Step 6 and § Conflicts handle.
+clears both, which Step 6 and `preflight-reference.md` § Conflicts handle.
 
 ## Step 6: adjudicate -- the safety hinge
 
@@ -361,27 +354,10 @@ ask in an agreement, and deleting the clause leaves the ask with no basis, so
 what the agreement actually was is a question. "As discussed, here is the
 staging failure" grounds nothing, and deleting it costs the message nothing.
 
-### Conflicts
-
-There is no "primary recipient" to arbitrate toward. Work messages routinely go
-to several people at once, so a rule that picks one addressee is picking a
-fiction. In order:
-
-1. **Try to satisfy both.** Most conflicts are false ones -- length can usually
-   come out somewhere other than the constraint the fact-checker wants kept. A
-   fix that serves both is applied like any other and needs no disclosure.
-2. **Archetype versus archetype**, where neither is a real addressee: resolve
-   silently toward whichever real audience the message actually has. Archetypes
-   are proxies for readers, not readers, and a proxy does not outrank a person.
-   This is not reported.
-3. **Recipient versus recipient**, where both are people the message genuinely
-   addresses and no fix serves both: **report it and resolve nothing.** It
-   usually means the message is serving two audiences and wants splitting, or
-   that one audience needs a separate note. Say that, rather than quietly
-   picking a winner.
-
-Case 3 is reported alongside the content questions in Step 10, because like
-them it is something only the user can settle.
+**Two reviewers can want incompatible things.** Where no single fix serves
+both, read `preflight-reference.md` § Conflicts for the order they resolve in
+and which case is reported rather than resolved -- Step 7 and Step 10 both
+refer to its case 3. Fixes that sit together need none of it.
 
 ## Step 7: rewrite -- never dispatched
 
@@ -406,8 +382,9 @@ writing style.
 cycle-1 finding write either the edit made in answer to it, or nothing. A
 content finding gets nothing by definition -- its repair needed a fact the draft
 does not have. So does a finding left unfixed because no fix served both
-recipients, per Step 6 case 3. Step 8 reads this record, and without it cycle 2
-cannot tell a fix that landed from a sentence nobody touched.
+recipients, per `preflight-reference.md` § Conflicts case 3. Step 8 reads this
+record, and without it cycle 2 cannot tell a fix that landed from a sentence
+nobody touched.
 
 ## Step 8: cycle 2 -- re-check once
 
@@ -465,28 +442,11 @@ report it once rather than bouncing back at the user three separate times.
 
 ## Step 9: learned personas
 
-If the user described someone inline who has no entry in `personas.md`, route
-that description to `/daikenja:remember-persona`, which is the only skill that
-writes persona content. Pass on what the user actually said and nothing
-inferred from the draft.
-
-**Never route a person out of material that says it is synthetic.** Acceptance
-fixtures and worked examples describe invented people, and writing them into the
-user's real file pollutes it with people who do not exist. Skip the routing
-silently and say so in one line in the report.
-
-**Whether a person the material does not vouch for gets written is not this
-skill's call.** A review almost always runs on a pasted draft, so almost every
-person routed from here arrives with pasted material -- and `remember-persona`
-holds the one test that decides what happens to those, per its Step 1 § Where
-the description came from. Route the description with what the user said and
-leave the decision there. Do not add a second test here, and do not pre-judge
-which people are real.
-
-The outcome comes back as one line for Step 10 -- `Learned:` where the entry was
-written, `Not learned:` where it was offered instead. Either way this skill
-carries on: it never waits for the answer, and a missing `personas.md` comes
-back as one line too. Nothing about a persona blocks a review.
+**Only when the user described someone inline this run who has no entry in
+`personas.md`.** Read `preflight-reference.md` § Step 9: learned personas and
+follow it -- it owns the routing, the synthetic-material exception and the line
+it hands to Step 10. Where nobody was described inline, this step does nothing
+and Step 10 carries no `Learned:` or `Not learned:` line.
 
 ## Step 10: report
 
@@ -541,25 +501,10 @@ under Step 8 was never an edit, so it is not counted there and it does not
 leave the report -- it stays in the `Needs you` list or the conflict line it
 already belonged to.
 
-### Reporting a re-run
-
-When Step 1's re-run rule applied, the report carries one more line,
-`Settled since last run:`, naming what the user's directions closed out since
-the earlier report. It sits after `Needs you` when there is a list, or after
-the draft when there is not:
-
-```
-Settled since last run: the window (12 minutes), and that in-flight requests
-fail and must be retried rather than queuing.
-```
-
-**If this is the second consecutive run on the same draft and the verdict is
-still `needs <n> facts`, say whether that is all of it.** State plainly
-whether the remaining `Needs you` items are the complete set -- nothing else
-is expected to surface on a further revision -- or whether more may still
-emerge once the draft changes again. Name every remaining fact in the `Needs
-you` list itself; this line adds only the finite-or-not statement, not a
-second listing.
+**A re-run's report carries one more line.** Where Step 1 established this run
+is a re-run, read `preflight-reference.md` § Reporting a re-run for that line
+and for what a second consecutive run has to state. A first run adds nothing
+here.
 
 ### The `Reviewed:` line is mandatory
 
@@ -628,70 +573,22 @@ sentence says -- so the clean answer has to look clean. Offering a second versio
 This is the one case the loop exists to handle well: a draft that really is fine
 and should go out now.
 
+
 ## When dispatch is unavailable
 
-**This path is weaker than a dispatched run**, for whatever reason subagent
-dispatch did not run. It was run against the `preflight` fixtures on
-19 August 2026 and found the planted content gaps and the unresolvable
-recipient conflict, so it is no longer untested -- but what it cannot produce
-is isolation, and no amount of testing changes that.
-
-Run the reviewers in this context, sequentially, one brief at a time, and
-report it in the mandatory `Reviewed:` line of Step 10. That line, not a
-notice raised here, is what tells the user which run they got.
-
-**No dispatch means no model tiers either.** Every reviewer reads in this
-context on whatever the session is set to, so the busy reader is no longer
-weaker than the rest and the risk reader is no longer stronger. Nothing extra
-is said about it -- the `Reviewed:` line already reports that the run went this
-way, and the tiers are part of what that line is admitting was not available.
-
-The weakness is structural rather than incidental. A sequential reviewer has
-already read the ones before it and will defer to them, which is exactly the
-isolation that dispatching buys. Hold each brief separately and do not let a
-later reviewer soften an earlier one's finding -- but do not claim the isolation
-survived, because it did not.
+**Only when subagent dispatch did not run.** Read `preflight-reference.md`
+§ When dispatch is unavailable and follow it -- how the reviewers run instead,
+what that costs, and that no model tier applies. It is still reported through
+the mandatory `Reviewed:` line above and not by a notice raised there.
 
 ## Failure cases
 
-| Situation | What to do |
-|---|---|
-| No draft and no description given | Ask for one. Do not guess what the user wants to raise. |
-| A description with no draft | Cycle 0 only. Report the verdict and hand off to `compose`. Never draft one here. |
-| The input is a revision of a draft this skill already reported on in this conversation | Collect the user's directions given since that report, state them settled in one line, and never re-raise them. Raise only what is new. |
-| Subagent dispatch unavailable | Run the reviewers in sequence and say so in the mandatory `Reviewed:` line. Cycle 2 re-reads, it never **confirms**. No model tier applies. |
-| The dispatch available takes no model | Dispatch anyway, on the session model, and say nothing. The tier is a preference, not a dependency. |
-| A finding arrives with no anchor | Discard it. An unanchored finding is noise. |
-| A finding states its cost only as a possibility | Discard it. "Someone could misread this" with nothing behind it has not cleared the second bar, and a nitpick in the report is the padding it was discarded to prevent. |
-| A wording `Fix` introduces a fact not in the draft | Reclassify as content. Never apply it, and never write the fact in. |
-| A `Fix` only deletes or rearranges words already in the draft | Wording fix. Apply it. Do not ask the user whether the deleted phrase was accurate. |
-| A cycle-2 reviewer calls a finding resolved but Step 7 made no edit for it | The finding stands, as a restate. Cycle 2 closes only what the rewrite changed. |
-| Every reviewer returns nothing, or nothing they returned survived the bars | Verdict, the original draft unchanged, evidence lines. No rewrite, and none offered as an alternative. |
-| The `personas` pointer does not resolve | Silent. Archetypes only. |
-| Step 9 routed someone and `remember-persona` offered the entry rather than writing it | Report it as the `Not learned:` line and finish. Never wait for the answer, and never write the entry from here. |
-| `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
-| `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-resolution.md`. |
-| No ledger at the resolved path | Not fatal. Report "already answered" as not checked and continue. |
-| Check 4 fails because the message carries several asks at once | Split or label them directly in Step 7, like any other wording fix. Report it in `Applied:`, never in `Needs you`. |
-| Check 4 fails because there is no specific ask at all | Content gap. The sender has to say what they want; nothing in the draft supplies it. |
-| Check 6 finds a pre-existing answer | Report it topic-first with its ID in `Already answered:`, and ask only whether to defer. Never add it to `Needs you`, and never count it toward the verdict's fact count. |
-| More addressees than persona slots | Direct beats cc'd. Name who was dropped. |
-| Goal cannot be determined from the input | Ask the one question in Step 2. Do not guess. |
-| The user asks for the message to be sent | Decline. This skill has no send action. |
+`preflight-reference.md` § Failure cases. Read it the moment a run meets a
+situation the steps above do not settle -- a missing draft, a finding that
+fails a bar, a config pointer that does not resolve, a check that fails -- and
+before improvising a way through one.
 
 ## What this skill does not do
 
-- It does not send, post or schedule anything.
-- It does not draft a message from nothing. A description with no draft gets a
-  verdict and a handoff to `/daikenja:compose`.
-- It does not write `personas.md`. It routes through
-  `/daikenja:remember-persona`, which owns every content write to that file.
-- It does not write the ledger. It reads one for check 6 and nothing more.
-- It does not invent a reviewer. The roster in `docs/reviewer-personas.md` is
-  fixed and changes only by pull request.
-- It does not run more than two cycles.
-- It does not let cycle 2 close a finding the rewrite never touched.
-- It does not let anyone change which model a reviewer runs on. The tiers live
-  in `docs/reviewer-personas.md` and change only by pull request, like the
-  roster itself. `CLAUDE_CODE_SUBAGENT_MODEL` still overrides them, because
-  that is Claude Code's own precedence and not something this skill controls.
+`preflight-reference.md` § What this skill does not do. Read it when a run is
+about to do something no step above told it to.
