@@ -61,20 +61,40 @@ is not.
 
 Read these before doing anything. Do not work from memory of them.
 
-- `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` -- the six checks in cycle 0.
-- `${CLAUDE_PLUGIN_ROOT}/docs/reviewer-personas.md` -- the reviewer roster, the
-  two always-on checks, the model tier each reviewer runs on, and the critique
-  contract. This skill selects from that roster and never invents a reviewer.
-- `${CLAUDE_PLUGIN_ROOT}/docs/rewrite-rules.md` -- the rules that bound every
-  wording fix this skill applies.
-- `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the default voice every rewrite is
-  written in.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- how `writing_style` and
-  `personas` resolve, and the failure-behavior table.
+- `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` § When the checks apply, §
+  The six checks and § How a fail is reported -- when cycle 0 runs (Step 2),
+  what the six checks are (Step 3), and how a failure is reported (Step 3).
+- `${CLAUDE_PLUGIN_ROOT}/docs/reviewer-personas.md` § How a brief is
+  assembled, § What every reviewer is told, § The critique contract, § What
+  each reviewer runs on, § The roster and § The two checks that never
+  dispatch -- the reviewer roster this skill selects from and never invents
+  a member of (Step 4), the isolation rule and the two bars every dispatched
+  finding is held to (Step 5), and the model tier each reviewer runs on
+  (Step 5). Not § Archetypes are reading behaviours, not people -- that
+  section explains the design; nothing in this skill's own steps depends on
+  it.
+- `${CLAUDE_PLUGIN_ROOT}/docs/rewrite-rules.md` -- read in full: Step 7
+  applies it "in full", by its own words, and every one of its rules bounds
+  the wording fixes this skill makes.
+- `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- read in full: Step 7 layers the
+  user's `writing_style` prose under it, and that layering rule (§ Fixed
+  cannot be overridden, § Defaults can) depends on the whole Fixed/Defaults
+  split, not one rule in isolation.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` § Resolution order, §
+  Resolving `writing_style` and `personas` and § Failure behavior -- how the
+  ledger location for check 6 resolves (Step 3), how the `writing_style` and
+  `personas` pointers resolve (Step 4, Step 7), and the failure-behavior
+  table this skill's own failure cases and "never blocks" notices follow
+  throughout.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- where
   `profile.tone` is defined.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
-  is shaped. The report in Step 10 implements it.
+  is shaped. Read in full and not narrowed to a section: Step 10 says its
+  report shape "implements `response-format.md`" as a whole, and the
+  contract's own scope says a skill "implements it; it never redefines it" --
+  every rule in the file governs this skill's replies, not only
+  § Entries are named topic-first, ID in parentheses, the one heading Step 3
+  cites by name.
 
 ## Step 1: take the input as given
 

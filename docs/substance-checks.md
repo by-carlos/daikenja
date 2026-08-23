@@ -1,5 +1,11 @@
 # Substance checks
 
+Depends-on (reverse index -- hand-maintained, checked against SKILL.md
+headings by tests/check-invariants.py):
+- § When the checks apply -- preflight "Step 0: read the shared docs"
+- § The six checks -- preflight "Step 0: read the shared docs"
+- § How a fail is reported -- preflight "Step 0: read the shared docs"
+
 Six checks that a message asking for something actually has enough in it for
 the reader to act. Written once and shared by two consumers, per the S6
 decision on the `compose` / `preflight` boundary:
