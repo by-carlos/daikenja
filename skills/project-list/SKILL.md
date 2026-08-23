@@ -1,9 +1,10 @@
 ---
 name: project-list
-description: Lists every project registered in daikenja.yaml, says which one the current directory resolves to, and reports whether each project's ledger actually exists. Use when the user says "what projects does Daikenja know about", "list my projects", "which project am I in", "why can't it find my ledger", "check my Daikenja setup", or asks anything shaped like a doctor or health check. Also the skill to reach for when a read skill reported a project it did not expect, or reported none. Read-only; writes nothing, and never repairs what it reports. Accepts an optional project key -- `/daikenja:project-list <key>` reports just that entry, without being in its directory.
+description: Lists every project registered in daikenja.yaml, says which one the current directory resolves to, and reports whether each project's ledger actually exists. Use when the user says "what projects does Daikenja know about", "list my projects", "which project am I in", "why can't it find my ledger", "check my Daikenja setup", or asks anything shaped like a doctor or health check. Also the skill to reach for when a read skill reported a project it did not expect, or reported none. Read-only; writes nothing, and never repairs what it reports. Accepts an optional project key -- `/daikenja:project-list <key>` reports just that entry, without being in its directory. Run explicitly with /daikenja:project-list -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
+disable-model-invocation: true
 ---
 
 # Project list

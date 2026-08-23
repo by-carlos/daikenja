@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`/daikenja:project-list` no longer fires on a natural-language ask.**
+  Nothing in `skills/` or `docs/` routed into it by prose -- every reference
+  was already the explicit `/daikenja:project-list` command -- so it now
+  carries `disable-model-invocation: true`, matching `setup-user`,
+  `setup-project` and `learn-voice`. A request like "which project am I in"
+  or "check my Daikenja setup" no longer auto-triggers it; type the command
+  (#190).
+
 ### Added
 
 - **CI now warns when a `SKILL.md` doubles in size since the last release.**
