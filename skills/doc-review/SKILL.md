@@ -1,6 +1,6 @@
 ---
 name: doc-review
-description: Reviews a document against a fixed checklist before it is published or shared -- clarity, undefined terms, unenforced rules, undated decisions, missing owners, contradictions, and content that is stale on its face. Use when the user says "review this doc", "is this page clear", "check this page before I publish", "does this make sense to someone outside the team", or pastes a document/link and asks for a check before sending it out. Read-only -- this skill reports findings, it never edits or rewrites the document. Not for a message or reply (that is /daikenja:compose) or a pre-send substance check on a draft message (that is /daikenja:preflight) -- this skill is for standalone documents (specs, runbooks, wikis, READMEs), not chat replies.
+description: Reviews a document against a fixed checklist before it is published or shared -- clarity, undefined terms, unenforced rules, undated decisions, missing owners, contradictions, and content that is stale on its face. Use when the user says "review this doc", "is this page clear", "check this page before I publish", "does this make sense to someone outside the team", or pastes a document/link and asks for a check before sending it out. Read-only -- this skill reports findings, it never edits or rewrites the document. For standalone documents (specs, runbooks, wikis, READMEs), not chat replies or draft messages.
 metadata:
   owner: Carlos
   version: 1

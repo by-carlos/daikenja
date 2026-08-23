@@ -1,6 +1,6 @@
 ---
 name: project-summary
-description: Gives a full-state overview of a project's Daikenja ledger, written for someone with no prior context. Use when the user says "what's the state of this project", "give me an overview", "summarize this project", "brief a new person on this", "where do things stand", or is opening a project they have not looked at before. Not for a personal delta since last time (that is /daikenja:project-catchup) or a single decision lookup (that is /daikenja:project-decisions). Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-summary <key>` reads that project from anywhere, without being in its directory.
+description: Gives a full-state overview of a project's Daikenja ledger, written for someone with no prior context -- not a personal delta since last time or a single decision lookup. Use when the user says "what's the state of this project", "give me an overview", "summarize this project", "brief a new person on this", "where do things stand", or is opening a project they have not looked at before. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-summary <key>` reads that project from anywhere, without being in its directory.
 metadata:
   owner: Carlos
   version: 1

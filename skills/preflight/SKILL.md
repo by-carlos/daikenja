@@ -1,6 +1,6 @@
 ---
 name: preflight
-description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this". Not for making a message read better when nobody needs to challenge it, which is /daikenja:compose. This skill never sends anything.
+description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply. Runs the six substance checks, then puts the draft in front of a set of reviewer personas -- the busy reader, the executive, the risk reader, a named recipient you describe -- fixes the wording problems they raise, and asks you about anything that needs a fact the draft does not contain. Use for "would this survive X", "poke holes in this", "what will they come back with", "is this ready to go", "should I even raise this", or "am I missing something before I send this" -- not simply for making a message read better. This skill never sends anything.
 metadata:
   owner: Carlos
   version: 8
