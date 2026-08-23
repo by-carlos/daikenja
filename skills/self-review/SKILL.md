@@ -48,11 +48,16 @@ Read these before doing anything. Do not work from memory of them.
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` § Field notes -- where `tone`
   and `norms_doc` are defined.
-- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- the failure-behavior
-  table this skill follows.
+- `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` § Failure behavior -- the
+  absent/unreachable `norms_doc` and `daikenja.yaml` handling Step 8 and the
+  failure table follow. This skill does not resolve a project or a ledger,
+  so nothing else in that document applies.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
-  is shaped. The tone modes in Step 7 refine its tone table and stay inside
-  its invariants.
+  is shaped. Read in full and not narrowed to a section: Step 9's report is
+  "bound by" the whole contract, and Step 7's own tone table explicitly
+  "refines" response-format.md's tone table and "stays inside its
+  invariants" -- both statements govern this skill's replies as a whole, not
+  just § The answer comes first, the one heading Step 7 also cites by name.
 
 ## Step 1: get the thread and identify the invoker
 
