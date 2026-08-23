@@ -3,6 +3,13 @@
 Specifications the skills agree on. A skill implements a contract; it never
 redefines one. When a contract changes, it changes here and the skills follow.
 
+One file here is a different kind. `preflight-reference.md` belongs to a single
+skill rather than to an agreement between several: it holds the sections of
+`preflight/SKILL.md` that a run reaches only on some branches, kept out of line
+so a run that never reaches one never pays to read it. It is that skill's own
+instructions and binds exactly as if it sat in its `SKILL.md`; no other skill
+reads it.
+
 - [`ledger-format.md`](ledger-format.md) -- the ledger file layout, the entry
   line shape, and how skills read it.
 - [`config-resolution.md`](config-resolution.md) -- the resolution core: where
@@ -39,5 +46,10 @@ redefines one. When a contract changes, it changes here and the skills follow.
 - [`reviewer-personas.md`](reviewer-personas.md) -- the reviewer archetypes
   `preflight` dispatches, the two checks it always runs itself, and the
   contract every finding comes back in.
+- [`preflight-reference.md`](preflight-reference.md) -- `preflight`'s own
+  branch-only sections: a re-run on a draft already reported on, an
+  unresolvable recipient conflict, a person described inline, a run where
+  dispatch was unavailable, the failure cases, and what that skill does not do.
+  Read at the point of use, never on every run.
 - [`future-work.md`](future-work.md) -- what the shipped design does not do.
   Limitations of current behaviour, not a roadmap.

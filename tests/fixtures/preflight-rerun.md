@@ -7,7 +7,7 @@ remains is finite. Only meaningful under `claude --plugin-dir .`, like the
 other loop fixtures in this directory -- a normal session loads the last
 released copy of the skill.
 
-Depends on: preflight "Re-running on the same draft"
+Depends on: preflight-reference.md "Re-running on the same draft", preflight-reference.md "Reporting a re-run"
 
 ## Run 1 -- the original draft, two gaps
 
