@@ -29,7 +29,7 @@ Four things this fixture exists to pin down:
 does not have -- so the report-and-continue path has something to report. It is
 the only broken thing in the file; everything else is well formed.
 
-Depends on: ledger-format.md "Body markers", ledger-format.md "Relationships between entries", ledger-format.md "A decision imposed from outside", project-decisions "Step 5: surface relationships and origin", project-gaps "Step 3: filter", project-log "Record a relationship only where the source says so", project-log "Mark a decision that was imposed"
+Depends on: ledger-format.md "Body markers", ledger-format.md "Relationships between entries", ledger-format.md "A decision imposed from outside", project-decisions "Step 5: surface relationships and origin", project-gaps "Step 3: filter", project-log-reference.md "Record a relationship only where the source says so", project-log-reference.md "Mark a decision that was imposed"
 
 ---
 
