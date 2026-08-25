@@ -1,7 +1,7 @@
 {
   "name": "daikenja",
   "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. Daikenja is a Claude Code plugin -- it reads configuration from ~/.claude/daikenja/ and writes a ledger inside the project, and Claude Code stays the source of truth. Your persona notes and writing style can optionally live in a Google Drive file instead of a local file, which is what lets them follow you between machines running Claude Code.",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "author": {
     "name": "Carlos Eng",
     "url": "https://github.com/by-carlos"
