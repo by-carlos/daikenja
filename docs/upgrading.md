@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.6.0] - 2026-08-25
 
 ### `project-list` no longer answers a natural-language ask
 
