@@ -38,3 +38,6 @@ docs/superpowers/
 
 # Python bytecode from tests/check-invariants.py and scripts/prepare_release.py.
 __pycache__/
+
+# Local plan drafts written by Claude Code. Working state, not shipped content.
+.claude/plans/
