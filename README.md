@@ -38,8 +38,14 @@ cut and no setting is needed.
 
 ## Install
 
+Daikenja is listed on the shared
+[`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins)
+marketplace, but the repo is also self-installable if you don't have that
+marketplace added:
+
 ```bash
-claude plugin install by-carlos/daikenja
+claude plugin marketplace add by-carlos/daikenja
+claude plugin install daikenja@daikenja
 ```
 
 Then run `/daikenja:setup-user` once. It checks the environment and writes your

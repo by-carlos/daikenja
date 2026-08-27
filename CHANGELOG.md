@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **The repo is now self-installable.** A `.claude-plugin/marketplace.json`
+  lists Daikenja as its own plugin, pinned to the `release` branch, so
+  `claude plugin marketplace add by-carlos/daikenja` works without needing
+  the shared `by-carlos/claude-plugins` catalog. README's Install section
+  documented a bare `claude plugin install by-carlos/daikenja`, which was
+  never valid syntax; it's replaced with the real two-command sequence.
+
 ## [0.6.0] - 2026-08-25
 
 ### Changed
