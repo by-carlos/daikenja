@@ -50,26 +50,17 @@ marketplace, and this repo is also a marketplace in its own right -- so you can
 install it on its own, without adding anything else first. Pick whichever of
 these matches how you use Claude Code.
 
-**From the Claude desktop app, no terminal needed.** It is two steps: add the
-marketplace, then install Daikenja from it.
-
-First, open the **Plugins** pane (the **+** button next to the prompt box, then
-**Plugins**) and click **Add**. Put `by-carlos/daikenja` in the **URL** box --
-it takes a GitHub `owner/repo` directly, so there is nothing else to paste --
-then click **Sync**.
+**From the Claude desktop app, no terminal needed.** Open the **Plugins** pane
+(the **+** button next to the prompt box, then **Plugins**) and click **Add**.
+Put `by-carlos/daikenja` in the **URL** box -- it takes a GitHub `owner/repo`
+directly, so there is nothing else to paste -- then click **Sync**.
 
 ![The Add marketplace dialog in the Claude desktop app, with by-carlos/daikenja entered in the URL field](docs/images/claude_desktop_marketplace.png)
 
-Then click **Browse** to open the plugin directory. Under **Plugins**, open the
-**Code** tab and pick the marketplace you just added. Daikenja is listed there
-with a **+** beside it -- click that, and it is installed.
+The plugin directory opens on its own once the sync finishes. Daikenja is under
+the **Code** tab, with a **+** beside it -- click that, and it is installed.
 
 ![The plugin directory in the Claude desktop app, showing the Daikenja card with a + button to install it](docs/images/claude_desktop_plugin.png)
-
-That screenshot shows the shared `carlos-plugins` marketplace, where Daikenja
-sits next to its sibling plugins. If you added `by-carlos/daikenja` on its own,
-you get a marketplace with Daikenja as its only entry -- the screen and the
-**+** work exactly the same.
 
 The same **Plugins** pane is where you later enable, disable or remove it.
 
