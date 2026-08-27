@@ -5,6 +5,49 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **The repo is now self-installable.** A `.claude-plugin/marketplace.json`
+  lists Daikenja as its own plugin, pinned to the `release` branch, so
+  `claude plugin marketplace add by-carlos/daikenja` works without needing
+  the shared `by-carlos/claude-plugins` catalog. README's Install section
+  documented a bare `claude plugin install by-carlos/daikenja`, which was
+  never valid syntax; it's replaced with the real two-command sequence.
+- **README gained "What using it looks like", "Updating" and "Contributing".**
+  The first walks one real sequence end to end -- `thread` into `compose` into
+  `preflight`, then `project-log`, then `project-catchup` weeks later -- so a
+  new reader sees the loop before the seventeen-skill catalog. "Updating" gives
+  the two commands (`claude plugin marketplace update`, `claude plugin update
+  daikenja`, both verified against the installed CLI), the restart requirement,
+  and the `/daikenja:setup-user` re-run that applies upgrade notes.
+  "Contributing" links `CONTRIBUTING.md`, `SECURITY.md` and the issue tracker,
+  none of which the README referenced before.
+
+### Changed
+
+- **README's Install section covers all three install paths.** The desktop app
+  (with screenshots of the **Add marketplace** dialog and the plugin
+  directory), the in-session `/plugin` commands, and the shell `claude plugin`
+  commands, each labelled so a reader picks the one matching how they work.
+  The desktop path is two steps -- add the marketplace, then install from it --
+  which the previous single-step wording ran together.
+- **README's "Where it runs" moved below Install and leads with what works.**
+  It previously sat in the second slot and opened with unsupported surfaces
+  plus the skill-listing budget arithmetic, so a reader met the caveats before
+  the capability. It now states that Daikenja runs in the terminal and the
+  desktop app's Code tab, then names what does not run it (the Chat tab,
+  claude.ai, Cowork, and desktop cloud sessions, which load plugins from the
+  claude.ai account instead). The auto-invocation limit leads with the
+  actionable half -- the slash form always works -- and the character counts
+  move into a closing parenthetical.
+- **README says how the `docs/` contract rule is enforced.** It stated that a
+  skill never redefines a contract without naming anything that would catch a
+  violation; it now points at `tests/check-invariants.py`, which CI runs.
+- **README defines Cowork on first use** rather than naming it unexplained
+  alongside claude.ai and the Chat surface.
+
 ## [0.6.0] - 2026-08-25
 
 ### Changed

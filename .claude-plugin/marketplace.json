@@ -1,0 +1,19 @@
+{
+  "name": "daikenja",
+  "description": "Daikenja, as its own self-hosted marketplace entry.",
+  "owner": {
+    "name": "Carlos Eng",
+    "url": "https://github.com/by-carlos"
+  },
+  "plugins": [
+    {
+      "name": "daikenja",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/by-carlos/daikenja.git",
+        "ref": "release"
+      },
+      "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. Claude Code only."
+    }
+  ]
+}
