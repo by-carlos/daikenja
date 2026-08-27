@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **README's desktop install steps match what the app actually does.** They
+  described clicking a **Browse** button to reach the plugin directory; the
+  directory opens on its own once **Sync** finishes, so that step is gone and
+  the two steps read as one flow. The directory screenshot is reshot against a
+  standalone `by-carlos/daikenja` add rather than the shared `carlos-plugins`
+  marketplace, so the paragraph explaining the mismatch is gone too. Confirmed
+  by installing from the live marketplace after #225 landed.
+
 ### Added
 
 - **The repo is now self-installable.** A `.claude-plugin/marketplace.json`
