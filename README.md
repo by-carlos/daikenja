@@ -15,41 +15,112 @@ The writing and remembering side of a working week.
 
 **Status:** in active development. Seventeen skills ship today.
 
-## Where it runs
+## What using it looks like
 
-**Daikenja is a Claude Code plugin.** claude.ai, the desktop-app Chat surface,
-and Cowork are not supported surfaces. Settings come from `~/.claude/daikenja/`,
-or the `daikenja` folder in your Google Drive if you opt into that -- see below.
+A colleague drops a long thread on you and wants an answer today.
 
-**Auto-invocation needs a 1M-token context window.** Claude Code gives the
-always-on skill listing a budget of 1% of the model's context window and, when
-it overflows, drops whole descriptions starting with the skills used least. On
-a 200K-context model that budget is 8,000 characters; Daikenja's thirteen
-auto-invocable descriptions alone are about 8,600, and a typical install with a
-couple of other plugins plus the bundled skills measures over 21,000 (measured
-24 Aug 2026 on Claude Code 2.1.240, by-carlos/daikenja#199). On such a model
-Claude sees Daikenja's skill *names* only: asking "help me answer this thread"
-in plain language will not start `/daikenja:thread`, and no trimming of the
-descriptions on this side can change that. The slash form (`/daikenja:<skill>`)
-always works on every model. To get description-driven invocation on a
-200K-context model, raise `skillListingBudgetFraction` in your Claude Code
-settings (`0.03` covers the listing above); on a 1M-context model nothing is
-cut and no setting is needed.
+You paste it into `/daikenja:thread`. It does not write a reply. It tells you
+what is actually being asked and by whom, then asks you the few things only you
+know -- what you have already promised, what you are not willing to commit to.
+
+You answer, and `/daikenja:compose` drafts the reply: clear and calm, in your
+words, with your ask and your stance intact. If the message is one you cannot
+afford to get wrong, `/daikenja:preflight` puts the draft in front of readers
+who each look for a different failure -- the busy one, the executive, the one
+who hunts for risk, the specific colleague you described to it -- then hands
+back a revised draft plus the questions only you can answer. Nothing is sent.
+You copy it out and send it yourself.
+
+That thread settled two things, so you say so, and `/daikenja:project-log` shows
+you the exact lines it wants to add to the project's ledger and waits for your
+yes. The ledger is a markdown file that lives in the project, so git versions
+it beside the code.
+
+Three weeks later you come back and ask `/daikenja:project-catchup` what you
+missed. It tells you what was decided while you were away, what is still open,
+and who owes it.
+
+Read, draft, record, come back to it later. That is the whole loop.
 
 ## Install
 
 Daikenja is listed on the shared
 [`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins)
-marketplace, but the repo is also self-installable if you don't have that
-marketplace added:
+marketplace, and this repo is also a marketplace in its own right -- so you can
+install it on its own, without adding anything else first. Pick whichever of
+these matches how you use Claude Code.
+
+**From the Claude desktop app, no terminal needed.** It is two steps: add the
+marketplace, then install Daikenja from it.
+
+First, open the **Plugins** pane (the **+** button next to the prompt box, then
+**Plugins**) and click **Add**. Put `by-carlos/daikenja` in the **URL** box --
+it takes a GitHub `owner/repo` directly, so there is nothing else to paste --
+then click **Sync**.
+
+![The Add marketplace dialog in the Claude desktop app, with by-carlos/daikenja entered in the URL field](docs/images/claude_desktop_marketplace.png)
+
+Then click **Browse** to open the plugin directory. Under **Plugins**, open the
+**Code** tab and pick the marketplace you just added. Daikenja is listed there
+with a **+** beside it -- click that, and it is installed.
+
+![The plugin directory in the Claude desktop app, showing the Daikenja card with a + button to install it](docs/images/claude_desktop_plugin.png)
+
+That screenshot shows the shared `carlos-plugins` marketplace, where Daikenja
+sits next to its sibling plugins. If you added `by-carlos/daikenja` on its own,
+you get a marketplace with Daikenja as its only entry -- the screen and the
+**+** work exactly the same.
+
+The same **Plugins** pane is where you later enable, disable or remove it.
+
+**From a Claude Code session in the terminal:**
+
+```
+/plugin marketplace add by-carlos/daikenja
+/plugin install daikenja@daikenja
+```
+
+**From your shell**, without starting a session first:
 
 ```bash
 claude plugin marketplace add by-carlos/daikenja
 claude plugin install daikenja@daikenja
 ```
 
-Then run `/daikenja:setup-user` once. It checks the environment and writes your
-configuration into `~/.claude/daikenja/`.
+However you installed it, run `/daikenja:setup-user` once. It checks the
+environment and writes your configuration into `~/.claude/daikenja/`.
+
+## Where it runs
+
+**Daikenja is a Claude Code plugin.** It runs everywhere Claude Code does: the
+terminal, and the **Code tab of the Claude desktop app**. You can install it
+from either one -- the desktop app has its own plugin menu, so you never have to
+open a terminal. Local and SSH sessions both work.
+
+It is not a claude.ai skill. The desktop app's **Chat** tab, claude.ai itself,
+and Cowork (Anthropic's team-workspace product) do not run Claude Code plugins,
+so Daikenja will not show up in any of them. One more case worth knowing: a
+desktop **cloud** session loads plugins from your claude.ai account rather than
+from your own machine, so a Daikenja you installed locally will not be there
+either.
+
+Settings come from `~/.claude/daikenja/`, or the `daikenja` folder in your
+Google Drive if you opt into that -- see below.
+
+**Typing `/daikenja:<skill>` always works, on every model.** Claude Code can
+also start a skill just from plain language ("help me answer this thread"
+triggering `/daikenja:thread`), but only if it has room to read that skill's
+description -- and on a smaller-context model, a full Daikenja install plus a
+couple of other plugins can be more than Claude Code has room for, so it falls
+back to skill *names* only and plain-language triggering stops working for
+Daikenja's skills. If that happens to you, use the slash form, or raise
+`skillListingBudgetFraction` in your Claude Code settings to give skill
+descriptions more room. (Measured 24 Aug 2026 on Claude Code 2.1.240,
+[by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199), on
+a 200K-context model: Daikenja's thirteen auto-invocable descriptions alone run
+about 8,600 characters against Claude Code's 8,000-character default budget,
+and `skillListingBudgetFraction: 0.03` covers it. On a 1M-context model nothing
+is cut and no setting is needed.)
 
 After that, run `/daikenja:setup-project` in each project you want Daikenja to
 track. It registers the directory, sets that project's own settings, and can
@@ -140,6 +211,29 @@ without being in its directory.
   one -- and writes nothing until you approve it. Run it whenever you have more
   samples, not only at setup.
 
+## Updating
+
+New versions ship on the `release` branch, and you pick them up when you ask
+for them:
+
+```bash
+claude plugin marketplace update
+claude plugin update daikenja
+```
+
+Restart Claude Code afterwards -- the new version does not load into a session
+already running. In the desktop app, the **Plugins** pane manages installed
+plugins too.
+
+Then run `/daikenja:setup-user` again. It compares the version that last wrote
+your configuration against the one you now have, and where a release changed
+something already on your disk, it proposes the exact edits and waits for your
+approval. Most releases change nothing there, and it will say so.
+
+[`docs/upgrading.md`](docs/upgrading.md) is that same information written out to
+read or apply by hand, newest version first. Anything a release expects you to
+do is in there.
+
 ## Where your data lives
 
 Nothing personal is stored in this repository, and nothing personal should ever
@@ -211,14 +305,33 @@ referencing it live, so edits go stale until you reinstall. Use
 Layout:
 
 ```
-.claude-plugin/plugin.json   the manifest
-skills/                      one directory per skill, each with a SKILL.md
-templates/                   blank files copied out to the user
-docs/                        the ledger and config specifications
+.claude-plugin/plugin.json        the manifest
+.claude-plugin/marketplace.json   lists this repo as its own marketplace
+skills/                           one directory per skill, each with a SKILL.md
+templates/                        blank files copied out to the user
+docs/                             the ledger and config specifications
+tests/                            invariant checks and the hand-run fixtures
 ```
 
 `docs/` holds the contracts. A skill implements a contract and never redefines
-one, so a format change happens in `docs/` first.
+one, so a format change happens in `docs/` first. `tests/check-invariants.py`,
+run in CI, catches the parts of this it can check mechanically (like a
+skill's headings drifting from what a contract's reverse index expects).
+
+## Contributing
+
+Bugs and ideas go to [the issue tracker](https://github.com/by-carlos/daikenja/issues).
+A problem with the marketplace listing itself belongs in
+[`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins),
+which owns the catalog.
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) has the rest: what an issue needs, the
+branch and commit conventions, when a change owes a changelog entry or an
+upgrade note, and the conventions that are easiest to trip over. Read it before
+opening a pull request.
+
+**Do not report a security problem in a public issue.**
+[`SECURITY.md`](SECURITY.md) says how to reach the maintainer privately.
 
 ## License
 
