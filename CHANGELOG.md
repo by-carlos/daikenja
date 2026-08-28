@@ -37,6 +37,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **README's Updating section leads with auto-update, and stops telling you to
+  re-run `setup-user` after every release.** Claude Code enables auto-update by
+  default only for Anthropic's own marketplaces, so Daikenja never updates
+  itself until the user turns it on -- the section now says so and gives the
+  `/plugin` **Marketplaces** path that does it. The re-run advice was also wrong
+  against this repo's own contract: `docs/config-versioning.md` has every skill
+  that reads `daikenja.yaml` emit a notice **only** when `upgrading.md` names a
+  section later than the recorded version, precisely so the line does not become
+  noise the user learns to skip. A new `Do I have to re-run setup?` subsection
+  says the answer is usually no and shows the notice that means yes.
 - **README's Install section is split into `Claude Desktop app`, `Claude Code
   CLI` and `After installing` subsections**, and uses Anthropic's own names for
   the two surfaces throughout -- their docs contrast "the Claude Desktop app"

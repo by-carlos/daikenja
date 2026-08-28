@@ -210,26 +210,44 @@ without being in its directory.
 
 ## Updating
 
-New versions ship on the `release` branch, and you pick them up when you ask
-for them:
+New versions ship on the `release` branch. Claude Code turns auto-update on by
+default only for Anthropic's own marketplaces, so **Daikenja does not update
+itself until you say so.**
+
+**The one-time fix is to turn auto-update on.** Run `/plugin`, open the
+**Marketplaces** tab, select the Daikenja marketplace and choose **Enable
+auto-update**. Claude Code then refreshes it in the background shortly after a
+session starts, and either loads the new version on your next launch or offers
+you `/reload-plugins`.
+
+**Or update by hand whenever you like:**
 
 ```bash
 claude plugin marketplace update
 claude plugin update daikenja
 ```
 
-Restart Claude Code afterwards -- the new version does not load into a session
-already running. In the Claude Desktop app, the **Plugins** pane manages installed
-plugins too.
+Either way, a new version does not load into a session that is already running:
+restart Claude Code, or run `/reload-plugins`.
 
-Then run `/daikenja:setup-user` again. It compares the version that last wrote
-your configuration against the one you now have, and where a release changed
-something already on your disk, it proposes the exact edits and waits for your
-approval. Most releases change nothing there, and it will say so.
+### Do I have to re-run setup?
 
-[`docs/upgrading.md`](docs/upgrading.md) is that same information written out to
-read or apply by hand, newest version first. Anything a release expects you to
-do is in there.
+Usually not. Most releases change nothing that is already on your disk, and
+Daikenja tells you when one does -- every skill that reads your configuration
+compares the version that wrote it against the version installed, and prints a
+single line when there is something to do:
+
+```
+daikenja.yaml was written by Daikenja 0.6.0; 0.7.0 is installed -- run /daikenja:setup-user.
+```
+
+That line is the signal. Run `/daikenja:setup-user` when you see it and it
+proposes the exact edits and waits for your approval; ignore updating otherwise.
+The notice deliberately stays quiet for releases that need nothing, so it does
+not become something you learn to skip.
+
+[`docs/upgrading.md`](docs/upgrading.md) is the same information written out to
+apply by hand, newest version first.
 
 ## Where your data lives
 
