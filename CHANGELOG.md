@@ -37,6 +37,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **README's Install section is split into `Claude Desktop app`, `Claude Code
+  CLI` and `After installing` subsections**, and uses Anthropic's own names for
+  the two surfaces throughout -- their docs contrast "the Claude Desktop app"
+  with "the Claude Code CLI" in one sentence, so the README now matches. This
+  also retires the "From a Claude Code session in the terminal" label, whose
+  terminal qualifier was never tested against the Desktop app's Code tab; under
+  a `Claude Code CLI` heading the block is accurate without it.
+- **`setup-project` is back with the other setup steps.** Moving "Where it runs"
+  below Install stranded the `setup-project` paragraphs inside it, where they
+  read as a non-sequitur after the skill-listing budget note. They now close
+  `After installing`, next to `setup-user`.
+- **"Where it runs" names the Desktop app's three tabs.** It described Cowork as
+  a separate product; per Anthropic's docs, Chat, Cowork and Code are three tabs
+  of the same app and only Code runs plugins, which is both shorter to say and
+  the actual reason Daikenja does not appear in the other two.
 - **README's Install section covers all three install paths.** The desktop app
   (with screenshots of the **Add marketplace** dialog and the plugin
   directory), the in-session `/plugin` commands, and the shell `claude plugin`

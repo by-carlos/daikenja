@@ -50,50 +50,67 @@ marketplace, and this repo is also a marketplace in its own right -- so you can
 install it on its own, without adding anything else first. Pick whichever of
 these matches how you use Claude Code.
 
-**From the Claude desktop app, no terminal needed.** Open the **Plugins** pane
-(the **+** button next to the prompt box, then **Plugins**) and click **Add**.
-Put `by-carlos/daikenja` in the **URL** box -- it takes a GitHub `owner/repo`
-directly, so there is nothing else to paste -- then click **Sync**.
+### Claude Desktop app
 
-![The Add marketplace dialog in the Claude desktop app, with by-carlos/daikenja entered in the URL field](docs/images/claude_desktop_marketplace.png)
+No terminal needed. Open the **Plugins** pane (the **+** button next to the
+prompt box, then **Plugins**) and click **Add**. Put `by-carlos/daikenja` in the
+**URL** box -- it takes a GitHub `owner/repo` directly, so there is nothing else
+to paste -- then click **Sync**.
+
+![The Add marketplace dialog in the Claude Desktop app, with by-carlos/daikenja entered in the URL field](docs/images/claude_desktop_marketplace.png)
 
 The plugin directory opens on its own once the sync finishes. Daikenja is under
 the **Code** tab, with a **+** beside it -- click that, and it is installed.
 
-![The plugin directory in the Claude desktop app, showing the Daikenja card with a + button to install it](docs/images/claude_desktop_plugin.png)
+![The plugin directory in the Claude Desktop app, showing the Daikenja card with a + button to install it](docs/images/claude_desktop_plugin.png)
 
 The same **Plugins** pane is where you later enable, disable or remove it.
 
-**From a Claude Code session in the terminal:**
+### Claude Code CLI
+
+From inside a session:
 
 ```
 /plugin marketplace add by-carlos/daikenja
 /plugin install daikenja@daikenja
 ```
 
-**From your shell**, without starting a session first:
+Or from your shell, without starting a session first:
 
 ```bash
 claude plugin marketplace add by-carlos/daikenja
 claude plugin install daikenja@daikenja
 ```
 
+### After installing
+
 However you installed it, run `/daikenja:setup-user` once. It checks the
 environment and writes your configuration into `~/.claude/daikenja/`.
+
+Then run `/daikenja:setup-project` in each project you want Daikenja to track.
+It registers the directory, sets that project's own settings, and can seed its
+ledger from a decision log, a wiki space or a Slack channel you already have.
+`setup-user` is once per person; `setup-project` is once per project.
+
+**A project does not have to be one directory.** A programme spanning three
+repositories is registered once and every one of its directories resolves to
+it; a body of work with no repository at all is registered with no directory,
+reached by name, and keeps its ledger wherever its `ledger:` key points.
+`/daikenja:project-list` shows the whole index back to you.
 
 ## Where it runs
 
 **Daikenja is a Claude Code plugin.** It runs everywhere Claude Code does: the
-terminal, and the **Code tab of the Claude desktop app**. You can install it
-from either one -- the desktop app has its own plugin menu, so you never have to
-open a terminal. Local and SSH sessions both work.
+**Claude Code CLI**, and the **Code** tab of the **Claude Desktop app**. You can
+install it from either one -- the Desktop app has its own plugin menu, so you
+never have to open a terminal. Local and SSH sessions both work.
 
-It is not a claude.ai skill. The desktop app's **Chat** tab, claude.ai itself,
-and Cowork (Anthropic's team-workspace product) do not run Claude Code plugins,
-so Daikenja will not show up in any of them. One more case worth knowing: a
-desktop **cloud** session loads plugins from your claude.ai account rather than
-from your own machine, so a Daikenja you installed locally will not be there
-either.
+It is not a claude.ai skill. The Claude Desktop app has three tabs, and only
+**Code** runs Claude Code plugins -- **Chat** and **Cowork** (for Dispatch and
+longer agentic work) do not, and neither does claude.ai itself, so Daikenja will
+not show up in any of them. One more case worth knowing: a desktop **cloud**
+session loads plugins from your claude.ai account rather than from your own
+machine, so a Daikenja you installed locally will not be there either.
 
 Settings come from `~/.claude/daikenja/`, or the `daikenja` folder in your
 Google Drive if you opt into that -- see below.
@@ -112,17 +129,6 @@ a 200K-context model: Daikenja's thirteen auto-invocable descriptions alone run
 about 8,600 characters against Claude Code's 8,000-character default budget,
 and `skillListingBudgetFraction: 0.03` covers it. On a 1M-context model nothing
 is cut and no setting is needed.)
-
-After that, run `/daikenja:setup-project` in each project you want Daikenja to
-track. It registers the directory, sets that project's own settings, and can
-seed its ledger from a decision log, a wiki space or a Slack channel you already
-have. `setup-user` is once per person; `setup-project` is once per project.
-
-**A project does not have to be one directory.** A programme spanning three
-repositories is registered once and every one of its directories resolves to
-it; a body of work with no repository at all is registered with no directory,
-reached by name, and keeps its ledger wherever its `ledger:` key points.
-`/daikenja:project-list` shows the whole index back to you.
 
 ## Skills
 
@@ -213,7 +219,7 @@ claude plugin update daikenja
 ```
 
 Restart Claude Code afterwards -- the new version does not load into a session
-already running. In the desktop app, the **Plugins** pane manages installed
+already running. In the Claude Desktop app, the **Plugins** pane manages installed
 plugins too.
 
 Then run `/daikenja:setup-user` again. It compares the version that last wrote
