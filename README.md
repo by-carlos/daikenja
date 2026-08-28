@@ -210,25 +210,36 @@ without being in its directory.
 
 ## Updating
 
-New versions ship on the `release` branch. Claude Code turns auto-update on by
-default only for Anthropic's own marketplaces, so **Daikenja does not update
-itself until you say so.**
+New versions ship on the `release` branch.
 
-**The one-time fix is to turn auto-update on.** Run `/plugin`, open the
-**Marketplaces** tab, select the Daikenja marketplace and choose **Enable
-auto-update**. Claude Code then refreshes it in the background shortly after a
-session starts, and either loads the new version on your next launch or offers
-you `/reload-plugins`.
+### Claude Desktop app
 
-**Or update by hand whenever you like:**
+Open the **Plugins** pane and select Daikenja. Its page shows the version you
+have and how many skills it ships, with an **Update** button that is greyed out
+when you are already current.
+
+### Claude Code CLI
+
+Run `/plugin` and open the **Marketplaces** tab. Selecting the Daikenja
+marketplace gives you **Update marketplace** for a one-off, and **Enable
+auto-update**, which has Claude Code refresh the marketplace and its installed
+plugins in the background shortly after each session starts. That tab also tells
+you which state you are currently in.
+
+Auto-update is worth turning on, and worth checking rather than assuming:
+Claude Code enables it by default for Anthropic's own marketplaces, not
+necessarily for others. The toggle lives here in the CLI -- the desktop app's
+plugin page updates on demand but does not expose it.
+
+The same two actions from your shell:
 
 ```bash
 claude plugin marketplace update
 claude plugin update daikenja
 ```
 
-Either way, a new version does not load into a session that is already running:
-restart Claude Code, or run `/reload-plugins`.
+However you update, a new version does not load into a session that is already
+running: restart Claude Code, or run `/reload-plugins`.
 
 ### Do I have to re-run setup?
 

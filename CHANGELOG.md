@@ -37,11 +37,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **README's Updating section leads with auto-update, and stops telling you to
-  re-run `setup-user` after every release.** Claude Code enables auto-update by
-  default only for Anthropic's own marketplaces, so Daikenja never updates
-  itself until the user turns it on -- the section now says so and gives the
-  `/plugin` **Marketplaces** path that does it. The re-run advice was also wrong
+- **README's Updating section splits by surface, and stops telling you to
+  re-run `setup-user` after every release.** It covers the desktop app's
+  per-plugin **Update** button and the CLI's **Marketplaces** tab, which is
+  where **Enable auto-update** lives -- the desktop app updates on demand but
+  does not expose that toggle, so a desktop user is told where it is rather than
+  left hunting. Auto-update is presented as worth checking rather than assumed
+  off: Claude Code enables it by default for Anthropic's own marketplaces and
+  not necessarily for others. The re-run advice was also wrong
   against this repo's own contract: `docs/config-versioning.md` has every skill
   that reads `daikenja.yaml` emit a notice **only** when `upgrading.md` names a
   section later than the recorded version, precisely so the line does not become
