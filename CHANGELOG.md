@@ -40,9 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **README's Updating section splits by surface, and stops telling you to
   re-run `setup-user` after every release.** It covers the desktop app's
   per-plugin **Update** button and the CLI's **Marketplaces** tab, which is
-  where **Enable auto-update** lives -- the desktop app updates on demand but
-  does not expose that toggle, so a desktop user is told where it is rather than
-  left hunting. Auto-update is presented as worth checking rather than assumed
+  where **Enable auto-update** lives -- the desktop app has no equivalent, so a
+  desktop user is told where the toggle is rather than left hunting. It also
+  warns that desktop updating has been inconsistent in testing: a plugin sat on
+  an old version across a release with **Check for updates** reporting nothing
+  available, and a remove-and-reinstall was what reached the new version. That
+  makes the CLI the dependable route, and the reinstall the fallback. Auto-update is presented as worth checking rather than assumed
   off: Claude Code enables it by default for Anthropic's own marketplaces and
   not necessarily for others. The re-run advice was also wrong
   against this repo's own contract: `docs/config-versioning.md` has every skill

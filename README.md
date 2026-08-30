@@ -217,9 +217,15 @@ New versions ship on the `release` branch.
 Open the **Plugins** pane and select Daikenja. Its page shows the version you
 have, how many skills it ships, and an **Update** button.
 
-If that page keeps showing an old version after a release has gone out, remove
-Daikenja and install it again -- a reinstall always picks up the current
-version.
+**Do not count on the desktop app noticing a new release.** Its updating has
+been inconsistent in testing: a plugin sat on an old version across a release,
+with the **Update** button inactive and **Check for updates** reporting nothing
+available, days after the new version was out.
+
+So if that page shows a version behind the one you expect, do not wait for it.
+Remove Daikenja and install it again -- a reinstall always lands on the current
+version. If you have a terminal, the CLI commands below are the dependable
+route.
 
 ### Claude Code CLI
 
@@ -231,8 +237,9 @@ you which state you are currently in.
 
 Auto-update is worth turning on, and worth checking rather than assuming:
 Claude Code enables it by default for Anthropic's own marketplaces, not
-necessarily for others. The toggle lives here in the CLI -- the desktop app's
-plugin page updates on demand but does not expose it.
+necessarily for others. The toggle lives here in the CLI, and the desktop app
+has no equivalent -- which, with the caveat above, makes the CLI the reliable
+way to keep Daikenja current.
 
 The same two actions from your shell:
 
