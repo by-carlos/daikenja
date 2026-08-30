@@ -37,6 +37,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **README's Updating section splits by surface, and stops telling you to
+  re-run `setup-user` after every release.** It covers the desktop app's
+  per-plugin **Update** button and the CLI's **Marketplaces** tab, which is
+  where **Enable auto-update** lives -- the desktop app has no equivalent, so a
+  desktop user is told where the toggle is rather than left hunting. It also
+  warns that desktop updating has been inconsistent in testing: a plugin sat on
+  an old version across a release with **Check for updates** reporting nothing
+  available, and a remove-and-reinstall was what reached the new version. That
+  makes the CLI the dependable route, and the reinstall the fallback. Auto-update is presented as worth checking rather than assumed
+  off: Claude Code enables it by default for Anthropic's own marketplaces and
+  not necessarily for others. The re-run advice was also wrong
+  against this repo's own contract: `docs/config-versioning.md` has every skill
+  that reads `daikenja.yaml` emit a notice **only** when `upgrading.md` names a
+  section later than the recorded version, precisely so the line does not become
+  noise the user learns to skip. A new `Do I have to re-run setup?` subsection
+  says the answer is usually no and shows the notice that means yes.
+- **README's Install section is split into `Claude Desktop app`, `Claude Code
+  CLI` and `After installing` subsections**, and uses Anthropic's own names for
+  the two surfaces throughout -- their docs contrast "the Claude Desktop app"
+  with "the Claude Code CLI" in one sentence, so the README now matches. This
+  also retires the "From a Claude Code session in the terminal" label, whose
+  terminal qualifier was never tested against the Desktop app's Code tab; under
+  a `Claude Code CLI` heading the block is accurate without it.
+- **`setup-project` is back with the other setup steps.** Moving "Where it runs"
+  below Install stranded the `setup-project` paragraphs inside it, where they
+  read as a non-sequitur after the skill-listing budget note. They now close
+  `After installing`, next to `setup-user`.
+- **"Where it runs" names the Desktop app's three tabs.** It described Cowork as
+  a separate product; per Anthropic's docs, Chat, Cowork and Code are three tabs
+  of the same app and only Code runs plugins, which is both shorter to say and
+  the actual reason Daikenja does not appear in the other two.
 - **README's Install section covers all three install paths.** The desktop app
   (with screenshots of the **Add marketplace** dialog and the plugin
   directory), the in-session `/plugin` commands, and the shell `claude plugin`
