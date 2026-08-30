@@ -215,8 +215,11 @@ New versions ship on the `release` branch.
 ### Claude Desktop app
 
 Open the **Plugins** pane and select Daikenja. Its page shows the version you
-have and how many skills it ships, with an **Update** button that is greyed out
-when you are already current.
+have, how many skills it ships, and an **Update** button.
+
+If that page keeps showing an old version after a release has gone out, remove
+Daikenja and install it again -- a reinstall always picks up the current
+version.
 
 ### Claude Code CLI
 
