@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Docs consistency sweep.** `reading.md`'s shared-notices line says "five
+  skills" again (it still said four from before `project-sources` existed);
+  `response-format.md`'s reverse index now lists every skill that actually
+  cites its headings, and `config-schema.md`'s adds `project-list` under
+  § Field notes; the shipped ledger template's format hint documents the five
+  body markers added in 0.6.0; and the 2026-08-16 preflight design spec
+  carries a historical note that `config-contract.md` was split into the five
+  config docs it cites.
+
 - **README's desktop install steps match what the app actually does.** They
   described clicking a **Browse** button to reach the plugin directory; the
   directory opens on its own once **Sync** finishes, so that step is gone and

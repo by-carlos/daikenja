@@ -2,7 +2,9 @@
 
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
-- § Entries are named topic-first, ID in parentheses -- preflight "Step 3: cycle 0 -- the substance checks"
+- § The answer comes first -- project-sources "Step 4: report", self-review "Step 0: read the shared docs"
+- § Entries are named topic-first, ID in parentheses -- preflight "Step 3: cycle 0 -- the substance checks", project-catchup "Step 4: report the delta", project-decisions "Step 6: show the result", project-gaps "Step 4: report", project-summary "Step 3: build the overview", project-sources "Step 4: report"
+- § A clean result is one line -- project-sources "Step 0: read the contracts"
 
 How a skill reports to the user in the conversation. `ledger-format.md` fixes
 what the record file looks like, `voice.md` fixes how a drafted message reads,
