@@ -158,7 +158,7 @@ output, per `config-resolution.md` § Precedence.
 
 ## Notices, shared wording
 
-Use these exact shapes so the four skills read as one system:
+Use these exact shapes so the five skills read as one system:
 
 ```
 Ledger: <path>

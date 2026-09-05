@@ -17,6 +17,10 @@ Two tails may follow a body:
   -> resolved YYYY-MM-DD[, see D-nnn]
   -> superseded by D-nnn
 
+Five body markers may open a body, in this fixed order when combined:
+  Supersedes D-nnn. / Imposed. / Blocked by <id>. / Contradicts <id>. /
+  Approximate date.
+
 Sources are a head line "- S-001 -- Label -- <url or path>" plus field lines
 indented two spaces, one per line, every field optional: "modified:" (as the
 source's system reports it), "read:" (YYYY-MM-DD), "covers:",

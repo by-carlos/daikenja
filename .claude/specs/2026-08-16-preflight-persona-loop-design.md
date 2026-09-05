@@ -1,5 +1,10 @@
 # Design: preflight as a persona review loop
 
+**Historical note (5 Sep 2026):** `docs/config-contract.md`, cited throughout,
+was later split into `config-resolution.md`, `config-schema.md`,
+`config-writers.md`, `config-drive.md` and `config-versioning.md`. Citations
+below are left as written; this spec is a historical record.
+
 **Date:** 16 Aug 2026
 **Status:** approved design, fully implemented. PR 1 of § 10.3 landed 16 Aug
 2026 (#30), PR 2 landed 16 Aug 2026 (#33), PR 3 landed 16 Aug 2026 (#37).
