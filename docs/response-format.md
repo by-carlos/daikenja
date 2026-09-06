@@ -37,6 +37,40 @@ Where a skill's own report template and this contract disagree, this contract
 wins and the template is what gets fixed -- the same rule every other contract
 in this directory carries.
 
+### A user-side conversational layer
+
+Some users run their own conversational layer on top of every reply -- a
+personal register of labelled response parts and a brevity discipline,
+switched on before a skill's output ever reaches them. That layer's own rules
+live outside this repository (an editor's `CLAUDE.md`, or similar), and this
+contract does not define them. It only draws the boundary such a layer runs
+inside, the same way it already draws one for file content and the drafted
+message.
+
+- **The deliverable is untouched.** A skill's fixed output -- the message
+  `compose` hands back, a finding's content, a ledger line quoted or proposed
+  -- is not the user-side layer's to rewrite, shorten or relabel. "Exactly
+  this. Nothing else." in a skill's own output format governs the deliverable
+  and continues to mean exactly that.
+- **The reply around it is conversation, and a user-side layer owns
+  conversation.** The sections a skill's format defines around the
+  deliverable -- a `Comment` block, a caveat, a closing offer, a notice --
+  carry that skill's structure and content, but the user-side layer may label
+  or compress them under its own register. A skill's "exactly this" does not
+  suspend that: it fixes what the surrounding section says, not who may
+  annotate it once it reaches the user.
+- **`profile.tone` and a user-side layer are independent settings, and they
+  layer rather than compete.** `profile.tone` decides how much framing,
+  reasoning and closing material a skill puts into the reply in the first
+  place -- that resolution does not change. A user-side layer then decides
+  how that same reply is presented to that one user, including compressing or
+  re-labelling material `profile.tone` produced. It runs after the skill's
+  reply is assembled and is the user's own standing instruction across every
+  skill, not a per-invocation setting, so where the two disagree on how much
+  surfaces, the user-side layer is the outer layer and wins for that user.
+  Nothing here changes `profile.tone`'s resolution or its default for anyone
+  who has not layered anything on top.
+
 ## The answer comes first
 
 The reply leads with the thing the user asked for -- the verdict, the answer,
