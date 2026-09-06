@@ -5,7 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - 2026-08-30
+## [Unreleased]
+
+### Fixed
+
+- **`response-format.md` now says how a user-side conversational layer composes
+  with a skill's reply.** The contract previously pointed three ways at once:
+  § Scope claimed the whole reply for the skill, `compose`'s "Exactly this.
+  Nothing else." read as forbidding any outside annotation, and `guided`
+  `profile.tone` scales narration up in a way an always-on personal brevity
+  layer would flatly contradict. A new § Scope subsection draws the line: the
+  deliverable stays the skill's alone, the sections a skill's format defines
+  around it (`Comment`, a caveat, a closing offer) are conversation a
+  user-side layer may label or compress, and `profile.tone` and that layer
+  compose as an inner setting and an outer one rather than competing.
+
+
 
 ### Fixed
 
