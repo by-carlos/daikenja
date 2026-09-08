@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`/daikenja:learn-voice` leaves beta.** Its first live run on 8 Sep 2026
+  took a 1,419-message corpus across 10 sources, landed above the evidence bar,
+  and produced a file its author recognised as their own writing. The Step 2
+  thresholds (a floor of 30 messages or about 1,000 words; a bar of about 200
+  messages across 3 sources and 2 audiences) stay as they were: the run gives
+  no reason to move them and no evidence about the floor either way. Every
+  step executed as written, including the authorship filter and the question
+  about excluding Daikenja-drafted messages, which is a question by design.
+  The beta marker is removed from `README.md`; the 0.5.0 entry below keeps
+  its historical wording. Closes #93.
+
 ### Fixed
 
 - **`response-format.md` now says how a user-side conversational layer composes
