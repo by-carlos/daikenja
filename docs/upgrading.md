@@ -41,6 +41,19 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### `learn-voice` replaces `writing-style.md` after a backup, without asking
+
+If you have edited `writing-style.md` by hand, the next `/daikenja:learn-voice`
+run no longer shows a diff or asks which sections to keep. It copies the current
+file to `writing-style.<date>.bak.md` beside it (in `~/.claude/daikenja/` also
+when the file itself is on Drive), then writes the derived file over the
+original, and its report names every section the old file had that the new one
+does not. Nothing to do before upgrading. After a run, copy back from the
+backup any hand-written section you still want, and delete backups you no
+longer need; the plugin never removes them.
+
 ## [0.6.0] - 2026-08-25
 
 ### `project-list` no longer answers a natural-language ask

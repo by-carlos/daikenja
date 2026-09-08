@@ -302,7 +302,7 @@ your own norms document in place of the fixture's.
   walks over it: the whole corpus against an untouched template, a block whose
   authorship cannot be separated and must be refused, the DM block alone as an
   under-the-floor stop, and a re-run against a file the user has hand-written a
-  line into, which must be diffed and not replaced.
+  line into, which must be backed up beside it before it is replaced.
 
 Every fixture is synthetic: invented project, invented people, `example.com`
 links. Nothing in this directory may contain real work content, personal data or

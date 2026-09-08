@@ -15,7 +15,8 @@ Four walks over one corpus:
 - **Walk B** -- a block whose authorship cannot be separated. Must refuse.
 - **Walk C** -- the DM block alone. Under the floor, so nothing is derived.
 - **Walk D** -- Walk A again, against a `writing-style.md` the user has since
-  written a line into. Must diff.
+  written a line into. Must back up, then replace, and name what the new file
+  no longer carries.
 
 The corpus is deliberately sized between the floor and the bar -- 33 messages of
 rimuru's own, 4 sources, 3 audiences, 12 May to 18 August 2026 -- so a run has
@@ -337,7 +338,11 @@ template. The user has written one line into it by hand:
 Never "circle back". I have never used it and I never will.
 ```
 
-The run must show a diff rather than the whole file, must not drop that line,
-and must not silently reword it. The corpus supports keeping it -- `circle
-back`, `sync up` and `touch base` appear nowhere in 33 messages -- so the
-proposal extends the line rather than replacing it.
+The run must copy that file to a dated backup beside it, confirm the copy,
+and only then write the derived file over it. The report must name the backup
+and say the previous file's `## Words to avoid` section is not carried as
+written. The corpus supports the line -- `circle back`, `sync up` and `touch
+base` appear nowhere in 33 messages -- so the derived section says the same
+thing from evidence, and the "what to watch" block must not treat the
+hand-written line as a finding. Nothing may be written anywhere else, and
+`daikenja.yaml` must not change.

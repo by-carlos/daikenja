@@ -17,7 +17,7 @@ live and how a pointer resolves to one.
 | `personas.md` -- creating the file | `setup-user`, and `remember-persona` on absence | Both copy the blank template if and only if no file exists at the resolved **default** path, and neither inspects or overwrites content. `setup-user` does this proactively on every run; `remember-persona` does it only when it has an entry to write and finds the default file missing, folding the scaffold into that write's report. Copying the template twice is idempotent, so the two never conflict. This scaffold never runs against a path the user named explicitly in `profile.personas` -- see the note below on a configured pointer that fails to resolve. |
 | `personas.md` -- content | the user by hand, and `remember-persona` | Appends an entry for a person the user described. Any other skill that needs a persona recorded runs it. The append is silent only where the user described the person with nothing pasted; a description that arrived with pasted material is offered once and written on a yes. Amending prose the user wrote by hand is proposed, never silent. |
 | `writing-style.md` -- creating the file | `setup-user` on absence | Copies the blank template if and only if no file exists, and never inspects content. Same rule as `personas.md`. |
-| `writing-style.md` -- content | the user by hand, and `learn-voice` on approval | `learn-voice` derives a proposal from writing samples the user supplies, shows the exact content it would write -- as a diff whenever the file already holds anything -- and writes only what the user approves. Nothing else edits it. |
+| `writing-style.md` -- content | the user by hand, and `learn-voice` | `learn-voice` derives the file from writing samples the user supplies, backs up whatever the file held to a dated copy beside it, and writes the derived file in full. Nothing else edits it, and `learn-voice` writes nothing else. |
 | The project's ledger -- wherever `ledger:` resolves to, `<project>/.daikenja/ledger.md` by default | `project-log`, and only `project-log` | `meeting-review` and `project-sources` write through `project-log`. Every other skill reads. The Sources section is ledger content like any other. Who may write does not change with where the ledger lives, exactly as it does not for the two prose files above. |
 | The documents a source points at -- the tracked wiki page, epic, thread or file itself | nobody | Not a Daikenja write surface. See below. |
 
@@ -47,7 +47,7 @@ follow from the fact that Daikenja can only see Drive files it created itself:
   the default path scaffolds; a path the user named is never silently swapped
   for a different one. `learn-voice` follows the same rule for
   `writing-style.md`: an unresolvable `writing_style` path stops the write and
-  shows the proposal instead of saving it elsewhere.
+  shows the derived file instead of saving it elsewhere.
 
 **The single-writer rule governs the ledger, not `daikenja.yaml`.** This
 distinction matters: `project-catchup`'s job is to report a delta and move the
@@ -95,15 +95,16 @@ never re-decides it. **The question never gates the caller** -- a review or a
 draft finishes and carries the offer back as one line, the same one line a
 silent write would have cost it.
 
-**`writing-style.md` splits the same way, and its content writer asks every
-time.** `setup-user` owns creation on the same existence-only test, and
+**`writing-style.md` splits the same way, and its content writer backs up
+every time.** `setup-user` owns creation on the same existence-only test, and
 `learn-voice` owns every content write. The two prose files differ only in what
 buys the write: an appended persona is additive, so it is silent and reported
 afterwards, while a derived writing style replaces the whole file and is
-therefore proposed in full, diffed against whatever is already there, and
-written only on approval. Neither skill may write the other's file, and
-`setup-user`'s never-inspect rule is unchanged -- `learn-voice` reads the file
-under its own contract, to show the user what would change.
+therefore preceded by a dated backup of the previous content, named in the
+report together with any section the new file no longer carries. Neither skill
+may write the other's file, and `setup-user`'s never-inspect rule is unchanged
+-- `learn-voice` reads the file under its own contract, to back it up and to
+say what changed.
 
 `setup-user` writes a fresh configuration by asking the user. It does not
 import or convert anything from another tool or from any pre-plugin layout.
