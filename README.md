@@ -9,7 +9,7 @@ back something you can act on -- a verdict on a draft, a review of how you
 handled a thread, a plain markdown ledger of what a project decided and what is
 still open. In a codebase that ledger is the why behind the code, which `git
 blame` cannot give you. It never sends, never publishes, and never writes a word
-you have not approved.
+you did not ask for.
 
 The writing and remembering side of a working week.
 
@@ -200,11 +200,11 @@ without being in its directory.
   to `/daikenja:project-log` for your approval; it never writes the ledger
   itself.
 - `/daikenja:learn-voice` -- works out how you write from writing samples you
-  supply, and proposes the whole of your `writing-style.md`. Read the proposal
-  before you approve it. It reads only
+  supply, and writes the whole of your `writing-style.md`. It reads only
   samples you say you wrote yourself, records style and never facts about
-  people or projects, shows the complete file -- as a diff if you already have
-  one -- and writes nothing until you approve it. Run it whenever you have more
+  people or projects, backs up whatever the file held to a dated copy beside
+  it, and writes the derived file. What it saw but kept out of the file comes
+  back as a separate "what to watch" report. Run it whenever you have more
   samples, not only at setup.
 
 ## Updating
@@ -279,7 +279,7 @@ and get overwritten on update.
 |---|---|---|
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
-| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` for a proposal you approve |
+| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice`, which backs up the file before replacing it |
 | A project's decision ledger | `<project root>/.daikenja/ledger.md`, or wherever that project's `ledger:` key points -- including outside the project. For a project spanning several directories the root is the first one registered | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to

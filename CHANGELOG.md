@@ -14,11 +14,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and produced a file its author recognised as their own writing. The Step 2
   thresholds (a floor of 30 messages or about 1,000 words; a bar of about 200
   messages across 3 sources and 2 audiences) stay as they were: the run gives
-  no reason to move them and no evidence about the floor either way. Every
-  step executed as written, including the authorship filter and the question
-  about excluding Daikenja-drafted messages, which is a question by design.
-  The beta marker is removed from `README.md`; the 0.5.0 entry below keeps
-  its historical wording. Closes #93.
+  no reason to move them and no evidence about the floor either way. The
+  derivation steps executed as written, including the authorship filter and
+  the question about excluding Daikenja-drafted messages, which is a question
+  by design. The write step did not: against a 348-line hand-edited file, the
+  proposal-and-diff design produced a draft under a temporary path and a
+  repointed `daikenja.yaml` instead of a written file. The beta marker is
+  removed from `README.md`; the 0.5.0 entry below keeps its historical
+  wording. Closes #93.
+
+- **`/daikenja:learn-voice` writes in one pass: back up, write, report.** The
+  proposal, the diff against existing content, the partial approval and the
+  merge of hand-written lines are gone. The skill now copies whatever the file
+  held to `writing-style.<date>.bak.md` beside it (locally, also for a Drive
+  file), confirms the copy, writes the derived file in full, reads it back, and
+  reports the backup together with every section the previous file had that
+  the new one does not. It never writes a draft, a scratch copy or any other
+  path, and never edits `daikenja.yaml`. The observations that describe the
+  writer but do not belong in a style file -- habits, non-native patterns,
+  anything a `Fixed` rule kept out -- come back as a separate "what to watch"
+  block in the conversation, never written anywhere. `config-writers.md` § Who
+  writes what, the fixture's Walk D and `tests/README.md` follow. Upgrade note
+  in `docs/upgrading.md`.
 
 ### Fixed
 
