@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.8.0] - 2026-09-08
 
 ### `learn-voice` replaces `writing-style.md` after a backup, without asking
 
