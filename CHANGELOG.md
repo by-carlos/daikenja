@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`voice.md` § The substitution floor now names its idiom examples from
+  evidence.** The three hand-picked keepers (`a heads up`, `a rabbit hole`,
+  `catch up`) are folded into a list built from a frequency count over a
+  64,000-word sample of real workplace messages, judged phrase by phrase on
+  two separate questions: does it block a non-native reader, and is the plain
+  form at least as natural. The section now carries three named groups --
+  stays, replaced, banned -- with the reason each phrase lands where it does,
+  so the floor can be extended by the same method instead of from memory.
+  Closes #61.
+
 - **`/daikenja:learn-voice` leaves beta.** Its first live run on 8 Sep 2026
   took a 1,419-message corpus across 10 sources, landed above the evidence bar,
   and produced a file its author recognised as their own writing. The Step 2

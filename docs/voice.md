@@ -108,18 +108,40 @@ as what it replaced. If the plain alternative is stiffer, longer, or reads as
 machine-written, keep the original -- including when the original is an idiom.
 
 This applies hardest to the idiom rule, which reads as a blanket ban and is not
-one. An idiom that costs a non-native reader nothing, and that has no plain
-form a person would actually write, stays. Three that stay:
+one. Two questions decide each phrase, and they are answered separately: does
+it block a reader who cannot decode it from its words, and is the plain form
+at least as natural. The named examples below come from a frequency count over
+a 64,000-word sample of real workplace messages (September 2026), judged phrase
+by phrase; the list is evidence, not intuition, so extend it the same way.
+
+**Stays.** Costs a non-native reader nothing, and the plain form is stiffer,
+longer, or reads as machine-written:
 
 - **a heads up.** "Telling you first" is stiffer and reads as machine-written.
 - **a rabbit hole.** The plain forms ("an unproductive tangent") are longer and
   more formal than the message needs.
 - **catch up.** A phrasal verb, and still the normal way to say it.
+- **end up, figure out, come up with, get back to.** Decodable from their words;
+  "eventually", "determine", "produce" and "reply later" are all more formal
+  than the sentence around them.
+- **keep up, speed up, looking into.** Transparent compounds; "maintain pace",
+  "accelerate" and "investigate" read as a report, not a message.
+- **push back.** Decodable in a work setting, and "object" or "resist" changes
+  the register.
 
-What the rule does ban is the idiom a reader cannot decode from its words --
-"bite the bullet", "a ballpark figure", "put it on the back burner". Those
-block a non-native reader and have a plain replacement that is genuinely
-better, which is what makes them different.
+**Replaced.** Blocks nobody, but the plain verb is exactly as natural, so the
+phrasal-verb rule applies as written: "contact", not "reach out"; "prepare",
+not "put together"; "continue", not "move forward"; "raise", not "flag".
+
+**Banned.** The reader cannot decode it from its words, and a plain replacement
+that is genuinely better exists, which is what makes these different --
+"bite the bullet", "a ballpark figure", "put it on the back burner", and the
+frequent workplace ones: "in agreement", not "on the same page"; "ultimately",
+not "at the end of the day"; "duplicate existing work", not "reinvent the
+wheel"; "a detailed review", not "a deep dive"; "start", not "spin up" or
+"jump on"; "message", not "ping". A phrase that is ambiguous rather than
+opaque is banned for the same reason: write "approve" or "sign off for the
+day", never "sign off" alone.
 
 **Narrowing only.** The floor is Daikenja's own reading of a Fixed rule, not a
 user override of one, which is why a Defaults rule is allowed to bound a Fixed
