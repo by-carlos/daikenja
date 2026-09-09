@@ -123,12 +123,15 @@ couple of other plugins can be more than Claude Code has room for, so it falls
 back to skill *names* only and plain-language triggering stops working for
 Daikenja's skills. If that happens to you, use the slash form, or raise
 `skillListingBudgetFraction` in your Claude Code settings to give skill
-descriptions more room. (Measured 24 Aug 2026 on Claude Code 2.1.240,
+descriptions more room. Since the ledger, setup, drafting and self-review
+skills moved to slash-only, Daikenja's five auto-invocable descriptions run
+about 3,600 characters, under Claude Code's 8,000-character default budget, so
+the setting is only needed when other plugins fill the rest. (Measured 24 Aug 2026
+on Claude Code 2.1.240,
 [by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199), on
-a 200K-context model: Daikenja's thirteen auto-invocable descriptions alone run
-about 8,600 characters against Claude Code's 8,000-character default budget,
-and `skillListingBudgetFraction: 0.03` covers it. On a 1M-context model nothing
-is cut and no setting is needed.)
+a 200K-context model: the thirteen auto-invocable descriptions of that time
+ran about 8,600 characters, and `skillListingBudgetFraction: 0.03` covered it.
+On a 1M-context model nothing is cut.)
 
 ## Skills
 
@@ -178,7 +181,8 @@ Seventeen skills, grouped by what they do.
 
 All five reading skills take an **optional project name**:
 `/daikenja:project-summary atlas-migration` reads that project from anywhere,
-without being in its directory.
+without being in its directory. They run only when you type the command: a
+phrase such as "catch me up" does not fire them on its own.
 
 **Reviewing things**
 
@@ -187,7 +191,8 @@ without being in its directory.
 - `/daikenja:doc-review` -- reviews a document against a fixed checklist before
   it is published or shared.
 - `/daikenja:self-review` -- reviews how you handled a thread you took part in,
-  with private, evidence-backed coaching on your own moves.
+  with private, evidence-backed coaching on your own moves. Runs only when you
+  type the command.
 
 **Setup**
 

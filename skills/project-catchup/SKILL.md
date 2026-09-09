@@ -1,10 +1,11 @@
 ---
 name: project-catchup
-description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. Use when the user says "catch me up", "what changed since I last looked", "what's new", "what did I miss", or "bring me up to speed" -- personal, delta-shaped asks about a project they already know, not a first look or a single decision lookup. This is the only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content. Accepts an optional project key -- `/daikenja:project-catchup <key>` reads that project from anywhere, without being in its directory.
+description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. The only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content. Accepts an optional project key -- `/daikenja:project-catchup <key>` reads that project from anywhere. Run explicitly with /daikenja:project-catchup -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
   writes: ~/.claude/daikenja/daikenja.yaml (last_checkpoint only)
+disable-model-invocation: true
 ---
 
 # Catchup

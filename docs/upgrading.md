@@ -41,6 +41,19 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### Eight skills answer only to their slash command
+
+`compose`, `preflight`, `project-catchup`, `project-summary`,
+`project-decisions`, `project-gaps`, `project-sources` and `self-review` no
+longer fire on a phrase such as "tone this down", "is this ready to go" or
+"catch me up". Type the command instead: `/daikenja:compose`,
+`/daikenja:preflight`, `/daikenja:project-catchup`, `/daikenja:project-summary`,
+`/daikenja:project-decisions`, `/daikenja:project-gaps`,
+`/daikenja:project-sources`, `/daikenja:self-review`. Nothing on disk changes
+and nothing to do before upgrading.
+
 ## [0.8.0] - 2026-09-08
 
 ### `learn-voice` replaces `writing-style.md` after a backup, without asking
