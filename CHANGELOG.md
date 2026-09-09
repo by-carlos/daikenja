@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`/daikenja:tensei` -- installs, updates, or removes the Tensei
+  conversational persona (`~/.claude/daikenja/tensei.md`) and its
+  `CLAUDE.md` import line.** Ships `templates/tensei.md`, the current
+  answer-shaping, register and query-mechanics contract, and diffs an
+  existing installed copy against it: a five-state model (`new` /
+  `unchanged` / `update` / `local-edit` / `conflict`, tracked in
+  `~/.claude/daikenja/.tensei-manifest.json`) means an update never
+  overwrites a hand-edited copy without saying so first, and every write is
+  backed up under `~/.claude/backups/tensei-<UTC timestamp>/` first. Unlike
+  `personas.md` and `writing-style.md`, tensei is maintained content this
+  plugin revises, not a blank template the user owns after creation --
+  Tensei governs conversation, not deliverables, and needs neither
+  `daikenja.yaml` nor a prior `setup-user` run. Carries one fix to the
+  persona itself in the same change: Query mechanics now covers the case
+  where no user reply separates the substance turn from the dialog turn,
+  folding a 60-word recap into the dialog instead of relying on a text turn
+  that never happens.
+
 ### Changed
 
 - **Skill descriptions trimmed to one sentence plus, where the model needs

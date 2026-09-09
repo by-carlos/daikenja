@@ -17,5 +17,11 @@ starting points.
   same template into whichever the user chose. See
   [`../docs/config-resolution.md`](../docs/config-resolution.md) § Resolving
   `writing_style` and `personas`.
+- [`tensei.md`](tensei.md) -- the conversational persona `/daikenja:tensei`
+  installs to `~/.claude/daikenja/tensei.md`, imported from `~/.claude/CLAUDE.md`.
+  Unlike the two templates above, this one is not a blank starting point the
+  user fills in: it is maintained content, and the skill can update an
+  installed copy the user has not edited by hand. See
+  [`../skills/tensei/SKILL.md`](../skills/tensei/SKILL.md).
 
 Nothing in this directory may contain personal or organization data.
