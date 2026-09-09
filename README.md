@@ -123,12 +123,15 @@ couple of other plugins can be more than Claude Code has room for, so it falls
 back to skill *names* only and plain-language triggering stops working for
 Daikenja's skills. If that happens to you, use the slash form, or raise
 `skillListingBudgetFraction` in your Claude Code settings to give skill
-descriptions more room. (Measured 24 Aug 2026 on Claude Code 2.1.240,
+descriptions more room. Since the seven ledger, setup and self-review skills
+moved to slash-only, Daikenja's seven auto-invocable descriptions run about
+4,400 characters, under Claude Code's 8,000-character default budget, so the
+setting is only needed when other plugins fill the rest. (Measured 24 Aug 2026
+on Claude Code 2.1.240,
 [by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199), on
-a 200K-context model: Daikenja's thirteen auto-invocable descriptions alone run
-about 8,600 characters against Claude Code's 8,000-character default budget,
-and `skillListingBudgetFraction: 0.03` covers it. On a 1M-context model nothing
-is cut and no setting is needed.)
+a 200K-context model: the thirteen auto-invocable descriptions of that time
+ran about 8,600 characters, and `skillListingBudgetFraction: 0.03` covered it.
+On a 1M-context model nothing is cut.)
 
 ## Skills
 
