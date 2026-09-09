@@ -43,12 +43,13 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
-### Six skills answer only to their slash command
+### Eight skills answer only to their slash command
 
-`project-catchup`, `project-summary`, `project-decisions`, `project-gaps`,
-`project-sources` and `self-review` no longer fire on a phrase such as "catch
-me up" or "how did I handle that". Type the command instead:
-`/daikenja:project-catchup`, `/daikenja:project-summary`,
+`compose`, `preflight`, `project-catchup`, `project-summary`,
+`project-decisions`, `project-gaps`, `project-sources` and `self-review` no
+longer fire on a phrase such as "tone this down", "is this ready to go" or
+"catch me up". Type the command instead: `/daikenja:compose`,
+`/daikenja:preflight`, `/daikenja:project-catchup`, `/daikenja:project-summary`,
 `/daikenja:project-decisions`, `/daikenja:project-gaps`,
 `/daikenja:project-sources`, `/daikenja:self-review`. Nothing on disk changes
 and nothing to do before upgrading.

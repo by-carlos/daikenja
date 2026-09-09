@@ -1,10 +1,11 @@
 ---
 name: compose
-description: Rewrites or drafts a work message (Slack, Teams, email) so it stays clear, calm and easy to read for a non-native English audience, without changing the ask, the stance or the confidence level. Returns one balanced message, then offers a firmer or softer version on request. Use this whenever the user pastes a draft message, asks for help replying to a colleague, asks to "make this sound better", "tone this down", "make this sound better before I send it", or has just finished the /daikenja:thread skill and is ready to draft -- even a plain "go ahead" or "draft it" once that skill's intent block exists.
+description: Rewrites or drafts a work message (Slack, Teams, email) so it stays clear, calm and easy to read for a non-native English audience, without changing the ask, the stance or the confidence level. Returns one balanced message, then offers a firmer or softer version on request. Run explicitly with /daikenja:compose -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 6
+  version: 7
   pairs-with: thread
+disable-model-invocation: true
 ---
 
 # Message compose
