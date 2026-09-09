@@ -1,6 +1,6 @@
 ---
 name: doc-review
-description: Reviews a document against a predetermined checklist: clarity, undefined terms, unenforced rules, undated decisions, missing owners, contradictions, and obvious stale content. Use when the user says "review this doc", "review this page", "check this before I publish", or pastes a document and asks for a check before sharing it. Read-only -- it reports findings, it never edits or rewrites the document.
+description: 'Reviews a document against a predetermined checklist: clarity, undefined terms, unenforced rules, undated decisions, missing owners, contradictions, and obvious stale content. Use when the user says "review this doc", "review this page", "check this before I publish", or pastes a document and asks for a check before sharing it. Read-only -- it reports findings, it never edits or rewrites the document.'
 metadata:
   owner: Carlos
   version: 1

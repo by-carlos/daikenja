@@ -1,6 +1,6 @@
 ---
 name: setup-user
-description: One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona and writing-style files, and applies any pending version upgrade.
+description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona and writing-style files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
   version: 5

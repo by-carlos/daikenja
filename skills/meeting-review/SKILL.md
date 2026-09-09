@@ -1,6 +1,6 @@
 ---
 name: meeting-review
-description: Turns a meeting transcript into proposed ledger entries: decisions made, action items with owners and dates, and questions left unresolved. Use when the user pastes a transcript or asks what came out of a call. It classifies only and writes nothing itself.
+description: 'Turns a meeting transcript into proposed ledger entries: decisions made, action items with owners and dates, and questions left unresolved. Use when the user pastes a transcript or asks what came out of a call. It classifies only and writes nothing itself.'
 metadata:
   owner: Carlos
   version: 1
