@@ -1,6 +1,6 @@
 ---
 name: doc-review
-description: Reviews a document against a fixed checklist before it is published or shared -- clarity, undefined terms, unenforced rules, undated decisions, missing owners, contradictions, and content that is stale on its face. Use when the user says "review this doc", "is this page clear", "check this page before I publish", "does this make sense to someone outside the team", or pastes a document/link and asks for a check before sending it out. Read-only -- this skill reports findings, it never edits or rewrites the document. For standalone documents (specs, runbooks, wikis, READMEs), not chat replies or draft messages.
+description: Reviews a document against a predetermined checklist: clarity, undefined terms, unenforced rules, undated decisions, missing owners, contradictions, and obvious stale content. Use when the user says "review this doc", "review this page", "check this before I publish", or pastes a document and asks for a check before sharing it. Read-only -- it reports findings, it never edits or rewrites the document.
 metadata:
   owner: Carlos
   version: 1

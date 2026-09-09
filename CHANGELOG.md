@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Skill descriptions trimmed to one sentence plus, where the model needs
+  them, trigger phrases.** The five model-invocable skills -- `doc-review`,
+  `meeting-review`, `project-log`, `remember-persona` and `thread` -- drop
+  from 3,617 to 1,398 characters, about 61% off what their descriptions cost
+  in every session's system prompt. Behavioural prose that a description was
+  carrying (which file a skill writes, which skill it hands off to, what it
+  refuses) belongs in the skill body and is already there. The twelve
+  `disable-model-invocation: true` skills were trimmed the same way for the
+  slash menu, and their now-redundant "Run explicitly with /daikenja:x -- it
+  never fires on its own" tails are gone: the flag already says that, so the
+  sentence was noise.
+
+
 - **Eight deliberate-command skills now run only on their slash command.**
   `/daikenja:compose`, `/daikenja:preflight`,
   `/daikenja:project-catchup`, `/daikenja:project-summary`,

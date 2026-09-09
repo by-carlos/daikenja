@@ -1,6 +1,6 @@
 ---
 name: project-catchup
-description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. The only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content. Accepts an optional project key -- `/daikenja:project-catchup <key>` reads that project from anywhere. Run explicitly with /daikenja:project-catchup -- it never fires on its own.
+description: Reports what changed in a project's Daikenja ledger since the user last checked, then advances the checkpoint on approval. The only skill that writes last_checkpoint in daikenja.yaml; it never touches ledger content. Accepts an optional project key -- `/daikenja:project-catchup <key>` reads that project from anywhere.
 metadata:
   owner: Carlos
   version: 2

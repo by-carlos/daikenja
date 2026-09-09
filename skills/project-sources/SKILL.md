@@ -1,6 +1,6 @@
 ---
 name: project-sources
-description: Reports which of a project's tracked sources moved since they were last read, by comparing each source's stored last-modified value against what its system reports now. Read-only against the ledger; recording a re-read goes through /daikenja:project-log. Accepts an optional project key -- `/daikenja:project-sources <key>` reads that project from anywhere. Run explicitly with /daikenja:project-sources -- it never fires on its own.
+description: Reports which of a project's tracked sources moved since they were last read, by comparing each source's stored last-modified value against what its system reports now. Read-only against the ledger; recording a re-read goes through /daikenja:project-log. Accepts an optional project key -- `/daikenja:project-sources <key>` reads that project from anywhere.
 metadata:
   owner: Carlos
   version: 2

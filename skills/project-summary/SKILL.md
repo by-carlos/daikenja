@@ -1,6 +1,6 @@
 ---
 name: project-summary
-description: Gives a full-state overview of a project's Daikenja ledger, written for someone with no prior context. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-summary <key>` reads that project from anywhere. Run explicitly with /daikenja:project-summary -- it never fires on its own.
+description: Gives a full-state overview of a project's Daikenja ledger, written for someone with no prior context. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-summary <key>` reads that project from anywhere.
 metadata:
   owner: Carlos
   version: 2

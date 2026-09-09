@@ -1,6 +1,6 @@
 ---
 name: preflight
-description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply -- the six substance checks, then a set of reviewer personas whose wording problems it fixes. Never sends anything. Run explicitly with /daikenja:preflight -- it never fires on its own.
+description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply -- the six substance checks, then a set of reviewer personas whose wording problems it fixes. Never sends anything.
 metadata:
   owner: Carlos
   version: 9

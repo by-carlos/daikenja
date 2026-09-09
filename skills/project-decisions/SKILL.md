@@ -1,6 +1,6 @@
 ---
 name: project-decisions
-description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history and what it is blocked by or contradicts. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere. Run explicitly with /daikenja:project-decisions -- it never fires on its own.
+description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history and what it is blocked by or contradicts. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere.
 metadata:
   owner: Carlos
   version: 2

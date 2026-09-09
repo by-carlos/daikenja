@@ -1,6 +1,6 @@
 ---
 name: meeting-review
-description: Turns a meeting transcript into proposed ledger entries -- decisions actually made, action items with owners and dates, and questions left unresolved. Use when the user says "review this meeting", "what came out of this call", "turn this transcript into actions", or pastes a transcript, meeting notes or a recording link and asks what was decided or who owes what. This skill writes nothing itself. It classifies, then hands the entries to the /daikenja:project-log skill, which shows the exact lines and waits for approval. For a meeting transcript, not a live chat thread or coaching on the user's own performance in it.
+description: Turns a meeting transcript into proposed ledger entries: decisions made, action items with owners and dates, and questions left unresolved. Use when the user pastes a transcript or asks what came out of a call. It classifies only and writes nothing itself.
 metadata:
   owner: Carlos
   version: 1

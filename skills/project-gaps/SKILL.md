@@ -1,6 +1,6 @@
 ---
 name: project-gaps
-description: Audits a project's Daikenja ledger for open items with no owner or that have sat too long; only Open items are in scope. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-gaps <key>` reads that project from anywhere. Run explicitly with /daikenja:project-gaps -- it never fires on its own.
+description: Audits a project's Daikenja ledger for open items with no owner or that have sat too long; only Open items are in scope. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-gaps <key>` reads that project from anywhere.
 metadata:
   owner: Carlos
   version: 2

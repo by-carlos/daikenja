@@ -1,6 +1,6 @@
 ---
 name: learn-voice
-description: Derives your writing-style.md from writing samples you supply -- your own sent messages, a mail export, a folder of exported threads, a text dump -- backs up whatever the file held, and writes the derived file. Use when the user says "learn how I write", "build my writing style from my old messages", "work out my voice from these", or asks why their writing-style.md is still empty. It reads only samples the user states are their own writing, records style rules and never facts about people or projects, and touches nothing on disk but that one file and its dated backup. The habits it saw but did not write go into a separate "what to watch" report. Run explicitly with /daikenja:learn-voice -- it never fires on its own. Not for recording how somebody else likes to be written to (that is /daikenja:remember-persona) and not for the rest of first-time setup (that is /daikenja:setup-user).
+description: Derives your writing-style.md from writing samples you supply, backing up whatever the file held first. It records style rules only, never facts about people or projects.
 metadata:
   owner: Carlos
   version: 1

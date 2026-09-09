@@ -1,6 +1,6 @@
 ---
 name: compose
-description: Rewrites or drafts a work message (Slack, Teams, email) so it stays clear, calm and easy to read for a non-native English audience, without changing the ask, the stance or the confidence level. Returns one balanced message, then offers a firmer or softer version on request. Run explicitly with /daikenja:compose -- it never fires on its own.
+description: Rewrites or writes a message so it stays clear, professional and easy to read for all audiences without changing the ask, stance or confidence level.
 metadata:
   owner: Carlos
   version: 7
