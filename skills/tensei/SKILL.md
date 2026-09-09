@@ -63,7 +63,10 @@ Before asking anything:
   JSON: **stop**, name the file, say the user should fix or remove it. Never
   rewrite a file that could not be read.
 - `~/.claude/CLAUDE.md` -- read it if present, and check whether a line
-  reading exactly `@~/.claude/daikenja/tensei.md` already exists.
+  reading exactly `@~/.claude/daikenja/tensei.md` already exists (compare
+  after stripping the line ending and surrounding whitespace, and anywhere in
+  the file, not only at the end -- another installer may have placed it inside
+  a slot of its own).
 
 ## Step 2: state and report
 
@@ -76,7 +79,7 @@ works on every platform this plugin supports.
 | Installed | Manifest `installed_hash` | Compare | State |
 |---|---|---|---|
 | absent | -- | -- | `new` |
-| present | absent | installed == shipped | `unchanged` |
+| present | absent | installed == shipped | `unchanged` (untracked -- see the adoption note below) |
 | present | absent | installed != shipped | `conflict` (no record to tell a local edit from an independently-placed file) |
 | present | present | installed == shipped | `unchanged` |
 | present | present | installed == manifest hash, shipped != manifest hash | `update` |
@@ -103,6 +106,13 @@ never useful, so never propose it alone.
 A `plan` reporting `unchanged` with the import line already present is one
 line: "Already installed and current -- nothing to change." No gate follows.
 
+**Adoption.** `unchanged` with **no manifest** is the one exception: the file
+matches the payload but nothing records that, so the next update would read a
+later hand edit as a `conflict` instead of a `local-edit`. Say so in one line
+and offer to record the manifest -- a new file, no other write, no backup
+needed. Its `import_line_added_by_skill` is `false`: this run did not add the
+line. Declining is fine and leaves everything as it was.
+
 ## Step 3: the gate
 
 One closed question. The question text carries the state and whether the
@@ -116,6 +126,8 @@ Options, at minimum:
 - **Install and overwrite my local edit** -- offered only when the state is
   `local-edit` or `conflict`; say plainly that the local version is backed
   up, not discarded outright.
+- **Record the manifest only** -- offered only in the adoption case above;
+  writes `.tensei-manifest.json` and nothing else.
 - **Nothing** -- stop, write nothing.
 
 **Never write without an explicit yes.**
@@ -132,8 +144,10 @@ Options, at minimum:
    write.
 3. **Append the import line** (`@~/.claude/daikenja/tensei.md`, on its own
    line, at the end of the file) if the gate approved it and it is not
-   already present. Create `~/.claude/CLAUDE.md` with just that line if the
-   file does not exist yet.
+   already present. Keep the file's existing line ending (CRLF stays CRLF),
+   make sure the previous last line is terminated before appending, and end
+   the file with one newline. Create `~/.claude/CLAUDE.md` with just that
+   line if the file does not exist yet.
 4. **Write the manifest** at `~/.claude/daikenja/.tensei-manifest.json`:
 
    ```json
@@ -179,6 +193,26 @@ nothing, including no manifest rewrite. It never touches a `local-edit` file
 without the explicit overwrite option in Step 3, and never resolves a
 `conflict` on its own.
 
+## Coexisting with other installers of `CLAUDE.md`
+
+Other tooling may own and regenerate `~/.claude/CLAUDE.md` from a skeleton
+(the `carlos` plugin's `setup-wow` does, and keeps a slot for exactly this
+import line). The contract that keeps the two from fighting:
+
+- This skill only ever **appends one plain line** or **removes that exact
+  line**; it never restructures the file, and it never reads anything under
+  `~/.claude/reference/` or any other installer's manifest.
+- After this skill appends the line, an installer that hashes `CLAUDE.md` will
+  see it as changed on its next run. That is correct: it should surface the
+  line and carry it forward, not silently drop it. If it does drop it, a re-run
+  of this skill reports the line as missing and re-adds it.
+- If another installer later moves the line into its own slot,
+  `import_line_added_by_skill` stays whatever this skill recorded -- the line
+  is still the one this skill added, wherever it now sits, so uninstall still
+  removes it.
+- `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json` are this skill's
+  alone. Nothing else should write them, and this skill writes nothing else.
+
 ## Failure cases
 
 | Situation | What to do |
@@ -187,6 +221,8 @@ without the explicit overwrite option in Step 3, and never resolves a
 | `${CLAUDE_PLUGIN_ROOT}/templates/tensei.md` cannot be read | **Stop.** Name the path. Never reconstruct the payload from memory. |
 | `.tensei-manifest.json` will not parse | **Stop.** Name the file, say the user should fix or remove it. Never rewrite a file that could not be read. |
 | No manifest, and the installed file differs from shipped | Correct behaviour, not an error: reads as `conflict`. Show the diff and ask. |
+| No manifest, and the installed file matches shipped | `unchanged`, untracked. Offer to record the manifest (Step 2, Adoption); never treat it as an error. |
+| `CLAUDE.md` contains the import line more than once | Report it; on an install leave the file alone (the import is already active), on an uninstall remove every copy only if the manifest says this skill added it, otherwise none. |
 | State is `local-edit` | Leave it by default. Report it once. Only the explicit overwrite option in Step 3 installs over it. |
 | `~/.claude/CLAUDE.md` does not exist yet | The import line is absent by definition; adding it creates the file with just that line. Not a failure. |
 | The user declines the gate | Write nothing, say so in one line, close. Not a failure. |

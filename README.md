@@ -13,7 +13,7 @@ you did not ask for.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Seventeen skills ship today.
+**Status:** in active development. Eighteen skills ship today.
 
 ## What using it looks like
 
@@ -135,7 +135,7 @@ On a 1M-context model nothing is cut.)
 
 ## Skills
 
-Seventeen skills, grouped by what they do.
+Eighteen skills, grouped by what they do.
 
 **Writing a reply**
 
@@ -211,6 +211,13 @@ phrase such as "catch me up" does not fire them on its own.
   it, and writes the derived file. What it saw but kept out of the file comes
   back as a separate "what to watch" report. Run it whenever you have more
   samples, not only at setup.
+- `/daikenja:tensei` -- installs, updates or removes the Tensei conversational
+  persona (`~/.claude/daikenja/tensei.md`) and the line that imports it from
+  `~/.claude/CLAUDE.md`. Unlike the other setup files, this one is maintained
+  content the plugin revises: a copy you have not edited by hand can be updated
+  to the shipped version, a copy you have edited is never overwritten without
+  asking, and anything replaced is backed up first. Needs no `daikenja.yaml`
+  and no prior `setup-user` run. Runs only when you type the command.
 
 ## Updating
 

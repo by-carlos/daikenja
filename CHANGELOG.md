@@ -16,8 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   existing installed copy against it: a five-state model (`new` /
   `unchanged` / `update` / `local-edit` / `conflict`, tracked in
   `~/.claude/daikenja/.tensei-manifest.json`) means an update never
-  overwrites a hand-edited copy without saying so first, and every write is
-  backed up under `~/.claude/backups/tensei-<UTC timestamp>/` first. Unlike
+  overwrites a hand-edited copy without saying so first, a copy placed by
+  hand that already matches the payload can be adopted by recording the
+  manifest alone, and every write is backed up under
+  `~/.claude/backups/tensei-<UTC timestamp>/` first. Unlike
   `personas.md` and `writing-style.md`, tensei is maintained content this
   plugin revises, not a blank template the user owns after creation --
   Tensei governs conversation, not deliverables, and needs neither
