@@ -1,6 +1,6 @@
 ---
 name: setup-project
-description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has. Use when the user says "register this project", "add this repo to Daikenja", "set this project up", "this repo is part of the platform programme", or "seed the ledger from our Confluence space". A project may span several directories or none at all, so this skill also adds the directory you are in to a project you already track, and registers a project that has no directory. Run explicitly with /daikenja:setup-project -- it never fires on its own. Personal setup stays in /daikenja:setup-user and is not repeated here. Seeding writes nothing itself -- proposed entries go to /daikenja:project-log, which shows the exact lines and waits for approval.
+description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has.
 metadata:
   owner: Carlos
   version: 1

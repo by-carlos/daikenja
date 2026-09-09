@@ -1,6 +1,6 @@
 ---
 name: setup-user
-description: One-time (and re-runnable) personal setup for Daikenja. Checks that the session is Claude Code, creates ~/.claude/daikenja/daikenja.yaml from the template, captures the user's profile, copies the blank persona and writing-style files if they are not already there (or creates them in Google Drive if you ask), and reports which connected tools the other skills can use. It is also the only place an upgrade is applied -- when the version recorded in your configuration is behind the installed one, it proposes the edits docs/upgrading.md lists for the versions in between and writes them on approval, which is what the one-line version notice in every other skill points at. It does not register a project -- /daikenja:setup-project does that, and this skill hands off to it at the end, so a first-ever run is still one continuous flow. Run explicitly with /daikenja:setup-user -- it never fires on its own.
+description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona and writing-style files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
   version: 5

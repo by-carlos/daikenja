@@ -1,6 +1,6 @@
 ---
 name: remember-persona
-description: Records what the user says about a person they write to, in their own personas file (by default ~/.claude/daikenja/personas.md, or a Google Drive file if that is where they keep it), so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", "note that D is the one who cares about cost", "remember how M likes to be written to", or describes a recipient while drafting and wants that kept -- not a project decision or open item. Also the skill other Daikenja skills route through when a description of a person comes up mid-draft. This is the only skill that writes persona content -- every other Daikenja skill reads it, and it scaffolds personas.md from the template on first use if it is not already there. It records only what the user actually said and never infers a character study.
+description: Records what the user says about a person they write to, so later messages are written for that reader. Use when the user says "remember that S challenges every technical claim", "log this persona", or describes a recipient while drafting and wants that kept.
 metadata:
   owner: Carlos
   version: 7

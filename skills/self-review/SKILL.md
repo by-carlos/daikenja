@@ -1,6 +1,6 @@
 ---
 name: self-review
-description: Reviews how the user themselves handled a thread they took part in, with private, direct, evidence-backed coaching on their own moves. Findings are about the user alone, and nothing is written, logged or sent. Run explicitly with /daikenja:self-review -- it never fires on its own.
+description: Reviews how the user themselves handled a thread they took part in, with private, direct, evidence-backed coaching on their own moves. Findings are about the user alone, and nothing is written, logged or sent.
 metadata:
   owner: Carlos
   version: 2

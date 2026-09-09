@@ -1,6 +1,6 @@
 ---
 name: project-log
-description: Records decisions, open items and sources in a project's Daikenja ledger. Use when the user says "log this", "record this decision", "add this to the ledger", "capture the open items", "note that we agreed X", "track this page as a source", or pastes a thread or a plain description and asks for what was settled to be written down -- not a raw meeting transcript (meeting-review classifies those in two passes before handing to this skill), and not a check for whether tracked sources moved. Also use when a project has no ledger yet and one is asked for. This is the only skill that writes ledger content -- every other Daikenja skill reads it. A short fact the user dictates is written in the same turn and shown verbatim; everything else is proposed first and written only on approval. Accepts a project key only when that project has no paths -- `/daikenja:project-log <key>` logs against it from anywhere; a key naming a project that has paths is refused.
+description: Records decisions, open items and sources in a project's ledger. Use when the user says "log this", "record this decision", "add this to the ledger", or asks for what was settled to be written down.
 metadata:
   owner: Carlos
   version: 1

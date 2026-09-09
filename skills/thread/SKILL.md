@@ -1,6 +1,6 @@
 ---
 name: thread
-description: Reads a Slack or email thread, summarizes what is being asked and by whom, then collects context from the user before any reply is drafted. Use whenever the user pastes a Slack permalink or thread link, forwards an email thread, pastes a block of chat history, or says things like "what is this about", "help me answer this", "I need to reply to this thread". This skill gathers only -- it never writes the reply itself. The reply is produced later by the /daikenja:compose skill.
+description: Reads a Slack or email thread, summarizes what is being asked and by whom, then collects context from the user before any reply is drafted. Use when the user pastes a thread link or a block of chat history, or says "help me answer this". It gathers only and never writes the reply.
 metadata:
   owner: Carlos
   version: 1
