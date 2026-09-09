@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Six deliberate-command skills now run only on their slash command.**
+  `/daikenja:project-catchup`, `/daikenja:project-summary`,
+  `/daikenja:project-decisions`, `/daikenja:project-gaps`,
+  `/daikenja:project-sources` and `/daikenja:self-review` carry
+  `disable-model-invocation: true`, and their descriptions shrink to what a
+  slash-menu reader needs. A skill with that flag is not listed to the model
+  at all, so this removes about 3.9K characters of trigger prose from every
+  session's system prompt. The move follows from a 9 Sep 2026 review: each of
+  these is a ledger operation or a private coaching ask that a user runs on
+  purpose, never something a stray phrase should fire, and on a machine with
+  many plugins loaded the listing was already dropping half of Daikenja's
+  auto-trigger descriptions. The seven skills that fire on pasted content or
+  vague phrasing (`compose`, `doc-review`, `preflight`, `thread`,
+  `meeting-review`, `project-log`, `remember-persona`) keep auto-triggering.
+
 ## [0.8.0] - 2026-09-08
 
 ### Changed

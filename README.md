@@ -178,7 +178,8 @@ Seventeen skills, grouped by what they do.
 
 All five reading skills take an **optional project name**:
 `/daikenja:project-summary atlas-migration` reads that project from anywhere,
-without being in its directory.
+without being in its directory. They run only when you type the command: a
+phrase such as "catch me up" does not fire them on its own.
 
 **Reviewing things**
 
@@ -187,7 +188,8 @@ without being in its directory.
 - `/daikenja:doc-review` -- reviews a document against a fixed checklist before
   it is published or shared.
 - `/daikenja:self-review` -- reviews how you handled a thread you took part in,
-  with private, evidence-backed coaching on your own moves.
+  with private, evidence-backed coaching on your own moves. Runs only when you
+  type the command.
 
 **Setup**
 

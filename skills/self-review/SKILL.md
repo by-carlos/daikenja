@@ -1,9 +1,10 @@
 ---
 name: self-review
-description: Reviews how the user themselves handled a thread they took part in, and gives private, direct, evidence-backed coaching on their own moves -- not a review of a document, a meeting's outcome, or a draft message's substance. Use when the user says "how did I handle that", "review my messages in this thread", "what could I have done better", "was I out of line", or pastes a thread they participated in and asks for feedback on their part in it. Findings are about the user alone, never about anyone else's failings, and nothing is written, logged or sent.
+description: Reviews how the user themselves handled a thread they took part in, with private, direct, evidence-backed coaching on their own moves. Findings are about the user alone, and nothing is written, logged or sent. Run explicitly with /daikenja:self-review -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
+disable-model-invocation: true
 ---
 
 # Self review

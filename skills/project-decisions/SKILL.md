@@ -1,9 +1,10 @@
 ---
 name: project-decisions
-description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history, the entries it is blocked by or contradicts, and whether it was imposed from outside. Use when the user says "was this decided", "what did we decide about X", "what's the decision on X", "show me D-003", or "did we ever settle X" -- a targeted question about one decision or topic, not a full project overview or a delta since last time. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere, without being in its directory.
+description: Looks up what was decided about a specific topic in a project's Daikenja ledger, including its supersession history and what it is blocked by or contradicts. Read-only; writes nothing. Accepts an optional project key -- `/daikenja:project-decisions <key>` reads that project from anywhere. Run explicitly with /daikenja:project-decisions -- it never fires on its own.
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
+disable-model-invocation: true
 ---
 
 # Decisions
