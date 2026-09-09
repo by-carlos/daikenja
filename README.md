@@ -125,7 +125,7 @@ Daikenja's skills. If that happens to you, use the slash form, or raise
 `skillListingBudgetFraction` in your Claude Code settings to give skill
 descriptions more room. Since the ledger, setup, drafting and self-review
 skills moved to slash-only, Daikenja's five auto-invocable descriptions run
-about 3,700 characters, under Claude Code's 8,000-character default budget, so
+about 3,600 characters, under Claude Code's 8,000-character default budget, so
 the setting is only needed when other plugins fill the rest. (Measured 24 Aug 2026
 on Claude Code 2.1.240,
 [by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199), on
