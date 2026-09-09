@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.9.0] - 2026-09-09
 
 ### Eight skills answer only to their slash command
 
