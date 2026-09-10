@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`learn-voice` no longer contradicts itself over the watch material.**
+  Step 4 listed `## Habits to watch` as a heading to add to
+  `writing-style.md`, while Step 8 defines that content as a conversation-only
+  block that is never written anywhere. A run that took Step 4 wrote a section
+  the next run silently dropped as a lost heading. Step 4 now forbids the
+  heading outright.
+
 ### Changed
 
 - **Plugin description now leads with the README's own framing.** The

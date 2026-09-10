@@ -202,8 +202,7 @@ Only now write the proposed file, from the Step 3 evidence alone.
 **Keep the template's `# Writing style` title and its five headings**, drop the
 instructional preamble underneath the title -- it is guidance for a user filling
 the file in by hand -- and add further headings only where the evidence demands
-one (`## Humor`, `## How I disagree`, `## Habits to watch` are the usual
-candidates):
+one (`## Humor` and `## How I disagree` are the usual candidates):
 
 ```
 ## Openings and closings
@@ -212,6 +211,13 @@ candidates):
 ## Words and phrasings I use
 ## Tone
 ```
+
+**Never add a heading for the watch material** -- no `## Habits to watch`, and
+no section under any other name carrying the same content. Observations about
+habits the user may want to change belong in the Step 8 "what to watch" block,
+which lives in the conversation and is never written to the file. A run that
+writes them into `writing-style.md` makes them a section the next run silently
+drops.
 
 **Separate the voice from the medium.** A habit that holds across registers is
 voice and becomes a general line. A habit that appears only in chat is the
