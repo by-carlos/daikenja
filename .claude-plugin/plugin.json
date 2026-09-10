@@ -1,7 +1,7 @@
 {
   "name": "daikenja",
   "description": "Not an assistant -- a sage you consult. It reads the threads, documents, meetings and code you are buried in, asks what you are actually trying to do, and hands back something you can act on: a verdict on a draft, a review of how you handled a thread, a plain markdown ledger of what a project decided and what is still open. It never sends, never publishes, and never writes a word you did not ask for. The writing and remembering side of a working week.",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": {
     "name": "Carlos Eng",
     "url": "https://github.com/by-carlos"
