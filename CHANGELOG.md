@@ -5,6 +5,15 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Plugin description now leads with the README's own framing.** The
+  marketplace and plugin list showed a mechanics-first blurb about
+  configuration paths and Google Drive; it now opens with what Daikenja is
+  for, which is what a truncated listing actually shows.
+
 ## [0.9.0] - 2026-09-09
 
 **Codename:** Tensei

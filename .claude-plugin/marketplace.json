@@ -13,7 +13,7 @@
         "url": "https://github.com/by-carlos/daikenja.git",
         "ref": "release"
       },
-      "description": "Skills for reading threads and documents, composing messages, and keeping a per-project markdown ledger of decisions and open items. Claude Code only."
+      "description": "Not an assistant -- a sage you consult. It reads the threads, documents, meetings and code you are buried in and hands back something you can act on: a verdict on a draft, a review of how you handled a thread, a plain markdown ledger of what a project decided and what is still open. It never sends and never publishes. Claude Code only."
     }
   ]
 }
