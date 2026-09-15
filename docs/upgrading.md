@@ -41,6 +41,19 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### `learn-voice` saves its "what to watch" report to a dated file
+
+Each `/daikenja:learn-voice` run now also writes
+`writing-style.watch.<date>.md` next to `writing-style.md` (in
+`~/.claude/daikenja/` when the style file is on Drive), and the next run
+compares against the most recent one. Nothing to do before upgrading. A watch
+report you copied out of an earlier conversation, or a `## Habits to watch`
+section sitting in a `writing-style.<date>.bak.md`, is not read -- the first run
+after upgrading marks every line new. The file is not a style file: leave it out
+of `profile.writing_style`. The plugin never removes old watch files.
+
 ## [0.9.0] - 2026-09-09
 
 ### Eight skills answer only to their slash command

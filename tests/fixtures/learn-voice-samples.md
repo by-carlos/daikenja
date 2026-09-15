@@ -276,12 +276,14 @@ Six traits belong in the proposed file:
 6. **Summary-first past roughly 120 words**, then a link
    (2026-08-11 09:00). A replaceable override of § Length.
 
-Two more are legitimate extra sections if the evidence is stated honestly:
+One more is a legitimate extra section if the evidence is stated honestly:
 
 - **Humor.** Two instances in 33 messages, both self-deprecating, both in DM. A
   run that describes this user as funny has over-read the corpus.
-- **Habits to watch.** `Sorry` opens two mails that do not need it, and
-  `For what it is worth I think` hedges a sentence that was already correct.
+
+Two habits belong in the "what to watch" block and its dated watch file, never
+in a section of the style file: `Sorry` opens two mails that do not need it, and
+`For what it is worth I think` hedges a sentence that was already correct.
 
 ## What a Walk A run must observe and leave out
 
@@ -344,5 +346,22 @@ and say the previous file's `## Words to avoid` section is not carried as
 written. The corpus supports the line -- `circle back`, `sync up` and `touch
 base` appear nowhere in 33 messages -- so the derived section says the same
 thing from evidence, and the "what to watch" block must not treat the
-hand-written line as a finding. Nothing may be written anywhere else, and
-`daikenja.yaml` must not change.
+hand-written line as a finding. Nothing may be written anywhere else apart from
+the dated watch file, and `daikenja.yaml` must not change.
+
+## Walk E -- a re-run compares against the previous watch file
+
+Walk A on a machine with no `writing-style.watch.*.md` in
+`~/.claude/daikenja/`. The run must write exactly one
+`writing-style.watch.<today>.md` holding the "what to watch" block as reported,
+with every line marked new, and name the path in the report.
+
+Then run Walk A again on a later date, against the same four sources. The
+second report must show previous value and date against the current value on
+every line both runs carry -- on an unchanged corpus the values match -- list any
+earlier line with no current match as no longer seen at a reportable frequency
+-- never as fixed -- and leave the first watch file in place beside a second
+one. Neither watch file may appear under a heading in `writing-style.md`.
+
+Walks B and C, and any run that stops before the style file is written, must
+leave no watch file behind.
