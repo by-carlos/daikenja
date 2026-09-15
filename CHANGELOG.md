@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`learn-voice` persists the "what to watch" report and compares re-runs
+  against it.** Step 8 now writes the block to a dated
+  `writing-style.watch.<YYYY-MM-DD>.md` beside the style file (locally, beside
+  the backups, for a Drive pointer), and Step 5 reads the most recent one, so
+  each watch line shows its previous value and date next to the current one.
+  New lines are marked new; a previous line with no current match is listed as
+  no longer seen at a reportable frequency, never as fixed. A failed watch
+  write is reported and does not stop the run. The file is not a style file and
+  no other skill reads it (#242).
+
 ## [0.9.1] - 2026-09-10
 
 ### Fixed

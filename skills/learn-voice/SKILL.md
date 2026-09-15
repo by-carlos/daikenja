@@ -4,7 +4,7 @@ description: Derives your writing-style.md from writing samples you supply, back
 metadata:
   owner: Carlos
   version: 1
-  writes: whatever profile.writing_style resolves to (default ~/.claude/daikenja/writing-style.md), after backing up its previous content beside it
+  writes: whatever profile.writing_style resolves to (default ~/.claude/daikenja/writing-style.md), after backing up its previous content beside it; plus a dated writing-style.watch.<YYYY-MM-DD>.md report in the same local directory (~/.claude/daikenja/ for a Drive pointer)
 disable-model-invocation: true
 ---
 
@@ -57,9 +57,12 @@ shipped template, a dated copy is written beside it before the new content
 goes in, and the report names it. A write with no backup is a bug, not a
 shortcut. See Step 6.
 
-**One file, and nothing else on disk.** The write goes to the path
-`profile.writing_style` resolves to and nowhere else. Never a scratch or draft
-file, never a second copy under another name, and never an edit to
+**One style file, and nothing else on disk but its backup and the watch
+report.** The style write goes to the path `profile.writing_style` resolves to
+and nowhere else. The only other files a run leaves are the Step 6 backup and
+the Step 8 dated watch report, both local and both named in the report. Never a
+scratch or draft file, never a second copy under another name, and never an
+edit to
 `daikenja.yaml` to point at something temporary. If the resolved path cannot be
 written, the run stops and the derived content stays in the conversation.
 
@@ -215,9 +218,10 @@ one (`## Humor` and `## How I disagree` are the usual candidates):
 **Never add a heading for the watch material** -- no `## Habits to watch`, and
 no section under any other name carrying the same content. Observations about
 habits the user may want to change belong in the Step 8 "what to watch" block,
-which lives in the conversation and is never written to the file. A run that
-writes them into `writing-style.md` makes them a section the next run silently
-drops.
+which is persisted to its own dated watch file and never written to the style
+file. A run that writes them into `writing-style.md` makes them a section the
+next run silently drops, and hands `compose` and `self-review` observations the
+user never asked to have applied.
 
 **Separate the voice from the medium.** A habit that holds across registers is
 voice and becomes a general line. A habit that appears only in chat is the
@@ -298,6 +302,18 @@ case**, not an empty file. Never create a Drive file -- `setup-user` is the only
 skill that does -- and never fall back to the local default, which would split
 the user's settings across two stores without telling them.
 
+**Then look for the previous watch report.** Its directory is derived from the
+resolved style path, never configured: the same directory as a local
+`writing_style` file, or `~/.claude/daikenja/` for a Drive pointer -- the same
+local directory Step 6 keeps a Drive file's backups in, and for the same
+reason. Take the most recent `writing-style.watch.<YYYY-MM-DD>.md` there by the
+date in its name. **None found is the normal first-run case**, not a failure:
+Step 8 marks every line new. If more than one file carries that most recent
+date (`writing-style.watch.2026-09-08.md` and
+`writing-style.watch.2026-09-08-2.md`), name both and compare against neither.
+A watch file that cannot be read is one notice line, and the run continues
+without a comparison.
+
 ## Step 6: back up what is there
 
 Skip this step only when Step 5 found no file or the untouched template.
@@ -338,8 +354,9 @@ recovered.
 into it**, and the reason it is allowed is Step 6. `remember-persona` splices
 because there is no copy of what it appends to. Here the previous content sits
 in a dated backup the user can restore with one copy, so replacing the file
-costs nothing that cannot be undone. That licence extends no further: no other
-file is created, moved or edited, and `daikenja.yaml` is never touched.
+costs nothing that cannot be undone. That licence extends no further: apart
+from the backup and the Step 8 watch file, no other file is created, moved or
+edited, and `daikenja.yaml` is never touched.
 
 ## Step 8: report
 
@@ -377,15 +394,45 @@ file: habits the samples show and the user may want to know about, patterns
 that read as non-native, and every observation that contradicts a `Fixed` rule
 in `docs/voice.md` and was therefore left out. Behavioural and specific, with
 the frequency behind each line, and never evaluative of the person. It is
-never written to `writing-style.md` or anywhere else -- it lives in the
-conversation, and the user copies what they want to keep.
+never written to `writing-style.md`.
+
+**When Step 5 found a previous watch report, every line carries the comparison.**
+A line matching a previous observation shows its previous value and date, then
+the current one. A line with no previous match is marked new. A previous
+observation with nothing matching it this run goes in its own list as no longer
+seen at a reportable frequency -- never as fixed, because a thinner corpus
+produces the same result. The numbers on both sides come from Step 3 over the
+full corpus; never compute a current value over only the messages added since
+the last run, since a percentage over a small batch is not comparable to one
+over the whole.
 
 ```
-What to watch (not written to the file):
-- "actually" opens 4% of your sentences; the reader gets it as a correction.
-- Relative dates ("by Friday") in 12% of messages. Fixed rule, left out.
-- Two ideas per sentence in 18% of messages over 20 words.
+What to watch (not written to the style file):
+- "actually" opens sentences: 7% (2026-08-19) -> 4%. The reader gets it as a
+  correction.
+- Relative dates ("by Friday"): 12% of messages (2026-08-19) -> 12%. Fixed
+  rule, left out.
+- Two ideas per sentence in messages over 20 words: 18%. New.
+
+No longer seen at a reportable frequency:
+- Ellipsis as a request: 3% (2026-08-19).
 ```
+
+**Then write the block to `writing-style.watch.<YYYY-MM-DD>.md`** in the Step 5
+watch directory, using the same date stamp as the Step 6 backup and the same
+`-2`, `-3` rule when the name is taken -- never overwrite an earlier watch
+file. The file holds the block exactly as reported, comparison included, so the
+next run reads both the values and the dates it was compared against. Read it
+back, then name it on its own line after the block:
+
+```
+Watch report saved to ~/.claude/daikenja/writing-style.watch.2026-09-08.md.
+```
+
+**A watch file that cannot be written or does not read back does not stop the
+run** -- the style file is already written. Say the write failed and the path,
+and the block in the conversation is the only copy, as it was before this file
+existed.
 
 Do not assess the user's writing beyond that block, and do not congratulate
 them on their voice.
@@ -395,7 +442,11 @@ them on their voice.
 Safe at any time, and the second run is the interesting one -- more samples,
 better evidence. Every run backs up the current file before replacing it, and
 every backup keeps its own date, so a series of runs leaves a series of
-recoverable files. A line the user typed by hand lives on in the backup and is
+recoverable files. The watch reports form the same kind of series, one dated
+file per run, and each run compares against the most recent one, so the
+habits the user was told to watch show a trend rather than a fresh snapshot.
+Keep the samples cumulative for that comparison to mean anything. A line the
+user typed by hand lives on in the backup and is
 named in the report if the new file does not carry it; pulling it back is a
 copy, not a negotiation.
 
@@ -425,6 +476,10 @@ missing thing is the task itself -- the same rule every Daikenja skill follows.
 | More than one Drive file carries the pointer's name | **Stop.** Name both and say an earlier write was probably interrupted. Never guess which is current. |
 | The Drive replacement fails after the new file was created | The old file is still there and untouched. Say both files now carry the name, name the one just written, and stop. Never trash the old file to tidy up an unverified write. |
 | The file is not writable | **Stop.** Name the path and the error. Never write the derived file somewhere else, and never repoint `daikenja.yaml` at a stand-in. |
+| No previous watch file | Normal on a first run. Mark every watch line new. |
+| More than one watch file carries the most recent date | Name both and compare against neither. Never guess which is current. |
+| A previous watch file cannot be read | One notice naming the path, then report without a comparison. Do not stop. |
+| The watch file cannot be written, or does not read back | Report the block in the conversation, say the write failed and name the path. Do not stop: the style file is already written. |
 | The evidence contradicts a line the user wrote by hand | The line is in the backup. Say what contradicted it in the report, and name the section so the user can restore the line if they still mean it. |
 
 ## What this skill does not do
@@ -439,6 +494,11 @@ missing thing is the task itself -- the same rule every Daikenja skill follows.
 - It does not record anything about other people. Describing a reader is
   `/daikenja:remember-persona`, and it records only what the user states.
 - It does not touch `personas.md` or any project ledger.
+- It does not treat the watch file as a style file. No other skill reads
+  `writing-style.watch.<YYYY-MM-DD>.md`, and `/daikenja:compose` and
+  `/daikenja:self-review` must never be pointed at it: its lines are
+  observations the user has not asked to have applied. It is never written to
+  Drive, and it has no key in `daikenja.yaml`.
 - It does not review, score or improve the user's writing. `/daikenja:compose`
   drafts, `/daikenja:self-review` coaches; this skill only describes.
 - It does not fetch samples on its own. The user names the source every time.
