@@ -418,6 +418,9 @@ No longer seen at a reportable frequency:
 - Ellipsis as a request: 3% (2026-08-19).
 ```
 
+**Only a run that wrote the style file writes a watch file** -- a run that
+stopped wrote nothing, and that includes this file.
+
 **Then write the block to `writing-style.watch.<YYYY-MM-DD>.md`** in the Step 5
 watch directory, using the same date stamp as the Step 6 backup and the same
 `-2`, `-3` rule when the name is taken -- never overwrite an earlier watch

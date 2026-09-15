@@ -209,7 +209,8 @@ phrase such as "catch me up" does not fire them on its own.
   samples you say you wrote yourself, records style and never facts about
   people or projects, backs up whatever the file held to a dated copy beside
   it, and writes the derived file. What it saw but kept out of the file comes
-  back as a separate "what to watch" report. Run it whenever you have more
+  back as a separate "what to watch" report, saved to a dated file so the next
+  run can show what moved. Run it whenever you have more
   samples, not only at setup.
 - `/daikenja:tensei` -- installs, updates or removes the Tensei conversational
   persona (`~/.claude/daikenja/tensei.md`) and the line that imports it from
