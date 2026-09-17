@@ -3,8 +3,8 @@ name: setup-project
 description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has.
 metadata:
   owner: Carlos
-  version: 1
-  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one
+  version: 2
+  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one; and the project card beside the ledger, only when none exists
 disable-model-invocation: true
 ---
 
@@ -179,6 +179,44 @@ then skip everything older than the moment of registration.
 State the values you are about to write and wait for a yes, then edit them into
 the entry from Step 2.
 
+## Step 3b: offer the project card
+
+The registry entry says where the project is. The **project card** says what
+it is about -- one paragraph of scope, the channels, repositories and trackers
+it owns, and the people on it -- and it is what lets a thread or a report be
+checked against this project from anywhere, per
+`${CLAUDE_PLUGIN_ROOT}/docs/project-card.md`. Read that document's § Location
+and § Format before proposing one.
+
+Resolve the card's path from the entry's ledger path -- the one Step 1
+resolved for an existing entry, or `.daikenja/ledger.md` under the root of an
+entry Step 2 just wrote, unless Step 3 set a `ledger:` for it -- per
+`project-card.md` § Location -- `project.md` beside a `ledger.md`, or
+`<name>.project.md` beside any other ledger name. Then:
+
+- **A card already exists there.** Say so and leave it alone. This skill
+  never inspects or rewrites an existing card; the user edits it by hand.
+- **No card.** Offer it in one round, and take silence as no:
+
+  ```
+  Want a project card? One paragraph on what <key> is about, the channels,
+  repos and trackers it owns, and who is on it -- it is what lets a thread be
+  matched to this project from anywhere. Answer in prose or skip it.
+  ```
+
+  From the answer, fill `${CLAUDE_PLUGIN_ROOT}/templates/project.md` with
+  `{{PROJECT}}` replaced by the key, the Scope paragraph in the user's own
+  words, one `- <kind>: <handle>` line per handle they named, and one
+  `- @handle -- role` line per person. Show the exact file, wait for a yes,
+  and write it with the Write tool. A user who wants the card but has nothing
+  to say yet gets the blank template, comments and all -- an empty card is a
+  place to write, and better than none.
+
+An entry with no ledger location -- no paths and no absolute `ledger:` -- has
+no card location either; say so in one line and skip this step. `project-log`
+does not scaffold the card when it scaffolds the ledger, and no read skill
+does: this step is the only place a card is created.
+
 ## Step 4: offer to seed the ledger
 
 Optional, and **reachable on its own.** A project registered months ago can run
@@ -327,9 +365,10 @@ leads, and seeded entries are counted as ranges, not listed one by one.
 
 ```
 Registered this project as `harbor` at C:/GitHub/harbor, with
-stale_after_days: 30. Seeded 11 decisions and 6 open items through
-project-log -- D-001 to D-011, O-001 to O-006. Left `ledger` and `norms_doc`
-unset, so they use the defaults.
+stale_after_days: 30. Wrote the project card at
+C:/GitHub/harbor/.daikenja/project.md. Seeded 11 decisions and 6 open items
+through project-log -- D-001 to D-011, O-001 to O-006. Left `ledger` and
+`norms_doc` unset, so they use the defaults.
 ```
 
 If seeding was declined or produced nothing, say that plainly and name
@@ -359,6 +398,8 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | An exact path match already exists | Say which key, leave it alone, and carry on to Steps 3 and 4. Registration is idempotent. |
 | An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval; never rewrite it silently. |
 | The user names an existing project to add this directory to, and the key does not exist | Ask again, listing the registered keys. Never create a new entry under a key the user only half-remembered. |
+| A project card already exists at the derived path | Say so and leave it alone. Never inspect or rewrite it -- the user edits the card by hand. |
+| The card's directory does not exist yet (no ledger has been scaffolded) | Create the directory as part of the approved card write. The ledger is still `project-log`'s to scaffold; an empty `.daikenja/` beside a card is a normal state. |
 | The user says the project has no directory | Not a failure. Write `paths: []` **and** an absolute `ledger:` in the same entry, per Step 2 -- a pathless entry without one has nowhere to keep its record. |
 | The current directory is inside an already-registered project | Say which project it resolves to and ask before adding a second entry. Never assume a nested registration is wanted. |
 | The current directory is the user's home directory or `~/.claude` | **Stop.** Neither is a project. Say so and write nothing. |
@@ -377,6 +418,9 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
   there.
 - It does not write ledger content. `/daikenja:project-log` does, on its own
   approval, and it is the only skill that does.
+- It does not edit an existing project card. It creates one on approval when
+  none exists; after that the card is the user's, per
+  `docs/config-writers.md` § Who writes what.
 - It does not write `last_checkpoint`. That is `/daikenja:project-catchup`.
 - It does not edit the project's own documents -- a decision record, a wiki page
   or a README that a seed run read stays exactly as it was found.

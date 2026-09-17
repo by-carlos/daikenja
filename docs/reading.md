@@ -113,6 +113,13 @@ No ledger at <path>. Run /daikenja:project-log to create one.
 and stop -- this notice already names the path, so the `Ledger:` line above
 is not repeated. Reading is not the skill that creates the file.
 
+**The project card, when a skill wants it, is beside the ledger** -- its path
+is derived from the resolved ledger path per `project-card.md` § Location, and
+it is read per § Reading a card. Only the skills that say so read it
+(`project-summary` shows it; `thread` matches against it); the other read
+skills do not open it, and its absence is never a notice for a skill that did
+not ask.
+
 ## Step C: read and parse
 
 Read the whole ledger. Locate each H2 section by its exact heading, per

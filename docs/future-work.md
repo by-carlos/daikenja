@@ -31,6 +31,16 @@ ledger at a different file, which is why `setup-project` appends and never
 reorders. There is no way to split one project's ledger across its
 directories, and no way to merge two ledgers into one project.
 
+**A project without a card cannot be found by content.** Resolving a project
+from a thread or a report, per `project-card.md` § Resolving a project by
+content, reads every registered project's card and nothing else -- not the
+ledger, not the repository, not the channel history. A project that has no
+card is not a candidate, and a card whose `Owns` handles are stale or shared
+with another project decides nothing. The scan is a direct read across the
+cards on every run; there is no index, so a registry with many projects pays
+that read each time. A caller with no working directory can use the route on
+its own, but nothing ships that calls it from outside a Claude Code session.
+
 **`project-list` does not search your disk.** Its scan for unregistered ledgers
 covers the current directory tree three levels deep, plus the same depth under
 the current VCS root. A ledger written somewhere else entirely is not found,

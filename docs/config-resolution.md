@@ -69,7 +69,9 @@ alone. Nothing else writes this file. See
 **Two routes, and the named one wins.** A skill resolves which `projects:`
 entry applies either from a project key the user named, or from the directory
 it is running in. The key route is checked first and is decisive: it never
-falls through to the directory.
+falls through to the directory. A third route, by content, exists for a
+caller that has neither and is described between them; it never outranks
+these two.
 
 #### By key, when the user named one
 
@@ -91,6 +93,17 @@ with the same rationale: a name alone does not say which root the write
 belongs in. See `project-log`'s own `SKILL.md` § Step 2 for the exact rule.
 `setup-project` still resolves by directory only; it registers a *new* entry's
 own root, and a name alone cannot say what that root should be.
+
+#### By content, when neither applies
+
+A caller that starts from a thread, a report or a pasted conversation -- with
+no key and no useful directory -- resolves the project by matching the content
+against every registered project's card. That route is defined in
+[`project-card.md`](project-card.md) § Resolving a project by content, and it
+never overrides the two above: a named key is decisive, a directory that
+resolves is the project the user is standing in, and content decides only when
+neither does. It is a read across cards, not a lookup in this file, which is
+why it lives with the card's own contract.
 
 #### By directory, otherwise
 

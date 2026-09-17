@@ -43,6 +43,18 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### A project card can sit beside each ledger
+
+Daikenja now reads an optional `project.md` next to `.daikenja/ledger.md` (or
+`<name>.project.md` next to a ledger with another file name, such as a
+pathless project's `~/.claude/daikenja/ledgers/q4-planning.md`). Nothing to do
+before upgrading: no existing file is read differently, `daikenja.yaml` gains
+no key, and a project without a card behaves exactly as before. To add one,
+run `/daikenja:setup-project` in the project -- it offers the card and writes
+it on your yes -- or copy `templates/project.md` from the plugin into place by
+hand. If you already keep a file of your own at that path, it will be read as
+a card and reported as malformed; rename it or fill in the three sections.
+
 ### `learn-voice` saves its "what to watch" report to a dated file
 
 Each `/daikenja:learn-voice` run now also writes
