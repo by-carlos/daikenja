@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import unittest
 from pathlib import Path
@@ -114,10 +115,13 @@ class BuildArgvTests(unittest.TestCase):
 
 
 class ResolveCommandTests(unittest.TestCase):
+    @unittest.skipUnless(
+        shutil.which(os.path.basename(sys.executable)),
+        "the interpreter's own name is not on PATH here",
+    )
     def test_a_bare_name_resolves_to_a_real_file(self):
-        # The interpreter is the one executable every machine running these
-        # tests certainly has. On Windows this also proves the PATHEXT
-        # lookup is happening, which is the whole point of the function.
+        # On Windows this is the case that matters: a bare name only finds
+        # `claude.CMD` through PATHEXT, which is why the function exists.
         resolved = resolve_command(os.path.basename(sys.executable))
         self.assertTrue(os.path.isfile(resolved))
 

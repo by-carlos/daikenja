@@ -196,6 +196,22 @@ class ExtractBlockTests(unittest.TestCase):
         self.assertNotIn("Using daikenja", extracted)
         self.assertNotIn("What's your position", extracted)
 
+    def test_an_emphasised_verdict_header_is_still_found(self):
+        text = (
+            "Using daikenja:verdict.\n"
+            "\n"
+            "**AI review summary**\n"
+            "**Subject:** Slack thread, 3 messages\n"
+            "- Ledger: no project resolved, so no ledger was checked\n"
+            "- Not checked: nothing beyond the three messages.\n"
+            "\n"
+            "Report: want me to look for a ledger elsewhere?\n"
+        )
+        extracted = extract_output(text, VERDICT)
+        self.assertTrue(extracted.startswith("**AI review summary**"))
+        self.assertTrue(extracted.endswith("nothing beyond the three messages."))
+        self.assertNotIn("want me to look", extracted)
+
     def test_a_document_summary_opens_on_its_own_label(self):
         text = "preamble\n\nDocument: Cutover plan, a runbook\nClaims: Friday works\nOpen: nothing\n"
         extracted = extract_output(text, SUMMARY)

@@ -85,9 +85,11 @@ SUMMARY_OPENER_RE = re.compile(
 
 # The header line, subject line and bullets `verdict` § Form `message`
 # fixes for its deliverable.
-VERDICT_HEADER = "AI review summary"
+VERDICT_HEADER = "ai review summary"
 VERDICT_BULLET_RE = re.compile(r"^\s*(?:[-*•])\s+")
-VERDICT_SUBJECT_RE = re.compile(r"^\s*Subject\s*:")
+VERDICT_SUBJECT_RE = re.compile(rf"^{_EMPHASIS_PREFIX}Subject\s*[*_]*\s*:")
+# Emphasis a line may be wrapped in, stripped before the line is compared.
+EMPHASIS_CHARS = " \t*_#"
 
 SUBJECT_BEGIN = "--- BEGIN SUBJECT ---"
 SUBJECT_END = "--- END SUBJECT ---"
@@ -284,7 +286,7 @@ def _verdict_block(text: str) -> str:
     """
     lines = text.split("\n")
     for index, line in enumerate(lines):
-        if line.strip().lower() != VERDICT_HEADER.lower():
+        if line.strip(EMPHASIS_CHARS).lower() != VERDICT_HEADER:
             continue
         kept = [line.strip()]
         rest = lines[index + 1 :]

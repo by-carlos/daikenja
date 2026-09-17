@@ -1,3 +1,4 @@
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -6,7 +7,22 @@ from daikenja_bot import preflight
 from daikenja_bot.config import parse_config
 from daikenja_bot.preflight import SkillReport, parse_skills
 
-from .fakes import make_config
+
+def resolvable_config():
+    """A config whose `claude.command` exists on every machine.
+
+    `check` resolves the command before it calls anything, so a test that
+    injects `details` still needs a real executable -- otherwise it passes
+    only where the Claude Code CLI happens to be installed, which is how
+    these tests first went green locally and red in CI.
+    """
+    return parse_config(
+        {
+            "slack": {"owner_user_id": "U0RIMURU"},
+            "claude": {"command": sys.executable},
+        }
+    )
+
 
 DETAILS_OUTPUT = """\
 daikenja 0.9.1
@@ -72,7 +88,7 @@ class CheckInstalledTests(unittest.TestCase):
     def test_the_installed_plugin_is_queried(self):
         calls: list = []
         report = preflight.check(
-            make_config(),
+            resolvable_config(),
             environ={"SLACK_BOT_TOKEN": "secret", "PATH": "/bin"},
             details=responder(0, DETAILS_WITH_VERDICT, calls),
         )
@@ -82,14 +98,14 @@ class CheckInstalledTests(unittest.TestCase):
 
     def test_a_version_without_verdict_disables_that_command(self):
         report = preflight.check(
-            make_config(), environ={}, details=responder(0, DETAILS_OUTPUT)
+            resolvable_config(), environ={}, details=responder(0, DETAILS_OUTPUT)
         )
         self.assertEqual(set(report.missing()), {"verdict"})
 
     def test_a_failing_cli_leaves_both_commands_enabled(self):
         with self.assertLogs("daikenja_bot.preflight", level="WARNING"):
             report = preflight.check(
-                make_config(), environ={}, details=responder(1, "no such plugin")
+                resolvable_config(), environ={}, details=responder(1, "no such plugin")
             )
         self.assertFalse(report.determined)
         self.assertEqual(report.missing(), {})
@@ -99,7 +115,7 @@ class CheckInstalledTests(unittest.TestCase):
             raise OSError("cannot start")
 
         with self.assertLogs("daikenja_bot.preflight", level="WARNING"):
-            report = preflight.check(make_config(), environ={}, details=details)
+            report = preflight.check(resolvable_config(), environ={}, details=details)
         self.assertFalse(report.determined)
 
     def test_a_missing_cli_leaves_both_commands_enabled(self):
