@@ -142,7 +142,7 @@ class ThreadSubjectTests(unittest.TestCase):
     def test_a_linked_subject_names_its_source_above_the_answer(self):
         handler, client, _ = build()
         handler.handle_mention(mention(f"<@U0BOT> summary {PERMALINK}"))
-        self.assertTrue(client.posted[0]["text"].startswith(f"_On {PERMALINK}_"))
+        self.assertTrue(client.posted[0]["text"].startswith(f"_On_ <{PERMALINK}>"))
 
     def test_an_empty_thread_is_reported_not_summarised(self):
         handler, client, run = build(client=FakeSlackClient(replies=[], users=USERS))
@@ -195,7 +195,7 @@ class ConfluenceTests(unittest.TestCase):
         self.assertEqual(run.calls[0][1].label, "Cutover plan")
         self.assertEqual(client.replies_calls, [])
         self.assertIn("AI review summary", client.posted[0]["text"])
-        self.assertTrue(client.posted[0]["text"].startswith(f"_On {PAGE_URL}_"))
+        self.assertTrue(client.posted[0]["text"].startswith(f"_On_ <{PAGE_URL}>"))
 
     def test_a_missing_token_is_reported_not_raised(self):
         handler = Handler(

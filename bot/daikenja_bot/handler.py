@@ -207,7 +207,11 @@ class Handler:
     ) -> None:
         body = to_mrkdwn(text)
         if source is not None and source.source_url:
-            body = f"_On {source.source_url}_\n\n{body}"
+            # Angle brackets, not a bare URL: a Slack permalink carries
+            # `?thread_ts=...&cid=...`, and a bare `&` is markup to Slack's
+            # renderer. `<...>` is the documented form for a link, and the
+            # post already has unfurling switched off.
+            body = f"_On_ <{source.source_url}>\n\n{body}"
         try:
             self._slack.post(mention.channel_id, mention.thread_ts, truncate(body))
         except SlackError as exc:
