@@ -66,6 +66,8 @@ removes.
 3. Under **Install App**, install it to your workspace and copy the **Bot
    User OAuth Token**. That is the `xoxb-` token.
 4. Invite the bot to each channel you want it to work in: `/invite @daikenja`.
+   In a group DM there is no `/invite` -- mention it and Slack offers to add
+   it to the conversation.
 
 ```yaml
 display_information:
@@ -82,8 +84,12 @@ oauth_config:
       - chat:write          # post the answer
       - channels:history    # read a public thread
       - groups:history      # read a private thread, if you use it there
+      - mpim:history        # read a thread in a group DM
+      - im:history          # read a thread in a one-to-one DM
       - channels:read       # name the channel in the summary
       - groups:read         # the same, for private channels
+      - mpim:read           # the same, for group DMs
+      - im:read             # the same, for one-to-one DMs
       - users:read          # turn user IDs into names in the transcript
       - reactions:write     # optional: the acknowledging reaction
 settings:
@@ -98,6 +104,13 @@ on a laptop or a home server with no public URL and no certificate.
 `reactions:write` is the one optional scope: without it the bot still
 answers, it just cannot mark the mention as seen. Set `ack_reaction: null`
 in the config to skip it deliberately.
+
+**A DM is its own scope.** `channels:history` and `groups:history` cover
+public and private channels only. Without `mpim:history` and `im:history`
+the bot receives the mention in a DM and then answers `conversations_replies
+failed: missing_scope`, because it can see the mention but not the thread
+around it. Adding a scope to an installed app only takes effect after you
+reinstall it under **Install App**.
 
 ## Install and run
 
@@ -229,7 +242,8 @@ key is `slack.owner_user_id`.
 | `slack.ack_reaction` | `eyes` | The emoji added to the mention while the answer is written. `null` turns it off. |
 | `slack.unauthorized_message` | a line saying it is a personal instance | What someone not on the allowlist is told, privately. `{owner}` becomes a mention of `owner_user_id`. `null` says nothing at all. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
-| `claude.model` | unset | Pin the model the headless session uses. |
+| `claude.model` | `claude-sonnet-5` | The model the headless session runs on. An empty value follows your account's default. |
+| `claude.effort` | `medium` | The reasoning effort: `low`, `medium`, `high`, `xhigh`, `max`. An empty value follows your account's default. This is separate from the model -- `claude-sonnet-5-medium` is not a model name and is refused at startup. |
 | `claude.plugin_dir` | unset | Only for running against a working tree of this repository. An installed plugin needs nothing here. |
 | `claude.working_dir` | your home directory | Where the headless session runs. |
 | `claude.allowed_tools` | `Read, Glob, Grep` | The tools the session may use. |

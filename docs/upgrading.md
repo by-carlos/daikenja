@@ -43,6 +43,30 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### The Slack bot now picks its own model, instead of your account's default
+
+Only affects you if you run `bot/`. The bot now starts its headless session
+with `--model claude-sonnet-5 --effort medium`, where before it passed neither
+and got whatever your account's interactive default was. Nothing to do if that
+suits you: an existing `bot.yaml` with no `model:` line picks this up on the
+next restart, and the change costs less per mention than the old behaviour on
+most accounts.
+
+To keep following your account's default instead, add an empty value to the
+`claude:` block of your `bot.yaml` -- an absent key now means "the bot's
+default", so removing the line is not how you unpin it:
+
+```yaml
+claude:
+  model:
+  effort:
+```
+
+`claude.effort` takes `low`, `medium`, `high`, `xhigh` or `max` and is separate
+from the model name. A level appended to the model (`claude-sonnet-5-medium`)
+is not a model, and `python -m daikenja_bot --check` now refuses it rather than
+letting it fail at the first mention.
+
 ### A project card can sit beside each ledger
 
 Daikenja now reads an optional `project.md` next to `.daikenja/ledger.md` (or

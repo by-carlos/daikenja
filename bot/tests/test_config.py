@@ -26,6 +26,8 @@ class ParseTests(unittest.TestCase):
         self.assertEqual(config.claude.command, "claude")
         self.assertEqual(config.claude.allowed_tools, DEFAULT_ALLOWED_TOOLS)
         self.assertEqual(config.claude.timeout_seconds, 300)
+        self.assertEqual(config.claude.model, "claude-sonnet-5")
+        self.assertEqual(config.claude.effort, "medium")
         self.assertIsNone(config.confluence)
         self.assertFalse(config.confluence_configured)
 
@@ -63,6 +65,22 @@ class ParseTests(unittest.TestCase):
             parse_config({**MINIMAL, "claude": {"timeout_seconds": 0}})
         with self.assertRaises(ConfigError):
             parse_config({**MINIMAL, "claude": {"timeout_seconds": "soon"}})
+
+    def test_effort_must_be_a_level_the_cli_accepts(self):
+        # The level is not part of the model name; a config that spells it
+        # that way should be caught at startup, not at the first mention.
+        with self.assertRaises(ConfigError) as caught:
+            parse_config({**MINIMAL, "claude": {"effort": "claude-sonnet-5-medium"}})
+        self.assertIn("claude.effort", str(caught.exception))
+
+    def test_effort_is_case_insensitive(self):
+        config = parse_config({**MINIMAL, "claude": {"effort": "HIGH"}})
+        self.assertEqual(config.claude.effort, "high")
+
+    def test_an_empty_model_or_effort_unpins_them(self):
+        config = parse_config({**MINIMAL, "claude": {"model": "", "effort": ""}})
+        self.assertIsNone(config.claude.model)
+        self.assertIsNone(config.claude.effort)
 
     def test_confluence_needs_both_keys(self):
         with self.assertRaises(ConfigError):
