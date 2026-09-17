@@ -82,18 +82,35 @@ class SlackIO:
     def fetch_message(self, channel_id: str, ts: str) -> dict[str, Any] | None:
         """The single message at `ts`, wherever it sits in a thread.
 
-        `conversations.history` with `latest`/`inclusive`/`limit=1` is the
-        standard way to fetch one message by timestamp without knowing in
-        advance whether it is a thread parent or a reply -- unlike
-        `conversations.replies`, which needs a thread's own `ts` to start
-        from. The message it returns carries `thread_ts` when it is a reply,
-        and any `reactions` already on it.
+        `conversations.history` only returns top-level channel messages --
+        handed a reply's `ts`, Slack does not error, it silently returns the
+        nearest channel-level message instead. `conversations.replies`
+        accepts either a thread's parent `ts` or any reply's `ts` within it,
+        so it is tried first; a `ts` that belongs to no thread raises
+        `thread_not_found`, which falls back to `conversations.history` for
+        the plain channel-message case. Either way, the returned message's
+        own `ts` is checked against the one requested before it is trusted --
+        a mismatch is treated as not found rather than silently returned,
+        since a wrong message read here decides both the re-fire guard and
+        which thread the answer is posted into.
         """
+        try:
+            response = self._call(
+                "conversations_replies", channel=channel_id, ts=ts, limit=PAGE_SIZE
+            )
+        except SlackError:
+            response = None
+        if response is not None:
+            for message in response.get("messages") or []:
+                if message.get("ts") == ts:
+                    return message
+
         response = self._call(
             "conversations_history", channel=channel_id, latest=ts, inclusive=True, limit=1
         )
         messages = response.get("messages") or []
-        return messages[0] if messages else None
+        message = messages[0] if messages else None
+        return message if message is not None and message.get("ts") == ts else None
 
     def has_reaction(self, message: Mapping[str, Any], name: str) -> bool:
         """Has this bot already reacted to `message` with `name`?"""

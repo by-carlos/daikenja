@@ -138,7 +138,7 @@ class ReactionTests(unittest.TestCase):
 
 
 class FetchMessageTests(unittest.TestCase):
-    def test_the_single_message_is_returned(self):
+    def test_a_top_level_channel_message_is_returned(self):
         message = {"ts": "1758067200.000100", "user": "U0RIMURU", "text": "hi"}
         client = FakeSlackClient(history=message)
         found = SlackIO(client).fetch_message("C0HARBOR", "1758067200.000100")
@@ -146,6 +146,47 @@ class FetchMessageTests(unittest.TestCase):
         self.assertEqual(client.history_calls[0]["channel"], "C0HARBOR")
         self.assertEqual(client.history_calls[0]["latest"], "1758067200.000100")
         self.assertTrue(client.history_calls[0]["inclusive"])
+
+    def test_a_thread_reply_is_found_via_conversations_replies(self):
+        parent = {"ts": "1", "thread_ts": "1", "user": "U0RIMURU", "text": "parent"}
+        reply = {"ts": "2", "thread_ts": "1", "user": "U0RIMURU", "text": "reply"}
+        client = FakeSlackClient(replies=[parent, reply])
+        found = SlackIO(client).fetch_message("C0HARBOR", "2")
+        self.assertEqual(found, reply)
+        self.assertEqual(client.replies_calls[0]["channel"], "C0HARBOR")
+        self.assertEqual(client.replies_calls[0]["ts"], "2")
+        self.assertEqual(client.history_calls, [])
+
+    def test_a_thread_parent_is_found_via_conversations_replies(self):
+        parent = {"ts": "1", "thread_ts": "1", "user": "U0RIMURU", "text": "parent"}
+        reply = {"ts": "2", "thread_ts": "1", "user": "U0RIMURU", "text": "reply"}
+        client = FakeSlackClient(replies=[parent, reply])
+        found = SlackIO(client).fetch_message("C0HARBOR", "1")
+        self.assertEqual(found, parent)
+        self.assertEqual(client.history_calls, [])
+
+    def test_a_replies_error_falls_back_to_history(self):
+        message = {"ts": "1", "user": "U0RIMURU", "text": "hi"}
+        client = FakeSlackClient(
+            fail={"conversations_replies": "thread_not_found"}, history=message
+        )
+        found = SlackIO(client).fetch_message("C0HARBOR", "1")
+        self.assertEqual(found, message)
+
+    def test_a_history_ts_mismatch_is_treated_as_not_found(self):
+        # The exact failure this issue describes: `conversations.history`
+        # silently returning the nearest channel-level message instead of
+        # the reply that was actually requested.
+        wrong_message = {"ts": "999", "user": "U0RIMURU", "text": "wrong"}
+        client = FakeSlackClient(history=wrong_message)
+        self.assertIsNone(SlackIO(client).fetch_message("C0HARBOR", "1"))
+
+    def test_a_replies_ts_mismatch_falls_back_to_history(self):
+        other_thread_message = {"ts": "3", "thread_ts": "3", "user": "U0RIMURU", "text": "other"}
+        message = {"ts": "1", "user": "U0RIMURU", "text": "hi"}
+        client = FakeSlackClient(replies=[other_thread_message], history=message)
+        found = SlackIO(client).fetch_message("C0HARBOR", "1")
+        self.assertEqual(found, message)
 
     def test_nothing_found_is_none(self):
         client = FakeSlackClient(history=None)
