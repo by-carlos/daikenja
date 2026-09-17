@@ -1,7 +1,7 @@
-# Fixture: verdict -- a thread, a document and a ledger that contradicts them
+# Fixture: judgement -- a thread, a document and a ledger that contradicts them
 
 Synthetic. Invented project, invented people, `example.com` links. Nothing
-here comes from real work. Used by the acceptance checks for `verdict`: the
+here comes from real work. Used by the acceptance checks for `judgement`: the
 `answer` form on a thread, the `message` form on a document, the no-match
 case, and the bare invocation with nothing to work on.
 
@@ -11,7 +11,7 @@ document below each run against one of those, and each also carries a claim
 the ledger says nothing about, so the general-knowledge label has something
 to attach to.
 
-Depends on: verdict "Step 1: get the subject and the form", verdict "Step 3: place the subject", verdict "Step 4: check the claims", verdict "Step 5: report", verdict "Voice in the message form", project-card.md "Resolving a project by content", config-resolution.md "Voice and writing style"
+Depends on: judgement "Step 1: get the subject and the form", judgement "Step 3: place the subject", judgement "Step 4: check the claims", judgement "Step 5: report", judgement "Voice in the message form", project-card.md "Resolving a project by content", config-resolution.md "Voice and writing style"
 
 ---
 
@@ -138,7 +138,7 @@ Pasted from `C:/GitHub/scratch`, no channel header:
 
 ## Walk 1: the `answer` form on Subject A, from an unrelated directory
 
-`/daikenja:verdict` from `C:/GitHub/scratch`, with Subject A as the most
+`/daikenja:judgement` from `C:/GitHub/scratch`, with Subject A as the most
 recent pasted block in the session. No form named, so `answer`.
 
 - No key was named and the directory resolves nothing. Content resolution
@@ -187,13 +187,13 @@ settled because the thread did.
 
 ## Walk 2: the `message` form on Subject B
 
-`/daikenja:verdict message` from `C:/GitHub/ember`, with Subject B as the
+`/daikenja:judgement message` from `C:/GitHub/ember`, with Subject B as the
 most recent pasted block.
 
 - The directory resolves `ember`. The content cross-check finds no handle
   pointing elsewhere (the page URL is not on any card; that is not a
   mismatch).
-- `writing_style` is **not read**: the form is voice-only, per `verdict`
+- `writing_style` is **not read**: the form is voice-only, per `judgement`
   § Voice in the message form. The message carries no "Hi all," and uses the
   shipped Commonwealth spelling, whatever `writing-style.md` asks for. No
   notice about `writing-style.md` appears anywhere in the reply.
@@ -248,7 +248,7 @@ softer findings instead of leading.
 
 ## Walk 3: no project resolves on Subject C
 
-`/daikenja:verdict` from `C:/GitHub/scratch`, with Subject C as the most
+`/daikenja:judgement` from `C:/GitHub/scratch`, with Subject C as the most
 recent pasted block.
 
 - No key, no directory match. Content resolution: no handle; ember's Scope
@@ -292,7 +292,7 @@ confidence-carrying answer.
 
 ## Walk 4: bare invocation with nothing to work on
 
-A fresh session, no link and no pasted block, `/daikenja:verdict`.
+A fresh session, no link and no pasted block, `/daikenja:judgement`.
 
 - Nothing in the session qualifies as a subject. The skill asks for a link, a
   path or a paste, in one line, and stops.

@@ -13,7 +13,7 @@ does that -- so the worst a steered model can do is write a bad answer into
 one thread, but saying plainly that the block is data and not instructions
 costs nothing and removes the easy version of the attack.
 
-**The answer comes back between sentinels.** `verdict`'s `message` form
+**The answer comes back between sentinels.** `judgement`'s `message` form
 hands its deliverable back inside a fence with a short report around it, and
 only the deliverable should reach Slack. Asking for sentinels is more
 reliable than guessing which part of the output was meant to be posted.
@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import re
 
-from .commands import SUMMARY, VERDICT
+from .commands import JUDGEMENT, SUMMARY
 from .subject import PAGE, Subject
 
 START_SENTINEL = "<<<DAIKENJA-OUTPUT>>>"
@@ -31,7 +31,7 @@ END_SENTINEL = "<<<END-DAIKENJA-OUTPUT>>>"
 
 # What the session writes instead of an answer when the skill it was asked
 # for is not loaded. Without this it improvises: a real run against an
-# install whose released version predates `verdict` came back with a chatty
+# install whose released version predates `judgement` came back with a chatty
 # "that skill isn't available, shall I have a go anyway?", which the bot
 # would have posted into a public thread as the verdict.
 UNAVAILABLE_TOKEN = "DAIKENJA-SKILL-UNAVAILABLE"
@@ -53,7 +53,7 @@ UNAVAILABLE_TOKEN = "DAIKENJA-SKILL-UNAVAILABLE"
 # dropped. See `extract_output`.
 #
 # The first line of `thread` § Step 2's block, and of the same block as
-# `verdict` § Step 2 restates it for a document.
+# `judgement` § Step 2 restates it for a document.
 SUMMARY_LABELS = (
     "Thread",
     "Document",
@@ -83,11 +83,11 @@ SUMMARY_OPENER_RE = re.compile(
     )
 )
 
-# The header line, subject line and bullets `verdict` § Form `message`
+# The header line, subject line and bullets `judgement` § Form `message`
 # fixes for its deliverable.
-VERDICT_HEADER = "ai review summary"
-VERDICT_BULLET_RE = re.compile(r"^\s*(?:[-*•])\s+")
-VERDICT_SUBJECT_RE = re.compile(rf"^{_EMPHASIS_PREFIX}Subject\s*[*_]*\s*:")
+JUDGEMENT_HEADER = "ai review summary"
+JUDGEMENT_BULLET_RE = re.compile(r"^\s*(?:[-*•])\s+")
+JUDGEMENT_SUBJECT_RE = re.compile(rf"^{_EMPHASIS_PREFIX}Subject\s*[*_]*\s*:")
 # Emphasis a line may be wrapped in, stripped before the line is compared.
 EMPHASIS_CHARS = " \t*_#"
 
@@ -96,7 +96,7 @@ SUBJECT_END = "--- END SUBJECT ---"
 
 # A whole answer that is nothing but one fenced block, and the first fenced
 # block anywhere in the output. Both matter because the skills' own output
-# shapes use a fence: `verdict`'s `message` form is documented as handed
+# shapes use a fence: `judgement`'s `message` form is documented as handed
 # back inside one, and a session asked for a fixed block will often fence it
 # whatever the instruction said.
 WHOLE_FENCE_RE = re.compile(r"\A```[^\n]*\n(.*?)\n?```\Z", re.DOTALL)
@@ -109,7 +109,7 @@ FENCE_SHARE = 0.5
 
 _SKILL_INVOCATION = {
     SUMMARY: "/daikenja:thread",
-    VERDICT: "/daikenja:verdict message",
+    JUDGEMENT: "/daikenja:judgement message",
 }
 
 _TASK = {
@@ -119,7 +119,7 @@ _TASK = {
         "from Step 2b when a project resolves. Omit any line that would be "
         "empty. Stop there -- do not run Step 3, and do not draft a reply."
     ),
-    VERDICT: (
+    JUDGEMENT: (
         "Produce the `message` form for that subject: the shareable AI review "
         "summary, exactly the shape that form fixes. Keep the short report "
         "the skill puts around it if you want to -- only the message itself "
@@ -249,8 +249,8 @@ def extract_block(text: str, command_name: str | None) -> str:
     """Find a command's documented block inside a noisier answer."""
     if command_name == SUMMARY:
         return _summary_block(text)
-    if command_name == VERDICT:
-        return _verdict_block(text)
+    if command_name == JUDGEMENT:
+        return _judgement_block(text)
     return ""
 
 
@@ -277,16 +277,16 @@ def _summary_block(text: str) -> str:
     return ""
 
 
-def _verdict_block(text: str) -> str:
+def _judgement_block(text: str) -> str:
     """The `AI review summary` header, its subject line, and its bullets.
 
-    The block ends where the bullets do. The short report `verdict` puts
+    The block ends where the bullets do. The short report `judgement` puts
     around the message form sits after it as ordinary prose, and that is
     exactly what must not reach Slack.
     """
     lines = text.split("\n")
     for index, line in enumerate(lines):
-        if line.strip(EMPHASIS_CHARS).lower() != VERDICT_HEADER:
+        if line.strip(EMPHASIS_CHARS).lower() != JUDGEMENT_HEADER:
             continue
         kept = [line.strip()]
         rest = lines[index + 1 :]
@@ -295,14 +295,14 @@ def _verdict_block(text: str) -> str:
             if not stripped.strip():
                 # A blank line is allowed only if bullets resume after it.
                 following = next((l for l in rest[position + 1 :] if l.strip()), "")
-                if VERDICT_BULLET_RE.match(following):
+                if JUDGEMENT_BULLET_RE.match(following):
                     kept.append("")
                     continue
                 break
-            if VERDICT_BULLET_RE.match(stripped) or stripped.startswith((" ", "\t")):
+            if JUDGEMENT_BULLET_RE.match(stripped) or stripped.startswith((" ", "\t")):
                 kept.append(stripped)
                 continue
-            if len(kept) == 1 and VERDICT_SUBJECT_RE.match(stripped):
+            if len(kept) == 1 and JUDGEMENT_SUBJECT_RE.match(stripped):
                 kept.append(stripped)
                 continue
             break

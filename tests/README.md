@@ -213,9 +213,9 @@ last released copy of the skill, so a result obtained any other way is void.
   applies today" for a 2024 cutover with nothing to support that. Exercises
   the full checklist in one document.
 
-### `verdict`
+### `judgement`
 
-- [`fixtures/verdict.md`](fixtures/verdict.md) -- an `ember` reporting
+- [`fixtures/judgement.md`](fixtures/judgement.md) -- an `ember` reporting
   warehouse registry, card and ledger, whose storage-engine decision and
   load-window decision are each contradicted by one of two subjects: a thread
   in which two people assume the engine the ledger rejected and a third

@@ -75,7 +75,7 @@ class ConversionTests(unittest.TestCase):
     def test_empty_input(self):
         self.assertEqual(to_mrkdwn(""), "")
 
-    def test_a_whole_verdict_message(self):
+    def test_a_whole_judgement_message(self):
         source = (
             "AI review summary\n"
             "Subject: #harbor-rollout, 4 messages\n"

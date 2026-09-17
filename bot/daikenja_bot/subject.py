@@ -1,6 +1,6 @@
 """What the model is asked to read.
 
-A subject is whatever `summary` or `verdict` works on: the thread the
+A subject is whatever `summary` or `judgement` works on: the thread the
 command was typed in, a thread somewhere else, or a page. It is plain text
 by the time it reaches this type -- fetching is done, and nothing downstream
 talks to Slack or Confluence again.

@@ -178,9 +178,9 @@ class UsageTests(unittest.TestCase):
 class ThreadSubjectTests(unittest.TestCase):
     def test_the_invoking_thread_is_read_and_rendered(self):
         handler, client, run = build()
-        handler.handle_mention(mention("<@U0BOT> verdict", thread_ts="1758067200.000100"))
+        handler.handle_mention(mention("<@U0BOT> judgement", thread_ts="1758067200.000100"))
         command, subject = run.calls[0]
-        self.assertEqual(command, "verdict")
+        self.assertEqual(command, "judgement")
         self.assertEqual(subject.label, "#harbor-rollout, 4 messages")
         self.assertIn("@rigurd you owned the validation step", subject.body)
         self.assertEqual(client.replies_calls[0]["ts"], "1758067200.000100")
@@ -231,7 +231,7 @@ class ConfluenceTests(unittest.TestCase):
 
     def test_unconfigured_says_so_and_stops(self):
         handler, client, run = build()
-        handler.handle_mention(mention(f"<@U0BOT> verdict {PAGE_URL}"))
+        handler.handle_mention(mention(f"<@U0BOT> judgement {PAGE_URL}"))
         self.assertIn("not configured", client.posted[0]["text"])
         self.assertEqual(run.calls, [])
 
@@ -247,9 +247,9 @@ class ConfluenceTests(unittest.TestCase):
             run=run,
             fetch_confluence=lambda config, url, token: seen.append((url, token)) or page,
         )
-        handler.handle_mention(mention(f"<@U0BOT> verdict {PAGE_URL}"))
+        handler.handle_mention(mention(f"<@U0BOT> judgement {PAGE_URL}"))
         self.assertEqual(seen, [(PAGE_URL, "t")])
-        self.assertEqual(run.calls[0][0], "verdict")
+        self.assertEqual(run.calls[0][0], "judgement")
         self.assertEqual(run.calls[0][1].label, "Cutover plan")
         self.assertEqual(client.replies_calls, [])
         self.assertIn("AI review summary", client.posted[0]["text"])
@@ -264,7 +264,7 @@ class ConfluenceTests(unittest.TestCase):
             fetch_confluence=lambda *a, **k: None,
         )
         client = handler._slack._client  # noqa: SLF001 - asserting on the stand-in
-        handler.handle_mention(mention(f"<@U0BOT> verdict {PAGE_URL}"))
+        handler.handle_mention(mention(f"<@U0BOT> judgement {PAGE_URL}"))
         self.assertIn("WIKI_TOKEN", client.posted[0]["text"])
 
     def test_a_fetch_failure_is_reported(self):
@@ -276,7 +276,7 @@ class ConfluenceTests(unittest.TestCase):
             fetch_confluence=_raise(ConfluenceError("that page does not exist")),
         )
         client = handler._slack._client  # noqa: SLF001
-        handler.handle_mention(mention(f"<@U0BOT> verdict {PAGE_URL}"))
+        handler.handle_mention(mention(f"<@U0BOT> judgement {PAGE_URL}"))
         self.assertIn("does not exist", client.posted[0]["text"])
 
 
@@ -290,9 +290,9 @@ class UnavailableCommandTests(unittest.TestCase):
             environ={},
             run=run,
             fetch_confluence=lambda *a, **k: None,
-            unavailable={"verdict": "I cannot run `verdict`: the skill is missing."},
+            unavailable={"judgement": "I cannot run `judgement`: the skill is missing."},
         )
-        handler.handle_mention(mention("<@U0BOT> verdict"))
+        handler.handle_mention(mention("<@U0BOT> judgement"))
         self.assertIn("cannot run", client.posted[0]["text"])
         self.assertEqual(run.calls, [])
         self.assertEqual(client.replies_calls, [])
@@ -305,9 +305,9 @@ class UnavailableCommandTests(unittest.TestCase):
             environ={},
             run=Recorder(),
             fetch_confluence=lambda *a, **k: None,
-            unavailable={"verdict": "nope"},
+            unavailable={"judgement": "nope"},
         )
-        handler.handle_mention(mention("<@U0BOT> verdict"))
+        handler.handle_mention(mention("<@U0BOT> judgement"))
         self.assertEqual(client.reactions, [])
 
     def test_the_other_command_still_works(self):
@@ -319,7 +319,7 @@ class UnavailableCommandTests(unittest.TestCase):
             environ={},
             run=run,
             fetch_confluence=lambda *a, **k: None,
-            unavailable={"verdict": "nope"},
+            unavailable={"judgement": "nope"},
         )
         handler.handle_mention(mention("<@U0BOT> summary"))
         self.assertEqual(run.calls[0][0], "summary")
@@ -328,7 +328,7 @@ class UnavailableCommandTests(unittest.TestCase):
 class UnknownLinkTests(unittest.TestCase):
     def test_an_unrecognised_link_gets_one_line(self):
         handler, client, run = build()
-        handler.handle_mention(mention("<@U0BOT> verdict https://example.com/harbor"))
+        handler.handle_mention(mention("<@U0BOT> judgement https://example.com/harbor"))
         self.assertEqual(client.posted[0]["text"], UNKNOWN_LINK)
         self.assertEqual(run.calls, [])
 
@@ -356,13 +356,13 @@ class AcknowledgementTests(unittest.TestCase):
 class AnswerTests(unittest.TestCase):
     def test_the_answer_is_converted_to_mrkdwn(self):
         handler, client, _ = build(run=Recorder(answer="**Ledger:** nothing on this"))
-        handler.handle_mention(mention("<@U0BOT> verdict"))
+        handler.handle_mention(mention("<@U0BOT> judgement"))
         self.assertEqual(client.posted[0]["text"], "*Ledger:* nothing on this")
 
     def test_a_failed_run_is_reported_in_the_thread_and_logged(self):
         handler, client, _ = build(run=Recorder(error=RunnerError("the session timed out")))
         with self.assertLogs("daikenja_bot.handler", level="WARNING"):
-            handler.handle_mention(mention("<@U0BOT> verdict"))
+            handler.handle_mention(mention("<@U0BOT> judgement"))
         self.assertIn("timed out", client.posted[0]["text"])
 
     def test_a_failed_post_is_logged_rather_than_raised(self):

@@ -1,12 +1,12 @@
 ---
-name: verdict
-description: 'Checks a thread or a document against the project ledger and general knowledge and hands back a verdict: what is being claimed or asked, which parts a recorded decision settles, which parts are plain fact, and what is presented as settled without being established. Use when the user says "is this right?", "check this against the ledger", "give me a verdict on this thread", or asks for a quick "AI review summary" of a page or pull request to share with the team. Read-only -- it never drafts a reply, never edits the document and never writes the ledger.'
+name: judgement
+description: 'Checks a thread or a document against the project ledger and general knowledge and hands back a verdict: what is being claimed or asked, which parts a recorded decision settles, which parts are plain fact, and what is presented as settled without being established. Use when the user says "is this right?", "check this against the ledger", "give me a judgement on this thread", or asks for a quick "AI review summary" of a page or pull request to share with the team. Read-only -- it never drafts a reply, never edits the document and never writes the ledger.'
 metadata:
   owner: Carlos
   version: 1
 ---
 
-# Verdict
+# Judgement
 
 One subject, one verdict. The subject is a thread or a document; the verdict
 says what it claims or asks, checks that against the project's ledger first
@@ -85,8 +85,8 @@ conversational layer. The `message` form never does: it leaves the session.
 
 ## Step 1: get the subject and the form
 
-**The argument rule.** `/daikenja:verdict` with no argument works on the
-enclosing context; `/daikenja:verdict <subject>` works on that subject
+**The argument rule.** `/daikenja:judgement` with no argument works on the
+enclosing context; `/daikenja:judgement <subject>` works on that subject
 instead. In Claude Code there is no enclosing thread, so the bare form means
 **the most recent link or pasted block in this session**. When nothing in the
 session qualifies, ask for one and stop. Never guess, and never go looking for
@@ -107,7 +107,7 @@ a summary in place of the content, and do not review a partial document
 silently -- say it is partial.
 
 **The form.** `answer` is the default. `message` is chosen when the user asks
-for it by name (`/daikenja:verdict message <subject>`), or in plain words asks
+for it by name (`/daikenja:judgement message <subject>`), or in plain words asks
 for something to share -- "for the team", "as a message", "an AI review
 summary", "something I can post". When the wording is ambiguous, produce the
 `answer` form; it is one line to ask for the other afterwards.
@@ -332,7 +332,7 @@ govern it and `response-format.md` does.
 
 | Situation | What to do |
 |---|---|
-| Bare `verdict`, and nothing in the session is a link or a pasted block | Ask for a link, a path or a paste. Do not search for one. |
+| Bare `judgement`, and nothing in the session is a link or a pasted block | Ask for a link, a path or a paste. Do not search for one. |
 | Link given but no tool is connected for that source | Say which source and that no tool is connected; ask for a paste. |
 | Fetched content is empty or truncated | Say so and ask for a paste. Never judge a partial subject silently. |
 | The named project key is not registered | Stop: name the key and list the registered ones. Never fall back to the directory. |

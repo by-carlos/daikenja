@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   new Python service, shipped with the plugin and run by hand, takes two
   commands from an @-mention: `summary` posts the five-line thread summary
   `thread` produces at its Step 2, including the `Ledger:` line when the
-  thread matches a registered project, and `verdict` posts the shareable
-  `message` form of the `verdict` skill. Either command takes a Slack
+  thread matches a registered project, and `judgement` posts the shareable
+  `message` form of the `judgement` skill. Either command takes a Slack
   permalink or a Confluence page URL as an argument and works on that
   instead, answering in the thread it was asked from. It is a personal
   instance: it runs on one person's machine, reads that person's ledgers,
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it, and `.claude/` is for people working on this repository. The middle
   case is new and is why `bot/` must stay lean and must hold nothing a skill
   needs.
-- **`verdict`: a read-only check of a thread or a document against the
+- **`judgement`: a read-only check of a thread or a document against the
   ledger.** A new skill takes a Slack thread link, a Confluence page link, a
   repository path or pasted text -- or, with no argument, the most recent
   link or pasted block in the session -- triages what it claims or asks,
@@ -75,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   its outputs: `voice.md` applies in full and the user's `writing_style` and
   `personas` are not read at all, for output written as an AI pass rather
   than as the user. Layering stays the default for everything else; no
-  `daikenja.yaml` key selects the mode. `verdict`'s `message` form is the
+  `daikenja.yaml` key selects the mode. `judgement`'s `message` form is the
   one shipped use (#251).
 - **Project cards: a per-project description beside the ledger.** A new
   `docs/project-card.md` contract and `templates/project.md` define a short

@@ -1,6 +1,6 @@
 import unittest
 
-from daikenja_bot.commands import SUMMARY, VERDICT
+from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.prompts import (
     END_SENTINEL,
     START_SENTINEL,
@@ -26,12 +26,12 @@ class BuildInstructionTests(unittest.TestCase):
         self.assertIn("Waiting on you", instruction)
         self.assertIn("do not draft a reply", instruction)
 
-    def test_verdict_invokes_the_message_form(self):
-        instruction = build_instruction(VERDICT, THREAD_SUBJECT)
-        self.assertTrue(instruction.startswith("/daikenja:verdict message"))
+    def test_judgement_invokes_the_message_form(self):
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
+        self.assertTrue(instruction.startswith("/daikenja:judgement message"))
 
     def test_the_subject_is_described_but_not_included(self):
-        instruction = build_instruction(VERDICT, THREAD_SUBJECT)
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
         self.assertIn("#harbor-rollout, 4 messages", instruction)
         self.assertNotIn("[1] hakurou: hi", instruction)
 
@@ -145,8 +145,8 @@ class ExtractBlockTests(unittest.TestCase):
         "1. What is your position?\n"
     )
 
-    NOISY_VERDICT = (
-        "Using daikenja:verdict to check this thread against the ledger.\n"
+    NOISY_JUDGEMENT = (
+        "Using daikenja:judgement to check this thread against the ledger.\n"
         "\n"
         "No project can be resolved, so I proceed on general knowledge.\n"
         "\n"
@@ -169,8 +169,8 @@ class ExtractBlockTests(unittest.TestCase):
         self.assertNotIn("WARNING", extracted)
         self.assertNotIn("What is your position", extracted)
 
-    def test_a_noisy_verdict_keeps_only_the_message(self):
-        extracted = extract_output(self.NOISY_VERDICT, VERDICT)
+    def test_a_noisy_judgement_keeps_only_the_message(self):
+        extracted = extract_output(self.NOISY_JUDGEMENT, JUDGEMENT)
         self.assertTrue(extracted.startswith("AI review summary"))
         self.assertTrue(extracted.endswith("- Not checked: no ledger existed to check against."))
         self.assertNotIn("Using daikenja", extracted)
@@ -196,9 +196,9 @@ class ExtractBlockTests(unittest.TestCase):
         self.assertNotIn("Using daikenja", extracted)
         self.assertNotIn("What's your position", extracted)
 
-    def test_an_emphasised_verdict_header_is_still_found(self):
+    def test_an_emphasised_judgement_header_is_still_found(self):
         text = (
-            "Using daikenja:verdict.\n"
+            "Using daikenja:judgement.\n"
             "\n"
             "**AI review summary**\n"
             "**Subject:** Slack thread, 3 messages\n"
@@ -207,7 +207,7 @@ class ExtractBlockTests(unittest.TestCase):
             "\n"
             "Report: want me to look for a ledger elsewhere?\n"
         )
-        extracted = extract_output(text, VERDICT)
+        extracted = extract_output(text, JUDGEMENT)
         self.assertTrue(extracted.startswith("**AI review summary**"))
         self.assertTrue(extracted.endswith("nothing beyond the three messages."))
         self.assertNotIn("want me to look", extracted)
@@ -228,7 +228,7 @@ class ExtractBlockTests(unittest.TestCase):
     def test_an_unrecognisable_answer_survives_whole(self):
         text = "I could not work out what this thread is about at all."
         self.assertEqual(extract_output(text, SUMMARY), text)
-        self.assertEqual(extract_output(text, VERDICT), text)
+        self.assertEqual(extract_output(text, JUDGEMENT), text)
 
     def test_the_sentinels_still_win_over_the_shape(self):
         raw = (
@@ -247,13 +247,13 @@ class ExtractBlockTests(unittest.TestCase):
 
 class UnavailableTests(unittest.TestCase):
     def test_the_instruction_names_the_skill_and_the_token(self):
-        instruction = build_instruction(VERDICT, THREAD_SUBJECT)
-        self.assertIn("/daikenja:verdict is not loaded", instruction)
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
+        self.assertIn("/daikenja:judgement is not loaded", instruction)
         self.assertIn(UNAVAILABLE_TOKEN, instruction)
         self.assertIn("do not improvise", instruction)
 
     def test_the_skill_name_drops_the_form_argument(self):
-        self.assertEqual(skill_name(VERDICT), "/daikenja:verdict")
+        self.assertEqual(skill_name(JUDGEMENT), "/daikenja:judgement")
         self.assertEqual(skill_name(SUMMARY), "/daikenja:thread")
 
     def test_the_bare_token_is_recognised(self):

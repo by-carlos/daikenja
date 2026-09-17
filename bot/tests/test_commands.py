@@ -1,6 +1,6 @@
 import unittest
 
-from daikenja_bot.commands import HELP, SUMMARY, VERDICT, parse_command, strip_mentions
+from daikenja_bot.commands import HELP, JUDGEMENT, SUMMARY, parse_command, strip_mentions
 
 
 class StripMentionsTests(unittest.TestCase):
@@ -20,19 +20,19 @@ class ParseCommandTests(unittest.TestCase):
         self.assertIsNone(command.argument)
         self.assertTrue(command.is_known)
 
-    def test_bare_verdict(self):
-        self.assertEqual(parse_command("<@U0BOT> verdict").name, VERDICT)
+    def test_bare_judgement(self):
+        self.assertEqual(parse_command("<@U0BOT> judgement").name, JUDGEMENT)
 
     def test_case_and_punctuation_are_forgiven(self):
-        for text in ("<@U0BOT> Verdict", "<@U0BOT> VERDICT:", "<@U0BOT> /verdict"):
+        for text in ("<@U0BOT> Judgement", "<@U0BOT> JUDGEMENT:", "<@U0BOT> /judgement"):
             with self.subTest(text=text):
-                self.assertEqual(parse_command(text).name, VERDICT)
+                self.assertEqual(parse_command(text).name, JUDGEMENT)
 
     def test_link_argument_is_unwrapped(self):
         command = parse_command(
-            "<@U0BOT> verdict <https://example.slack.com/archives/C0HARBOR/p1758067200000100>"
+            "<@U0BOT> judgement <https://example.slack.com/archives/C0HARBOR/p1758067200000100>"
         )
-        self.assertEqual(command.name, VERDICT)
+        self.assertEqual(command.name, JUDGEMENT)
         self.assertEqual(
             command.argument,
             "https://example.slack.com/archives/C0HARBOR/p1758067200000100",

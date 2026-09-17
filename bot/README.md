@@ -9,14 +9,14 @@ Two commands, both triggered by an @-mention:
 | Command | What it posts |
 |---|---|
 | `@daikenja summary` | The five-line thread summary the [`thread`](../skills/thread/SKILL.md) skill produces at its Step 2: what the thread is, who is asking, what is open, what is waiting on you, and the tone -- plus the `Ledger:` line when the thread matches one of your projects. |
-| `@daikenja verdict` | The shareable `message` form of the [`verdict`](../skills/verdict/SKILL.md) skill: what the thread claims or asks, checked against the project's ledger first and general knowledge second, with every statement labelled by where it came from. |
+| `@daikenja judgement` | The shareable `message` form of the [`judgement`](../skills/judgement/SKILL.md) skill: what the thread claims or asks, checked against the project's ledger first and general knowledge second, with every statement labelled by where it came from. |
 
 Either command takes a link as its argument and works on that instead of
 the thread it was typed in:
 
 ```
 @daikenja summary https://example.slack.com/archives/C0HARBOR/p1758067200000100
-@daikenja verdict https://example.atlassian.net/wiki/spaces/HARBOR/pages/424242/Cutover+plan
+@daikenja judgement https://example.atlassian.net/wiki/spaces/HARBOR/pages/424242/Cutover+plan
 ```
 
 The answer still lands in the thread the command was typed in, so a verdict
@@ -163,7 +163,7 @@ until the process is restarted.
 
 ## What it needs from the plugin
 
-`summary` needs the `thread` skill and `verdict` needs the `verdict` skill,
+`summary` needs the `thread` skill and `judgement` needs the `judgement` skill,
 both from a Daikenja install the headless session can see. The bot checks
 this at startup rather than finding out mid-answer:
 
@@ -176,11 +176,11 @@ line in the thread saying which skill is absent and where it looked.
 
 ```
   summary:    ready
-  verdict:    unavailable
+  judgement:  unavailable
 ```
 
-**This matters today**: `verdict` shipped after 0.9.1, so an installed
-plugin at that version runs `summary` and refuses `verdict` until the next
+**This matters today**: `judgement` shipped after 0.9.1, so an installed
+plugin at that version runs `summary` and refuses `judgement` until the next
 release. Point `claude.plugin_dir` at a working tree in the meantime.
 
 The check is not a nicety. A session asked for a skill it does not have will
@@ -192,7 +192,7 @@ would post that into a public thread as the verdict.
 The session is asked to mark its deliverable between two sentinel lines, and
 usually does. When it does not, the deliverable is found by its own shape:
 the `Thread:` / `Asking:` / `Open:` block for `summary`, and the
-`AI review summary` header and its bullets for `verdict`. Both shapes are
+`AI review summary` header and its bullets for `judgement`. Both shapes are
 fixed by the skills, so this is reading a contract rather than guessing.
 
 That matters because the headless session is not a private one. It reads the
@@ -260,7 +260,7 @@ a different line saying so, since telling them they are not on the allowlist
 would not be true.
 
 **`claude.working_dir` defaults to your home directory on purpose.** A bot
-has no project of its own. `verdict` resolves a project by a key you named,
+has no project of its own. `judgement` resolves a project by a key you named,
 then by the working directory, then by the subject's own content -- and
 running the session inside one of your registered projects would silently
 attach every thread to that project. Home is almost never registered, so
@@ -272,7 +272,7 @@ input is text other people wrote.
 
 ### Confluence links
 
-`verdict <confluence link>` needs credentials the Slack app does not have,
+`judgement <confluence link>` needs credentials the Slack app does not have,
 so it is off until you add a `confluence` block. Without one, the bot
 replies in the thread that Confluence links are not configured and stops.
 
@@ -323,7 +323,7 @@ goes through `slack_io.py`, which is the layer that is allowed to.
 daikenja_bot/__main__.py   the entry point and --check
 daikenja_bot/app.py        Socket Mode transport; the only slack_bolt import
 daikenja_bot/handler.py    what happens on a mention, start to finish
-daikenja_bot/commands.py   parsing `summary` / `verdict` and its argument
+daikenja_bot/commands.py   parsing `summary` / `judgement` and its argument
 daikenja_bot/links.py      Slack permalinks and Confluence URLs
 daikenja_bot/slack_io.py   the only file that holds the Slack token
 daikenja_bot/transcript.py a fetched thread, rendered for a reader
@@ -337,7 +337,7 @@ daikenja_bot/config.py     bot.yaml
 
 ## What it does not do
 
-- It does not write a reply for you. `summary` gathers and `verdict` judges;
+- It does not write a reply for you. `summary` gathers and `judgement` judges;
   both skills refuse to draft, and this bot does not ask them to.
 - It does not write your ledger. Only `/daikenja:project-log` does, on your
   approval, in a session of your own.

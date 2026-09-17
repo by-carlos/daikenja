@@ -35,9 +35,9 @@ Component inventory
   Hooks (0)
 """
 
-DETAILS_WITH_VERDICT = DETAILS_OUTPUT.replace(
+DETAILS_WITH_JUDGEMENT = DETAILS_OUTPUT.replace(
     "Skills (3)  compose, thread, project-log",
-    "Skills (4)  compose, thread, verdict, project-log",
+    "Skills (4)  compose, thread, judgement, project-log",
 )
 
 
@@ -66,17 +66,17 @@ class ParseSkillsTests(unittest.TestCase):
 class ReportTests(unittest.TestCase):
     def test_a_complete_install_disables_nothing(self):
         report = SkillReport(
-            available=frozenset({"thread", "verdict"}), source="the installed plugin"
+            available=frozenset({"thread", "judgement"}), source="the installed plugin"
         )
         self.assertEqual(report.missing(), {})
         self.assertTrue(report.determined)
 
-    def test_a_missing_verdict_disables_only_verdict(self):
+    def test_a_missing_judgement_disables_only_judgement(self):
         report = SkillReport(available=frozenset({"thread"}), source="the installed plugin")
         missing = report.missing()
-        self.assertEqual(set(missing), {"verdict"})
-        self.assertIn("/daikenja:verdict", missing["verdict"])
-        self.assertIn("plugin_dir", missing["verdict"])
+        self.assertEqual(set(missing), {"judgement"})
+        self.assertIn("/daikenja:judgement", missing["judgement"])
+        self.assertIn("plugin_dir", missing["judgement"])
 
     def test_an_undetermined_report_disables_nothing(self):
         report = SkillReport(available=None, source="the installed plugin")
@@ -90,17 +90,17 @@ class CheckInstalledTests(unittest.TestCase):
         report = preflight.check(
             resolvable_config(),
             environ={"SLACK_BOT_TOKEN": "secret", "PATH": "/bin"},
-            details=responder(0, DETAILS_WITH_VERDICT, calls),
+            details=responder(0, DETAILS_WITH_JUDGEMENT, calls),
         )
         self.assertEqual(report.missing(), {})
         self.assertEqual(calls[0]["argv"][1:], ["plugin", "details", "daikenja"])
         self.assertNotIn("SLACK_BOT_TOKEN", calls[0]["env"])
 
-    def test_a_version_without_verdict_disables_that_command(self):
+    def test_a_version_without_judgement_disables_that_command(self):
         report = preflight.check(
             resolvable_config(), environ={}, details=responder(0, DETAILS_OUTPUT)
         )
-        self.assertEqual(set(report.missing()), {"verdict"})
+        self.assertEqual(set(report.missing()), {"judgement"})
 
     def test_a_failing_cli_leaves_both_commands_enabled(self):
         with self.assertLogs("daikenja_bot.preflight", level="WARNING"):
@@ -134,7 +134,7 @@ class CheckWorkingTreeTests(unittest.TestCase):
     def test_skills_are_read_off_disk(self):
         with tempfile.TemporaryDirectory() as tmp:
             skills = Path(tmp) / "skills"
-            for name in ("thread", "verdict"):
+            for name in ("thread", "judgement"):
                 (skills / name).mkdir(parents=True)
                 (skills / name / "SKILL.md").write_text("---\n", encoding="utf-8")
             (skills / "not-a-skill").mkdir()
@@ -145,7 +145,7 @@ class CheckWorkingTreeTests(unittest.TestCase):
                 }
             )
             report = preflight.check(config, environ={})
-            self.assertEqual(report.available, frozenset({"thread", "verdict"}))
+            self.assertEqual(report.available, frozenset({"thread", "judgement"}))
             self.assertEqual(report.missing(), {})
 
     def test_a_directory_with_no_skills_folder_is_undetermined(self):
@@ -170,7 +170,7 @@ class CheckWorkingTreeTests(unittest.TestCase):
         self.assertEqual(report.missing(), {})
         assert report.available is not None
         self.assertIn("thread", report.available)
-        self.assertIn("verdict", report.available)
+        self.assertIn("judgement", report.available)
 
 
 if __name__ == "__main__":

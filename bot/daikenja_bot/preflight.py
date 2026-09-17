@@ -1,7 +1,7 @@
 """Check, before answering anything, that the skills this bot needs exist.
 
 A real run against an install one version behind produced this as the
-`verdict`: *"The /daikenja:verdict command isn't available in this session,
+`judgement`: *"The /daikenja:judgement command isn't available in this session,
 but I can analyse the thread"*, followed by a confident answer from no
 source at all. Asking the session to report an unloaded skill helps and is
 kept, but it is a request, and a small model ignores it. This check is not a
@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from .commands import SUMMARY, VERDICT
+from .commands import JUDGEMENT, SUMMARY
 from .config import BotConfig
 from .prompts import skill_name
 from .runner import RunnerError, resolve_command, scrubbed_env
@@ -34,7 +34,7 @@ PLUGIN_NAME = "daikenja"
 DETAILS_TIMEOUT = 60
 
 # Which skill each command cannot run without.
-REQUIRED_SKILL = {SUMMARY: "thread", VERDICT: "verdict"}
+REQUIRED_SKILL = {SUMMARY: "thread", JUDGEMENT: "judgement"}
 
 SKILLS_LINE_RE = re.compile(r"^\s*Skills\s*\(\d+\)\s+(.+)$", re.MULTILINE)
 

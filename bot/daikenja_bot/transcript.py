@@ -1,6 +1,6 @@
 """Turn the Slack API's message dicts into a transcript a person could read.
 
-`thread` and `verdict` both work from pasted thread text, so the cleanest
+`thread` and `judgement` both work from pasted thread text, so the cleanest
 thing to hand the headless session is exactly that: numbered messages, a
 name and a timestamp on each, and the user IDs inside the text resolved to
 names so attribution does not depend on the model recognising ``<@U04…>``.

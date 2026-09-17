@@ -96,7 +96,7 @@ class ClaudeConfig:
         """Where the headless session runs.
 
         Defaults to the user's home directory rather than the bot's own
-        directory. `verdict` resolves a project by key, then by working
+        directory. `judgement` resolves a project by key, then by working
         directory, then by the subject's content; a bot has no meaningful
         working directory, and running it inside a registered project would
         silently attach every thread to that project. Home is almost never
