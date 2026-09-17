@@ -79,8 +79,15 @@ def _from_plugin_dir(plugin_dir: str) -> SkillReport:
 
 
 def _default_details(argv: list[str], env: dict[str, str]) -> tuple[int, str]:
+    # `env` is the scrubbed environment, and passing it is the point: this is
+    # the second place the bot starts the CLI, and "the model never holds a
+    # Slack token" has to hold in both. The check itself runs one fixed
+    # command over a file on disk before any thread has been read, so nothing
+    # here was reachable -- but the rule was written in `runner.py` and not
+    # honoured here, which is how it stops being true later.
     completed = subprocess.run(
         argv,
+        env=env,
         capture_output=True,
         text=True,
         encoding="utf-8",
