@@ -143,6 +143,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it was asking the conversational form, in prose, to behave like a form the
   skill did not yet have, and real runs came back with `Waiting on you`.
 
+### Changed
+
+- **The bot runs on Sonnet 5 at medium effort by default.** Reading a thread
+  and writing a few lines to a fixed format does not need the largest model,
+  and every mention pays for it, so the bot no longer inherits whatever the
+  account's interactive default happens to be. `claude.model` and the new
+  `claude.effort` set both; an empty value for either follows the account
+  default as before. The effort level is a separate setting from the model,
+  and a level appended to the model name (`claude-sonnet-5-medium`) is not a
+  model -- `bot.yaml` is now checked for that at startup rather than letting
+  it surface as a failed run at the first mention.
+
 ### Fixed
 
 - **The bot no longer opens a console window on Windows for every mention.**
@@ -152,6 +164,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   gave it a new visible window each time. The two places that start the CLI
   now pass `CREATE_NO_WINDOW`. Output is still captured through the pipes,
   and the flag does not exist on POSIX, where it resolves to no flag at all.
+- **The bot's Slack app manifest now asks for the DM scopes.** A mention in a
+  group DM or a one-to-one DM arrived, was acknowledged, and then answered
+  `conversations_replies failed: missing_scope`: `channels:history` and
+  `groups:history` cover public and private channels only, and nothing in the
+  manifest covered a DM. `bot/README.md` adds `mpim:history`, `im:history`,
+  `mpim:read` and `im:read`, says that a scope added to an installed app only
+  takes effect on reinstall, and notes that a group DM has no `/invite` -- you
+  mention the bot and Slack offers to add it.
 - **The bot no longer summarizes the wrapper around a forwarded message.** A
   Slack message forwarded into another channel carries its text in an
   attachment, not in the message, so a bare `summary` or `judgement` in the

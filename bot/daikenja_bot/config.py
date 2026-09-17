@@ -34,6 +34,23 @@ DEFAULT_ALLOWED_TOOLS = ("Read", "Glob", "Grep")
 
 DEFAULT_TIMEOUT_SECONDS = 300
 
+# What the headless session runs on unless `bot.yaml` says otherwise. The
+# work is reading a thread and writing a few lines to a fixed format, which
+# does not need the largest model, and every mention pays for it -- so the
+# default is the mid-size model at medium effort rather than whatever the
+# account's interactive default happens to be. `model: ` or `effort: ` left
+# empty in `bot.yaml` unpins it and follows the account default instead.
+#
+# Effort is a separate dimension from the model: the CLI takes `--effort`,
+# and a model string with the level appended (`claude-sonnet-5-medium`) is
+# rejected as a model that does not exist.
+DEFAULT_MODEL = "claude-sonnet-5"
+DEFAULT_EFFORT = "medium"
+
+# What `--effort` accepts. A value outside this set is refused at startup
+# rather than at the first mention, where it would surface as a failed run.
+EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")
+
 # Sent only to the person who mentioned the bot, and only they can see it.
 # `{owner}` becomes a mention of `slack.owner_user_id`, which renders as a
 # name without notifying anyone -- an ephemeral message never notifies.
@@ -85,7 +102,8 @@ class SlackConfig:
 @dataclass(frozen=True)
 class ClaudeConfig:
     command: str = "claude"
-    model: str | None = None
+    model: str | None = DEFAULT_MODEL
+    effort: str | None = DEFAULT_EFFORT
     plugin_dir: str | None = None
     working_dir: str | None = None
     allowed_tools: tuple[str, ...] = DEFAULT_ALLOWED_TOOLS
@@ -205,10 +223,25 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
     if timeout <= 0:
         raise ConfigError("claude.timeout_seconds: must be greater than zero")
 
+    # Absent means the default; present but empty means "follow the account
+    # default", which is the only way to unpin either of these.
+    model = claude_raw.get("model", DEFAULT_MODEL) or None
+    effort = claude_raw.get("effort", DEFAULT_EFFORT) or None
+    if effort is not None:
+        effort = str(effort).strip().lower()
+        if effort not in EFFORT_LEVELS:
+            raise ConfigError(
+                "claude.effort: expected one of "
+                f"{', '.join(EFFORT_LEVELS)}, or an empty value to follow the "
+                f"account default. Got {effort!r}. The effort level is not part "
+                "of the model name -- set claude.model separately."
+            )
+
     allowed_tools = _as_str_tuple(claude_raw.get("allowed_tools"), "claude.allowed_tools")
     claude = ClaudeConfig(
         command=str(claude_raw.get("command") or "claude"),
-        model=claude_raw.get("model") or None,
+        model=model,
+        effort=effort,
         plugin_dir=claude_raw.get("plugin_dir"),
         working_dir=claude_raw.get("working_dir"),
         allowed_tools=allowed_tools or DEFAULT_ALLOWED_TOOLS,
