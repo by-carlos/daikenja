@@ -34,6 +34,11 @@ confirmations, notices. It does not govern:
   `writing-style.md` layered per `config-resolution.md` § Voice and writing
   style. This contract governs
   the reply around that message, never the message.
+- **The exception is § The second person belongs to conversation.** That
+  section is a rule about who a deliverable addresses, not about how the
+  drafted prose reads, so it stays in this contract rather than in
+  `voice.md` even though it constrains the same `message`/deliverable text
+  this boundary otherwise leaves to `voice.md`.
 
 Where a skill's own report template and this contract disagree, this contract
 wins and the template is what gets fixed -- the same rule every other contract

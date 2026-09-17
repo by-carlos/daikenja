@@ -181,6 +181,9 @@ Rules:
   findings.** Each is omitted only if it would be empty; `Not checked` is
   never empty.
 - **No `Subject:` line and no date.** The surface carries both.
+- **The deliverable is never wrapped in a code fence and never contains
+  one**, even when the subject it is assessing quotes a fenced snippet. A
+  quoted line is named or restated inline instead of fenced.
 - A clean subject is `⚖️ **Verdict**` with its sentence and
   `🚧 **Not checked**` with its line. Nothing else.
 
@@ -201,7 +204,10 @@ entries for `judgement`, `thread`, `compose` and `preflight`.
 > was written for.
 
 This belongs in the shared contract rather than inside `judgement` because
-`compose` and `preflight` also hand back leaving-the-session material.
+`thread` and `preflight` also hand back leaving-the-session material.
+`compose` was considered too, but its deliverable is a message written **as
+the user, to a named recipient**, where `you` means that recipient and is
+correct -- so `compose` is deliberately left out of the reverse index.
 
 ## 8. Bot changes
 

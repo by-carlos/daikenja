@@ -63,13 +63,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every result closes with one line saying what was not checked. Two forms:
   `answer`, the default, is a reply in the conversation opening with the
   same summary block `thread` uses; `message` is a shareable deliverable for
-  a cold reader, headed *AI review summary*, bulleted, about 150 words, with
-  no conversational markers or emoji, written as an AI pass and never as the
-  user. A subject that matches no project is said outright, and the check
-  continues on general knowledge alone rather than reading another
-  project's ledger. It never drafts a reply, never edits the document and
-  never writes the ledger; a consumer that posts the `message` form into a
-  chat surface is separate work (#251).
+  a cold reader opening with a one- or two-sentence `⚖️ Verdict`, a
+  `📒 Ledger -- <project name>` section present only when a project resolved,
+  a `🔍 Basis` section of bold-topic, italic-confidence findings, and
+  `💡 Suggestion` and `🚧 Not checked` sections -- bulleted, about 150 words,
+  no conversational markers, no emoji beyond its own section markers, no
+  code fence, and written as an AI pass, never as the user. A subject that
+  matches no project is said outright, and the check continues on general
+  knowledge alone rather than reading another project's ledger. It never
+  drafts a reply, never edits the document and never writes the ledger; a
+  consumer that posts the `message` form into a chat surface is separate
+  work (#251).
+- **The shared summary block -- `thread`'s and `judgement`'s -- stops
+  narrating its own plumbing, and the second person stays inside the
+  session.** `🧵 Thread` / `📄 Document` now leads with subject matter and
+  never names how the content arrived (a pasted block, a link) or states an
+  absence; a channel that is not known is simply not mentioned. `⏳ Waiting
+  on` carries `you` only in the conversational `answer` reply -- any form
+  built to leave the session, such as `judgement`'s `message` form, names the
+  person instead, per the new `response-format.md` § The second person
+  belongs to conversation. `🌡️ Tone` is written in the conversational reply
+  only, since it exists to feed `compose`, which nothing leaving the session
+  reaches. Neither block, nor `judgement`'s `message` form, is ever wrapped
+  in a code fence or contains one, even when the subject quotes a fenced
+  snippet -- a rule stated in both skills and backed, in the bot, by
+  stripping any stray fence line from the deliverable before it posts.
 - **Voice-only mode for generated output.** `docs/config-resolution.md`
   § Voice and writing style now defines a mode a skill may declare for one of
   its outputs: `voice.md` applies in full and the user's `writing_style` and
