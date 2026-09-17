@@ -173,6 +173,26 @@ class SlackIO:
             unfurl_media=False,
         )
 
+    def post_direct(self, user_id: str, text: str) -> str:
+        """Post one top-level message to a person's DM with this bot.
+
+        `chat.postMessage` opens the conversation itself when `channel` is a
+        user id, so this needs no `conversations.open` call and no scope
+        beyond the `chat:write` the bot already has for everything else.
+
+        Unlike `post` there is no `thread_ts`: a digest is its own message,
+        not a reply to one. It raises rather than swallowing a failure --
+        a digest nobody received must not look like a digest that was sent.
+        """
+        response = self._call(
+            "chat_postMessage",
+            channel=user_id,
+            text=text,
+            unfurl_links=False,
+            unfurl_media=False,
+        )
+        return str(response.get("ts") or "")
+
     def post_ephemeral(
         self,
         channel_id: str,

@@ -16,6 +16,9 @@ from daikenja_bot.runner import RunResult
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
+# What `chat.postMessage` reports back for anything the fake accepts.
+POSTED_TS = "1726650000.000100"
+
 
 def load_fixture(name: str) -> dict[str, Any]:
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
@@ -114,7 +117,9 @@ class FakeSlackClient:
     def chat_postMessage(self, **kwargs: Any) -> dict[str, Any]:
         self._maybe_fail("chat_postMessage")
         self.posted.append(kwargs)
-        return {"ok": True}
+        # Slack returns the posted message's `ts`; `post_direct` hands it
+        # back so a scheduled digest run can log what it sent.
+        return {"ok": True, "ts": POSTED_TS}
 
     def chat_postEphemeral(self, **kwargs: Any) -> dict[str, Any]:  # noqa: N802
         self._maybe_fail("chat_postEphemeral")
