@@ -49,7 +49,7 @@ def resolve_tokens(config: BotConfig, environ: Mapping[str, str]) -> tuple[str, 
 
 
 def run(config: BotConfig, environ: Mapping[str, str] | None = None) -> None:
-    """Connect to Slack and answer mentions until the process is stopped."""
+    """Connect to Slack and answer mentions and reactions until stopped."""
     from slack_bolt import App
     from slack_bolt.adapter.socket_mode import SocketModeHandler
 
@@ -83,6 +83,10 @@ def run(config: BotConfig, environ: Mapping[str, str] | None = None) -> None:
     def on_app_mention(event: dict[str, Any]) -> None:
         pool.submit(_guarded, handler, event)
 
+    @app.event("reaction_added")
+    def on_reaction_added(event: dict[str, Any]) -> None:
+        pool.submit(_guarded_reaction, handler, event)
+
     log.info(
         "listening as the owner's personal instance (owner %s, %s)",
         config.slack.owner_user_id,
@@ -99,3 +103,11 @@ def _guarded(handler: Handler, event: dict[str, Any]) -> None:
         handler.handle_mention(event)
     except Exception:  # noqa: BLE001 - a worker that dies takes the bot with it
         log.exception("unhandled error while answering a mention")
+
+
+def _guarded_reaction(handler: Handler, event: dict[str, Any]) -> None:
+    """Never let one bad event kill the worker thread."""
+    try:
+        handler.handle_reaction(event)
+    except Exception:  # noqa: BLE001 - a worker that dies takes the bot with it
+        log.exception("unhandled error while answering a reaction")

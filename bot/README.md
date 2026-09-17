@@ -22,6 +22,19 @@ the thread it was typed in:
 The answer still lands in the thread the command was typed in, so a verdict
 on an external page is visible where somebody asked for it.
 
+**A third way in: react instead of typing.** Set `slack.reaction_trigger` to a
+custom emoji's name and adding that reaction to any message runs `summary`
+and `judgement` together and posts one combined reply in that message's
+thread -- no @-mention, no command word. A reaction on a thread reply is
+resolved to the thread's parent, the same as a reply someone typed a command
+into. The existing allowlist still decides who may trigger it, and a
+reaction from anybody else does nothing at all -- there is no ephemeral
+reply on this path, because nobody addressed the bot. The bot's own
+`ack_reaction` doubles as the record that a message has already been
+answered: removing and re-adding the trigger, or a second person adding it,
+does nothing once that reaction is there. This is off by default; the emoji
+it reacts to has to be created in your workspace first (see below).
+
 Two things happen on its own to the thread a command with no argument reads.
 **A forwarded message is followed to its original.** Sharing a message into
 another channel leaves its text in an attachment rather than in the message,
@@ -92,18 +105,27 @@ oauth_config:
       - im:read             # the same, for one-to-one DMs
       - users:read          # turn user IDs into names in the transcript
       - reactions:write     # optional: the acknowledging reaction
+      - reactions:read      # optional: trigger by reacting, see below
 settings:
   event_subscriptions:
     bot_events:
       - app_mention
+      - reaction_added
   socket_mode_enabled: true
 ```
 
 **Socket Mode rather than the Events API**, because a personal instance runs
 on a laptop or a home server with no public URL and no certificate.
-`reactions:write` is the one optional scope: without it the bot still
-answers, it just cannot mark the mention as seen. Set `ack_reaction: null`
-in the config to skip it deliberately.
+`reactions:write` is optional: without it the bot still answers, it just
+cannot mark the mention as seen. Set `ack_reaction: null` in the config to
+skip it deliberately. `reactions:read` and the `reaction_added` subscription
+are needed only for `slack.reaction_trigger`; leave both out if you never set
+it. Adding a scope or an event subscription to an installed app takes effect
+only after you reinstall it under **Install App**.
+
+Reacting with a custom emoji needs the emoji itself to exist first: an
+**Emoji** admin under your workspace's settings, uploaded once by a workspace
+admin -- this bot cannot create it.
 
 **A DM is its own scope.** `channels:history` and `groups:history` cover
 public and private channels only. Without `mpim:history` and `im:history`
@@ -239,7 +261,8 @@ key is `slack.owner_user_id`.
 | `slack.bot_token_env` / `slack.app_token_env` | `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` | Where the tokens are read from. |
 | `slack.bot_token_file` / `slack.app_token_file` | unset | A file holding the token instead, for people who would rather not export one. |
 | `slack.bot_token` / `slack.app_token` | unset | The token written into the config file itself. Accepted, and the last choice -- see below. |
-| `slack.ack_reaction` | `eyes` | The emoji added to the mention while the answer is written. `null` turns it off. |
+| `slack.ack_reaction` | `eyes` | The emoji added to the mention while the answer is written. Also doubles as the re-fire guard on the reaction-trigger path. `null` turns it off. |
+| `slack.reaction_trigger` | unset | An emoji name (no colons) that runs `summary` + `judgement` on the reacted message's thread when added by an allowed person. Unset means the reaction path is off. |
 | `slack.unauthorized_message` | a line saying it is a personal instance | What someone not on the allowlist is told, privately. `{owner}` becomes a mention of `owner_user_id`. `null` says nothing at all. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
 | `claude.model` | `claude-sonnet-5` | The model the headless session runs on. An empty value follows your account's default. |

@@ -81,6 +81,9 @@ class SlackConfig:
     # mention of `owner_user_id` by the posting layer -- after the mrkdwn
     # conversion, which would otherwise escape the angle brackets.
     unauthorized_message: str | None = DEFAULT_UNAUTHORIZED_MESSAGE
+    # `None` means the reaction path is off. The emoji name, without colons
+    # -- Slack's `reaction_added` event never sends them either way.
+    reaction_trigger: str | None = None
 
     def allows_user(self, user_id: str) -> bool:
         """Owner-only unless the config widens it.
@@ -198,6 +201,13 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
             "nothing at all"
         )
 
+    reaction_trigger = slack_raw.get("reaction_trigger")
+    if reaction_trigger is not None and not isinstance(reaction_trigger, str):
+        raise ConfigError("slack.reaction_trigger: expected an emoji name, or null")
+    reaction_trigger = reaction_trigger.strip().strip(":") if reaction_trigger else None
+    if slack_raw.get("reaction_trigger") and not reaction_trigger:
+        raise ConfigError("slack.reaction_trigger: expected an emoji name, or null")
+
     slack = SlackConfig(
         owner_user_id=owner,
         allowed_users=_as_str_tuple(slack_raw.get("allowed_users"), "slack.allowed_users"),
@@ -212,6 +222,7 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
         app_token=slack_raw.get("app_token"),
         ack_reaction=ack_reaction or None,
         unauthorized_message=unauthorized.strip() if unauthorized else None,
+        reaction_trigger=reaction_trigger,
     )
 
     claude_raw = _section(data, "claude")

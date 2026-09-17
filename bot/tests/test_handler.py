@@ -3,7 +3,7 @@ import unittest
 from daikenja_bot.commands import USAGE
 from daikenja_bot.config import parse_config
 from daikenja_bot.confluence import ConfluenceError
-from daikenja_bot.handler import UNKNOWN_LINK, Handler, MentionEvent
+from daikenja_bot.handler import UNKNOWN_LINK, Handler, MentionEvent, ReactionEvent
 from daikenja_bot.runner import RunnerError
 from daikenja_bot.slack_io import SlackIO
 from daikenja_bot.subject import PAGE, Subject
@@ -458,6 +458,146 @@ def _raise(exc: Exception):
         raise exc
 
     return fetch
+
+
+def reaction(name: str = "daikenja", user: str = "U0RIMURU", ts: str = "1758067200.000100") -> dict:
+    return {"user": user, "reaction": name, "item": {"type": "message", "channel": "C0HARBOR", "ts": ts}}
+
+
+class ReactionEventTests(unittest.TestCase):
+    def test_the_event_is_read_out(self):
+        event = ReactionEvent.from_event(reaction())
+        self.assertEqual(event.user_id, "U0RIMURU")
+        self.assertEqual(event.channel_id, "C0HARBOR")
+        self.assertEqual(event.message_ts, "1758067200.000100")
+        self.assertEqual(event.reaction, "daikenja")
+
+
+class CombinedRecorder:
+    """Stands in for `run_command`, answering `summary` and `judgement` differently."""
+
+    def __init__(self, answers: dict | None = None, error_on: str | None = None):
+        self.answers = answers or {
+            "summary": "Thread: four messages",
+            "judgement": "Verdict: fine",
+        }
+        self.error_on = error_on
+        self.calls: list[tuple] = []
+
+    def __call__(self, config, command_name, subject, *, environ):
+        self.calls.append((command_name, subject))
+        if command_name == self.error_on:
+            raise RunnerError("the session timed out")
+        return self.answers[command_name]
+
+
+class ReactionTriggerTests(unittest.TestCase):
+    PARENT = THREAD[0]
+    REPLY = THREAD[2]
+
+    def _client(self, history=None, **kwargs):
+        return FakeSlackClient(replies=THREAD, users=USERS, history=history, **kwargs)
+
+    def _handler(self, client, run=None, config=None, unavailable=None):
+        run = run or CombinedRecorder()
+        handler = Handler(
+            config or make_config(reaction_trigger="daikenja"),
+            SlackIO(client),
+            environ={"PATH": "/bin"},
+            run=run,
+            fetch_confluence=lambda *a, **k: None,
+            unavailable=unavailable,
+        )
+        return handler, run
+
+    def test_a_non_trigger_emoji_does_nothing(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction(name="thumbsup"))
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
+        self.assertEqual(client.history_calls, [])
+
+    def test_no_trigger_configured_does_nothing(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client, config=make_config())
+        handler.handle_reaction(reaction())
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
+
+    def test_a_stranger_gets_nothing_and_no_session(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction(user="U0GOBTA"))
+        self.assertEqual(client.posted, [])
+        self.assertEqual(client.ephemeral, [])
+        self.assertEqual(run.calls, [])
+
+    def test_the_owner_gets_one_combined_post(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        self.assertEqual(len(client.posted), 1)
+        self.assertEqual([c[0] for c in run.calls], ["summary", "judgement"])
+        self.assertIn("Thread: four messages", client.posted[0]["text"])
+        self.assertIn("Verdict: fine", client.posted[0]["text"])
+
+    def test_the_post_lands_in_the_reacted_threads_thread(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        self.assertEqual(client.posted[0]["channel"], "C0HARBOR")
+        self.assertEqual(client.posted[0]["thread_ts"], "1758067200.000100")
+
+    def test_a_reaction_on_a_reply_resolves_to_the_parent_thread(self):
+        client = self._client(history=self.REPLY)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction(ts="1758067800.000300"))
+        self.assertEqual(client.replies_calls[0]["ts"], "1758067200.000100")
+        self.assertEqual(client.posted[0]["thread_ts"], "1758067200.000100")
+
+    def test_the_bot_marks_the_message_it_answered(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        self.assertEqual(client.reactions[0]["name"], "eyes")
+        self.assertEqual(client.reactions[0]["timestamp"], "1758067200.000100")
+
+    def test_an_already_answered_message_is_skipped(self):
+        answered = {**self.PARENT, "reactions": [{"name": "eyes", "users": ["U0BOT"]}]}
+        client = self._client(history=answered)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
+
+    def test_someone_elses_eyes_reaction_does_not_count_as_answered(self):
+        answered = {**self.PARENT, "reactions": [{"name": "eyes", "users": ["U0RIMURU"]}]}
+        client = self._client(history=answered)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        self.assertEqual(len(client.posted), 1)
+
+    def test_no_message_found_does_nothing(self):
+        client = self._client(history=None)
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
+
+    def test_a_failed_command_posts_nothing(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client, run=CombinedRecorder(error_on="judgement"))
+        with self.assertLogs("daikenja_bot.handler", level="WARNING"):
+            handler.handle_reaction(reaction())
+        self.assertEqual(client.posted, [])
+
+    def test_a_disabled_command_posts_nothing(self):
+        client = self._client(history=self.PARENT)
+        handler, run = self._handler(client, unavailable={"judgement": "nope"})
+        handler.handle_reaction(reaction())
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
 
 
 if __name__ == "__main__":
