@@ -13,7 +13,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .commands import HELP, USAGE, Command, parse_command
+from .commands import DELETE, HELP, USAGE, Command, parse_command
 from .config import BotConfig, ConfigError, resolve_secret
 from .confluence import ConfluenceError, ConfluenceNotConfigured, fetch_page
 from .links import forwarded_permalink, looks_like_confluence, parse_slack_permalink
@@ -108,6 +108,12 @@ class Handler:
                 self._reply(mention, f"I do not know `{command.unknown_word}`. {USAGE}")
             else:
                 self._reply(mention, USAGE)
+            return
+
+        if command.name == DELETE:
+            # Answered out of Slack alone: no subject, no skill, no session,
+            # and no acknowledging reaction -- there is nothing to wait for.
+            self._delete_last_answer(mention)
             return
 
         unavailable = self._unavailable.get(command.name)
@@ -239,7 +245,68 @@ class Handler:
         )
         return self._fetch_confluence(confluence, url, token)
 
+    # -- deleting ------------------------------------------------------
+
+    def _delete_last_answer(self, mention: MentionEvent) -> None:
+        """Take down the most recent message this bot posted in the thread.
+
+        Every outcome is reported back to the person who asked and to nobody
+        else. A confirmation posted into the thread would replace the message
+        just removed with another one, which is the opposite of what was
+        asked for.
+        """
+        own = self._slack.bot_user_id()
+        if not own:
+            self._tell_only(
+                mention,
+                "I could not work out which messages are mine, so I have "
+                "deleted nothing.",
+            )
+            return
+
+        try:
+            messages = self._slack.fetch_thread(mention.channel_id, mention.thread_ts)
+        except SlackError as exc:
+            self._tell_only(mention, f"I could not read this thread: {exc}")
+            return
+
+        mine = [
+            m
+            for m in messages
+            if str(m.get("user") or "") == own and m.get("ts")
+        ]
+        if not mine:
+            self._tell_only(mention, "I have not posted anything in this thread.")
+            return
+
+        timestamp = str(mine[-1]["ts"])
+        try:
+            self._slack.delete(mention.channel_id, timestamp)
+        except SlackError as exc:
+            log.warning("could not delete %s in %s: %s", timestamp, mention.channel_id, exc)
+            self._tell_only(mention, f"I could not delete that: {exc}")
+            return
+
+        remaining = len(mine) - 1
+        text = "Deleted my last post here."
+        if remaining:
+            text += (
+                f" {remaining} earlier "
+                f"{'post of mine is' if remaining == 1 else 'posts of mine are'} "
+                "still in this thread -- say `delete` again for the next one."
+            )
+        self._tell_only(mention, text)
+
     # -- posting -------------------------------------------------------
+
+    def _tell_only(self, mention: MentionEvent, text: str) -> None:
+        """Say something to the person who asked, and leave nothing behind."""
+        self._slack.post_ephemeral(
+            mention.channel_id,
+            mention.user_id,
+            to_mrkdwn(text),
+            thread_ts=_ephemeral_thread_ts(mention),
+        )
 
     def _decline(self, mention: MentionEvent) -> None:
         """Tell a stranger why nothing happened -- and tell only them.
@@ -266,13 +333,11 @@ class Handler:
         body = to_mrkdwn(text).replace(
             OWNER_PLACEHOLDER, f"<@{slack.owner_user_id}>"
         )
-        # Slack renders a threaded ephemeral message only when the thread
-        # already exists. A mention that was itself a top-level message has
-        # no replies yet, so that one goes to the channel view instead --
-        # still visible to one person only.
-        in_thread = mention.thread_ts if mention.thread_ts != mention.message_ts else None
         self._slack.post_ephemeral(
-            mention.channel_id, mention.user_id, body, thread_ts=in_thread
+            mention.channel_id,
+            mention.user_id,
+            body,
+            thread_ts=_ephemeral_thread_ts(mention),
         )
 
     def _acknowledge(self, mention: MentionEvent) -> None:
@@ -297,3 +362,14 @@ class Handler:
             # Nothing left to say in the thread, so the log is the only
             # place this can surface.
             log.error("could not post into %s: %s", mention.channel_id, exc)
+
+
+def _ephemeral_thread_ts(mention: MentionEvent) -> str | None:
+    """Where an ephemeral message for this mention should go.
+
+    Slack renders a threaded ephemeral message only when the thread already
+    exists. A mention that was itself a top-level message has no replies yet,
+    so that one goes to the channel view instead -- still visible to one
+    person only.
+    """
+    return mention.thread_ts if mention.thread_ts != mention.message_ts else None
