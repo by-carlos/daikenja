@@ -136,6 +136,13 @@ class ReactionTests(unittest.TestCase):
         client = FakeSlackClient(fail={"reactions_add": "missing_scope"})
         self.assertFalse(SlackIO(client).add_reaction("C0HARBOR", "1", "eyes"))
 
+    def test_a_failure_is_logged_as_a_warning(self):
+        # Not info: for the reaction trigger this failure disables the
+        # re-fire guard, which is a real functional consequence.
+        client = FakeSlackClient(fail={"reactions_add": "message_not_found"})
+        with self.assertLogs("daikenja_bot.slack_io", level="WARNING"):
+            SlackIO(client).add_reaction("C0HARBOR", "1", "eyes")
+
 
 class FetchMessageTests(unittest.TestCase):
     def test_a_top_level_channel_message_is_returned(self):
