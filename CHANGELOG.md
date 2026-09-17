@@ -288,6 +288,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   replies came from. This bot's own messages are now dropped from the
   transcript. Another app's messages are somebody's actual content and stay.
 
+- **A failed acknowledgement no longer leaves the reaction trigger's re-fire
+  guard blind.** The guard treats the bot's own `:eyes:` reaction on a
+  message as proof it already answered, but that write is best-effort and
+  can fail -- observed with `reactions.add` returning `message_not_found`,
+  most likely because the reacted-to message was deleted while the two
+  headless sessions the trigger runs were still working, tens of seconds
+  after it was fetched. While the write kept failing, the guard never
+  engaged, so the same trigger answered the same message twice, each answer
+  costing a full model run. The failure is now logged as a warning instead
+  of info, and the bot now also keeps its own in-memory record of messages
+  it has answered by reaction this run, so the guard still holds when the
+  Slack-side write fails for any reason.
+
 ## [0.9.1] - 2026-09-10
 
 ### Fixed
