@@ -111,6 +111,56 @@ The bot answers one command at a time. A headless session takes tens of
 seconds, so the reaction goes on immediately and the answer arrives when it
 is written.
 
+## Run it without a window
+
+Started by hand, it holds a console for as long as it runs. Two things have
+to change before it can run unattended, and both are easy to miss:
+
+- **`--log-file`.** A windowless process has nowhere to write, so without it
+  a bot that fails to start leaves no evidence at all. It rotates at 1 MB and
+  keeps three files.
+- **The tokens.** A service or a scheduled task does not inherit the
+  environment of the shell you exported them in. Either set them as
+  *persistent* user environment variables, or point `bot_token_file` and
+  `app_token_file` at files -- the file route is the better one here, because
+  a file can be locked down and read only at startup.
+
+### Windows: a scheduled task at logon
+
+Use `pythonw.exe` rather than `python.exe`: same interpreter, no console
+window. `-WorkingDirectory` is what puts `daikenja_bot` on the import path,
+so no `PYTHONPATH` is needed.
+
+```powershell
+Register-ScheduledTask -TaskName "Daikenja bot" -Description "Daikenja's personal Slack bot" -Action (New-ScheduledTaskAction -Execute "C:/Python313/pythonw.exe" -Argument "-m daikenja_bot --log-file C:/Users/you/.claude/daikenja/bot.log" -WorkingDirectory "C:/GitHub/daikenja/bot") -Trigger (New-ScheduledTaskTrigger -AtLogOn) -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1))
+```
+
+`-ExecutionTimeLimit ([TimeSpan]::Zero)` matters: the default stops the task
+after three days. Afterwards, `Start-ScheduledTask -TaskName "Daikenja bot"`,
+`Stop-ScheduledTask` and `Unregister-ScheduledTask` are the controls, and
+`Get-ScheduledTaskInfo -TaskName "Daikenja bot"` says whether it is running.
+
+### Linux or macOS: a systemd user unit
+
+```ini
+# ~/.config/systemd/user/daikenja-bot.service
+[Service]
+WorkingDirectory=%h/daikenja/bot
+ExecStart=/usr/bin/python3 -m daikenja_bot
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+`systemctl --user enable --now daikenja-bot`, and `journalctl --user -u
+daikenja-bot -f` for the log -- no `--log-file` needed, since journald
+captures the console. `loginctl enable-linger $USER` keeps it running when
+you are not logged in.
+
+**The config is read once, at startup.** Editing `bot.yaml` changes nothing
+until the process is restarted.
+
 ## What it needs from the plugin
 
 `summary` needs the `thread` skill and `verdict` needs the `verdict` skill,
@@ -168,6 +218,7 @@ key is `slack.owner_user_id`.
 | `slack.bot_token_file` / `slack.app_token_file` | unset | A file holding the token instead, for people who would rather not export one. |
 | `slack.bot_token` / `slack.app_token` | unset | The token written into the config file itself. Accepted, and the last choice -- see below. |
 | `slack.ack_reaction` | `eyes` | The emoji added to the mention while the answer is written. `null` turns it off. |
+| `slack.unauthorized_message` | a line saying it is a personal instance | What someone not on the allowlist is told, privately. `{owner}` becomes a mention of `owner_user_id`. `null` says nothing at all. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
 | `claude.model` | unset | Pin the model the headless session uses. |
 | `claude.plugin_dir` | unset | Only for running against a working tree of this repository. An installed plugin needs nothing here. |
@@ -187,9 +238,26 @@ straight into `bot.yaml` as `slack.bot_token`, `slack.app_token` or
 `.gitignore`d here, but it is still a plaintext secret in a config
 directory, and every backup of that directory now carries it.
 
-**A mention from anyone not on the allowlist is ignored in silence**, with a
-line in the log. A refusal posted back into the thread would turn any
-passer-by into a way to fill it.
+**A mention from anyone not on the allowlist gets an ephemeral reply**, and a
+line in the log. Only the person who mentioned the bot sees it: nobody is
+notified, and nothing is left behind in the channel. That is the whole reason
+it can answer at all -- a refusal posted into the thread as a normal message
+would turn any passer-by into a way to fill it, which is why
+`unauthorized_message: null` is there for anyone who would rather the bot
+stayed completely silent.
+
+Set it to whatever fits. `{owner}` is replaced with a mention of
+`owner_user_id`, which renders as a name and notifies nobody, because an
+ephemeral message never does:
+
+```yaml
+unauthorized_message: >-
+  Sorry, this bot is in beta and runs on {owner}'s own account.
+```
+
+Someone who *is* allowed but is in a channel `allowed_channels` excludes gets
+a different line saying so, since telling them they are not on the allowlist
+would not be true.
 
 **`claude.working_dir` defaults to your home directory on purpose.** A bot
 has no project of its own. `verdict` resolves a project by a key you named,

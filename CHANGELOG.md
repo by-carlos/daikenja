@@ -19,7 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instead, answering in the thread it was asked from. It is a personal
   instance: it runs on one person's machine, reads that person's ledgers,
   posts as its own Slack app rather than as the user, and is owner-only
-  until its config widens it. The model and the posting layer are separate
+  until its config widens it. Someone who is not on that allowlist gets an
+  ephemeral reply saying so -- visible to them alone, notifying nobody and
+  leaving nothing in the channel, so a refusal can never be used to fill a
+  public thread; `slack.unauthorized_message` sets the wording, or `null`
+  restores complete silence. The model and the posting layer are separate
   by construction -- the headless `claude -p` session is handed no Slack
   client, has the credentials stripped out of the environment it inherits,
   and runs with a read-only tool allowlist, while a layer it cannot reach
@@ -33,7 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   skill improvise an answer into a public thread. The deliverable is lifted
   out of the session's output by the block shape each skill fixes, so a
   personal conversational register or a skill's own closing question never
-  reaches Slack. `bot/README.md` carries the Slack app manifest, the scopes,
+  reaches Slack. It can run without a console -- `--log-file` writes a
+  rotating log for a Windows scheduled task or a systemd user unit, both
+  documented. `bot/README.md` carries the Slack app manifest, the scopes,
   the configuration table and the tests; `bot/requirements.txt` introduces
   this repository's first runtime dependency, `slack-bolt`.
 - **A third file-location category.** `CLAUDE.md`, `AGENTS.md`,
