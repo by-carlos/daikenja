@@ -43,8 +43,9 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
   unless an issue explicitly scopes a format change.
 - **Test fixtures must stay synthetic.** `tests/fixtures/` uses invented
   projects, invented people, and `example.com` links. **Never** put real work
-  content, personal data, or organization data there. There is no test runner —
-  fixtures are exercised by hand through the skills.
+  content, personal data, or organization data there. There is no test runner
+  for the skills — those fixtures are exercised by hand through them. `bot/`
+  is the exception and has a real unit-test suite, run in CI.
 - **Voice is contractual.** Anything Daikenja drafts or rewrites follows
   `docs/voice.md`, and `docs/config-resolution.md` § Voice and writing style
   fixes how a user's own `writing-style.md` layers on top. Read both before

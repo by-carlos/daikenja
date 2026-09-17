@@ -101,12 +101,18 @@ maintainer's Code Owner approval.
 - **gitleaks** scans the full history for secrets, with historical findings
   baselined in `.gitleaks-baseline.json`.
 - **invariant checks** run `tests/check-invariants.py`.
+- **bot** runs the `bot/` unit tests on Python 3.10 and 3.x, then imports the
+  Slack transport once to catch the dependency range going stale.
 
-Run the invariant checks locally before pushing:
+Run both locally before pushing:
 
 ```bash
 python tests/check-invariants.py
+cd bot && python -m unittest discover -s tests -t .
 ```
+
+The bot suite needs no Slack workspace, no network and no Claude Code CLI --
+the Slack client and the headless session are both injected.
 
 There is no test runner for the skills themselves. The fixtures under
 `tests/fixtures/` are exercised by hand through the skills.

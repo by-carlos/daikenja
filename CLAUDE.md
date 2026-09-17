@@ -156,7 +156,8 @@ without reading it.
     a runtime dependency.
   - **`.claude/` is for people working on this repo** and ships nothing.
 - **Test fixtures.** `tests/fixtures/` holds synthetic inputs that a stage's
-  acceptance checks are re-run against. There is no test runner: the fixtures
-  are exercised by hand through the skills. Every fixture must stay synthetic,
+  acceptance checks are re-run against. There is no test runner for the
+  skills: those fixtures are exercised by hand through the skills. (`bot/`
+  is the exception and has a real unit-test suite, run in CI.) Every fixture must stay synthetic,
   with invented projects, invented people and `example.com` links. Never put
   real work content, personal data or organization data there.
