@@ -39,7 +39,8 @@ content.
 
 Keep this to about 5 lines. The block below follows
 `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- read it before writing the
-reply; the summary is the answer and nothing precedes it.
+reply; the summary is the answer and nothing precedes it. § The second person
+belongs to conversation decides whether `Waiting on` carries a name or `you`.
 
 ```
 Thread: [channel or subject, and how many messages]

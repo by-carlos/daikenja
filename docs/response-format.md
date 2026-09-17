@@ -6,6 +6,7 @@ headings by tests/check-invariants.py):
 - § Entries are named topic-first, ID in parentheses -- preflight "Step 3: cycle 0 -- the substance checks", project-catchup "Step 4: report the delta", project-decisions "Step 6: show the result", project-gaps "Step 4: report", project-summary "Step 3: build the overview", project-sources "Step 4: report"
 - § A clean result is one line -- project-sources "Step 0: read the contracts", judgement "Step 5: report"
 - § A user-side conversational layer -- judgement "The discipline is this skill's own"
+- § The second person belongs to conversation -- judgement "Step 5: report", thread "Step 2: summarize it", preflight "Step 3: cycle 0 -- the substance checks"
 
 How a skill reports to the user in the conversation. `ledger-format.md` fixes
 what the record file looks like, `voice.md` fixes how a drafted message reads,
@@ -81,6 +82,23 @@ come after the answer, not before it.
 
 This holds in every tone mode. Tone scales what follows the answer; it never
 moves the answer off the top of the reply.
+
+## The second person belongs to conversation
+
+A reply the user reads in their own session addresses them as `you`. Anything
+the skill hands back **to leave that session** -- a message to post, a document
+to share, a block to paste elsewhere -- names people instead.
+
+The second person has exactly one referent in a conversation and none in a
+channel. `Waiting on you: everything` is precise in a reply and ambiguous to
+every reader of the thread it was written for; so is naming a participant list
+as "Daisy Ding and you".
+
+This is a rule about the surface, not about the content. The same block, written
+for the conversation and written to be posted, differs only in this: the reply
+says `you`, the deliverable says the person's name. A skill that cannot resolve
+a name says what the person did instead -- "the person who raised it" -- and
+never falls back to `you`.
 
 ## Findings are itemised, never narrated
 

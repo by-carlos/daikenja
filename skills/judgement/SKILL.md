@@ -43,6 +43,10 @@ Read these before the first output:
   conversational reply and follows it whole: answer first, findings
   itemised, entries topic-first with the ID in parentheses, clean result in
   one line.
+  - § The second person belongs to conversation governs the difference
+    between the two forms: the `answer` form addresses the user as `you`,
+    and the `message` form -- built to leave the session -- names people
+    instead.
 - `${CLAUDE_PLUGIN_ROOT}/docs/project-card.md` § Resolving a project by
   content and § Reading a card -- how a subject with no key and no directory
   finds its project, and what a card says.
