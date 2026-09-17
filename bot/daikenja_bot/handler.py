@@ -67,12 +67,15 @@ class Handler:
         environ: Mapping[str, str],
         run: Any = run_command,
         fetch_confluence: Any = fetch_page,
+        unavailable: Mapping[str, str] | None = None,
     ) -> None:
         self._config = config
         self._slack = slack
         self._environ = environ
         self._run = run
         self._fetch_confluence = fetch_confluence
+        # Command name -> why it cannot run, from the startup skill check.
+        self._unavailable = dict(unavailable or {})
 
     # -- entry point ---------------------------------------------------
 
@@ -99,6 +102,13 @@ class Handler:
                 self._reply(mention, f"I do not know `{command.unknown_word}`. {USAGE}")
             else:
                 self._reply(mention, USAGE)
+            return
+
+        unavailable = self._unavailable.get(command.name)
+        if unavailable:
+            # Said before any work, and before the reaction: there is
+            # nothing to wait for and nothing that will make it work.
+            self._reply(mention, unavailable)
             return
 
         self._acknowledge(mention)

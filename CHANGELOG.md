@@ -26,9 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   owns the token and calls `chat.postMessage`. Socket Mode means no public
   URL is needed. Confluence support is optional and off until credentials
   are configured, at which point it uses the standard library rather than a
-  second HTTP client. `bot/README.md` carries the Slack app manifest, the
-  scopes, the configuration table and the tests; `bot/requirements.txt`
-  introduces this repository's first runtime dependency, `slack-bolt`.
+  second HTTP client. Before answering anything the bot checks that the
+  skills it depends on are actually installed, reading `claude plugin
+  details` or the configured working tree, and switches off any command
+  whose skill is missing rather than letting a session that cannot find the
+  skill improvise an answer into a public thread. The deliverable is lifted
+  out of the session's output by the block shape each skill fixes, so a
+  personal conversational register or a skill's own closing question never
+  reaches Slack. `bot/README.md` carries the Slack app manifest, the scopes,
+  the configuration table and the tests; `bot/requirements.txt` introduces
+  this repository's first runtime dependency, `slack-bolt`.
 - **A third file-location category.** `CLAUDE.md`, `AGENTS.md`,
   `CONTRIBUTING.md` and the README now say that `skills/` ships to users and
   Claude Code loads it, `bot/` ships to users and Claude Code never loads

@@ -222,6 +222,51 @@ class ConfluenceTests(unittest.TestCase):
         self.assertIn("does not exist", client.posted[0]["text"])
 
 
+class UnavailableCommandTests(unittest.TestCase):
+    def test_a_disabled_command_says_so_and_runs_nothing(self):
+        client = FakeSlackClient(replies=THREAD, users=USERS)
+        run = Recorder()
+        handler = Handler(
+            make_config(),
+            SlackIO(client),
+            environ={},
+            run=run,
+            fetch_confluence=lambda *a, **k: None,
+            unavailable={"verdict": "I cannot run `verdict`: the skill is missing."},
+        )
+        handler.handle_mention(mention("<@U0BOT> verdict"))
+        self.assertIn("cannot run", client.posted[0]["text"])
+        self.assertEqual(run.calls, [])
+        self.assertEqual(client.replies_calls, [])
+
+    def test_no_reaction_is_added_for_a_disabled_command(self):
+        client = FakeSlackClient(replies=THREAD, users=USERS)
+        handler = Handler(
+            make_config(),
+            SlackIO(client),
+            environ={},
+            run=Recorder(),
+            fetch_confluence=lambda *a, **k: None,
+            unavailable={"verdict": "nope"},
+        )
+        handler.handle_mention(mention("<@U0BOT> verdict"))
+        self.assertEqual(client.reactions, [])
+
+    def test_the_other_command_still_works(self):
+        client = FakeSlackClient(replies=THREAD, users=USERS)
+        run = Recorder()
+        handler = Handler(
+            make_config(),
+            SlackIO(client),
+            environ={},
+            run=run,
+            fetch_confluence=lambda *a, **k: None,
+            unavailable={"verdict": "nope"},
+        )
+        handler.handle_mention(mention("<@U0BOT> summary"))
+        self.assertEqual(run.calls[0][0], "summary")
+
+
 class UnknownLinkTests(unittest.TestCase):
     def test_an_unrecognised_link_gets_one_line(self):
         handler, client, run = build()

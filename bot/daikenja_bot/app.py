@@ -17,6 +17,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Mapping
 
+from . import preflight
 from .config import BotConfig, resolve_secret
 from .handler import Handler
 from .slack_io import connect
@@ -56,10 +57,24 @@ def run(config: BotConfig, environ: Mapping[str, str] | None = None) -> None:
     bot_token, app_token = resolve_tokens(config, environ)
 
     slack = connect(bot_token)
+
+    report = preflight.check(config, environ=dict(environ))
+    unavailable = report.missing()
+    if not report.determined:
+        log.warning(
+            "could not determine which skills %s has; both commands stay "
+            "enabled and a missing skill will surface as a failed answer",
+            report.source,
+        )
+    for command in sorted(unavailable):
+        log.warning("`%s` is disabled: its skill is not in %s", command, report.source)
+
     # The model layer reads the environment it is given, and `runner`
     # strips the credentials out of it. Pass the real one; it is scrubbed
     # at the point of use, where the config says which names to remove.
-    handler = Handler(config, slack, environ=dict(environ))
+    handler = Handler(
+        config, slack, environ=dict(environ), unavailable=unavailable
+    )
 
     app = App(token=bot_token)
     pool = ThreadPoolExecutor(max_workers=MAX_CONCURRENT_RUNS, thread_name_prefix="daikenja")

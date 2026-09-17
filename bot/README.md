@@ -103,12 +103,54 @@ cd bot && python -m daikenja_bot --check              # validate, then:
 cd bot && python -m daikenja_bot
 ```
 
-`--check` reads the config and the credentials and prints what it found
-without connecting to Slack. Run it after every edit to `bot.yaml`.
+`--check` reads the config and the credentials, works out which commands can
+run, and prints what it found without connecting to Slack or spending a
+token. Run it after every edit to `bot.yaml`.
 
 The bot answers one command at a time. A headless session takes tens of
 seconds, so the reaction goes on immediately and the answer arrives when it
 is written.
+
+## What it needs from the plugin
+
+`summary` needs the `thread` skill and `verdict` needs the `verdict` skill,
+both from a Daikenja install the headless session can see. The bot checks
+this at startup rather than finding out mid-answer:
+
+- With `claude.plugin_dir` set, it reads `skills/` in that tree.
+- Otherwise it reads `claude plugin details daikenja`.
+
+A command whose skill is missing is switched off, and asking for it gets one
+line in the thread saying which skill is absent and where it looked.
+`--check` prints the same thing:
+
+```
+  summary:    ready
+  verdict:    unavailable
+```
+
+**This matters today**: `verdict` shipped after 0.9.1, so an installed
+plugin at that version runs `summary` and refuses `verdict` until the next
+release. Point `claude.plugin_dir` at a working tree in the meantime.
+
+The check is not a nicety. A session asked for a skill it does not have will
+answer anyway, in its own voice, from no source -- and without this the bot
+would post that into a public thread as the verdict.
+
+## How the answer is lifted out
+
+The session is asked to mark its deliverable between two sentinel lines, and
+usually does. When it does not, the deliverable is found by its own shape:
+the `Thread:` / `Asking:` / `Open:` block for `summary`, and the
+`AI review summary` header and its bullets for `verdict`. Both shapes are
+fixed by the skills, so this is reading a contract rather than guessing.
+
+That matters because the headless session is not a private one. It reads the
+user's own `CLAUDE.md` like any other session, so a personal conversational
+register -- labelled response parts, emoji markers, an announcement of which
+skill is running -- applies, and `thread` ends by asking the reader
+questions. None of that belongs in a public thread, and none of it is inside
+the block.
 
 ## Configuration
 
@@ -207,6 +249,7 @@ daikenja_bot/links.py      Slack permalinks and Confluence URLs
 daikenja_bot/slack_io.py   the only file that holds the Slack token
 daikenja_bot/transcript.py a fetched thread, rendered for a reader
 daikenja_bot/prompts.py    the prompt, and reading the answer back out
+daikenja_bot/preflight.py  which skills the headless session will actually find
 daikenja_bot/runner.py     the headless session, with the environment scrubbed
 daikenja_bot/confluence.py optional page fetching, standard library only
 daikenja_bot/mrkdwn.py     markdown to Slack's own dialect

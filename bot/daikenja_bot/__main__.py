@@ -12,8 +12,9 @@ import logging
 import os
 import sys
 
-from . import __version__
+from . import __version__, preflight
 from .app import resolve_tokens, run
+from .commands import KNOWN_COMMANDS
 from .config import DEFAULT_CONFIG_PATH, ConfigError, load_config
 
 
@@ -77,6 +78,17 @@ def main(argv: list[str] | None = None) -> int:
             "  confluence: "
             + (config.confluence.base_url if config.confluence else "not configured")
         )
+
+        report = preflight.check(config, environ=dict(os.environ))
+        unavailable = report.missing()
+        if not report.determined:
+            print(f"  commands:   unknown -- could not read {report.source}")
+        else:
+            for command in sorted(KNOWN_COMMANDS):
+                state = "unavailable" if command in unavailable else "ready"
+                print(f"  {command + ':':12}{state}")
+        for command in sorted(unavailable):
+            print(f"\n{unavailable[command]}", file=sys.stderr)
         return 0
 
     try:
