@@ -123,7 +123,7 @@ this skill assumes a working directory or a terminal.
 ## Step 2: triage the subject
 
 Before checking anything, establish what the subject says. For a thread, the
-summary is the same five-line shape `thread` § Step 2: summarize it uses,
+summary is the same six-line shape `thread` § Step 2: summarize it uses,
 and its attribution rules apply unchanged -- name who said what, keep a
 question apart from a proposal and both apart from a decision, and call an
 ambiguous position ambiguous:
@@ -240,21 +240,26 @@ The conversational reply, per `response-format.md`. The summary block from
 Step 2 opens it; the conclusion follows; nothing precedes the block.
 
 ```
-Thread: ...
-Asking: ...
-Open: ...
+🧵 **Thread** -- ...
+❓ **Asking** -- ...
+🔓 **Open** -- ...
+📒 **Ledger** -- ...
 Ledger: <key>, matched by #<channel> (<absolute path>)
 Card: <absolute path>
 
-Verdict: <one or two sentences that answer what the thread asks or judge
-what it claims, each clause labelled>
+⚖️ **Verdict**
+<one or two sentences that answer what the thread asks or judge what it
+claims, each clause labelled>
 
-1. <finding> -- <certain | likely | guessing>. Source: ledger, <topic>
-   (D-nnn) | general knowledge.
+🔍 **Basis**
+1. **<topic>** -- the finding. _certain · ledger, <topic> (D-nnn)_
 2. ...
 
-Suggested: <the action, as a suggestion, or omitted>
-Not checked: <one line>
+💡 **Suggestion**
+- <the action, or omitted>
+
+🚧 **Not checked**
+- <one line>
 ```
 
 The worked example from the design: a thread asks "are we going with X, and
@@ -271,9 +276,9 @@ every question answered by the thread itself -- is one line:
 not hold.` followed by the `Not checked:` line.
 
 **When no project resolved**, the `Ledger:` line is replaced by the one-line
-non-match from Step 3, and the first numbered finding says the ledger check
-did not run. The `Verdict:` sentence itself stays on the answer. Nothing
-else changes.
+non-match from Step 3, and the first item in `Basis` says the ledger check
+did not run. The `⚖️ **Verdict**` sentence itself stays on the answer.
+Nothing else changes.
 
 ### Form `message`
 
@@ -286,37 +291,69 @@ about 150 words, written as an AI pass and never as the user. Exactly this
 shape:
 
 ```
-AI review summary
-Subject: <one line naming the subject -- channel and date, or document title>
-- Ledger: <the finding itself: what the subject says, the decision or open
-  item it contradicts or depends on, topic-first with the ID in parentheses,
-  and its confidence -- first, before any other finding; or "no project
-  resolved, so no ledger was checked">
-- <finding> -- <certain | likely | guessing>. Source: ledger (D-nnn) |
-  general knowledge.
-- <a claim presented as settled but not established, if any>
-- Suggested: <the action, as a suggestion>
-- Not checked: <one line>
+⚖️ **Verdict**
+<one or two sentences that answer what the subject asks or judge what it
+claims, each clause labelled with where it came from>
+
+📒 **Ledger -- <project name>**
+- **<decision or open item, topic-first>** (D-nnn) -- what the subject says,
+  and how it bears on that entry. _<certain | likely | guessing> · ledger_
+
+🔍 **Basis**
+- **<topic>** -- the finding. _<certain | likely | guessing> · general knowledge_
+- **<a claim presented as settled>** -- why it is not established.
+  _<certain | likely | guessing> · not established_
+
+💡 **Suggestion**
+- <the action, as a suggestion>
+
+🚧 **Not checked**
+- <one line>
 ```
 
-The `Ledger:` bullet **is** the ledger finding, complete with its confidence;
-it is not a heading that a second bullet then restates. One ledger finding
-per bullet; a second contradiction or dependency gets its own `Ledger:`
-bullet directly under the first.
+**`📒 Ledger` is absent entirely when no project resolved.** Not a bullet saying
+no ledger was checked -- absent. Why a project could not be resolved belongs in
+the short report around the message, never in the message: a reader who was not
+in the conversation cannot act on it, and it takes the most-read line of the
+deliverable to say that nothing happened. A resolved project is named by its
+human-readable name in the section header, never by a bare key alone. A second
+contradiction or dependency is a second bullet in the same section.
+
+**Every bullet opens with a bold topic and closes with an italic
+`_<confidence> · <source>_`.** Confidence is `certain`, `likely` or `guessing`.
+Source is `ledger`, `general knowledge`, or `not established` for a claim the
+subject presents as settled without establishing it. Bold first and italic last
+is what makes the section skimmable: the reader takes the topics on one pass and
+the confidences on another.
+
+**`Suggestion` and `Not checked` are sections, not findings.** Each is omitted
+only when it would be empty, and `Not checked` is never empty.
+
+**No header line, no `Subject:` line and no date.** The surface carries all
+three -- a Slack app posts under its own name and timestamp, and a pasted block
+carries the context of wherever it was pasted. `⚖️ **Verdict**` opens the
+message.
+
+**No conversational markers and no register labels**, whatever the user has
+installed. The markers above are this form's own structure and are fixed here;
+they are not `tensei`'s, and the two sets never mix. No emoji beyond them, no
+preamble, no closing offer, and never a question -- there is nobody to answer
+one.
+
+A clean subject in this form is two sections: `⚖️ **Verdict**` with its
+sentence, and `🚧 **Not checked**` with its line. Nothing else.
 
 Sources named in it follow the links rule: title first, a link only when the
 subject or the ledger's Sources already carry it, otherwise `(link needed)`.
 
 The message is handed back inside a fenced block so the user can copy it
 whole. **Around it, a short report to the user** -- the `Ledger:` and
-`Card:` lines from Step 3, and anything that needs the user's own judgement: a candidate the user confirmed,
-a mismatch the cross-check found, a finding the user may not want shared, a
-term the reader might not know. That material goes in the report, never in
-the message; the message must stand without the conversation it came from.
-
-A clean subject in this form is still a complete message: the header line,
-the subject line, `- Ledger: nothing contradicted or depended on`, and the
-`Not checked:` line.
+`Card:` lines from Step 3, why a project could not be resolved when that is
+the case, and anything that needs the user's own judgement: a candidate the
+user confirmed, a mismatch the cross-check found, a finding the user may not
+want shared, a term the reader might not know. That material goes in the
+report, never in the message; the message must stand without the conversation
+it came from.
 
 ## Voice in the message form
 

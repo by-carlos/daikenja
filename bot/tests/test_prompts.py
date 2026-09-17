@@ -146,22 +146,6 @@ class ExtractBlockTests(unittest.TestCase):
         "1. What is your position?\n"
     )
 
-    NOISY_JUDGEMENT = (
-        "Using daikenja:judgement to check this thread against the ledger.\n"
-        "\n"
-        "No project can be resolved, so I proceed on general knowledge.\n"
-        "\n"
-        "AI review summary\n"
-        "Subject: Slack thread, 2025-09-17 (3 messages)\n"
-        "- Ledger: no project resolved, so no ledger was checked\n"
-        "- The SQL Server claim is false -- certain, general knowledge.\n"
-        "- Suggested: confirm what was actually agreed.\n"
-        "- Not checked: no ledger existed to check against.\n"
-        "\n"
-        "Report: the SQL Server claim is the headline problem. Want me to "
-        "check whether a ledger exists somewhere I have not been pointed to?\n"
-    )
-
     def test_a_noisy_summary_keeps_only_the_block(self):
         extracted = extract_output(self.NOISY_SUMMARY, SUMMARY)
         self.assertTrue(extracted.startswith("Thread: pasted excerpt"))
@@ -169,13 +153,6 @@ class ExtractBlockTests(unittest.TestCase):
         self.assertNotIn("Using daikenja", extracted)
         self.assertNotIn("WARNING", extracted)
         self.assertNotIn("What is your position", extracted)
-
-    def test_a_noisy_judgement_keeps_only_the_message(self):
-        extracted = extract_output(self.NOISY_JUDGEMENT, JUDGEMENT)
-        self.assertTrue(extracted.startswith("AI review summary"))
-        self.assertTrue(extracted.endswith("- Not checked: no ledger existed to check against."))
-        self.assertNotIn("Using daikenja", extracted)
-        self.assertNotIn("Want me to check", extracted)
 
     EMPHASISED_SUMMARY = (
         "Using daikenja:thread to build the picture before any reply.\n"
@@ -196,22 +173,6 @@ class ExtractBlockTests(unittest.TestCase):
         self.assertTrue(extracted.endswith("**Waiting on you:** unclear yet."))
         self.assertNotIn("Using daikenja", extracted)
         self.assertNotIn("What's your position", extracted)
-
-    def test_an_emphasised_judgement_header_is_still_found(self):
-        text = (
-            "Using daikenja:judgement.\n"
-            "\n"
-            "**AI review summary**\n"
-            "**Subject:** Slack thread, 3 messages\n"
-            "- Ledger: no project resolved, so no ledger was checked\n"
-            "- Not checked: nothing beyond the three messages.\n"
-            "\n"
-            "Report: want me to look for a ledger elsewhere?\n"
-        )
-        extracted = extract_output(text, JUDGEMENT)
-        self.assertTrue(extracted.startswith("**AI review summary**"))
-        self.assertTrue(extracted.endswith("nothing beyond the three messages."))
-        self.assertNotIn("want me to look", extracted)
 
     def test_a_document_summary_opens_on_its_own_label(self):
         text = "preamble\n\nDocument: Cutover plan, a runbook\nClaims: Friday works\nOpen: nothing\n"
@@ -277,6 +238,78 @@ class ExtractBlockTests(unittest.TestCase):
     def test_one_marked_label_alone_is_not_a_block(self):
         text = "\U0001F9F5 **Thread** -- this is prose and no second label follows."
         self.assertEqual(extract_output(text, SUMMARY), text)
+
+    MARKED_JUDGEMENT = (
+        "Using daikenja:judgement to check this thread against the ledger.\n"
+        "\n"
+        "Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md)\n"
+        "\n"
+        "\u2696\uFE0F **Verdict**\n"
+        "Backups and high availability solve different problems; the thread "
+        "treats them as substitutes.\n"
+        "\n"
+        "\U0001F4D2 **Ledger -- harbor**\n"
+        "- **Nightly backup retention** (D-003) -- the thread's proposal drops "
+        "it entirely. _certain \u00B7 ledger_\n"
+        "\n"
+        "\U0001F50D **Basis**\n"
+        "- **High availability is not a backup** -- replicas apply a bad "
+        "DELETE to every copy. _certain \u00B7 general knowledge_\n"
+        "\n"
+        "\U0001F4A1 **Suggestion**\n"
+        "- State the required RPO and RTO, then test a restore.\n"
+        "\n"
+        "\U0001F6A7 **Not checked**\n"
+        "- What \"SOL\" refers to here.\n"
+        "\n"
+        "Report: want me to look for a ledger elsewhere?\n"
+    )
+
+    def test_a_marked_judgement_keeps_every_section(self):
+        extracted = extract_output(self.MARKED_JUDGEMENT, JUDGEMENT)
+        self.assertTrue(extracted.startswith("\U00002696\uFE0F **Verdict**"))
+        self.assertTrue(extracted.endswith('What "SOL" refers to here.'))
+        self.assertIn("\U0001F4D2 **Ledger -- harbor**", extracted)
+        self.assertIn("\U0001F50D **Basis**", extracted)
+        self.assertIn("\U0001F4A1 **Suggestion**", extracted)
+        self.assertNotIn("Using daikenja", extracted)
+        self.assertNotIn("Report: want me to", extracted)
+        self.assertNotIn("C:/GitHub/harbor", extracted)
+
+    def test_a_judgement_without_a_ledger_section_is_still_whole(self):
+        text = (
+            "preamble\n\n"
+            "\u2696\uFE0F **Verdict**\n"
+            "The claim does not hold.\n"
+            "\n"
+            "\U0001F50D **Basis**\n"
+            "- **One engine cannot host another** -- they are separate "
+            "products. _certain \u00B7 general knowledge_\n"
+            "\n"
+            "\U0001F6A7 **Not checked**\n"
+            "- The linked runbook.\n"
+            "\n"
+            "Want me to open the runbook?\n"
+        )
+        extracted = extract_output(text, JUDGEMENT)
+        self.assertTrue(extracted.startswith("\u2696\uFE0F **Verdict**"))
+        self.assertTrue(extracted.endswith("- The linked runbook."))
+        self.assertNotIn("Want me to open", extracted)
+        self.assertNotIn("preamble", extracted)
+
+    def test_a_clean_judgement_is_two_sections(self):
+        text = (
+            "\u2696\uFE0F **Verdict**\n"
+            "Nothing in the thread contradicts the ledger.\n"
+            "\n"
+            "\U0001F6A7 **Not checked**\n"
+            "- The linked runbook.\n"
+        )
+        self.assertEqual(extract_output(text, JUDGEMENT), text.strip())
+
+    def test_a_sentence_mentioning_a_verdict_is_not_a_block(self):
+        text = "The verdict is that nobody agreed and there are no sections."
+        self.assertEqual(extract_output(text, JUDGEMENT), text)
 
 
 class UnavailableTests(unittest.TestCase):

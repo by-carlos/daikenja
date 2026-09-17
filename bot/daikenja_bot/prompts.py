@@ -100,11 +100,18 @@ SUMMARY_OPENER_RE = re.compile(
     )
 )
 
-# The header line, subject line and bullets `judgement` § Form `message`
-# fixes for its deliverable.
-JUDGEMENT_HEADER = "ai review summary"
+# The sections `judgement` § Form `message` fixes. `Ledger` is matched on its
+# own word because its header carries the project name -- `📒 **Ledger --
+# harbor**` -- and `Not checked` before `Not` would never be reached, so the
+# longest alternatives come first.
+JUDGEMENT_SECTIONS = ("Verdict", "Ledger", "Basis", "Suggestion", "Not checked")
+JUDGEMENT_SECTION_RE = re.compile(
+    r"^{}(?:{})\b".format(
+        _EMPHASIS_PREFIX,
+        "|".join(re.escape(name) for name in JUDGEMENT_SECTIONS),
+    )
+)
 JUDGEMENT_BULLET_RE = re.compile(r"^\s*(?:[-*•])\s+")
-JUDGEMENT_SUBJECT_RE = re.compile(rf"^{_EMPHASIS_PREFIX}Subject\s*[*_]*\s*:")
 # Emphasis a line may be wrapped in, stripped before the line is compared.
 EMPHASIS_CHARS = " \t*_#"
 
@@ -139,10 +146,12 @@ _TASK = {
         "-- do not run Step 3, and do not draft a reply."
     ),
     JUDGEMENT: (
-        "Produce the `message` form for that subject: the shareable AI review "
-        "summary, exactly the shape that form fixes. Keep the short report "
-        "the skill puts around it if you want to -- only the message itself "
-        "is taken."
+        "Produce the `message` form for that subject: the shareable review, "
+        "exactly the shape that form fixes -- the Verdict, Ledger, Basis, "
+        "Suggestion and Not checked sections with their markers. Omit the "
+        "Ledger section entirely if no project resolved. Name people rather "
+        "than writing 'you'. Keep the short report the skill puts around it if "
+        "you want to -- only the message itself is taken."
     ),
 }
 
@@ -297,39 +306,56 @@ def _summary_block(text: str) -> str:
 
 
 def _judgement_block(text: str) -> str:
-    """The `AI review summary` header, its subject line, and its bullets.
+    """The `Verdict` section, and every section that follows it.
 
-    The block ends where the bullets do. The short report `judgement` puts
-    around the message form sits after it as ordinary prose, and that is
-    exactly what must not reach Slack.
+    The block opens on `⚖️ **Verdict**` and runs until a line that belongs to
+    no section: not a section header, not a bullet, not an indented
+    continuation, and not the lead sentence directly under a header. That is
+    where the short report `judgement` puts around the message begins, and
+    that report is exactly what must not reach Slack.
+
+    A blank line is kept only when the block continues after it, so the
+    trailing blank before the report never survives.
     """
     lines = text.split("\n")
     for index, line in enumerate(lines):
-        if line.strip(EMPHASIS_CHARS).lower() != JUDGEMENT_HEADER:
+        if not _is_verdict_header(line):
             continue
-        kept = [line.strip()]
-        rest = lines[index + 1 :]
-        for position, candidate in enumerate(rest):
+        kept = [line.rstrip()]
+        after_header = True
+        for candidate in lines[index + 1 :]:
             stripped = candidate.rstrip()
             if not stripped.strip():
-                # A blank line is allowed only if bullets resume after it.
-                following = next((l for l in rest[position + 1 :] if l.strip()), "")
-                if JUDGEMENT_BULLET_RE.match(following):
-                    kept.append("")
-                    continue
-                break
-            if JUDGEMENT_BULLET_RE.match(stripped) or stripped.startswith((" ", "\t")):
-                kept.append(stripped)
+                kept.append("")
+                after_header = False
                 continue
-            if len(kept) == 1 and JUDGEMENT_SUBJECT_RE.match(stripped):
+            if JUDGEMENT_SECTION_RE.match(stripped):
+                kept.append(stripped)
+                after_header = True
+                continue
+            if JUDGEMENT_BULLET_RE.match(stripped) or candidate.startswith((" ", "\t")):
+                kept.append(stripped)
+                after_header = False
+                continue
+            if after_header:
+                # The one or two sentences a section header may carry.
                 kept.append(stripped)
                 continue
             break
         while kept and not kept[-1].strip():
             kept.pop()
+        # A header alone is more likely a sentence than the block itself.
         if len(kept) >= 2:
             return "\n".join(kept).strip()
     return ""
+
+
+def _is_verdict_header(line: str) -> bool:
+    """Is this the `Verdict` section header that opens the block?"""
+    if not JUDGEMENT_SECTION_RE.match(line):
+        return False
+    bare = re.sub(r"^" + _EMPHASIS_PREFIX, "", line).strip(EMPHASIS_CHARS)
+    return bare.lower().startswith("verdict")
 
 
 def _unfence(text: str) -> str:
