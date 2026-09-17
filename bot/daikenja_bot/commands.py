@@ -1,6 +1,6 @@
 """Read what was asked for out of the text of an @-mention.
 
-Two commands, `summary` and `verdict`. Either may carry one link as its
+Two commands, `summary` and `judgement`. Either may carry one link as its
 argument; with no argument, the subject is the thread the mention was typed
 in. Anything else comes back as `help`, which the transport answers with one
 line of usage rather than guessing.
@@ -16,14 +16,14 @@ from .links import unwrap_link
 MENTION_RE = re.compile(r"<@[UWB][A-Z0-9]+(?:\|[^>]*)?>")
 
 SUMMARY = "summary"
-VERDICT = "verdict"
+JUDGEMENT = "judgement"
 HELP = "help"
 
-KNOWN_COMMANDS = (SUMMARY, VERDICT)
+KNOWN_COMMANDS = (SUMMARY, JUDGEMENT)
 
 USAGE = (
     "I take two commands. `@daikenja summary` for what this thread is asking "
-    "and what is still open, and `@daikenja verdict` for a check of the "
+    "and what is still open, and `@daikenja judgement` for a check of the "
     "thread against the project's ledger. Either one takes a link -- a Slack "
     "thread or a Confluence page -- to work on that instead of this thread."
 )
@@ -50,8 +50,8 @@ def strip_mentions(text: str) -> str:
 def parse_command(text: str) -> Command:
     """Parse the text of an app mention.
 
-    The command word is matched case-insensitively, so `Verdict` and
-    `VERDICT` both work -- someone typing into Slack on a phone gets an
+    The command word is matched case-insensitively, so `Judgement` and
+    `JUDGEMENT` both work -- someone typing into Slack on a phone gets an
     initial capital for free.
     """
     body = strip_mentions(text)

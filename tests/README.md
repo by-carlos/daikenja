@@ -143,6 +143,12 @@ stage's acceptance checks can be re-run later against the same inputs.
   ending before rigurd's reply is drafted. Exercises the `thread` ->
   `compose` handoff: the runbook link must survive into the drafted reply
   untouched.
+- [`fixtures/sample-thread-no-channel.md`](fixtures/sample-thread-no-channel.md)
+  -- a pasted block of three messages between two named people, with no
+  channel named anywhere and no link. Exercises `thread` § Step 2: summarize
+  it -- the `🧵 **Thread**` line must name the lantern-lite pricing-tier
+  cutover and the two people in it, and never describe the block as pasted
+  or state that a channel is unknown.
 
 ### `preflight`
 
@@ -213,23 +219,28 @@ last released copy of the skill, so a result obtained any other way is void.
   applies today" for a 2024 cutover with nothing to support that. Exercises
   the full checklist in one document.
 
-### `verdict`
+### `judgement`
 
-- [`fixtures/verdict.md`](fixtures/verdict.md) -- an `ember` reporting
+- [`fixtures/judgement.md`](fixtures/judgement.md) -- an `ember` reporting
   warehouse registry, card and ledger, whose storage-engine decision and
   load-window decision are each contradicted by one of two subjects: a thread
   in which two people assume the engine the ledger rejected and a third
   presents an open retention question as settled, and a wiki page stating the
   wrong load window, the same retention as agreed, an unassigned backfill as
-  owned, and one plain PostgreSQL fact the ledger says nothing about. Four
+  owned, and one plain PostgreSQL fact the ledger says nothing about. Six
   walks: the `answer` form on the thread from an unrelated directory (the
   contradicted decision cited by ID, the Oracle-in-SQL-Server question
   answered and labelled general knowledge); the `message` form on the page,
   voice-only, with a `writing-style.md` present that must be ignored and a
   named standard that must come back `link needed` rather than with an
   invented URL; a thread that resolves to no project, where the reply says so
-  and says no ledger was checked; and the bare invocation with nothing in the
-  session to judge, which asks and stops.
+  and says no ledger was checked; the bare invocation with nothing in the
+  session to judge, which asks and stops; the `message` form on that same
+  no-project thread, whose `📒 **Ledger**` section must be absent outright rather
+  than saying no ledger was checked, with the reason moved to the report
+  around the message; and the `message` form on a document that quotes a
+  fenced cron snippet, whose deliverable must carry the snippet as inline
+  code and never nest a fence inside the fence it is itself handed back in.
 
 ### `self-review`
 

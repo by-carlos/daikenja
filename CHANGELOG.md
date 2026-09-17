@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   new Python service, shipped with the plugin and run by hand, takes two
   commands from an @-mention: `summary` posts the five-line thread summary
   `thread` produces at its Step 2, including the `Ledger:` line when the
-  thread matches a registered project, and `verdict` posts the shareable
-  `message` form of the `verdict` skill. Either command takes a Slack
+  thread matches a registered project, and `judgement` posts the shareable
+  `message` form of the `judgement` skill. Either command takes a Slack
   permalink or a Confluence page URL as an argument and works on that
   instead, answering in the thread it was asked from. It is a personal
   instance: it runs on one person's machine, reads that person's ledgers,
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it, and `.claude/` is for people working on this repository. The middle
   case is new and is why `bot/` must stay lean and must hold nothing a skill
   needs.
-- **`verdict`: a read-only check of a thread or a document against the
+- **`judgement`: a read-only check of a thread or a document against the
   ledger.** A new skill takes a Slack thread link, a Confluence page link, a
   repository path or pasted text -- or, with no argument, the most recent
   link or pasted block in the session -- triages what it claims or asks,
@@ -63,19 +63,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every result closes with one line saying what was not checked. Two forms:
   `answer`, the default, is a reply in the conversation opening with the
   same summary block `thread` uses; `message` is a shareable deliverable for
-  a cold reader, headed *AI review summary*, bulleted, about 150 words, with
-  no conversational markers or emoji, written as an AI pass and never as the
-  user. A subject that matches no project is said outright, and the check
-  continues on general knowledge alone rather than reading another
-  project's ledger. It never drafts a reply, never edits the document and
-  never writes the ledger; a consumer that posts the `message` form into a
-  chat surface is separate work (#251).
+  a cold reader opening with a one- or two-sentence `⚖️ Verdict`, a
+  `📒 Ledger -- <project name>` section present only when a project resolved,
+  a `🔍 Basis` section of bold-topic, italic-confidence findings, and
+  `💡 Suggestion` and `🚧 Not checked` sections -- bulleted, about 150 words,
+  no conversational markers, no emoji beyond its own section markers, no
+  code fence, and written as an AI pass, never as the user. A subject that
+  matches no project is said outright, and the check continues on general
+  knowledge alone rather than reading another project's ledger. It never
+  drafts a reply, never edits the document and never writes the ledger; a
+  consumer that posts the `message` form into a chat surface is separate
+  work (#251).
+- **The shared summary block -- `thread`'s and `judgement`'s -- stops
+  narrating its own plumbing, and the second person stays inside the
+  session.** `🧵 Thread` / `📄 Document` now leads with subject matter and
+  never names how the content arrived (a pasted block, a link) or states an
+  absence; a channel that is not known is simply not mentioned. `⏳ Waiting
+  on` carries `you` only in the conversational `answer` reply -- any form
+  built to leave the session, such as `judgement`'s `message` form, names the
+  person instead, per the new `response-format.md` § The second person
+  belongs to conversation. `🌡️ Tone` is written in the conversational reply
+  only, since it exists to feed `compose`, which nothing leaving the session
+  reaches. Neither block, nor `judgement`'s `message` form, is ever wrapped
+  in a code fence or contains one, even when the subject quotes a fenced
+  snippet -- a rule stated in both skills and backed, in the bot, by
+  stripping any stray fence line from the deliverable before it posts.
 - **Voice-only mode for generated output.** `docs/config-resolution.md`
   § Voice and writing style now defines a mode a skill may declare for one of
   its outputs: `voice.md` applies in full and the user's `writing_style` and
   `personas` are not read at all, for output written as an AI pass rather
   than as the user. Layering stays the default for everything else; no
-  `daikenja.yaml` key selects the mode. `verdict`'s `message` form is the
+  `daikenja.yaml` key selects the mode. `judgement`'s `message` form is the
   one shipped use (#251).
 - **Project cards: a per-project description beside the ledger.** A new
   `docs/project-card.md` contract and `templates/project.md` define a short
@@ -114,6 +132,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   no longer seen at a reportable frequency, never as fixed. A failed watch
   write is reported and does not stop the run. The file is not a style file and
   no other skill reads it (#242).
+- **`thread` gets a `message` form, for a summary that leaves the session.**
+  `/daikenja:thread message` produces the Step 2 block as a deliverable for a
+  surface where the user is not the only reader: people are named rather than
+  addressed as `you`, `🌡️ Tone` is omitted, and the `📒 Ledger` line names the
+  project without its absolute path, which carries the machine's own username
+  and cannot be opened by a reader in a channel. Steps 3 to 5 do not run. The
+  conversational form is unchanged and still says `you`, where it has exactly
+  one referent. The bot's `summary` command now asks for this form by name:
+  it was asking the conversational form, in prose, to behave like a form the
+  skill did not yet have, and real runs came back with `Waiting on you`.
+
+### Fixed
+
+- **The bot no longer summarizes the wrapper around a forwarded message.** A
+  Slack message forwarded into another channel carries its text in an
+  attachment, not in the message, so a bare `summary` or `judgement` in the
+  thread under one was handed an empty parent -- and answered about it,
+  saying the replies it could see referred to were unreadable. The original's
+  permalink travels in that attachment and is now followed, once, and named
+  as the source above the answer. A link typed as an argument is never
+  overridden by the thread it was typed in.
+- **The bot's own answers are no longer read back as thread content.** A
+  second command in a thread the bot had already answered was handed that
+  earlier answer as part of the thread, and summarized the summary --
+  including its message count, which is where a claim about eight unreadable
+  replies came from. This bot's own messages are now dropped from the
+  transcript. Another app's messages are somebody's actual content and stay.
 
 ## [0.9.1] - 2026-09-10
 

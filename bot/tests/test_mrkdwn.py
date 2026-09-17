@@ -75,20 +75,35 @@ class ConversionTests(unittest.TestCase):
     def test_empty_input(self):
         self.assertEqual(to_mrkdwn(""), "")
 
-    def test_a_whole_verdict_message(self):
+    def test_a_whole_judgement_message(self):
         source = (
-            "AI review summary\n"
-            "Subject: #harbor-rollout, 4 messages\n"
-            "- **Ledger:** the proposed Friday cutover contradicts the "
-            "Monday cutover decision (D-001) -- certain.\n"
-            "- Step 4 has never been run at volume -- likely. Source: "
-            "[the harbor runbook](https://example.com/harbor/runbook).\n"
-            "- Not checked: the linked runbook itself.\n"
+            "⚖️ **Verdict**\n"
+            "The proposed Friday cutover contradicts the Monday cutover "
+            "decision.\n"
+            "\n"
+            "\U0001F4D2 **Ledger -- harbor**\n"
+            "- **Monday cutover** (D-001) -- the thread proposes Friday "
+            "instead. _certain · ledger_\n"
+            "\n"
+            "\U0001F50D **Basis**\n"
+            "- **Step 4 at volume** -- never run at volume. Source: "
+            "[the harbor runbook](https://example.com/harbor/runbook). "
+            "_likely · general knowledge_\n"
+            "\n"
+            "\U0001F6A7 **Not checked**\n"
+            "- The linked runbook itself.\n"
         )
         converted = to_mrkdwn(source)
-        self.assertIn("*Ledger:*", converted)
+        self.assertIn("*Verdict*", converted)
+        self.assertIn("*Ledger -- harbor*", converted)
+        self.assertIn("*Basis*", converted)
+        self.assertIn("*Not checked*", converted)
         self.assertIn("• ", converted)
         self.assertIn("<https://example.com/harbor/runbook|the harbor runbook>", converted)
+        self.assertIn("_certain · ledger_", converted)
+        self.assertIn("_likely · general knowledge_", converted)
+        self.assertIn("⚖️", converted)
+        self.assertIn("\U0001F4D2", converted)
         self.assertNotIn("**", converted)
 
 

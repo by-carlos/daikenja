@@ -4,7 +4,7 @@ import sys
 import unittest
 from pathlib import Path
 
-from daikenja_bot.commands import SUMMARY, VERDICT
+from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.config import ClaudeConfig, parse_config
 from daikenja_bot.prompts import END_SENTINEL, START_SENTINEL, UNAVAILABLE_TOKEN
 from daikenja_bot.runner import (
@@ -155,7 +155,7 @@ class RunCommandTests(unittest.TestCase):
 
     def test_the_subject_travels_on_stdin_not_in_argv(self):
         runner = FakeRunner(text=f"{START_SENTINEL}\nok\n{END_SENTINEL}")
-        run_command(make_config(), VERDICT, SUBJECT, environ={}, runner=runner)
+        run_command(make_config(), JUDGEMENT, SUBJECT, environ={}, runner=runner)
         call = runner.calls[0]
         self.assertIn("[1] hakurou: hi", call["stdin"])
         self.assertNotIn("[1] hakurou: hi", " ".join(call["argv"]))
@@ -199,9 +199,9 @@ class RunCommandTests(unittest.TestCase):
             text=f"{START_SENTINEL}\n{UNAVAILABLE_TOKEN}\n{END_SENTINEL}"
         )
         with self.assertRaises(RunnerError) as caught:
-            run_command(make_config(), VERDICT, SUBJECT, environ={}, runner=runner)
+            run_command(make_config(), JUDGEMENT, SUBJECT, environ={}, runner=runner)
         message = str(caught.exception)
-        self.assertIn("/daikenja:verdict", message)
+        self.assertIn("/daikenja:judgement", message)
         self.assertIn("plugin_dir", message)
 
 

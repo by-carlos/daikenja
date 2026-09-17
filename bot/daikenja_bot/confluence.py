@@ -1,4 +1,4 @@
-"""Optional: fetch a Confluence page so `verdict` can be run against it.
+"""Optional: fetch a Confluence page so `judgement` can be run against it.
 
 A Slack bot token opens nothing in Confluence, so this needs credentials of
 its own. They are optional by design: with no `confluence` block in

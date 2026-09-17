@@ -1,6 +1,7 @@
 import unittest
 
 from daikenja_bot.links import (
+    forwarded_permalink,
     looks_like_confluence,
     parse_confluence_page_id,
     parse_slack_permalink,
@@ -101,6 +102,27 @@ class ConfluenceLinkTests(unittest.TestCase):
 
     def test_an_unrelated_url_is_not_confluence(self):
         self.assertFalse(looks_like_confluence("https://example.com/harbor/runbook"))
+
+
+class ForwardedPermalinkTests(unittest.TestCase):
+    ORIGINAL = "https://example.slack.com/archives/C0OTHER/p1758067200000100"
+
+    def test_a_forward_gives_up_the_original(self):
+        message = {
+            "text": "",
+            "attachments": [{"from_url": self.ORIGINAL, "author_id": "U0HAKUROU"}],
+        }
+        self.assertEqual(forwarded_permalink(message), self.ORIGINAL)
+
+    def test_an_ordinary_message_is_not_a_forward(self):
+        self.assertIsNone(forwarded_permalink({"text": "Can we move the cutover?"}))
+
+    def test_an_unfurled_web_link_is_not_a_forward(self):
+        message = {
+            "text": "the runbook",
+            "attachments": [{"from_url": "https://example.com/harbor/runbook"}],
+        }
+        self.assertIsNone(forwarded_permalink(message))
 
 
 if __name__ == "__main__":

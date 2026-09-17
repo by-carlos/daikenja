@@ -3,7 +3,7 @@ name: thread
 description: Reads a Slack or email thread, summarizes what is being asked and by whom, then collects context from the user before any reply is drafted. Use when the user pastes a thread link or a block of chat history, or says "help me answer this". It gathers only and never writes the reply.
 metadata:
   owner: Carlos
-  version: 2
+  version: 3
   pairs-with: compose
 ---
 
@@ -39,16 +39,42 @@ content.
 
 Keep this to about 5 lines. The block below follows
 `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- read it before writing the
-reply; the summary is the answer and nothing precedes it.
+reply; the summary is the answer and nothing precedes it. § The second person
+belongs to conversation decides whether `Waiting on` carries a name or `you`.
 
 ```
-Thread: [channel or subject, and how many messages]
-Asking: [who is asking, and what they actually want]
-Open: [what is still undecided]
-Waiting on you: [what, if anything, is yours]
-Tone: [neutral / tense / urgent -- only if it is not neutral]
-Ledger: [what the project already has on this -- see Step 2b; omitted when no project matched]
+🧵 **Thread** -- [what it is about, who is in it, and how many messages]
+❓ **Asking** -- [who is asking, and what they actually want]
+🔓 **Open** -- [what is still undecided]
+⏳ **Waiting on** -- [name: what is theirs]
+📒 **Ledger** -- [what the project already has on this -- see Step 2b]
+🌡️ **Tone** -- [neutral / tense / urgent -- only if it is not neutral]
 ```
+
+**The `Thread` line is about the thread, never about how it arrived.** Lead
+with what the thread is about, then who is in it, then the count. Never name
+the input mechanism -- not `pasted block`, not `link`, not `forwarded` -- and
+never state an absence. A channel that is not known is simply not mentioned;
+`channel not stated` is a defect, not a disclosure.
+
+**`Waiting on` names the person**, per `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md`
+§ The second person belongs to conversation. In this reply, where there is one
+reader, `you` is that person's name and is correct. In any form that leaves the
+session, the name is written out -- see § Form `message`, which is how a caller
+asks for that form.
+
+**`Tone` is written in this reply only.** Any form that leaves the session omits
+it, empty or not: it exists to feed the draft `compose` writes, and a consumer
+that never reaches `compose` gains nothing from a bot publicly labelling
+someone's message `tense`.
+
+**The summary block is never wrapped in a code fence and never contains one**,
+even when the thread itself quotes a fenced snippet -- a config block, a stack
+trace, a code sample. A quoted line is named or restated inline, not fenced.
+
+**A line that wraps onto a second line indents the continuation.** A second
+line that starts at the margin, with no indent, ends the block for a
+consumer that finds it by shape.
 
 Attribution rules, because getting this wrong is expensive:
 
@@ -116,21 +142,50 @@ card beside the ledger if there is one. Then write the `Ledger:` line:
   only `project-log` can do that and only on the user's say-so.
 
 ```
-Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- touches the ramp
+📒 **Ledger** -- harbor (C:/GitHub/harbor/.daikenja/ledger.md): touches the ramp
 cutover decision (D-001); the proposed Friday start contradicts its Monday
 2026-08-17 date; appears to resolve the rollback-trigger question (O-001).
 ```
 
 Keep it to one or two lines. Naming the project and the ledger path is what
 makes the rest checkable, so both stay even when nothing matched:
-`Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- nothing on this
+`📒 **Ledger** -- harbor (C:/GitHub/harbor/.daikenja/ledger.md): nothing on this
 subject.` is a complete, useful line.
 
 **When no project resolved**, or the project has no ledger, leave the
-`Ledger:` line out and say nothing about it. A thread that is not project
+`Ledger` line out and say nothing about it. A thread that is not project
 work is the ordinary case, and `daikenja.yaml` being absent is not a reason
 to narrate configuration in the middle of a thread summary. The only notice
 this step ever adds on its own is the mismatch above.
+
+## Form `message`: a summary that leaves the session
+
+`/daikenja:thread` produces the conversational reply above, for the one
+person reading it. **`/daikenja:thread message`** produces the Step 2 block as
+a deliverable for a surface where that person is not the only reader -- a bot
+posting into a channel, a block pasted somewhere else. A caller with an
+enclosing thread of its own passes that thread as the subject and names this
+form; nothing here assumes a working directory or a terminal.
+
+The block keeps its shape and its attribution rules exactly. Three things
+differ, and nothing else does:
+
+- **People are named, never `you`**, per
+  `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` § The second person belongs
+  to conversation. `⏳ **Waiting on** -- you: an answer on the duration` is
+  precise in a reply and has no referent in a channel, where every reader is
+  a `you`. Step 2's allowance for `you` is about the reply and does not reach
+  this form. A person whose name cannot be resolved is described by what they
+  did -- "the person who raised it" -- and never falls back to `you`.
+- **`Tone` is omitted**, empty or not, per Step 2.
+- **The `Ledger` line names the project, not the path.** Step 2b's line
+  carries an absolute path, which carries the machine's own username; a
+  reader in a channel cannot open it and should not be shown it.
+  `📒 **Ledger** -- harbor: touches the ramp cutover decision (D-001).`
+
+The block is the whole deliverable. Steps 3 to 5 do not run: there is nobody
+in the session to ask for a position, so there is nothing to hand off and
+nothing to draft. The hard rule at the top holds here as everywhere.
 
 ## Step 3: get the user's position
 

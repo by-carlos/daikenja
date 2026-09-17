@@ -1,12 +1,12 @@
 ---
-name: verdict
-description: 'Checks a thread or a document against the project ledger and general knowledge and hands back a verdict: what is being claimed or asked, which parts a recorded decision settles, which parts are plain fact, and what is presented as settled without being established. Use when the user says "is this right?", "check this against the ledger", "give me a verdict on this thread", or asks for a quick "AI review summary" of a page or pull request to share with the team. Read-only -- it never drafts a reply, never edits the document and never writes the ledger.'
+name: judgement
+description: 'Checks a thread or a document against the project ledger and general knowledge and hands back a verdict: what is being claimed or asked, which parts a recorded decision settles, which parts are plain fact, and what is presented as settled without being established. Use when the user says "is this right?", "check this against the ledger", "give me a judgement on this thread", or asks for a quick "AI review summary" of a page or pull request to share with the team. Read-only -- it never drafts a reply, never edits the document and never writes the ledger.'
 metadata:
   owner: Carlos
   version: 1
 ---
 
-# Verdict
+# Judgement
 
 One subject, one verdict. The subject is a thread or a document; the verdict
 says what it claims or asks, checks that against the project's ledger first
@@ -43,6 +43,10 @@ Read these before the first output:
   conversational reply and follows it whole: answer first, findings
   itemised, entries topic-first with the ID in parentheses, clean result in
   one line.
+  - § The second person belongs to conversation governs the difference
+    between the two forms: the `answer` form addresses the user as `you`,
+    and the `message` form -- built to leave the session -- names people
+    instead.
 - `${CLAUDE_PLUGIN_ROOT}/docs/project-card.md` § Resolving a project by
   content and § Reading a card -- how a subject with no key and no directory
   finds its project, and what a card says.
@@ -85,8 +89,8 @@ conversational layer. The `message` form never does: it leaves the session.
 
 ## Step 1: get the subject and the form
 
-**The argument rule.** `/daikenja:verdict` with no argument works on the
-enclosing context; `/daikenja:verdict <subject>` works on that subject
+**The argument rule.** `/daikenja:judgement` with no argument works on the
+enclosing context; `/daikenja:judgement <subject>` works on that subject
 instead. In Claude Code there is no enclosing thread, so the bare form means
 **the most recent link or pasted block in this session**. When nothing in the
 session qualifies, ask for one and stop. Never guess, and never go looking for
@@ -107,7 +111,7 @@ a summary in place of the content, and do not review a partial document
 silently -- say it is partial.
 
 **The form.** `answer` is the default. `message` is chosen when the user asks
-for it by name (`/daikenja:verdict message <subject>`), or in plain words asks
+for it by name (`/daikenja:judgement message <subject>`), or in plain words asks
 for something to share -- "for the team", "as a message", "an AI review
 summary", "something I can post". When the wording is ambiguous, produce the
 `answer` form; it is one line to ask for the other afterwards.
@@ -119,24 +123,25 @@ this skill assumes a working directory or a terminal.
 ## Step 2: triage the subject
 
 Before checking anything, establish what the subject says. For a thread, the
-summary is the same five-line shape `thread` § Step 2: summarize it uses,
+summary is the same six-line shape `thread` § Step 2: summarize it uses,
 and its attribution rules apply unchanged -- name who said what, keep a
 question apart from a proposal and both apart from a decision, and call an
 ambiguous position ambiguous:
 
 ```
-Thread: [channel or subject, and how many messages]
-Asking: [who is asking, and what they actually want]
-Open: [what is still undecided]
-Waiting on you: [what, if anything, is yours]
-Tone: [neutral / tense / urgent -- only if it is not neutral]
+🧵 **Thread** -- [what it is about, who is in it, and how many messages]
+❓ **Asking** -- [who is asking, and what they actually want]
+🔓 **Open** -- [what is still undecided]
+⏳ **Waiting on** -- [name: what is theirs]
+📒 **Ledger** -- [what the project already has on this -- see Step 2b]
+🌡️ **Tone** -- [neutral / tense / urgent -- only if it is not neutral]
 ```
 
-For a document, the same block with `Document:` in place of `Thread:` (title
-and what kind of document it is), `Claims:` in place of `Asking:` (what it
-states as fact), and `Open:` for what it leaves undecided. `Waiting on you`
-and `Tone` are omitted whenever they would be empty, for a thread as much as
-for a document.
+For a document, the same block with `📄 **Document**` in place of `🧵 **Thread**`
+(title and what kind of document it is), `📌 **Claims**` in place of
+`❓ **Asking**` (what it states as fact), and `🔓 **Open**` for what it leaves
+undecided. `Waiting on` and `Tone` are omitted whenever they would be empty,
+for a thread as much as for a document.
 
 Then list, for yourself, every **factual claim** and every **question** the
 subject carries, and for each claim whether the subject establishes it or
@@ -235,22 +240,34 @@ The conversational reply, per `response-format.md`. The summary block from
 Step 2 opens it; the conclusion follows; nothing precedes the block.
 
 ```
-Thread: ...
-Asking: ...
-Open: ...
+🧵 **Thread** -- ...
+❓ **Asking** -- ...
+🔓 **Open** -- ...
+📒 **Ledger** -- ...
 Ledger: <key>, matched by #<channel> (<absolute path>)
 Card: <absolute path>
 
-Verdict: <one or two sentences that answer what the thread asks or judge
-what it claims, each clause labelled>
+⚖️ **Verdict**
+<one or two sentences that answer what the thread asks or judge what it
+claims, each clause labelled>
 
-1. <finding> -- <certain | likely | guessing>. Source: ledger, <topic>
-   (D-nnn) | general knowledge.
+🔍 **Basis**
+1. **<topic>** -- the finding. _<certain | likely | guessing> · ledger, <topic> (D-nnn)_
 2. ...
 
-Suggested: <the action, as a suggestion, or omitted>
-Not checked: <one line>
+💡 **Suggestion**
+- <the action, or omitted>
+
+🚧 **Not checked**
+- <one line>
 ```
+
+This form has no `📒 Ledger -- <project name>` section of its own: the
+project is already established in the conversation and the `Ledger:` and
+`Card:` lines above already name it, so a second section would only restate
+that. `message`'s `📒 Ledger` section exists because its reader has neither
+-- a cold reader of the posted message never saw the `Ledger:`/`Card:` lines,
+so the finding needs its own section to carry that context.
 
 The worked example from the design: a thread asks "are we going with X, and
 can SQL Server host Oracle?". The verdict reads `Z was agreed for this
@@ -266,9 +283,9 @@ every question answered by the thread itself -- is one line:
 not hold.` followed by the `Not checked:` line.
 
 **When no project resolved**, the `Ledger:` line is replaced by the one-line
-non-match from Step 3, and the first numbered finding says the ledger check
-did not run. The `Verdict:` sentence itself stays on the answer. Nothing
-else changes.
+non-match from Step 3, and the first item in `Basis` says the ledger check
+did not run. The `⚖️ **Verdict**` sentence itself stays on the answer.
+Nothing else changes.
 
 ### Form `message`
 
@@ -281,37 +298,86 @@ about 150 words, written as an AI pass and never as the user. Exactly this
 shape:
 
 ```
-AI review summary
-Subject: <one line naming the subject -- channel and date, or document title>
-- Ledger: <the finding itself: what the subject says, the decision or open
-  item it contradicts or depends on, topic-first with the ID in parentheses,
-  and its confidence -- first, before any other finding; or "no project
-  resolved, so no ledger was checked">
-- <finding> -- <certain | likely | guessing>. Source: ledger (D-nnn) |
-  general knowledge.
-- <a claim presented as settled but not established, if any>
-- Suggested: <the action, as a suggestion>
-- Not checked: <one line>
+⚖️ **Verdict**
+<one or two sentences that answer what the subject asks or judge what it
+claims, each clause labelled with where it came from>
+
+📒 **Ledger -- <project name>**
+- **<decision or open item, topic-first>** (D-nnn) -- what the subject says,
+  and how it bears on that entry. _<certain | likely | guessing> · ledger_
+
+🔍 **Basis**
+- **<topic>** -- the finding. _<certain | likely | guessing> · general knowledge_
+- **<a claim presented as settled>** -- why it is not established.
+  _<certain | likely | guessing> · not established_
+
+💡 **Suggestion**
+- <the action, as a suggestion>
+
+🚧 **Not checked**
+- <one line>
 ```
 
-The `Ledger:` bullet **is** the ledger finding, complete with its confidence;
-it is not a heading that a second bullet then restates. One ledger finding
-per bullet; a second contradiction or dependency gets its own `Ledger:`
-bullet directly under the first.
+**`📒 Ledger` is absent entirely when no project resolved.** Not a bullet saying
+no ledger was checked -- absent. Why a project could not be resolved belongs in
+the short report around the message, never in the message: a reader who was not
+in the conversation cannot act on it, and it takes the most-read line of the
+deliverable to say that nothing happened. A resolved project is named by its
+human-readable name in the section header, never by a bare key alone. A second
+contradiction or dependency is a second bullet in the same section.
+
+**Every bullet opens with a bold topic and closes with an italic
+`_<confidence> · <source>_`.** Confidence is `certain`, `likely` or `guessing`.
+Source is `ledger`, `general knowledge`, or `not established` for a claim the
+subject presents as settled without establishing it. Bold first and italic last
+is what makes the section skimmable: the reader takes the topics on one pass and
+the confidences on another.
+
+**`Suggestion` and `Not checked` are sections, not findings.** Each is omitted
+only when it would be empty, and `Not checked` is never empty.
+
+**No header line, no `Subject:` line and no date.** The surface carries all
+three -- a Slack app posts under its own name and timestamp, and a pasted block
+carries the context of wherever it was pasted. `⚖️ **Verdict**` opens the
+message.
+
+**The section headers above are the bare words shown, with no trailing
+colon** -- `⚖️ **Verdict**`, not `⚖️ **Verdict:**`. A colon after `Ledger`
+specifically is reserved for the `Ledger:` provenance line in the report
+around the message, and must stay distinguishable from this section's own
+`📒 **Ledger -- <project name>**` header.
+
+**A bullet that wraps onto a second line indents the continuation.** A
+second line that starts at the margin, with no indent and no bullet marker
+of its own, ends the block for a consumer that finds it by shape -- so a
+long bullet keeps unfinished text on the same line or indents the wrap.
+
+**No conversational markers and no register labels**, whatever the user has
+installed. The markers above are this form's own structure and are fixed here;
+they are not `tensei`'s, and the two sets never mix. No emoji beyond them, no
+preamble, no closing offer, and never a question -- there is nobody to answer
+one.
+
+**The deliverable is never wrapped in a code fence and never contains one**,
+even when the subject it is assessing quotes a fenced snippet. A quoted line
+is named or restated inline -- in prose, or as inline code -- never fenced;
+the message is already handed back inside the report's own fence, and a
+fence nested inside it breaks on the way out.
+
+A clean subject in this form is two sections: `⚖️ **Verdict**` with its
+sentence, and `🚧 **Not checked**` with its line. Nothing else.
 
 Sources named in it follow the links rule: title first, a link only when the
 subject or the ledger's Sources already carry it, otherwise `(link needed)`.
 
 The message is handed back inside a fenced block so the user can copy it
 whole. **Around it, a short report to the user** -- the `Ledger:` and
-`Card:` lines from Step 3, and anything that needs the user's own judgement: a candidate the user confirmed,
-a mismatch the cross-check found, a finding the user may not want shared, a
-term the reader might not know. That material goes in the report, never in
-the message; the message must stand without the conversation it came from.
-
-A clean subject in this form is still a complete message: the header line,
-the subject line, `- Ledger: nothing contradicted or depended on`, and the
-`Not checked:` line.
+`Card:` lines from Step 3, why a project could not be resolved when that is
+the case, and anything that needs the user's own judgement: a candidate the
+user confirmed, a mismatch the cross-check found, a finding the user may not
+want shared, a term the reader might not know. That material goes in the
+report, never in the message; the message must stand without the conversation
+it came from.
 
 ## Voice in the message form
 
@@ -332,7 +398,7 @@ govern it and `response-format.md` does.
 
 | Situation | What to do |
 |---|---|
-| Bare `verdict`, and nothing in the session is a link or a pasted block | Ask for a link, a path or a paste. Do not search for one. |
+| Bare `judgement`, and nothing in the session is a link or a pasted block | Ask for a link, a path or a paste. Do not search for one. |
 | Link given but no tool is connected for that source | Say which source and that no tool is connected; ask for a paste. |
 | Fetched content is empty or truncated | Say so and ask for a paste. Never judge a partial subject silently. |
 | The named project key is not registered | Stop: name the key and list the registered ones. Never fall back to the directory. |
