@@ -189,6 +189,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`bot/`: a leaked skill invocation is rewritten as the mention that does
+  the same thing.** A run with no project match posted ``No project context.
+  Add `/daikenja:thread project <key>` if you want a ledger checked.`` into a
+  channel -- a Claude Code slash command, which nobody in Slack can type,
+  because the bot has no slash commands at all. The prompt already gives that
+  sentence verbatim with `@daikenja summary` written out; now `/daikenja:thread`
+  and `/daikenja:judgement` are also rewritten to `@daikenja summary` and
+  `@daikenja judgement` on the way out, alongside the absolute paths and code
+  fences already scrubbed there. A skill announcement without the slash
+  (`Using daikenja:thread to ...`) is prose and is left alone.
+
 - **The startup skill check now runs with the scrubbed environment too.** The
   bot strips the Slack credentials from the environment every session it
   starts -- except the one `preflight` runs at startup to see which skills are

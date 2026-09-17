@@ -187,6 +187,39 @@ class LocalPathTests(unittest.TestCase):
         self.assertIn("docs/voice.md", extract_output(raw))
 
 
+class SkillInvocationTests(unittest.TestCase):
+    """No Claude Code slash command ever reaches a public thread.
+
+    A real run posted `No project context. Add `/daikenja:thread project
+    <key>`` into a channel. That is how the session invokes the skill, not
+    anything a person in Slack can type -- the bot has no slash commands at
+    all -- so it is rewritten to the mention that does the same job.
+    """
+
+    def test_the_thread_skill_becomes_the_summary_mention(self):
+        raw = (
+            f"{START_SENTINEL}\nNo project context. Add "
+            "`/daikenja:thread project <key>` if you want a ledger checked.\n"
+            f"{END_SENTINEL}"
+        )
+        answer = extract_output(raw)
+        self.assertNotIn("/daikenja:", answer)
+        self.assertIn("`@daikenja summary project <key>`", answer)
+
+    def test_the_judgement_skill_becomes_the_judgement_mention(self):
+        raw = f"{START_SENTINEL}\nSay `/daikenja:judgement project harbor`.\n{END_SENTINEL}"
+        self.assertIn("`@daikenja judgement project harbor`", extract_output(raw))
+
+    def test_a_skill_announcement_is_left_alone(self):
+        # Without the slash it is prose, not a command handed to a reader.
+        raw = f"{START_SENTINEL}\nUsing daikenja:thread to gather context.\n{END_SENTINEL}"
+        self.assertIn("Using daikenja:thread to gather context.", extract_output(raw))
+
+    def test_an_ordinary_mention_is_left_alone(self):
+        raw = f"{START_SENTINEL}\nAdd `@daikenja summary project harbor`.\n{END_SENTINEL}"
+        self.assertIn("`@daikenja summary project harbor`", extract_output(raw))
+
+
 class ExtractOutputTests(unittest.TestCase):
     def test_the_sentinels_are_stripped(self):
         raw = f"thinking out loud\n{START_SENTINEL}\nthe answer\n{END_SENTINEL}\ndone"
