@@ -26,7 +26,7 @@ from typing import Callable
 from .commands import JUDGEMENT, SUMMARY
 from .config import BotConfig
 from .prompts import skill_name
-from .runner import RunnerError, resolve_command, scrubbed_env
+from .runner import NO_WINDOW, RunnerError, resolve_command, scrubbed_env
 
 log = logging.getLogger(__name__)
 
@@ -87,6 +87,7 @@ def _default_details(argv: list[str], env: dict[str, str]) -> tuple[int, str]:
         errors="replace",
         timeout=DETAILS_TIMEOUT,
         check=False,
+        creationflags=NO_WINDOW,
     )
     return completed.returncode, (completed.stdout or "")
 

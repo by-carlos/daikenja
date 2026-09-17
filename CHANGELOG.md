@@ -145,6 +145,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The bot no longer opens a console window on Windows for every mention.**
+  The Claude Code CLI installs as a batch file, so starting it runs
+  `cmd.exe`; when the bot itself runs without a console -- `pythonw.exe`, a
+  scheduled task, a service -- the child could not inherit one and Windows
+  gave it a new visible window each time. The two places that start the CLI
+  now pass `CREATE_NO_WINDOW`. Output is still captured through the pipes,
+  and the flag does not exist on POSIX, where it resolves to no flag at all.
 - **The bot no longer summarizes the wrapper around a forwarded message.** A
   Slack message forwarded into another channel carries its text in an
   attachment, not in the message, so a bare `summary` or `judgement` in the

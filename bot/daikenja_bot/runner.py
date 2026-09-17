@@ -37,6 +37,13 @@ log = logging.getLogger(__name__)
 # the user called them.
 SCRUBBED_PREFIXES = ("SLACK_", "SLACK")
 
+# On Windows the CLI is a batch file, so starting it runs `cmd.exe`. When the
+# bot itself runs without a console -- `pythonw.exe`, a scheduled task, a
+# service -- the child cannot inherit one and Windows opens a new console
+# window for every mention. The flag suppresses that window; stdout and
+# stderr are still captured through the pipes. It does not exist on POSIX.
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
 
 class RunnerError(Exception):
     """The headless session could not be run, or produced nothing usable."""
@@ -189,6 +196,7 @@ def _subprocess_runner(
             errors="replace",
             timeout=timeout,
             check=False,
+            creationflags=NO_WINDOW,
         )
     except OSError as exc:
         raise RunnerError(f"{argv[0]} could not be started: {exc}") from exc
