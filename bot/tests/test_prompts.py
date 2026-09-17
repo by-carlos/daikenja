@@ -35,6 +35,33 @@ class BuildInstructionTests(unittest.TestCase):
         instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
         self.assertTrue(instruction.startswith("/daikenja:judgement message"))
 
+    def test_a_named_project_is_passed_through_as_decisive(self):
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT, project="harbor")
+        self.assertIn("harbor", instruction)
+        self.assertIn("decisive", instruction)
+
+    def test_a_named_project_is_passed_through_for_summary_too(self):
+        instruction = build_instruction(SUMMARY, THREAD_SUBJECT, project="harbor")
+        self.assertIn("harbor", instruction)
+
+    def test_no_named_project_says_nothing_about_one(self):
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
+        self.assertNotIn("decisive", instruction)
+
+    def test_judgement_is_told_a_scope_candidate_never_waits(self):
+        # The defect this exists to stop: a Scope match made the session ask
+        # "confirm before I read its ledger" and post the question instead of
+        # a verdict. There is nobody in a thread to confirm it.
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
+        self.assertIn("Scope", instruction)
+        self.assertIn("do not wait", instruction)
+        self.assertIn("project <key>", instruction)
+
+    def test_summary_is_told_the_same(self):
+        instruction = build_instruction(SUMMARY, THREAD_SUBJECT)
+        self.assertIn("Scope", instruction)
+        self.assertIn("do not wait", instruction)
+
     def test_the_subject_is_described_but_not_included(self):
         instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
         self.assertIn("#harbor-rollout, 4 messages", instruction)
@@ -62,6 +89,49 @@ class BuildInputTests(unittest.TestCase):
         self.assertTrue(piped.startswith(SUBJECT_BEGIN))
         self.assertIn("[1] hakurou: hi", piped)
         self.assertIn(SUBJECT_END, piped)
+
+
+class LocalPathTests(unittest.TestCase):
+    """No absolute path ever reaches a public thread.
+
+    A real run posted `C:/GitHub/azure-to-gcp-migration/.daikenja/ledger.md`
+    into a channel: the machine's own layout, carrying its username, in front
+    of everyone in the thread. A reader there cannot open it and should not
+    be shown it, so it is taken out on the way out rather than asked away in
+    a prompt.
+    """
+
+    def test_a_windows_path_does_not_survive(self):
+        raw = (
+            f"{START_SENTINEL}\nLedger at "
+            "`C:/Users/somebody/GitHub/harbor/.daikenja/ledger.md`.\n"
+            f"{END_SENTINEL}"
+        )
+        answer = extract_output(raw)
+        self.assertNotIn("somebody", answer)
+        self.assertNotIn(".daikenja", answer)
+        self.assertIn("a local path", answer)
+
+    def test_a_backslash_path_does_not_survive(self):
+        raw = f"{START_SENTINEL}\nRead C:\\Users\\somebody\\ledger.md today.\n{END_SENTINEL}"
+        answer = extract_output(raw)
+        self.assertNotIn("somebody", answer)
+        self.assertIn("today", answer)
+
+    def test_a_posix_home_path_does_not_survive(self):
+        for path in ("/home/somebody/harbor/ledger.md", "/Users/somebody/ledger.md"):
+            with self.subTest(path=path):
+                answer = extract_output(f"{START_SENTINEL}\nRead {path}\n{END_SENTINEL}")
+                self.assertNotIn("somebody", answer)
+                self.assertIn("a local path", answer)
+
+    def test_a_url_is_not_mistaken_for_a_path(self):
+        raw = f"{START_SENTINEL}\nSee https://example.com/a/b for the standard.\n{END_SENTINEL}"
+        self.assertIn("https://example.com/a/b", extract_output(raw))
+
+    def test_an_ordinary_relative_path_is_left_alone(self):
+        raw = f"{START_SENTINEL}\nIt is written in docs/voice.md.\n{END_SENTINEL}"
+        self.assertIn("docs/voice.md", extract_output(raw))
 
 
 class ExtractOutputTests(unittest.TestCase):

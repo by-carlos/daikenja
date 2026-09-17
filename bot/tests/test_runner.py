@@ -168,6 +168,18 @@ class RunCommandTests(unittest.TestCase):
         )
         self.assertEqual(answer, "Thread: four messages")
 
+    def test_a_named_project_reaches_the_instruction(self):
+        runner = FakeRunner(text=f"{START_SENTINEL}\nok\n{END_SENTINEL}")
+        run_command(
+            make_config(),
+            JUDGEMENT,
+            SUBJECT,
+            environ={},
+            runner=runner,
+            project="harbor",
+        )
+        self.assertIn("harbor", " ".join(runner.calls[0]["argv"]))
+
     def test_the_subject_travels_on_stdin_not_in_argv(self):
         runner = FakeRunner(text=f"{START_SENTINEL}\nok\n{END_SENTINEL}")
         run_command(make_config(), JUDGEMENT, SUBJECT, environ={}, runner=runner)

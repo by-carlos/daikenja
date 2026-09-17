@@ -21,11 +21,20 @@ HELP = "help"
 
 KNOWN_COMMANDS = (SUMMARY, JUDGEMENT)
 
+# The word that names a project explicitly, ahead of any link: `judgement
+# project harbor`. The bot does not check the key against anything -- it has
+# never read `daikenja.yaml` and this is not the place to start. The skill
+# already treats a named key as decisive and stops on one it does not
+# recognise, naming the keys it does, so an unknown key comes back as an
+# answer rather than as a parse failure.
+PROJECT_KEYWORD = "project"
+
 USAGE = (
     "I take two commands. `@daikenja summary` for what this thread is asking "
     "and what is still open, and `@daikenja judgement` for a check of the "
     "thread against the project's ledger. Either one takes a link -- a Slack "
-    "thread or a Confluence page -- to work on that instead of this thread."
+    "thread or a Confluence page -- to work on that instead of this thread, "
+    "and `project <key>` before it to say which project's ledger to check."
 )
 
 
@@ -36,6 +45,7 @@ class Command:
     name: str
     argument: str | None = None
     unknown_word: str | None = None
+    project: str | None = None
 
     @property
     def is_known(self) -> bool:
@@ -65,11 +75,23 @@ def parse_command(text: str) -> Command:
     if word not in KNOWN_COMMANDS:
         return Command(name=HELP, unknown_word=parts[0])
 
-    remainder = " ".join(parts[1:]).strip()
-    if not remainder:
+    rest = parts[1:]
+    if not rest:
         return Command(name=word)
 
-    return Command(name=word, argument=first_argument(remainder) or None)
+    project = None
+    if rest[0].strip().lower().rstrip(":,.") == PROJECT_KEYWORD:
+        if len(rest) < 2:
+            # `judgement project` with nothing after it. The usage line names
+            # the form, so answering with it says more than guessing which
+            # project was meant.
+            return Command(name=HELP)
+        project = rest[1]
+        rest = rest[2:]
+
+    remainder = " ".join(rest).strip()
+    argument = first_argument(remainder) if remainder else None
+    return Command(name=word, argument=argument or None, project=project)
 
 
 def first_argument(remainder: str) -> str:
