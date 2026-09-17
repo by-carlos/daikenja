@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Any, Mapping
 from urllib.parse import parse_qs, unquote, urlparse
 
 SLACK_ARCHIVE_RE = re.compile(
@@ -79,6 +80,27 @@ def parse_slack_permalink(url: str) -> SlackThreadRef | None:
     return SlackThreadRef(
         channel_id=channel_id, thread_ts=thread_ts, message_ts=message_ts
     )
+
+
+def forwarded_permalink(message: Mapping[str, Any]) -> str | None:
+    """The permalink a forwarded Slack message carries, if this is one.
+
+    Sharing a message into another channel leaves almost nothing in the text
+    of the message that lands: the whole of it travels in an attachment, and
+    the original's permalink is that attachment's ``from_url``. Without this,
+    a command working on the enclosing thread gets an empty parent and
+    summarises the wrapper instead of what was forwarded.
+
+    The URL is handed back rather than the parsed reference so the caller can
+    both fetch the original and name it as the source of its answer.
+    """
+    for attachment in message.get("attachments") or []:
+        if not isinstance(attachment, Mapping):
+            continue
+        url = str(attachment.get("from_url") or "").strip()
+        if url and parse_slack_permalink(url):
+            return url
+    return None
 
 
 def parse_confluence_page_id(url: str) -> str | None:

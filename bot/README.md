@@ -8,7 +8,7 @@ Two commands, both triggered by an @-mention:
 
 | Command | What it posts |
 |---|---|
-| `@daikenja summary` | The five-line thread summary the [`thread`](../skills/thread/SKILL.md) skill produces at its Step 2: what the thread is, who is asking, what is open, what is waiting on you, and the tone -- plus the `Ledger:` line when the thread matches one of your projects. |
+| `@daikenja summary` | The `message` form of the [`thread`](../skills/thread/SKILL.md) skill's Step 2 summary: what the thread is, who is asking, what is open and who it is waiting on -- named, never "you", since every reader of a channel is a "you" -- plus the `Ledger` line when the thread matches one of your projects. |
 | `@daikenja judgement` | The shareable `message` form of the [`judgement`](../skills/judgement/SKILL.md) skill: what the thread claims or asks, checked against the project's ledger first and general knowledge second, with every statement labelled by where it came from. |
 
 Either command takes a link as its argument and works on that instead of
@@ -21,6 +21,15 @@ the thread it was typed in:
 
 The answer still lands in the thread the command was typed in, so a verdict
 on an external page is visible where somebody asked for it.
+
+Two things happen on its own to the thread a command with no argument reads.
+**A forwarded message is followed to its original.** Sharing a message into
+another channel leaves its text in an attachment rather than in the message,
+so the thread under one is a wrapper with an empty parent; the permalink in
+that attachment is followed once, and named above the answer. **The bot's own
+earlier answers are dropped.** Otherwise a second command in a thread it has
+already answered summarises its own summary. Another app's messages stay --
+those are somebody's actual content.
 
 ## The split that matters
 

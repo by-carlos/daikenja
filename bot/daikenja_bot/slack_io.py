@@ -36,8 +36,25 @@ class SlackIO:
         self._client = client
         self._user_cache: dict[str, str] = {}
         self._channel_cache: dict[str, str] = {}
+        self._bot_user_id: str | None = None
 
     # -- reading -------------------------------------------------------
+
+    def bot_user_id(self) -> str:
+        """This bot's own user id, looked up once.
+
+        `auth.test` needs no scope beyond the token itself. An empty string
+        when it fails: the only caller uses this to drop the bot's own
+        messages out of a transcript, and a thread carrying one extra message
+        is a far smaller problem than a command that will not run.
+        """
+        if self._bot_user_id is None:
+            try:
+                self._bot_user_id = str(self._call("auth_test").get("user_id") or "")
+            except SlackError as exc:
+                log.info("could not resolve the bot's own user id: %s", exc)
+                self._bot_user_id = ""
+        return self._bot_user_id
 
     def fetch_thread(self, channel_id: str, thread_ts: str) -> list[dict[str, Any]]:
         """Every message in one thread, parent first."""

@@ -216,6 +216,86 @@ class ThreadSubjectTests(unittest.TestCase):
         self.assertEqual(run.calls, [])
 
 
+FORWARD = [
+    {
+        "type": "message",
+        "user": "U0RIMURU",
+        "ts": "1758069000.000500",
+        "text": "",
+        "attachments": [{"from_url": PERMALINK, "author_id": "U0HAKUROU"}],
+    }
+]
+
+
+class ForwardedSubjectTests(unittest.TestCase):
+    """A thread whose parent is a forward is a wrapper, not the subject."""
+
+    def _client(self):
+        return FakeSlackClient(
+            pages=[
+                {"ok": True, "messages": FORWARD, "has_more": False},
+                {"ok": True, "messages": THREAD, "has_more": False},
+            ],
+            users=USERS,
+        )
+
+    def test_the_forwarded_thread_is_read_instead_of_the_wrapper(self):
+        handler, client, run = build(client=self._client())
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758069000.000500"))
+        self.assertEqual(client.replies_calls[1]["channel"], "C0OTHER")
+        self.assertEqual(client.replies_calls[1]["ts"], "1758067200.000100")
+        _, subject = run.calls[0]
+        self.assertIn("Can we move the harbor cutover", subject.body)
+
+    def test_the_forwarded_thread_is_named_as_the_source(self):
+        handler, client, _ = build(client=self._client())
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758069000.000500"))
+        self.assertTrue(client.posted[0]["text"].startswith(f"_On_ <{PERMALINK}>"))
+
+    def test_a_typed_link_is_not_overridden_by_the_thread_it_was_typed_in(self):
+        handler, client, run = build(client=self._client())
+        handler.handle_mention(
+            mention(f"<@U0BOT> summary {PERMALINK}", thread_ts="1758069000.000500")
+        )
+        # One fetch only: the link the user typed, never the wrapper's own.
+        self.assertEqual(len(client.replies_calls), 1)
+        self.assertEqual(client.replies_calls[0]["channel"], "C0OTHER")
+
+
+class OwnMessageTests(unittest.TestCase):
+    """The bot's earlier answers are not thread content for the next command."""
+
+    OWN_REPLY = {
+        "type": "message",
+        "user": "U0BOT",
+        "bot_id": "B0DAIKENJA",
+        "ts": "1758068900.000450",
+        "thread_ts": "1758067200.000100",
+        "text": "Thread: an earlier summary this bot posted, 8 messages",
+    }
+
+    def test_the_bots_own_reply_is_dropped_from_the_transcript(self):
+        client = FakeSlackClient(replies=THREAD + [self.OWN_REPLY], users=USERS)
+        handler, client, run = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758067200.000100"))
+        _, subject = run.calls[0]
+        self.assertNotIn("an earlier summary this bot posted", subject.body)
+        self.assertEqual(subject.label, "#harbor-rollout, 4 messages")
+
+    def test_another_apps_message_is_kept(self):
+        handler, client, run = build()
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758067200.000100"))
+        _, subject = run.calls[0]
+        self.assertIn("Build 412 is green.", subject.body)
+
+    def test_a_thread_of_nothing_but_the_bot_is_reported_not_summarised(self):
+        client = FakeSlackClient(replies=[self.OWN_REPLY], users=USERS)
+        handler, client, run = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758067200.000100"))
+        self.assertIn("could not read that", client.posted[0]["text"])
+        self.assertEqual(run.calls, [])
+
+
 class ConfluenceTests(unittest.TestCase):
     def _configured(self):
         return parse_config(

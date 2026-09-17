@@ -23,7 +23,10 @@ THREAD_SUBJECT = Subject(kind=THREAD, label="#harbor-rollout, 4 messages", body=
 class BuildInstructionTests(unittest.TestCase):
     def test_summary_invokes_the_thread_skill(self):
         instruction = build_instruction(SUMMARY, THREAD_SUBJECT)
-        self.assertTrue(instruction.startswith("/daikenja:thread"))
+        # The `message` form by name, not the bare skill: the conversational
+        # form of `thread` is documented to address its one reader as `you`,
+        # and an instruction arguing with the skill it just invoked loses.
+        self.assertTrue(instruction.startswith("/daikenja:thread message"))
         self.assertIn("Waiting on", instruction)
         self.assertIn("Name people rather than writing 'you'", instruction)
         self.assertIn("do not draft a reply", instruction)

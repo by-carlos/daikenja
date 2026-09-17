@@ -16,7 +16,7 @@ from typing import Any, Mapping
 from .commands import HELP, USAGE, Command, parse_command
 from .config import BotConfig, ConfigError, resolve_secret
 from .confluence import ConfluenceError, ConfluenceNotConfigured, fetch_page
-from .links import looks_like_confluence, parse_slack_permalink
+from .links import forwarded_permalink, looks_like_confluence, parse_slack_permalink
 from .mrkdwn import to_mrkdwn, truncate
 from .runner import RunnerError, run_command
 from .slack_io import SlackError, SlackIO, thread_participants
@@ -152,7 +152,9 @@ class Handler:
         self, command: Command, mention: MentionEvent
     ) -> Subject | None:
         if not command.argument:
-            return self._thread_subject(mention.channel_id, mention.thread_ts)
+            return self._thread_subject(
+                mention.channel_id, mention.thread_ts, follow_forward=True
+            )
 
         permalink = parse_slack_permalink(command.argument)
         if permalink:
@@ -171,9 +173,31 @@ class Handler:
         return None
 
     def _thread_subject(
-        self, channel_id: str, thread_ts: str, source_url: str | None = None
+        self,
+        channel_id: str,
+        thread_ts: str,
+        source_url: str | None = None,
+        follow_forward: bool = False,
     ) -> Subject:
         messages = self._slack.fetch_thread(channel_id, thread_ts)
+        if not messages:
+            raise SlackError("that thread came back empty")
+
+        if follow_forward:
+            # A thread whose parent is a forwarded message is a wrapper around
+            # the real subject. Followed once and only from the no-argument
+            # path: a link the user typed is what they asked for, whatever the
+            # thread around it holds. A failure here is reported rather than
+            # quietly falling back -- summarising the wrapper is the defect
+            # this exists to stop, and doing it silently is worse.
+            forwarded = forwarded_permalink(messages[0])
+            ref = parse_slack_permalink(forwarded) if forwarded else None
+            if ref:
+                return self._thread_subject(
+                    ref.channel_id, ref.thread_ts, source_url=forwarded
+                )
+
+        messages = self._without_own_messages(messages)
         if not messages:
             raise SlackError("that thread came back empty")
         users = self._slack.user_names(thread_participants(messages))
@@ -183,6 +207,21 @@ class Handler:
             channel_label=self._slack.channel_label(channel_id),
             source_url=source_url,
         )
+
+    def _without_own_messages(
+        self, messages: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Drop what this bot itself has already posted into the thread.
+
+        A second command in a thread the bot has answered would otherwise be
+        handed its own earlier answer as thread content, and summarise the
+        summary. Only this bot's messages go: another app's post is somebody's
+        actual content and stays.
+        """
+        own = self._slack.bot_user_id()
+        if not own:
+            return messages
+        return [m for m in messages if str(m.get("user") or "") != own]
 
     def _confluence_subject(self, url: str) -> Subject:
         confluence = self._config.confluence

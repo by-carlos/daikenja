@@ -132,6 +132,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   no longer seen at a reportable frequency, never as fixed. A failed watch
   write is reported and does not stop the run. The file is not a style file and
   no other skill reads it (#242).
+- **`thread` gets a `message` form, for a summary that leaves the session.**
+  `/daikenja:thread message` produces the Step 2 block as a deliverable for a
+  surface where the user is not the only reader: people are named rather than
+  addressed as `you`, `🌡️ Tone` is omitted, and the `📒 Ledger` line names the
+  project without its absolute path, which carries the machine's own username
+  and cannot be opened by a reader in a channel. Steps 3 to 5 do not run. The
+  conversational form is unchanged and still says `you`, where it has exactly
+  one referent. The bot's `summary` command now asks for this form by name:
+  it was asking the conversational form, in prose, to behave like a form the
+  skill did not yet have, and real runs came back with `Waiting on you`.
+
+### Fixed
+
+- **The bot no longer summarizes the wrapper around a forwarded message.** A
+  Slack message forwarded into another channel carries its text in an
+  attachment, not in the message, so a bare `summary` or `judgement` in the
+  thread under one was handed an empty parent -- and answered about it,
+  saying the replies it could see referred to were unreadable. The original's
+  permalink travels in that attachment and is now followed, once, and named
+  as the source above the answer. A link typed as an argument is never
+  overridden by the thread it was typed in.
+- **The bot's own answers are no longer read back as thread content.** A
+  second command in a thread the bot had already answered was handed that
+  earlier answer as part of the thread, and summarized the summary --
+  including its message count, which is where a claim about eight unreadable
+  replies came from. This bot's own messages are now dropped from the
+  transcript. Another app's messages are somebody's actual content and stay.
 
 ## [0.9.1] - 2026-09-10
 

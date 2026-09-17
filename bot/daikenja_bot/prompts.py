@@ -156,18 +156,18 @@ FENCE_SHARE = 0.5
 _FENCE_LINE_RE = re.compile(r"^\s*```")
 
 _SKILL_INVOCATION = {
-    SUMMARY: "/daikenja:thread",
+    SUMMARY: "/daikenja:thread message",
     JUDGEMENT: "/daikenja:judgement message",
 }
 
 _TASK = {
     SUMMARY: (
-        "Produce the Step 2 summary block for that subject: the Thread / "
-        "Asking / Open / Waiting on lines with their markers, plus the Ledger "
-        "line from Step 2b when a project resolves. Omit the Tone line and any "
-        "line that would be empty. Name people rather than writing 'you' -- "
-        "this is posted into a channel where 'you' has no referent. Stop there "
-        "-- do not run Step 3, and do not draft a reply."
+        "Produce the `message` form for that subject: the Step 2 summary "
+        "block, exactly the shape that form fixes -- the Thread / Asking / "
+        "Open / Waiting on lines with their markers, plus the Ledger line when "
+        "a project resolves. Omit the Tone line and any line that would be "
+        "empty. Name people rather than writing 'you'. Stop there -- do not "
+        "run Step 3, and do not draft a reply."
     ),
     JUDGEMENT: (
         "Produce the `message` form for that subject: the shareable review, "

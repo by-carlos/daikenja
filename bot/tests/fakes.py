@@ -46,7 +46,9 @@ class FakeSlackClient:
         users: dict[str, str] | None = None,
         channel_name: str | None = "harbor-rollout",
         fail: dict[str, str] | None = None,
+        bot_user_id: str = "U0BOT",
     ) -> None:
+        self._bot_user_id = bot_user_id
         self._pages = pages if pages is not None else [
             {"ok": True, "messages": replies or [], "has_more": False}
         ]
@@ -69,6 +71,10 @@ class FakeSlackClient:
         if index < len(self._pages):
             return self._pages[index]
         return {"ok": True, "messages": [], "has_more": False}
+
+    def auth_test(self, **kwargs: Any) -> dict[str, Any]:
+        self._maybe_fail("auth_test")
+        return {"ok": True, "user_id": self._bot_user_id}
 
     def conversations_info(self, **kwargs: Any) -> dict[str, Any]:
         self._maybe_fail("conversations_info")
