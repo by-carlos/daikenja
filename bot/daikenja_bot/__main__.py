@@ -119,6 +119,9 @@ def main(argv: list[str] | None = None) -> int:
             )
         )
         print(f"  claude:     {config.claude.command}")
+        model = config.claude.model or "your account's default"
+        effort = config.claude.effort or "your account's default"
+        print(f"  model:      {model} at {effort} effort")
         print(f"  tools:      {', '.join(config.claude.allowed_tools)}")
         print(f"  working in: {config.claude.resolved_working_dir()}")
         print(

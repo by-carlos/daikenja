@@ -85,6 +85,8 @@ def build_argv(config: BotConfig) -> list[str]:
     ]
     if claude.model:
         argv += ["--model", claude.model]
+    if claude.effort:
+        argv += ["--effort", claude.effort]
     if claude.plugin_dir:
         argv += ["--plugin-dir", claude.plugin_dir]
     argv += list(claude.extra_args)

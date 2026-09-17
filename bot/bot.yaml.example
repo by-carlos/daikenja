@@ -40,8 +40,14 @@ claude:
   # The Claude Code CLI. A full path works if it is not on PATH.
   command: claude
 
-  # Optional. Pin the model the headless session uses.
-  # model: claude-sonnet-5
+  # The model and effort level the headless session runs on. These are the
+  # defaults and can be left as they are; reading a thread and writing a few
+  # lines to a fixed format does not need a larger model, and every mention
+  # pays for it. Set either one to an empty value to follow whatever your
+  # account's default is instead. Effort is separate from the model name --
+  # `claude-sonnet-5-medium` is not a model.
+  model: claude-sonnet-5
+  effort: medium   # low, medium, high, xhigh, max
 
   # Optional. Only for running against a working tree of this repository;
   # an installed plugin needs nothing here.

@@ -90,10 +90,25 @@ class BuildArgvTests(unittest.TestCase):
         # block extraction in prompts.py handles the register leak.
         self.assertNotIn("--append-system-prompt", build_argv(make_config()))
 
+    def test_the_default_model_and_effort_are_on_the_command_line(self):
+        argv = build_argv(make_config())
+        self.assertEqual(argv[argv.index("--model") + 1], "claude-sonnet-5")
+        self.assertEqual(argv[argv.index("--effort") + 1], "medium")
+
     def test_optional_flags_are_only_added_when_set(self):
         argv = build_argv(make_config())
-        self.assertNotIn("--model", argv)
         self.assertNotIn("--plugin-dir", argv)
+
+    def test_an_empty_model_or_effort_follows_the_account_default(self):
+        config = parse_config(
+            {
+                "slack": {"owner_user_id": "U0RIMURU"},
+                "claude": {"model": "", "effort": ""},
+            }
+        )
+        argv = build_argv(config)
+        self.assertNotIn("--model", argv)
+        self.assertNotIn("--effort", argv)
 
     def test_model_plugin_dir_and_extra_args_are_passed_through(self):
         config = parse_config(
