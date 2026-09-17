@@ -396,13 +396,14 @@ bot/                              the optional Slack service, and its own tests
 templates/                        blank files copied out to the user
 docs/                             the ledger and config specifications
 tests/                            invariant checks and the hand-run fixtures
+.claude/                          guidance for people working on this repo
 ```
 
 Where a file belongs is decided by who reads it. `skills/` is downloaded by
 every installer and loaded by Claude Code. `bot/` is downloaded by every
 installer and never loaded by Claude Code, so it stays lean and holds
 nothing a skill needs -- no skill can reach it. `.claude/` is for people
-working on this repository.
+working on this repository and ships nothing.
 
 `docs/` holds the contracts. A skill implements a contract and never redefines
 one, so a format change happens in `docs/` first. `tests/check-invariants.py`,

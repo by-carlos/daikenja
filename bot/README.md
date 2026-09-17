@@ -166,6 +166,7 @@ key is `slack.owner_user_id`.
 | `slack.allowed_channels` | `[]` | Restrict it to named channels. Empty means every channel it was invited to. |
 | `slack.bot_token_env` / `slack.app_token_env` | `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` | Where the tokens are read from. |
 | `slack.bot_token_file` / `slack.app_token_file` | unset | A file holding the token instead, for people who would rather not export one. |
+| `slack.bot_token` / `slack.app_token` | unset | The token written into the config file itself. Accepted, and the last choice -- see below. |
 | `slack.ack_reaction` | `eyes` | The emoji added to the mention while the answer is written. `null` turns it off. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
 | `claude.model` | unset | Pin the model the headless session uses. |
@@ -175,6 +176,16 @@ key is `slack.owner_user_id`.
 | `claude.extra_args` | `[]` | Extra arguments for `claude`. |
 | `claude.timeout_seconds` | `300` | How long one answer may take. |
 | `confluence.*` | unset | Optional. Turns on Confluence links. |
+
+**Where a token lives: environment, then a file, then the config.** Each
+credential is looked for in that order, and the first one found wins. The
+environment is the recommendation, because a long-lived process needs the
+value in memory and not in a file anybody can read. A `*_token_file` is the
+alternative for a file you have chmodded yourself. Writing the token
+straight into `bot.yaml` as `slack.bot_token`, `slack.app_token` or
+`confluence.token` works and is the last choice: `bot.yaml` is
+`.gitignore`d here, but it is still a plaintext secret in a config
+directory, and every backup of that directory now carries it.
 
 **A mention from anyone not on the allowlist is ignored in silence**, with a
 line in the log. A refusal posted back into the thread would turn any
