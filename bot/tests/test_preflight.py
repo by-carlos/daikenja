@@ -1,6 +1,8 @@
+import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 from daikenja_bot import preflight
@@ -95,6 +97,22 @@ class CheckInstalledTests(unittest.TestCase):
         self.assertEqual(report.missing(), {})
         self.assertEqual(calls[0]["argv"][1:], ["plugin", "details", "daikenja"])
         self.assertNotIn("SLACK_BOT_TOKEN", calls[0]["env"])
+
+    def test_the_real_details_runner_passes_the_scrubbed_environment(self):
+        # The test above only proves `check` hands the scrubbed environment
+        # to `details`. It is the injected `details` in every other test, so
+        # the default one discarded that argument for a while and nothing
+        # noticed -- the seam was covered, the runner behind it was not.
+        seen: dict = {}
+
+        def fake_run(argv, **kwargs):
+            seen.update(kwargs)
+            return subprocess.CompletedProcess(argv, 0, DETAILS_WITH_JUDGEMENT, "")
+
+        with unittest.mock.patch.object(preflight.subprocess, "run", fake_run):
+            preflight._default_details([sys.executable], {"PATH": "/bin"})
+
+        self.assertEqual(seen["env"], {"PATH": "/bin"})
 
     def test_a_version_without_judgement_disables_that_command(self):
         report = preflight.check(

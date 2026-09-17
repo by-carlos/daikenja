@@ -157,6 +157,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The startup skill check now runs with the scrubbed environment too.** The
+  bot strips the Slack credentials from the environment every session it
+  starts -- except the one `preflight` runs at startup to see which skills are
+  installed, which built the scrubbed environment and then started the CLI
+  without it. Nothing was reachable through it: that check runs one fixed
+  command over a file on disk, before any thread has been read. But the rule
+  held in one of the two places that start the CLI, and the test covering it
+  asserted against an injected runner rather than the real one, so neither
+  said anything. Both now pass the scrubbed environment, and the test exercises
+  the real runner.
 - **The bot no longer opens a console window on Windows for every mention.**
   The Claude Code CLI installs as a batch file, so starting it runs
   `cmd.exe`; when the bot itself runs without a console -- `pythonw.exe`, a
