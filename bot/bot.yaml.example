@@ -1,0 +1,68 @@
+# Daikenja bot configuration.
+#
+# Copy this to ~/.claude/daikenja/bot.yaml and edit it. Never commit the
+# copy: it names your workspace and may hold your tokens.
+#
+# Check it with:  python -m daikenja_bot --check
+
+slack:
+  # Your own Slack user ID -- click your name in Slack, then "Copy member ID".
+  # Required. Only this person can trigger the bot unless allowed_users
+  # widens it, and the owner is always allowed.
+  owner_user_id: U0EXAMPLEOWNER
+
+  # Optional. Other people who may trigger it.
+  allowed_users: []
+
+  # Optional. Restrict it to named channels. Empty means every channel the
+  # bot has been invited to.
+  allowed_channels: []
+
+  # Where the tokens come from. The environment is the default and the
+  # recommendation; a *_token_file is the alternative for a 0600 file.
+  bot_token_env: SLACK_BOT_TOKEN
+  app_token_env: SLACK_APP_TOKEN
+  # bot_token_file: ~/.claude/daikenja/slack-bot-token
+  # app_token_file: ~/.claude/daikenja/slack-app-token
+
+  # Emoji added to the mention while the answer is being written. Needs the
+  # reactions:write scope; set it to null to skip the reaction entirely.
+  ack_reaction: eyes
+
+claude:
+  # The Claude Code CLI. A full path works if it is not on PATH.
+  command: claude
+
+  # Optional. Pin the model the headless session uses.
+  # model: claude-sonnet-5
+
+  # Optional. Only for running against a working tree of this repository;
+  # an installed plugin needs nothing here.
+  # plugin_dir: C:/GitHub/daikenja
+
+  # Where the headless session runs. Defaults to your home directory, which
+  # is deliberate: a bot has no project of its own, so threads should be
+  # matched to a project by their content rather than by whatever directory
+  # the process happens to sit in.
+  # working_dir: ~
+
+  # The tools the headless session may use. Read-only by default. Adding
+  # Bash or Write here hands a tool to a session that is reading text other
+  # people wrote -- do not.
+  allowed_tools:
+    - Read
+    - Glob
+    - Grep
+
+  # Extra arguments passed to `claude`, if you need any.
+  extra_args: []
+
+  # How long one answer may take before it is abandoned.
+  timeout_seconds: 300
+
+# Optional. Without this block, a Confluence link gets a one-line reply
+# saying Confluence is not configured, and nothing else happens.
+# confluence:
+#   base_url: https://example.atlassian.net
+#   email: you@example.com
+#   token_env: CONFLUENCE_API_TOKEN
