@@ -124,6 +124,19 @@ stage's acceptance checks can be re-run later against the same inputs.
   offering a card once and never touching an existing one. The harbor ledger
   it reads against is the state `sample-thread.md` and its follow-up leave.
 
+- [`fixtures/digest-items.md`](fixtures/digest-items.md) -- a feeder's list of
+  eight items over the same four projects `project-card.md` registers, plus
+  the atlas ledger that fixture does not carry: a Decisions section and an
+  **empty** Open items section, which is the case that has to render as
+  `_No open items._`. Four walks over `digest`: the whole digest, pinning a
+  `topic` key beating a channel no card owns, a tracker key deciding from
+  outside its own channel, a cardless project named once at the end rather
+  than guessed at, a summary-less item skipped without failing the run, and
+  the block both as markdown and as what `mrkdwn.to_mrkdwn` posts; a near
+  miss that must stay unmatched because nobody can confirm it; a `topic` that
+  names no registered key, which decides nothing rather than inventing a
+  group; and a list where nothing matches, which is still posted.
+
 ### `meeting-review`
 
 - [`fixtures/sample-transcript.md`](fixtures/sample-transcript.md) -- a

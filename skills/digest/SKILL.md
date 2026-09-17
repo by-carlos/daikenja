@@ -131,12 +131,18 @@ thing to avoid outright: Slack has none, and the converter flattens them.
 No emoji, no register markers, no preamble, no closing offer, and **no
 questions** -- there is nobody to answer one.
 
+**The header line** is `**Digest**`, the item count, the number of projects
+that got a group -- Unmatched is not a project and is not counted -- and
+`since <the earliest item's when>`. Drop the `since` clause entirely when no
+item carries a `when`; never invent a range, and never use the current time,
+which says when the digest was written rather than what it covers.
+
 Order projects by item count, most first, then by key A-Z. Unmatched always
 comes last. Within a project, newest item first; an item with no `when` sorts
 after the dated ones.
 
 ```markdown
-**Digest** -- 7 items, 3 projects, since 2026-09-18T06:00Z
+**Digest** -- 7 items, 2 projects, since 2026-09-18T06:30:00Z
 
 **harbor-rollout** -- 3 items
 - #harbor-rollout -- @diablo -- [The 30-day replica window may not survive the cutover move](https://example.com/archives/C0HARBOR/p1)
