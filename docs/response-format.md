@@ -6,7 +6,7 @@ headings by tests/check-invariants.py):
 - § Entries are named topic-first, ID in parentheses -- preflight "Step 3: cycle 0 -- the substance checks", project-catchup "Step 4: report the delta", project-decisions "Step 6: show the result", project-gaps "Step 4: report", project-summary "Step 3: build the overview", project-sources "Step 4: report"
 - § A clean result is one line -- project-sources "Step 0: read the contracts", judgement "Step 5: report"
 - § A user-side conversational layer -- judgement "The discipline is this skill's own"
-- § The second person belongs to conversation -- judgement "Step 5: report", thread "Step 2: summarize it", preflight "Step 3: cycle 0 -- the substance checks"
+- § The second person belongs to conversation -- judgement "Step 5: report", thread "Step 2: summarize it", thread "Form `message`: a summary that leaves the session", preflight "Step 3: cycle 0 -- the substance checks"
 
 How a skill reports to the user in the conversation. `ledger-format.md` fixes
 what the record file looks like, `voice.md` fixes how a drafted message reads,

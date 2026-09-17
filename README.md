@@ -343,7 +343,7 @@ so a thread gets an answer without anyone leaving Slack. Mention it and it
 replies in the same thread:
 
 ```
-@daikenja summary     what this thread is asking, what is open, what is yours
+@daikenja summary     what this thread is asking, what is open, who it waits on
 @daikenja judgement   that thread checked against your project's ledger
 ```
 
