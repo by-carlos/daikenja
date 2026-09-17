@@ -4,6 +4,7 @@ from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.prompts import (
     END_SENTINEL,
     JUDGEMENT_SECTION_RE,
+    NO_ANSWER,
     START_SENTINEL,
     SUBJECT_BEGIN,
     SUBJECT_END,
@@ -62,6 +63,17 @@ class BuildInstructionTests(unittest.TestCase):
         self.assertIn("Scope", instruction)
         self.assertIn("do not wait", instruction)
 
+    def test_both_sentences_are_given_verbatim(self):
+        # Describing what to write is followed less reliably than being given
+        # the sentence. Both cases are spelled out: a project nearly matched,
+        # and none matched at all.
+        for command, invocation in ((JUDGEMENT, "judgement"), (SUMMARY, "summary")):
+            with self.subTest(command=command):
+                instruction = build_instruction(command, THREAD_SUBJECT)
+                self.assertIn("This looks like", instruction)
+                self.assertIn("No project context", instruction)
+                self.assertIn(f"@daikenja {invocation} project", instruction)
+
     def test_the_subject_is_described_but_not_included(self):
         instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
         self.assertIn("#harbor-rollout, 4 messages", instruction)
@@ -89,6 +101,47 @@ class BuildInputTests(unittest.TestCase):
         self.assertTrue(piped.startswith(SUBJECT_BEGIN))
         self.assertIn("[1] hakurou: hi", piped)
         self.assertIn(SUBJECT_END, piped)
+
+
+class QuestionGuardTests(unittest.TestCase):
+    """A question is never an answer, whatever the session produced.
+
+    The rule the skills carry -- never ask, state the project assumption
+    inside the answer -- is advice the model follows unevenly. A real run
+    posted `Should I check this against the azure-to-gcp-migration ledger, or
+    proceed on general knowledge only?` into a thread, because no block was
+    recognised and the last pass posts what it got. Nobody can answer that
+    where it landed.
+    """
+
+    def test_a_bare_question_becomes_the_fixed_line(self):
+        raw = "Should I check this against the harbor ledger, or not?"
+        self.assertEqual(extract_output(raw, JUDGEMENT), NO_ANSWER)
+
+    def test_a_question_between_the_sentinels_is_caught_too(self):
+        raw = f"{START_SENTINEL}\nWhich project is this, harbor or atlas?\n{END_SENTINEL}"
+        self.assertEqual(extract_output(raw, JUDGEMENT), NO_ANSWER)
+
+    def test_a_summary_question_is_caught(self):
+        raw = "Do you want me to read the harbor ledger first?"
+        self.assertEqual(extract_output(raw, SUMMARY), NO_ANSWER)
+
+    def test_a_real_verdict_is_untouched_even_with_a_question_mark(self):
+        raw = (
+            "⚖️ **Verdict**\nThe claim does not hold -- what is the RPO? is the "
+            "question nobody answered. _certain · general knowledge_\n\n"
+            "🚧 **Not checked**\n- No ledger was read."
+        )
+        answer = extract_output(raw, JUDGEMENT)
+        self.assertIn("The claim does not hold", answer)
+        self.assertNotEqual(answer, NO_ANSWER)
+
+    def test_an_unrecognised_answer_that_asks_nothing_still_posts(self):
+        raw = "Backups and high availability solve different failure modes."
+        self.assertEqual(extract_output(raw, JUDGEMENT), raw)
+
+    def test_the_fixed_line_names_the_project_parameter(self):
+        self.assertIn("project <key>", NO_ANSWER)
 
 
 class LocalPathTests(unittest.TestCase):
@@ -316,9 +369,11 @@ class ExtractBlockTests(unittest.TestCase):
         )
 
     def test_no_command_means_no_shape_matching(self):
-        self.assertEqual(
-            extract_output(self.NOISY_SUMMARY).strip(), self.NOISY_SUMMARY.strip()
-        )
+        # Without a command name there is no shape to match, so the whole
+        # output comes back. The fixture's trailing question is dropped for
+        # this one: a question is refused now, whatever the command was.
+        text = self.NOISY_SUMMARY.replace("1. What is your position?\n", "")
+        self.assertEqual(extract_output(text).strip(), text.strip())
 
     MARKED_SUMMARY = (
         "Using daikenja:thread to gather context before any reply.\n"
@@ -427,16 +482,27 @@ class ExtractBlockTests(unittest.TestCase):
 
     def test_a_verdict_sentence_starting_with_the_word_is_not_a_header(self):
         # If "Verdict is unclear..." were mistaken for the header, the
-        # bullets below it would be taken as the block and the closing
-        # question would be dropped -- exactly the failure this guards.
+        # bullets below it would be taken as the block and the line after
+        # them dropped -- exactly the failure this guards.
         text = (
             "Verdict is unclear, need more evidence. Here is what we found:\n"
             "- One finding that looks like a bullet.\n"
             "- Another one.\n"
             "\n"
-            "Want me to look further?"
+            "Nothing else was reachable."
         )
         self.assertEqual(extract_output(text, JUDGEMENT), text)
+
+    def test_the_same_text_ending_in_a_question_is_refused(self):
+        # Same shape, closing by asking. No block was recognised, so the
+        # question test decides and the fixed line goes out instead.
+        text = (
+            "Verdict is unclear, need more evidence. Here is what we found:\n"
+            "- One finding that looks like a bullet.\n"
+            "\n"
+            "Want me to look further?"
+        )
+        self.assertEqual(extract_output(text, JUDGEMENT), NO_ANSWER)
 
     def test_a_report_directly_under_a_non_verdict_header_is_dropped(self):
         # Observed shape: a section with no bullet, and the report glued

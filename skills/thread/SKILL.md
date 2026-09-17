@@ -124,11 +124,18 @@ make is reported here and logged, if at all, by the user through
    **With no reader, a candidate is no match**, per `project-card.md`
    § Resolving a project by content, tier 2. A caller that says nobody can
    answer -- a chat bot posting into a thread -- is never asked to confirm
-   one: no ledger is read, and the `📒 Ledger` line carries the offer instead
-   of a finding -- the candidate by its human-readable name, that its ledger
-   was not read, and the command that would check it. The caller says how
-   that command is written; for the Slack bot it is
-   `@daikenja summary project <key>`.
+   one: no ledger is read, and the `📒 Ledger` line carries which project was
+   assumed instead of a finding, in one of two fixed forms:
+
+   ```
+   No ledger read. This looks like <project name> -- say `<command> project <key>` to check it.
+   No project context. Add `<command> project <key>` if you want a ledger checked.
+   ```
+
+   The first when a card's Scope nearly matched, the second when nothing did.
+   The caller says how `<command>` is written; for the Slack bot it is
+   `@daikenja summary`. **The sentence is copied, not composed** -- a rule
+   phrased as "name the candidate" produced a question in a real run instead.
 
 When a key or a directory resolved, still run the content check as a
 **cross-check**: a decisive handle on a *different* project's card is
@@ -165,9 +172,11 @@ subject.` is a complete, useful line.
 `Ledger` line out and say nothing about it. A thread that is not project
 work is the ordinary case, and `daikenja.yaml` being absent is not a reason
 to narrate configuration in the middle of a thread summary. The only notices
-this step ever adds on its own are the mismatch above and, for a caller with
-no reader, the Scope candidate it was not able to ask about -- that one keeps
-the `Ledger` line, since the offer is the whole point of it.
+this step ever adds on its own are the mismatch above and, **for a caller
+with no reader, the sentence saying which project was assumed** -- either of
+the two fixed forms above, whether a card nearly matched or nothing did. That
+caller keeps the `Ledger` line for it, because a reader who cannot ask needs
+to be told what was and was not read.
 
 ## Form `message`: a summary that leaves the session
 

@@ -200,6 +200,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   about. `judgement` names it in `Suggestion`, `thread` on its `Ledger`
   line.
 
+- **The bot no longer posts a question into a thread.** The rule above tells
+  the session to state which project it assumed rather than ask about it, and
+  a real run asked anyway -- `Should I check this against the
+  azure-to-gcp-migration ledger, or proceed on general knowledge only?` -- so
+  the last extraction pass, which posts whatever it got when no block is
+  recognised, put that in the thread. Nobody there can answer it and the bot
+  keeps no pending state, so the thread just stopped. Now an unrecognised
+  output that asks something is replaced by one fixed line naming
+  `project <key>` as the way to rephrase, with the raw output logged.
+  Anything else unrecognised is still posted as it came. The two sentences
+  the skills ask for are also given verbatim now rather than described, since
+  a sentence to copy is followed more reliably than one to compose.
+
 - **The bot no longer posts an absolute path into a thread.** Both skills
   say a `Ledger` line names the project and never the path, because the path
   carries the machine's own username and nobody in a channel can open it.

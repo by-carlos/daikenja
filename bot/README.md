@@ -56,9 +56,17 @@ a channel, a tracker key or a repository that exactly one card owns decides
 it outright. A match on a card's *Scope* paragraph alone is weaker, and in a
 conversation the skill would stop and ask you to confirm it. **Here it never
 asks.** Nobody in a thread can answer, so the candidate is treated as no
-match: the answer comes back on general knowledge, says that no ledger was
-read, and names the candidate with the command that would check it. Run that
-command if it was the right project; ignore it if it was not.
+match: the answer comes back on general knowledge and states which project it
+assumed, in one of two fixed sentences --
+
+```
+No ledger read. This looks like Harbor rollout -- say `@daikenja judgement project harbor` to check it.
+No project context. Add `@daikenja judgement project <key>` if you want a ledger checked.
+```
+
+-- so the answer always lands, and naming the project is a rephrase rather
+than a conversation. Run the command if it was the right project; ignore the
+line if it was not.
 
 Two things happen on its own to the thread a command with no argument reads.
 **A forwarded message is followed to its original.** Sharing a message into
@@ -263,6 +271,14 @@ usually does. When it does not, the deliverable is found by its own shape:
 the `Thread` / `Asking` / `Open` block for `summary`, and the `Verdict`
 header and the sections that follow it for `judgement`. Both shapes are
 fixed by the skills, so this is reading a contract rather than guessing.
+
+**A question is never posted.** If no block is recognised *and* the output
+asks something, a fixed line goes out instead -- *"I could not produce an
+answer for that. Ask me again, or name the project with `project <key>`."* --
+and the raw output goes to the log. The rules above tell the session not to
+ask, and a real run asked anyway; nobody in a thread can answer a question
+the bot is not waiting on, so the thread would simply stop there. Anything
+else unrecognised is still posted as it came.
 
 Whatever comes out is then cleaned: stray code fences are dropped, and every
 absolute path is replaced with `a local path`. Both skills already say a

@@ -21,10 +21,13 @@ reliable than guessing which part of the output was meant to be posted.
 
 from __future__ import annotations
 
+import logging
 import re
 
 from .commands import JUDGEMENT, SUMMARY
 from .subject import PAGE, Subject
+
+log = logging.getLogger(__name__)
 
 START_SENTINEL = "<<<DAIKENJA-OUTPUT>>>"
 END_SENTINEL = "<<<END-DAIKENJA-OUTPUT>>>"
@@ -166,6 +169,29 @@ _FENCE_LINE_RE = re.compile(r"^\s*```")
 #
 # The drive letter must be a token of its own, or the `s:/` inside
 # `https://example.com` would match and every link would be destroyed.
+# What goes out when the session asked something instead of answering.
+#
+# The skills say never to ask and to state the project assumption inside the
+# answer instead, and the prompt says it again. A real run asked anyway --
+# `Should I check this against the azure-to-gcp-migration ledger, or proceed
+# on general knowledge only?` -- and the last pass of `extract_output`, which
+# posts whatever it got when it recognises no block, put it in the thread.
+# Nobody there can answer it, and the bot keeps no pending state, so the
+# thread just stops.
+#
+# Model compliance is not a contract. This line is, and the recovery is the
+# same thing the offer would have named: say which project, and ask again.
+NO_ANSWER = (
+    "I could not produce an answer for that. Ask me again, or name the "
+    "project with `project <key>`."
+)
+
+# A line that asks something. Deliberately crude -- a trailing question mark
+# on any line -- because the case it guards is a session that produced a
+# question *and* no recognisable block, and a deliverable in either fixed
+# shape is found by its shape long before this is reached.
+_QUESTION_LINE_RE = re.compile(r"\?\s*[*_`)\]]*\s*$")
+
 LOCAL_PATH_PLACEHOLDER = "a local path"
 _LOCAL_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9])(?:[A-Za-z]:[\\/]|/(?:home|Users|root)/)[^\s`'\"<>|]*"
@@ -181,7 +207,8 @@ _TASK = {
         "Produce the `message` form for that subject: the Step 2 summary "
         "block, exactly the shape that form fixes -- the Thread / Asking / "
         "Open / Waiting on lines with their markers, plus the Ledger line "
-        "when a project resolves or when one is offered below. Omit the Tone "
+        "whenever a project resolves, and always for the sentence below. "
+        "Omit the Tone "
         "line and any line that would be empty. Name people rather than "
         "writing 'you'. Stop there -- do not run Step 3, and do not draft a "
         "reply."
@@ -206,28 +233,39 @@ _TASK = {
 # ledger path -- into a public thread as the answer.
 #
 # So the candidate degrades to no match, exactly as a subject that matched
-# nothing would, and is offered instead of asked: the command that would
-# check it is named in the deliverable, and the person runs it if they want
-# it. That turns a stall into an answer plus one line, and the offer is
-# answered by `project <key>` -- an ordinary new mention, so the bot needs to
-# remember nothing between the two.
+# nothing would, and is offered instead of asked: the answer states which
+# project it assumed, or that it assumed none, and names the command that
+# would settle it. The person runs that command if they want it. The offer is
+# answered by `project <key>` -- an ordinary new mention -- so the bot needs
+# to remember nothing between the two.
+#
+# The sentences are given verbatim rather than described. A rule stated as
+# "name the candidate with the command that would check it" was in force for
+# the run that asked `Should I check this against the azure-to-gcp-migration
+# ledger, or proceed on general knowledge only?` instead; a sentence to copy
+# is followed more reliably than a description of one to compose.
 _NO_READER = {
     SUMMARY: (
         " Nobody can answer a question here, so a project that matches only a "
         "card's Scope paragraph is never put to a reader: do not wait for a "
-        "confirmation and do not ask for one. Read no ledger. Put it on the "
-        "Ledger line instead -- the candidate project by its name, that its "
-        "ledger was not read, and the command that would check it, written as "
-        "`@daikenja summary project <key>`."
+        "confirmation and do not ask for one. Read no ledger, and say which "
+        "project you assumed on the Ledger line, in one of these two forms "
+        "exactly: `No ledger read. This looks like <project name> -- say "
+        "`@daikenja summary project <key>`` to check it.` when one nearly "
+        "matched, or `No project context. Add `@daikenja summary project "
+        "<key>`` if you want a ledger checked.` when none did."
     ),
     JUDGEMENT: (
         " Nobody can answer a question here, so a project that matches only a "
         "card's Scope paragraph is never put to a reader: do not wait for a "
         "confirmation and do not ask for one. Carry on as though nothing "
         "matched -- read no ledger, leave the Ledger section out, and say in "
-        "Not checked that no ledger was read. Name the candidate once as the "
-        "last bullet of Suggestion, with the command that would check it, "
-        "written as `@daikenja judgement project <key>`."
+        "Not checked that no ledger was read. Then say which project you "
+        "assumed as the last bullet of Suggestion, in one of these two forms "
+        "exactly: `No ledger read. This looks like <project name> -- say "
+        "`@daikenja judgement project <key>`` to check it.` when one nearly "
+        "matched, or `No project context. Add `@daikenja judgement project "
+        "<key>`` if you want a ledger checked.` when none did."
     ),
 }
 
@@ -344,6 +382,9 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
     4. **None of those.** Take the whole output. A session that answered
        well but in no recognisable shape is still worth posting; a bot that
        silently drops an answer is worse than one that posts a noisy one.
+       **Unless it is asking something** -- see `NO_ANSWER`. A question is the
+       one unrecognised output that is certainly not an answer, and posting it
+       into a thread nobody can reply to leaves the thread dead.
     5. **Whatever comes out of the above, clean it.** Every fence line found
        anywhere in the result is dropped -- neither deliverable ever
        legitimately contains one -- and every absolute path is replaced,
@@ -357,7 +398,7 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
     if start != -1:
         body = _unfence(text[start + len(START_SENTINEL) :].split(END_SENTINEL)[0].strip())
         if body:
-            return _clean(body)
+            return _answer(body, command_name)
 
     fenced = FIRST_FENCE_RE.search(text)
     if fenced:
@@ -365,8 +406,30 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
         if inner and len(inner) >= len(text) * FENCE_SHARE:
             text = inner
 
+    return _answer(text, command_name)
+
+
+def _answer(text: str, command_name: str | None) -> str:
+    """The deliverable, or the fixed line when what came back is a question.
+
+    The block is looked for first: a documented shape is an answer whatever
+    punctuation it contains, and a `Verdict` that quotes someone's question
+    must not be thrown away. Only when no block is recognised does the
+    question test decide.
+    """
     block = extract_block(text, command_name)
-    return _clean(block or text)
+    if block:
+        return _clean(block)
+    cleaned = _clean(text)
+    if asks_a_question(cleaned):
+        log.warning("the session asked instead of answering: %r", cleaned[:200])
+        return NO_ANSWER
+    return cleaned
+
+
+def asks_a_question(text: str) -> bool:
+    """Does any line of this end in a question mark?"""
+    return any(_QUESTION_LINE_RE.search(line) for line in (text or "").split("\n"))
 
 
 def extract_block(text: str, command_name: str | None) -> str:
