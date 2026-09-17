@@ -43,13 +43,29 @@ reply; the summary is the answer and nothing precedes it. § The second person
 belongs to conversation decides whether `Waiting on` carries a name or `you`.
 
 ```
-Thread: [channel or subject, and how many messages]
-Asking: [who is asking, and what they actually want]
-Open: [what is still undecided]
-Waiting on you: [what, if anything, is yours]
-Tone: [neutral / tense / urgent -- only if it is not neutral]
-Ledger: [what the project already has on this -- see Step 2b; omitted when no project matched]
+🧵 **Thread** -- [what it is about, who is in it, and how many messages]
+❓ **Asking** -- [who is asking, and what they actually want]
+🔓 **Open** -- [what is still undecided]
+⏳ **Waiting on** -- [name: what is theirs]
+📒 **Ledger** -- [what the project already has on this -- see Step 2b]
+🌡️ **Tone** -- [neutral / tense / urgent -- only if it is not neutral]
 ```
+
+**The `Thread` line is about the thread, never about how it arrived.** Lead
+with what the thread is about, then who is in it, then the count. Never name
+the input mechanism -- not `pasted block`, not `link`, not `forwarded` -- and
+never state an absence. A channel that is not known is simply not mentioned;
+`channel not stated` is a defect, not a disclosure.
+
+**`Waiting on` names the person**, per `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md`
+§ The second person belongs to conversation. In this reply, where there is one
+reader, `you` is that person's name and is correct. In any form that leaves the
+session, the name is written out.
+
+**`Tone` is written in this reply only.** Any form that leaves the session omits
+it, empty or not: it exists to feed the draft `compose` writes, and a consumer
+that never reaches `compose` gains nothing from a bot publicly labelling
+someone's message `tense`.
 
 Attribution rules, because getting this wrong is expensive:
 
@@ -117,18 +133,18 @@ card beside the ledger if there is one. Then write the `Ledger:` line:
   only `project-log` can do that and only on the user's say-so.
 
 ```
-Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- touches the ramp
+📒 **Ledger** -- harbor (C:/GitHub/harbor/.daikenja/ledger.md): touches the ramp
 cutover decision (D-001); the proposed Friday start contradicts its Monday
 2026-08-17 date; appears to resolve the rollback-trigger question (O-001).
 ```
 
 Keep it to one or two lines. Naming the project and the ledger path is what
 makes the rest checkable, so both stay even when nothing matched:
-`Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- nothing on this
+`📒 **Ledger** -- harbor (C:/GitHub/harbor/.daikenja/ledger.md): nothing on this
 subject.` is a complete, useful line.
 
 **When no project resolved**, or the project has no ledger, leave the
-`Ledger:` line out and say nothing about it. A thread that is not project
+`Ledger` line out and say nothing about it. A thread that is not project
 work is the ordinary case, and `daikenja.yaml` being absent is not a reason
 to narrate configuration in the middle of a thread summary. The only notice
 this step ever adds on its own is the mismatch above.

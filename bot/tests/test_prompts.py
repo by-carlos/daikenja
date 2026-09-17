@@ -23,7 +23,8 @@ class BuildInstructionTests(unittest.TestCase):
     def test_summary_invokes_the_thread_skill(self):
         instruction = build_instruction(SUMMARY, THREAD_SUBJECT)
         self.assertTrue(instruction.startswith("/daikenja:thread"))
-        self.assertIn("Waiting on you", instruction)
+        self.assertIn("Waiting on", instruction)
+        self.assertIn("Name people rather than writing 'you'", instruction)
         self.assertIn("do not draft a reply", instruction)
 
     def test_judgement_invokes_the_message_form(self):
@@ -243,6 +244,39 @@ class ExtractBlockTests(unittest.TestCase):
         self.assertEqual(
             extract_output(self.NOISY_SUMMARY).strip(), self.NOISY_SUMMARY.strip()
         )
+
+    MARKED_SUMMARY = (
+        "Using daikenja:thread to gather context before any reply.\n"
+        "\n"
+        "\U0001F9F5 **Thread** -- cutover scheduling, Daisy Ding and "
+        "Carlos Eng, 3 messages\n"
+        "❓ **Asking** -- Daisy wants the cutover moved to Friday\n"
+        "\U0001F513 **Open** -- whether step 4 must run first\n"
+        "⏳ **Waiting on** -- Carlos Eng: a position on the hold\n"
+        "\n"
+        "**Query:** what is your position?\n"
+    )
+
+    def test_a_marked_summary_block_is_found(self):
+        extracted = extract_output(self.MARKED_SUMMARY, SUMMARY)
+        self.assertTrue(extracted.startswith("\U0001F9F5 **Thread** --"))
+        self.assertTrue(extracted.endswith("a position on the hold"))
+        self.assertNotIn("Using daikenja", extracted)
+        self.assertNotIn("what is your position", extracted)
+
+    def test_a_marked_document_block_opens_on_its_own_label(self):
+        text = (
+            "preamble\n\n"
+            "\U0001F4C4 **Document** -- Cutover plan, a runbook\n"
+            "\U0001F4CC **Claims** -- Friday works\n"
+            "\U0001F513 **Open** -- nothing\n"
+        )
+        extracted = extract_output(text, SUMMARY)
+        self.assertTrue(extracted.startswith("\U0001F4C4 **Document** --"))
+
+    def test_one_marked_label_alone_is_not_a_block(self):
+        text = "\U0001F9F5 **Thread** -- this is prose and no second label follows."
+        self.assertEqual(extract_output(text, SUMMARY), text)
 
 
 class UnavailableTests(unittest.TestCase):

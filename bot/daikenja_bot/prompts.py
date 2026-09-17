@@ -54,6 +54,14 @@ UNAVAILABLE_TOKEN = "DAIKENJA-SKILL-UNAVAILABLE"
 #
 # The first line of `thread` § Step 2's block, and of the same block as
 # `judgement` § Step 2 restates it for a document.
+#
+# `Waiting on you` stays ahead of `Waiting on`, even though the skill itself
+# no longer writes it: a headless session does not always produce the new
+# shape, and a real run has pinned `**Waiting on you:** unclear yet.` as
+# output this extractor must still recognise. `_LABEL_SUFFIX` requires a
+# separator immediately after the label, so `Waiting on` alone does not
+# match that line -- and since `|` alternation takes the first alternative
+# that matches, the longer form has to come first.
 SUMMARY_LABELS = (
     "Thread",
     "Document",
@@ -61,25 +69,34 @@ SUMMARY_LABELS = (
     "Claims",
     "Open",
     "Waiting on you",
+    "Waiting on",
     "Tone",
     "Ledger",
     "Card",
 )
 SUMMARY_OPENERS = ("Thread", "Document")
 
-# A label may arrive wrapped in emphasis -- `**Thread: ...**` and
-# `*Asking:* ...` are both shapes a real run produced -- so the prefix is
-# skipped rather than required to be absent. The dash stays last in the
-# character class, where it is a literal.
-_EMPHASIS_PREFIX = r"[\s*_#>•-]*"
+# A label arrives decorated. Real runs have produced `Thread: ...`,
+# `**Thread: ...**`, `*Asking:* ...` and now `🧵 **Thread** -- ...`, so
+# everything before the word is skipped rather than enumerated: an emoji is
+# not a word character and neither is an asterisk. The two-label test in
+# `_summary_block` is what stops this matching ordinary prose.
+_EMPHASIS_PREFIX = r"[^\w\n]*"
+# The label may be followed by a colon or by a dash, inside or outside the
+# emphasis: `**Thread:** x`, `**Thread** -- x` and `Thread: x` are all real.
+_LABEL_SUFFIX = r"[*_]*\s*(?::|--|—)"
 SUMMARY_LABEL_RE = re.compile(
-    r"^{}(?:{})\s*[*_]*\s*:".format(
-        _EMPHASIS_PREFIX, "|".join(re.escape(label) for label in SUMMARY_LABELS)
+    r"^{}(?:{})\s*{}".format(
+        _EMPHASIS_PREFIX,
+        "|".join(re.escape(label) for label in SUMMARY_LABELS),
+        _LABEL_SUFFIX,
     )
 )
 SUMMARY_OPENER_RE = re.compile(
-    r"^{}(?:{})\s*[*_]*\s*:".format(
-        _EMPHASIS_PREFIX, "|".join(re.escape(label) for label in SUMMARY_OPENERS)
+    r"^{}(?:{})\s*{}".format(
+        _EMPHASIS_PREFIX,
+        "|".join(re.escape(label) for label in SUMMARY_OPENERS),
+        _LABEL_SUFFIX,
     )
 )
 
@@ -115,9 +132,11 @@ _SKILL_INVOCATION = {
 _TASK = {
     SUMMARY: (
         "Produce the Step 2 summary block for that subject: the Thread / "
-        "Asking / Open / Waiting on you / Tone lines, plus the Ledger line "
-        "from Step 2b when a project resolves. Omit any line that would be "
-        "empty. Stop there -- do not run Step 3, and do not draft a reply."
+        "Asking / Open / Waiting on lines with their markers, plus the Ledger "
+        "line from Step 2b when a project resolves. Omit the Tone line and any "
+        "line that would be empty. Name people rather than writing 'you' -- "
+        "this is posted into a channel where 'you' has no referent. Stop there "
+        "-- do not run Step 3, and do not draft a reply."
     ),
     JUDGEMENT: (
         "Produce the `message` form for that subject: the shareable AI review "

@@ -129,18 +129,19 @@ question apart from a proposal and both apart from a decision, and call an
 ambiguous position ambiguous:
 
 ```
-Thread: [channel or subject, and how many messages]
-Asking: [who is asking, and what they actually want]
-Open: [what is still undecided]
-Waiting on you: [what, if anything, is yours]
-Tone: [neutral / tense / urgent -- only if it is not neutral]
+🧵 **Thread** -- [what it is about, who is in it, and how many messages]
+❓ **Asking** -- [who is asking, and what they actually want]
+🔓 **Open** -- [what is still undecided]
+⏳ **Waiting on** -- [name: what is theirs]
+📒 **Ledger** -- [what the project already has on this -- see Step 2b]
+🌡️ **Tone** -- [neutral / tense / urgent -- only if it is not neutral]
 ```
 
-For a document, the same block with `Document:` in place of `Thread:` (title
-and what kind of document it is), `Claims:` in place of `Asking:` (what it
-states as fact), and `Open:` for what it leaves undecided. `Waiting on you`
-and `Tone` are omitted whenever they would be empty, for a thread as much as
-for a document.
+For a document, the same block with `📄 **Document**` in place of `🧵 **Thread**`
+(title and what kind of document it is), `📌 **Claims**` in place of
+`❓ **Asking**` (what it states as fact), and `🔓 **Open**` for what it leaves
+undecided. `Waiting on` and `Tone` are omitted whenever they would be empty,
+for a thread as much as for a document.
 
 Then list, for yourself, every **factual claim** and every **question** the
 subject carries, and for each claim whether the subject establishes it or
