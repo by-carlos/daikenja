@@ -391,7 +391,7 @@ goes through `slack_io.py`, which is the layer that is allowed to.
 daikenja_bot/__main__.py   the entry point and --check
 daikenja_bot/app.py        Socket Mode transport; the only slack_bolt import
 daikenja_bot/handler.py    what happens on a mention, start to finish
-daikenja_bot/commands.py   parsing `summary` / `judgement` / `delete` and the argument
+daikenja_bot/commands.py   parsing `summary` / `judgement` / `delete`, `project <key>` and the argument
 daikenja_bot/links.py      Slack permalinks and Confluence URLs
 daikenja_bot/slack_io.py   the only file that holds the Slack token
 daikenja_bot/transcript.py a fetched thread, rendered for a reader

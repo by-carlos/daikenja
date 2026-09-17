@@ -374,7 +374,10 @@ the message is already handed back inside the report's own fence, and a
 fence nested inside it breaks on the way out.
 
 A clean subject in this form is two sections: `⚖️ **Verdict**` with its
-sentence, and `🚧 **Not checked**` with its line. Nothing else.
+sentence, and `🚧 **Not checked**` with its line. Nothing else -- except the
+Scope-candidate offer from Step 3, which a caller with no reader gets in
+`💡 **Suggestion**` however clean the subject was: it is the one thing the
+reader can act on, and it is the reason no ledger was checked.
 
 Sources named in it follow the links rule: title first, a link only when the
 subject or the ledger's Sources already carry it, otherwise `(link needed)`.

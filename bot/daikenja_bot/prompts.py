@@ -180,10 +180,11 @@ _TASK = {
     SUMMARY: (
         "Produce the `message` form for that subject: the Step 2 summary "
         "block, exactly the shape that form fixes -- the Thread / Asking / "
-        "Open / Waiting on lines with their markers, plus the Ledger line when "
-        "a project resolves. Omit the Tone line and any line that would be "
-        "empty. Name people rather than writing 'you'. Stop there -- do not "
-        "run Step 3, and do not draft a reply."
+        "Open / Waiting on lines with their markers, plus the Ledger line "
+        "when a project resolves or when one is offered below. Omit the Tone "
+        "line and any line that would be empty. Name people rather than "
+        "writing 'you'. Stop there -- do not run Step 3, and do not draft a "
+        "reply."
     ),
     JUDGEMENT: (
         "Produce the `message` form for that subject: the shareable review, "
