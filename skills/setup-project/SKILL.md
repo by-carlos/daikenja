@@ -3,7 +3,7 @@ name: setup-project
 description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has.
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
   writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one; and the project card beside the ledger, only when none exists
 disable-model-invocation: true
 ---
@@ -188,7 +188,9 @@ checked against this project from anywhere, per
 `${CLAUDE_PLUGIN_ROOT}/docs/project-card.md`. Read that document's § Location
 and § Format before proposing one.
 
-Resolve the card's path from the ledger path Step 1 resolved, per
+Resolve the card's path from the entry's ledger path -- the one Step 1
+resolved for an existing entry, or `.daikenja/ledger.md` under the root of an
+entry Step 2 just wrote, unless Step 3 set a `ledger:` for it -- per
 `project-card.md` § Location -- `project.md` beside a `ledger.md`, or
 `<name>.project.md` beside any other ledger name. Then:
 

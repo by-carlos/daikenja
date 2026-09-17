@@ -70,7 +70,8 @@ alone. Nothing else writes this file. See
 entry applies either from a project key the user named, or from the directory
 it is running in. The key route is checked first and is decisive: it never
 falls through to the directory. A third route, by content, exists for a
-caller that has neither and is described last; it never outranks these two.
+caller that has neither and is described between them; it never outranks
+these two.
 
 #### By key, when the user named one
 

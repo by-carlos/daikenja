@@ -114,8 +114,8 @@ card beside the ledger if there is one. Then write the `Ledger:` line:
 
 ```
 Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- touches the ramp
-cutover decision (D-001); contradicts the flag-flip proposal it replaced
-(D-002, superseded); appears to resolve the rollback-trigger question (O-001).
+cutover decision (D-001); the proposed Friday start contradicts its Monday
+2026-08-17 date; appears to resolve the rollback-trigger question (O-001).
 ```
 
 Keep it to one or two lines. Naming the project and the ledger path is what
