@@ -67,8 +67,11 @@ maintainer's Code Owner approval.
 - **Templates.** Files under `templates/` are copied to a user's machine and
   never edited by the plugin afterwards, so a change there affects only new
   copies.
-- **Shipped vs local.** `skills/` ships to every user; `.claude/` is guidance for
-  people working on this repo. Contributor-facing instructions never belong in
+- **Where a file goes: three categories.** `skills/` ships to every user and
+  Claude Code loads it. `bot/` ships to every user and Claude Code does not
+  load it -- it is a Python service run by hand, so it stays lean and holds
+  nothing a skill needs. `.claude/` is guidance for people working on this
+  repo and ships nothing. Contributor-facing instructions never belong in
   `skills/`.
 - **Test fixtures.** Everything under `tests/fixtures/` must stay synthetic --
   invented projects, invented people, `example.com` links. Never put real work

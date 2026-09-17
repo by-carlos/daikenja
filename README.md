@@ -336,6 +336,36 @@ Two rules the skills follow:
 - **You approve first.** A skill proposes a ledger entry, you confirm, then it
   writes.
 
+## The Slack bot (optional)
+
+[`bot/`](bot/) is a small Python service you can run alongside your install
+so a thread gets an answer without anyone leaving Slack. Mention it and it
+replies in the same thread:
+
+```
+@daikenja summary     what this thread is asking, what is open, what is yours
+@daikenja verdict     that thread checked against your project's ledger
+```
+
+Either command takes a Slack permalink or a Confluence page link as an
+argument and works on that instead, still answering in the thread you asked
+from.
+
+**It is a personal instance.** It runs on your machine, reads your ledgers,
+and posts as its own Slack app -- never as you, and never with anybody
+else's records. By default only you can trigger it.
+
+**The model never holds the Slack token.** The bot runs Claude Code headless
+to produce the text, with the credentials stripped out of that process's
+environment and its tools limited to reading files; a separate layer that
+the model cannot reach does the posting. Thread content is written by other
+people, and a model that could both read it and post would be one
+instruction away from posting somewhere it should not.
+
+Nothing above happens unless you set it up: installing the plugin downloads
+`bot/` and does not run it. [`bot/README.md`](bot/README.md) has the Slack
+app manifest, the scopes, the config file and the tests.
+
 ## Development
 
 Load the working tree straight into a session, from the repo root:
@@ -362,10 +392,17 @@ Layout:
 .claude-plugin/plugin.json        the manifest
 .claude-plugin/marketplace.json   lists this repo as its own marketplace
 skills/                           one directory per skill, each with a SKILL.md
+bot/                              the optional Slack service, and its own tests
 templates/                        blank files copied out to the user
 docs/                             the ledger and config specifications
 tests/                            invariant checks and the hand-run fixtures
 ```
+
+Where a file belongs is decided by who reads it. `skills/` is downloaded by
+every installer and loaded by Claude Code. `bot/` is downloaded by every
+installer and never loaded by Claude Code, so it stays lean and holds
+nothing a skill needs -- no skill can reach it. `.claude/` is for people
+working on this repository.
 
 `docs/` holds the contracts. A skill implements a contract and never redefines
 one, so a format change happens in `docs/` first. `tests/check-invariants.py`,

@@ -142,10 +142,19 @@ without reading it.
   as frozen unless an issue explicitly scopes a format change.
 - **Templates.** Files under `templates/` are copied to a user's machine and
   never edited by the plugin afterwards. Changes there affect only new copies.
-- **Shipped vs local skills.** `skills/` holds the skills the plugin ships to
-  users. `.claude/` holds guidance for people working on this repo. Never put
-  contributor-facing instructions in `skills/`: it would ship them to every
-  Daikenja user.
+- **Three file-location categories, not two.** Where a file goes is decided by
+  who reads it, and there are three answers:
+  - **`skills/` ships to users and Claude Code loads it.** Never put
+    contributor-facing instructions here: it would ship them to every
+    Daikenja user.
+  - **`bot/` ships to users and Claude Code does not load it.** Every plugin
+    installer downloads this directory, but it is a Python service a user
+    runs by hand, not context any session reads. So it must stay lean -- no
+    vendored dependencies, no binaries -- and it must never hold anything a
+    skill needs, because no skill can reach it. Its own README documents its
+    setup; `bot/requirements.txt` is the only place this repository declares
+    a runtime dependency.
+  - **`.claude/` is for people working on this repo** and ships nothing.
 - **Test fixtures.** `tests/fixtures/` holds synthetic inputs that a stage's
   acceptance checks are re-run against. There is no test runner: the fixtures
   are exercised by hand through the skills. Every fixture must stay synthetic,
