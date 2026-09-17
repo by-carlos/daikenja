@@ -43,6 +43,26 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### The Slack bot needs four more Slack scopes to answer in a DM
+
+Only affects you if you run `bot/` and want to use it in a direct message or a
+group DM. In a channel nothing changes and there is nothing to do.
+
+`channels:history` and `groups:history` cover channels only. Without the DM
+scopes the bot receives the mention, then answers `conversations_replies
+failed: missing_scope`, because it can see the mention but not the thread
+around it. At [api.slack.com/apps](https://api.slack.com/apps), under **OAuth &
+Permissions**, add to the bot token scopes:
+
+```
+im:history      mpim:history      im:read      mpim:read
+```
+
+Then **reinstall the app** under **Install App** -- a scope added to an
+installed app does nothing until you do. The bot token does not change. In a
+group DM there is no `/invite`: mention the bot and Slack offers to add it to
+the conversation.
+
 ### The Slack bot now picks its own model, instead of your account's default
 
 Only affects you if you run `bot/`. The bot now starts its headless session
