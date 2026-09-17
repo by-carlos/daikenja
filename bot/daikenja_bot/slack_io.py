@@ -207,12 +207,17 @@ class SlackIO:
         self._call("chat_delete", channel=channel_id, ts=timestamp)
 
     def add_reaction(self, channel_id: str, timestamp: str, name: str) -> bool:
-        """Best-effort acknowledgement. Never fails a command."""
+        """Best-effort acknowledgement. Never fails a command.
+
+        Warning, not info: for the reaction trigger this doubles as the
+        re-fire guard's memory (`handler.py`), so a failure here can mean
+        the same trigger answers twice.
+        """
         try:
             self._call("reactions_add", channel=channel_id, timestamp=timestamp, name=name)
             return True
         except SlackError as exc:
-            log.info("could not add the %s reaction: %s", name, exc)
+            log.warning("could not add the %s reaction: %s", name, exc)
             return False
 
     # -- plumbing ------------------------------------------------------
