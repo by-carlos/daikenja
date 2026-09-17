@@ -11,6 +11,10 @@ profile.md
 writing-style.md
 .daikenja/
 
+# The Slack bot's own configuration -- names a workspace and may hold tokens.
+# bot/bot.yaml.example is the committed starting point and is not this file.
+bot.yaml
+
 # ...except the blank starting points the plugin ships.
 !templates/**
 

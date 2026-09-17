@@ -29,9 +29,12 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
   either from an agent session** — that is a settings change outside the
   working tree and needs the maintainer's explicit sign-off under the global
   risk-labeling rule.
-- **`skills/` ships to users; `.claude/` is for people working on this repo.
-  Never put contributor-facing instructions in `skills/`** — it would ship them
-  to every Daikenja user.
+- **Three file-location categories: `skills/` ships to users and Claude Code
+  loads it; `bot/` ships to users and Claude Code does not load it; `.claude/`
+  is for people working on this repo and ships nothing.** Never put
+  contributor-facing instructions in `skills/` — it would ship them to every
+  Daikenja user — and never put anything a skill needs in `bot/`, which no
+  skill can reach.
 - **`templates/` files are copied to a user's machine and never edited by the
   plugin afterwards.** A change there affects only new copies, never existing
   installs.
@@ -40,8 +43,9 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
   unless an issue explicitly scopes a format change.
 - **Test fixtures must stay synthetic.** `tests/fixtures/` uses invented
   projects, invented people, and `example.com` links. **Never** put real work
-  content, personal data, or organization data there. There is no test runner —
-  fixtures are exercised by hand through the skills.
+  content, personal data, or organization data there. There is no test runner
+  for the skills — those fixtures are exercised by hand through them. `bot/`
+  is the exception and has a real unit-test suite, run in CI.
 - **Voice is contractual.** Anything Daikenja drafts or rewrites follows
   `docs/voice.md`, and `docs/config-resolution.md` § Voice and writing style
   fixes how a user's own `writing-style.md` layers on top. Read both before

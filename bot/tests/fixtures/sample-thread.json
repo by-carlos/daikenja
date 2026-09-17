@@ -1,0 +1,49 @@
+{
+  "_note": "Synthetic conversations.replies payload. Invented project (harbor), invented people, example.com links. Shaped to exercise transcript rendering: a user mention, a channel mention, a labelled link, a bot reply, a join event that must be dropped, and one message with a file attachment.",
+  "ok": true,
+  "has_more": false,
+  "messages": [
+    {
+      "type": "message",
+      "user": "U0HAKUROU",
+      "ts": "1758067200.000100",
+      "thread_ts": "1758067200.000100",
+      "text": "Can we move the harbor cutover to Friday? <@U0RIGURD> you owned the validation step."
+    },
+    {
+      "type": "message",
+      "subtype": "channel_join",
+      "user": "U0SHION",
+      "ts": "1758067260.000200",
+      "text": "<@U0SHION> has joined the channel"
+    },
+    {
+      "type": "message",
+      "user": "U0RIGURD",
+      "ts": "1758067800.000300",
+      "thread_ts": "1758067200.000100",
+      "text": "Validation is not finished. The runbook is at <https://example.com/harbor/runbook|the harbor runbook> and step 4 has never been run against real volumes."
+    },
+    {
+      "type": "message",
+      "user": "U0SHION",
+      "ts": "1758068400.000400",
+      "thread_ts": "1758067200.000100",
+      "text": "Worth raising in <#C0HARBOR|harbor-rollout> before anyone commits a date.",
+      "files": [
+        {
+          "name": "cutover-timings.csv",
+          "title": "cutover-timings.csv"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "bot_id": "B0RELEASEBOT",
+      "username": "releasebot",
+      "ts": "1758069000.000500",
+      "thread_ts": "1758067200.000100",
+      "text": "Build 412 is green."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+# Runtime dependencies for bot/ only. Nothing else in this repository needs
+# them, and the plugin's skills do not import Python at all.
+#
+# slack-bolt over slack-sdk: Socket Mode needs a WebSocket client, envelope
+# acknowledgement and reconnection handling, and Bolt is the supported
+# implementation of all three. It depends on slack-sdk, so the Web API
+# client used by bot/daikenja_bot/slack_io.py comes with it.
+slack-bolt>=1.18,<2
+
+# Already the repository's YAML parser -- .github/workflows/ci.yml installs
+# it for tests/check-invariants.py.
+PyYAML>=6.0

@@ -67,8 +67,11 @@ maintainer's Code Owner approval.
 - **Templates.** Files under `templates/` are copied to a user's machine and
   never edited by the plugin afterwards, so a change there affects only new
   copies.
-- **Shipped vs local.** `skills/` ships to every user; `.claude/` is guidance for
-  people working on this repo. Contributor-facing instructions never belong in
+- **Where a file goes: three categories.** `skills/` ships to every user and
+  Claude Code loads it. `bot/` ships to every user and Claude Code does not
+  load it -- it is a Python service run by hand, so it stays lean and holds
+  nothing a skill needs. `.claude/` is guidance for people working on this
+  repo and ships nothing. Contributor-facing instructions never belong in
   `skills/`.
 - **Test fixtures.** Everything under `tests/fixtures/` must stay synthetic --
   invented projects, invented people, `example.com` links. Never put real work
@@ -98,12 +101,18 @@ maintainer's Code Owner approval.
 - **gitleaks** scans the full history for secrets, with historical findings
   baselined in `.gitleaks-baseline.json`.
 - **invariant checks** run `tests/check-invariants.py`.
+- **bot** runs the `bot/` unit tests on Python 3.10 and 3.x, then imports the
+  Slack transport once to catch the dependency range going stale.
 
-Run the invariant checks locally before pushing:
+Run both locally before pushing:
 
 ```bash
 python tests/check-invariants.py
+cd bot && python -m unittest discover -s tests -t .
 ```
+
+The bot suite needs no Slack workspace, no network and no Claude Code CLI --
+the Slack client and the headless session are both injected.
 
 There is no test runner for the skills themselves. The fixtures under
 `tests/fixtures/` are exercised by hand through the skills.

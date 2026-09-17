@@ -9,6 +9,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`bot/`: a personal-instance Slack bot that answers in the thread.** A
+  new Python service, shipped with the plugin and run by hand, takes two
+  commands from an @-mention: `summary` posts the five-line thread summary
+  `thread` produces at its Step 2, including the `Ledger:` line when the
+  thread matches a registered project, and `verdict` posts the shareable
+  `message` form of the `verdict` skill. Either command takes a Slack
+  permalink or a Confluence page URL as an argument and works on that
+  instead, answering in the thread it was asked from. It is a personal
+  instance: it runs on one person's machine, reads that person's ledgers,
+  posts as its own Slack app rather than as the user, and is owner-only
+  until its config widens it. Someone who is not on that allowlist gets an
+  ephemeral reply saying so -- visible to them alone, notifying nobody and
+  leaving nothing in the channel, so a refusal can never be used to fill a
+  public thread; `slack.unauthorized_message` sets the wording, or `null`
+  restores complete silence. The model and the posting layer are separate
+  by construction -- the headless `claude -p` session is handed no Slack
+  client, has the credentials stripped out of the environment it inherits,
+  and runs with a read-only tool allowlist, while a layer it cannot reach
+  owns the token and calls `chat.postMessage`. Socket Mode means no public
+  URL is needed. Confluence support is optional and off until credentials
+  are configured, at which point it uses the standard library rather than a
+  second HTTP client. Before answering anything the bot checks that the
+  skills it depends on are actually installed, reading `claude plugin
+  details` or the configured working tree, and switches off any command
+  whose skill is missing rather than letting a session that cannot find the
+  skill improvise an answer into a public thread. The deliverable is lifted
+  out of the session's output by the block shape each skill fixes, so a
+  personal conversational register or a skill's own closing question never
+  reaches Slack. It can run without a console -- `--log-file` writes a
+  rotating log for a Windows scheduled task or a systemd user unit, both
+  documented. `bot/README.md` carries the Slack app manifest, the scopes,
+  the configuration table and the tests; `bot/requirements.txt` introduces
+  this repository's first runtime dependency, `slack-bolt`.
+- **A third file-location category.** `CLAUDE.md`, `AGENTS.md`,
+  `CONTRIBUTING.md` and the README now say that `skills/` ships to users and
+  Claude Code loads it, `bot/` ships to users and Claude Code never loads
+  it, and `.claude/` is for people working on this repository. The middle
+  case is new and is why `bot/` must stay lean and must hold nothing a skill
+  needs.
 - **`verdict`: a read-only check of a thread or a document against the
   ledger.** A new skill takes a Slack thread link, a Confluence page link, a
   repository path or pasted text -- or, with no argument, the most recent
