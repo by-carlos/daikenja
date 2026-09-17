@@ -146,9 +146,9 @@ stage's acceptance checks can be re-run later against the same inputs.
 - [`fixtures/sample-thread-no-channel.md`](fixtures/sample-thread-no-channel.md)
   -- a pasted block of three messages between two named people, with no
   channel named anywhere and no link. Exercises `thread` § Step 2: summarize
-  it -- the `🧵 Thread` line must name the lantern-lite pricing-tier cutover
-  and the two people in it, and never describe the block as pasted or state
-  that a channel is unknown.
+  it -- the `🧵 **Thread**` line must name the lantern-lite pricing-tier
+  cutover and the two people in it, and never describe the block as pasted
+  or state that a channel is unknown.
 
 ### `preflight`
 
@@ -236,7 +236,7 @@ last released copy of the skill, so a result obtained any other way is void.
   invented URL; a thread that resolves to no project, where the reply says so
   and says no ledger was checked; the bare invocation with nothing in the
   session to judge, which asks and stops; the `message` form on that same
-  no-project thread, whose `📒 Ledger` section must be absent outright rather
+  no-project thread, whose `📒 **Ledger**` section must be absent outright rather
   than saying no ledger was checked, with the reason moved to the report
   around the message; and the `message` form on a document that quotes a
   fenced cron snippet, whose deliverable must carry the snippet as inline

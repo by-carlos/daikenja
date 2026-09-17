@@ -347,6 +347,12 @@ they are not `tensei`'s, and the two sets never mix. No emoji beyond them, no
 preamble, no closing offer, and never a question -- there is nobody to answer
 one.
 
+**The deliverable is never wrapped in a code fence and never contains one**,
+even when the subject it is assessing quotes a fenced snippet. A quoted line
+is named or restated inline -- in prose, or as inline code -- never fenced;
+the message is already handed back inside the report's own fence, and a
+fence nested inside it breaks on the way out.
+
 A clean subject in this form is two sections: `⚖️ **Verdict**` with its
 sentence, and `🚧 **Not checked**` with its line. Nothing else.
 

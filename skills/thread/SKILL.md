@@ -67,6 +67,10 @@ it, empty or not: it exists to feed the draft `compose` writes, and a consumer
 that never reaches `compose` gains nothing from a bot publicly labelling
 someone's message `tense`.
 
+**The summary block is never wrapped in a code fence and never contains one**,
+even when the thread itself quotes a fenced snippet -- a config block, a stack
+trace, a code sample. A quoted line is named or restated inline, not fenced.
+
 Attribution rules, because getting this wrong is expensive:
 
 - Name who said what. Do not merge two people's positions into one.

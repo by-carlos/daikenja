@@ -414,7 +414,10 @@ platform on-call rota. Certain.
   rota's own record of the agreed window.
 ```
 
-**Acceptance criterion:** the posted message contains no ``` line anywhere.
+**Acceptance criterion:** the posted message contains no ``` line anywhere,
+and the page's cron entry appears in the `🔍 **Basis**` bullet named or
+restated inline -- as prose or as inline code -- never inside its own fenced
+block, per `judgement` § the `message` form's no-fence rule.
 
 **The failure this catches:** the message copying the page's fenced cron
 snippet verbatim into the deliverable, or wrapping its own quoted line in a
