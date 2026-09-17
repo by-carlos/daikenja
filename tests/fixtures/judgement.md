@@ -3,7 +3,10 @@
 Synthetic. Invented project, invented people, `example.com` links. Nothing
 here comes from real work. Used by the acceptance checks for `judgement`: the
 `answer` form on a thread, the `message` form on a document, the no-match
-case, and the bare invocation with nothing to work on.
+case, the bare invocation with nothing to work on, the `message` form's own
+no-match case (its `📒 Ledger` section must be absent, not apologetic), and a
+subject that quotes a fenced config snippet, which the message form must
+never carry a fence out into.
 
 The project is `ember`, a reporting warehouse for a booking platform. Its
 ledger records the storage engine and the load window; the thread and the
@@ -133,6 +136,18 @@ Pasted from `C:/GitHub/scratch`, no channel header:
 **ranga** (2026-09-16 15:40)
 > The invoice retry queue keeps re-sending the same invoice three times. Is
 > that the queue's at-least-once delivery, or a bug on our side?
+
+## Subject D: a document quoting a config snippet
+
+Pasted from `https://example.com/wiki/ember-cron`, titled **Ember load cron
+config**:
+
+> The nightly load's cron entry is:
+> ```
+> 0 1 * * * /opt/ember/run-load.sh
+> ```
+> which runs the job at 01:00 UTC daily. Retries are configured with
+> `max_attempts: 3` and `backoff: exponential`.
 
 ---
 
@@ -299,3 +314,109 @@ A fresh session, no link and no pasted block, `/daikenja:judgement`.
 
 What must not happen: searching Slack or the working tree for something to
 judge, or picking the most recent file the user edited.
+
+## Walk 5: the `message` form on Subject C
+
+`/daikenja:judgement message` from `C:/GitHub/scratch`, with Subject C as the
+most recent pasted block.
+
+- Same non-match as Walk 3: no key, no directory match, and no handle in the
+  content. `billing-api` has no card and cannot be checked.
+- This is the `message` form, so the `📒 **Ledger**` section is omitted
+  entirely -- not a bullet saying no ledger was checked, absent. Why
+  resolution failed goes in the short report around the message, never
+  inside it.
+
+Expected report line, then the message in its own fenced block:
+
+Report line:
+
+```
+No registered project matches this content. billing-api has no card, so it
+could not be checked.
+```
+
+The message, exactly as handed back:
+
+```
+⚖️ **Verdict**
+The invoice retry queue re-sending the same invoice three times is consistent
+with at-least-once delivery redelivering an unacknowledged message to a
+consumer that is not idempotent -- likely, general knowledge. Whether the
+queue is configured that way is not something this check can tell.
+
+🔍 **Basis**
+- **At-least-once redelivery** -- a message is redelivered when the consumer
+  never acknowledges it; the fix on the consumer side is idempotent handling
+  keyed on the invoice, not a change to the queue. _likely · general
+  knowledge_
+
+💡 **Suggestion**
+- Check the queue's delivery setting and the consumer's acknowledgement path
+  before calling it a bug.
+
+🚧 **Not checked**
+- The queue's actual configuration, and whether any registered project's
+  records cover this repository.
+```
+
+**Acceptance criterion:** the message has no `📒 **Ledger**` section at all. It
+does not contain the words `no ledger`, `no project resolved` or `could not be
+checked`. The reason the project did not resolve appears in the short report
+around the message, not in the message.
+
+**The failure this catches:** a `📒 **Ledger**` section that reads "no ledger
+was checked" instead of being left out, or a `Not checked` line that repeats
+"could not be checked" inside the deliverable a cold reader receives.
+
+## Walk 6: the `message` form on Subject D, a quoted config snippet
+
+`/daikenja:judgement message` from `C:/GitHub/ember`, with Subject D as the
+most recent pasted block.
+
+- The directory resolves `ember`. The ledger check runs as in Walk 2: the
+  page's cron entry runs the load at 01:00 UTC, which contradicts the load
+  window decision (D-002: 02:00 to 04:00 UTC).
+- The page itself quotes the cron line inside a fenced block. The message
+  form never nests a fence inside the deliverable it hands back -- it quotes
+  the cron entry as inline code, on one line, with single backticks.
+
+Expected reply: the report lines, then the message in its own fenced block.
+
+Report lines:
+
+```
+Ledger: ember (C:/GitHub/ember/.daikenja/ledger.md)
+Card: C:/GitHub/ember/.daikenja/project.md
+```
+
+The message, exactly as handed back:
+
+```
+⚖️ **Verdict**
+The page's cron entry runs the nightly load at 01:00 UTC, which contradicts
+the load window decision (D-002): 02:00 to 04:00 UTC, agreed with the
+platform on-call rota. Certain.
+
+🔍 **Basis**
+- **Load window** -- the cron entry `0 1 * * * /opt/ember/run-load.sh` starts
+  the job an hour before the agreed window opens. _certain · ledger,
+  nightly load window (D-002)_
+- **Retry configuration** -- `max_attempts: 3` with exponential backoff is a
+  reasonable retry policy for a scheduled load and is not covered by any
+  decision. _likely · general knowledge_
+
+💡 **Suggestion**
+- Correct the cron entry to start the job inside the agreed window.
+
+🚧 **Not checked**
+- Whether the retry policy has ever triggered, and the platform on-call
+  rota's own record of the agreed window.
+```
+
+**Acceptance criterion:** the posted message contains no ``` line anywhere.
+
+**The failure this catches:** the message copying the page's fenced cron
+snippet verbatim into the deliverable, or wrapping its own quoted line in a
+fresh triple-backtick block, either of which breaks out of the fence the
+message is itself handed back inside.
