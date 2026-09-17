@@ -53,6 +53,12 @@ class FakeSlackClient:
         self._pages = pages if pages is not None else [
             {"ok": True, "messages": replies or [], "has_more": False}
         ]
+        # `pages=` opts into an explicit call-by-call sequence (real
+        # pagination, or several deliberately distinct lookups). `replies=`
+        # (or nothing) is a single canned answer, returned for every
+        # `conversations_replies` call in the test -- `fetch_message` and
+        # `fetch_thread` now both call it independently within one test.
+        self._repeat_single_page = pages is None
         self._users = users or {}
         self._channel_name = channel_name
         self._fail = fail or {}
@@ -74,7 +80,7 @@ class FakeSlackClient:
     def conversations_replies(self, **kwargs: Any) -> dict[str, Any]:
         self._maybe_fail("conversations_replies")
         self.replies_calls.append(kwargs)
-        index = len(self.replies_calls) - 1
+        index = 0 if self._repeat_single_page else len(self.replies_calls) - 1
         if index < len(self._pages):
             return self._pages[index]
         return {"ok": True, "messages": [], "has_more": False}

@@ -596,8 +596,13 @@ class ReactionTriggerTests(unittest.TestCase):
     PARENT = THREAD[0]
     REPLY = THREAD[2]
 
-    def _client(self, history=None, **kwargs):
-        return FakeSlackClient(replies=THREAD, users=USERS, history=history, **kwargs)
+    def _client(self, history=None, replies=None, **kwargs):
+        return FakeSlackClient(
+            replies=THREAD if replies is None else replies,
+            users=USERS,
+            history=history,
+            **kwargs,
+        )
 
     def _handler(self, client, run=None, config=None, unavailable=None):
         run = run or CombinedRecorder()
@@ -654,7 +659,10 @@ class ReactionTriggerTests(unittest.TestCase):
         client = self._client(history=self.REPLY)
         handler, run = self._handler(client)
         handler.handle_reaction(reaction(ts="1758067800.000300"))
-        self.assertEqual(client.replies_calls[0]["ts"], "1758067200.000100")
+        # replies_calls[0] is fetch_message resolving the reacted-to reply
+        # itself; replies_calls[1] is fetch_thread reading the whole thread
+        # once thread_ts is known.
+        self.assertEqual(client.replies_calls[1]["ts"], "1758067200.000100")
         self.assertEqual(client.posted[0]["thread_ts"], "1758067200.000100")
 
     def test_the_bot_marks_the_message_it_answered(self):
@@ -665,8 +673,11 @@ class ReactionTriggerTests(unittest.TestCase):
         self.assertEqual(client.reactions[0]["timestamp"], "1758067200.000100")
 
     def test_an_already_answered_message_is_skipped(self):
+        # fetch_message now resolves via conversations.replies before ever
+        # trying conversations.history, so the thread it searches -- not
+        # just `history` -- has to carry the ack reaction.
         answered = {**self.PARENT, "reactions": [{"name": "eyes", "users": ["U0BOT"]}]}
-        client = self._client(history=answered)
+        client = self._client(replies=[answered, *THREAD[1:]], history=answered)
         handler, run = self._handler(client)
         handler.handle_reaction(reaction())
         self.assertEqual(client.posted, [])
@@ -674,13 +685,15 @@ class ReactionTriggerTests(unittest.TestCase):
 
     def test_someone_elses_eyes_reaction_does_not_count_as_answered(self):
         answered = {**self.PARENT, "reactions": [{"name": "eyes", "users": ["U0RIMURU"]}]}
-        client = self._client(history=answered)
+        client = self._client(replies=[answered, *THREAD[1:]], history=answered)
         handler, run = self._handler(client)
         handler.handle_reaction(reaction())
         self.assertEqual(len(client.posted), 1)
 
     def test_no_message_found_does_nothing(self):
-        client = self._client(history=None)
+        # An empty thread lookup alongside `history=None` -- both of
+        # fetch_message's lookups come back empty, not just one.
+        client = self._client(replies=[], history=None)
         handler, run = self._handler(client)
         handler.handle_reaction(reaction())
         self.assertEqual(client.posted, [])

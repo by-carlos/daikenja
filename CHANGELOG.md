@@ -189,6 +189,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`bot/`: the reaction trigger no longer risks resolving to the wrong
+  message.** `fetch_message` used `conversations.history`, which only
+  returns top-level channel messages -- given a thread reply's `ts`, Slack
+  silently returned a different, nearby channel-level message instead of an
+  error. `handle_reaction` uses that lookup to decide whether it has already
+  answered a message and which thread to post the answer into, so a reply
+  trigger could skip an unanswered message, re-answer one already handled,
+  or post into the wrong thread, with nothing showing up as a failure.
+  `fetch_message` now tries `conversations.replies` first -- it accepts
+  either a thread's parent `ts` or a reply's own `ts` -- and falls back to
+  `conversations.history` only for plain channel messages, checking the
+  returned message's own `ts` against the one requested either way.
+
 - **`bot/`: a leaked skill invocation is rewritten as the mention that does
   the same thing.** A run with no project match posted ``No project context.
   Add `/daikenja:thread project <key>` if you want a ledger checked.`` into a
