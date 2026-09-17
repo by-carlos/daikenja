@@ -104,16 +104,34 @@ SUMMARY_OPENER_RE = re.compile(
 # own word because its header carries the project name -- `📒 **Ledger --
 # harbor**` -- and `Not checked` before `Not` would never be reached, so the
 # longest alternatives come first.
+#
+# `Ledger` deliberately does NOT tolerate a trailing colon, unlike the other
+# four. The skill's short report around the message writes `Ledger: <key>
+# (<absolute path>)` -- a colon straight after the word -- and that line must
+# never be mistaken for the `📒 **Ledger -- <project>**` section header, or an
+# absolute filesystem path (carrying the OS username) is posted verbatim into
+# a public Slack thread. `Card` is not a section word at all, so it needs no
+# such guard. This asymmetry is the point, not an inconsistency to smooth
+# over: `Ledger` is the only section word that collides with a documented
+# report line.
 JUDGEMENT_SECTIONS = ("Verdict", "Ledger", "Basis", "Suggestion", "Not checked")
+_JUDGEMENT_SECTION_ALTS = {
+    "Ledger": r"Ledger\b(?!:)",
+}
 JUDGEMENT_SECTION_RE = re.compile(
-    r"^{}(?:{})\b".format(
+    r"^{}(?:{})".format(
         _EMPHASIS_PREFIX,
-        "|".join(re.escape(name) for name in JUDGEMENT_SECTIONS),
+        "|".join(
+            _JUDGEMENT_SECTION_ALTS.get(name, r"{}\b:?".format(re.escape(name)))
+            for name in JUDGEMENT_SECTIONS
+        ),
     )
 )
-JUDGEMENT_BULLET_RE = re.compile(r"^\s*(?:[-*•])\s+")
+JUDGEMENT_BULLET_RE = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
 # Emphasis a line may be wrapped in, stripped before the line is compared.
-EMPHASIS_CHARS = " \t*_#"
+# The trailing colon a decorated header may now carry (`⚖️ **Verdict:**`) is
+# included here so `_is_verdict_header` still reduces it to the bare word.
+EMPHASIS_CHARS = " \t*_#:"
 
 SUBJECT_BEGIN = "--- BEGIN SUBJECT ---"
 SUBJECT_END = "--- END SUBJECT ---"
@@ -370,10 +388,10 @@ def _is_verdict_header(line: str) -> bool:
     """Is this the `Verdict` section header that opens the block?
 
     The documented header is the bare word, decorated: `⚖️ **Verdict**`,
-    `**Verdict**`, `Verdict`. The stripped remainder must equal `verdict`
-    exactly -- a `startswith` check would also take ordinary prose that
-    happens to open with the word, such as `Verdict is unclear, need more
-    evidence.`.
+    `**Verdict**`, `Verdict`, or with a trailing colon (`⚖️ **Verdict:**`).
+    The stripped remainder must equal `verdict` exactly -- a `startswith`
+    check would also take ordinary prose that happens to open with the word,
+    such as `Verdict is unclear, need more evidence.`.
     """
     if not JUDGEMENT_SECTION_RE.match(line):
         return False

@@ -3,6 +3,7 @@ import unittest
 from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.prompts import (
     END_SENTINEL,
+    JUDGEMENT_SECTION_RE,
     START_SENTINEL,
     SUBJECT_BEGIN,
     SUBJECT_END,
@@ -378,6 +379,87 @@ class ExtractBlockTests(unittest.TestCase):
         extracted = extract_output(text, JUDGEMENT)
         self.assertTrue(extracted.startswith("⚖️ **Verdict**"))
         self.assertNotIn("Report: nothing else needs checking.", extracted)
+
+    def test_the_trailing_report_ledger_line_never_reaches_the_output(self):
+        # Documented position: the skill's short report sits AFTER the
+        # message, not before it. `Ledger:` there is a report line, not the
+        # `📒 **Ledger -- <project>**` section header, and must never be
+        # mistaken for one -- doing so would post an absolute path carrying
+        # the OS username into a public Slack thread.
+        text = (
+            "⚖️ **Verdict**\n"
+            "Nothing in the thread contradicts the ledger.\n"
+            "\n"
+            "📒 **Ledger -- harbor**\n"
+            "- **Nightly backup retention** (D-003) -- unaffected. "
+            "_certain \u00B7 ledger_\n"
+            "\n"
+            "🔍 **Basis**\n"
+            "- **One engine cannot host another** -- they are separate "
+            "products. _certain \u00B7 general knowledge_\n"
+            "\n"
+            "💡 **Suggestion**\n"
+            "- State the required RPO and RTO, then test a restore.\n"
+            "\n"
+            "🚧 **Not checked**\n"
+            "- The linked runbook.\n"
+            "\n"
+            "Ledger: harbor (C:/Users/example/project/.daikenja/ledger.md)\n"
+            "Card: C:/Users/example/project/.daikenja/card.md\n"
+        )
+        extracted = extract_output(text, JUDGEMENT)
+        self.assertTrue(extracted.endswith("- The linked runbook."))
+        self.assertNotIn("Ledger: harbor", extracted)
+        self.assertNotIn("C:/Users", extracted)
+
+    def test_a_colon_decorated_verdict_header_still_anchors_the_block(self):
+        # A `⚖️ **Verdict:**` header is not forbidden by any skill file. If
+        # it fails to anchor, `extract_output` falls through to posting the
+        # entire raw output -- preamble, report and all.
+        text = (
+            "preamble the reader never sees\n\n"
+            "⚖️ **Verdict:**\n"
+            "Nothing in the thread contradicts the ledger.\n"
+            "\n"
+            "🚧 **Not checked:**\n"
+            "- The linked runbook.\n"
+            "\n"
+            "Ledger: harbor (C:/Users/example/project/.daikenja/ledger.md)\n"
+        )
+        extracted = extract_output(text, JUDGEMENT)
+        self.assertTrue(extracted.startswith("⚖️ **Verdict:**"))
+        self.assertTrue(extracted.endswith("- The linked runbook."))
+        self.assertNotIn("preamble", extracted)
+        self.assertNotIn("Ledger: harbor", extracted)
+
+    def test_a_colon_decorated_ledger_report_line_still_does_not_anchor(self):
+        # The asymmetry from finding 1 must survive the finding-2 fix:
+        # `Ledger:` (the report line) never becomes a recognised header, even
+        # though `Verdict:`, `Basis:`, `Suggestion:` and `Not checked:` now
+        # do.
+        self.assertFalse(JUDGEMENT_SECTION_RE.match("Ledger: harbor (C:/x)"))
+        self.assertTrue(JUDGEMENT_SECTION_RE.match("📒 **Ledger -- harbor**"))
+
+    def test_a_numbered_list_in_basis_does_not_cut_the_block(self):
+        # The `answer` form's own example uses a numbered list; the bullet
+        # pattern must accept it too, or `🔍 Basis` cuts the block from the
+        # first numbered item onward.
+        text = (
+            "⚖️ **Verdict**\n"
+            "The claim does not hold.\n"
+            "\n"
+            "🔍 **Basis**\n"
+            "1. **One engine cannot host another** -- separate products. "
+            "_certain \u00B7 general knowledge_\n"
+            "2. **Numbered lists are supported here too.**\n"
+            "\n"
+            "🚧 **Not checked**\n"
+            "- The linked runbook.\n"
+        )
+        extracted = extract_output(text, JUDGEMENT)
+        self.assertIn("1. **One engine cannot host another**", extracted)
+        self.assertIn("2. **Numbered lists are supported here too.**", extracted)
+        self.assertTrue(extracted.endswith("- The linked runbook."))
 
 
 class UnavailableTests(unittest.TestCase):

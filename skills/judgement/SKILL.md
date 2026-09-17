@@ -341,6 +341,17 @@ three -- a Slack app posts under its own name and timestamp, and a pasted block
 carries the context of wherever it was pasted. `⚖️ **Verdict**` opens the
 message.
 
+**The section headers above are the bare words shown, with no trailing
+colon** -- `⚖️ **Verdict**`, not `⚖️ **Verdict:**`. A colon after `Ledger`
+specifically is reserved for the `Ledger:` provenance line in the report
+around the message, and must stay distinguishable from this section's own
+`📒 **Ledger -- <project name>**` header.
+
+**A bullet that wraps onto a second line indents the continuation.** A
+second line that starts at the margin, with no indent and no bullet marker
+of its own, ends the block for a consumer that finds it by shape -- so a
+long bullet keeps unfinished text on the same line or indents the wrap.
+
 **No conversational markers and no register labels**, whatever the user has
 installed. The markers above are this form's own structure and are fixed here;
 they are not `tensei`'s, and the two sets never mix. No emoji beyond them, no

@@ -71,6 +71,10 @@ someone's message `tense`.
 even when the thread itself quotes a fenced snippet -- a config block, a stack
 trace, a code sample. A quoted line is named or restated inline, not fenced.
 
+**A line that wraps onto a second line indents the continuation.** A second
+line that starts at the margin, with no indent, ends the block for a
+consumer that finds it by shape.
+
 Attribution rules, because getting this wrong is expensive:
 
 - Name who said what. Do not merge two people's positions into one.
