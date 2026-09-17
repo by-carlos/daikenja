@@ -252,7 +252,7 @@ Card: <absolute path>
 claims, each clause labelled>
 
 🔍 **Basis**
-1. **<topic>** -- the finding. _certain · ledger, <topic> (D-nnn)_
+1. **<topic>** -- the finding. _<certain | likely | guessing> · ledger, <topic> (D-nnn)_
 2. ...
 
 💡 **Suggestion**
@@ -261,6 +261,13 @@ claims, each clause labelled>
 🚧 **Not checked**
 - <one line>
 ```
+
+This form has no `📒 Ledger -- <project name>` section of its own: the
+project is already established in the conversation and the `Ledger:` and
+`Card:` lines above already name it, so a second section would only restate
+that. `message`'s `📒 Ledger` section exists because its reader has neither
+-- a cold reader of the posted message never saw the `Ledger:`/`Card:` lines,
+so the finding needs its own section to carry that context.
 
 The worked example from the design: a thread asks "are we going with X, and
 can SQL Server host Oracle?". The verdict reads `Z was agreed for this

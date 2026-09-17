@@ -310,9 +310,16 @@ def _judgement_block(text: str) -> str:
 
     The block opens on `⚖️ **Verdict**` and runs until a line that belongs to
     no section: not a section header, not a bullet, not an indented
-    continuation, and not the lead sentence directly under a header. That is
-    where the short report `judgement` puts around the message begins, and
-    that report is exactly what must not reach Slack.
+    continuation, and not the lead sentence directly under the `Verdict`
+    header specifically. That is where the short report `judgement` puts
+    around the message begins, and that report is exactly what must not
+    reach Slack.
+
+    Only `Verdict` is documented to carry prose -- every other section is
+    bulleted -- so the lead-sentence tolerance applies only directly under
+    that header. A report dropped straight under `Ledger`, `Basis`,
+    `Suggestion` or `Not checked` with no blank line ahead of it must not be
+    mistaken for that section's own sentence.
 
     A blank line is kept only when the block continues after it, so the
     trailing blank before the report never survives.
@@ -322,23 +329,23 @@ def _judgement_block(text: str) -> str:
         if not _is_verdict_header(line):
             continue
         kept = [line.rstrip()]
-        after_header = True
+        after_verdict_header = True
         for candidate in lines[index + 1 :]:
             stripped = candidate.rstrip()
             if not stripped.strip():
                 kept.append("")
-                after_header = False
+                after_verdict_header = False
                 continue
             if JUDGEMENT_SECTION_RE.match(stripped):
                 kept.append(stripped)
-                after_header = True
+                after_verdict_header = _is_verdict_header(stripped)
                 continue
             if JUDGEMENT_BULLET_RE.match(stripped) or candidate.startswith((" ", "\t")):
                 kept.append(stripped)
-                after_header = False
+                after_verdict_header = False
                 continue
-            if after_header:
-                # The one or two sentences a section header may carry.
+            if after_verdict_header:
+                # The one or two sentences the `Verdict` header may carry.
                 kept.append(stripped)
                 continue
             break
@@ -351,11 +358,18 @@ def _judgement_block(text: str) -> str:
 
 
 def _is_verdict_header(line: str) -> bool:
-    """Is this the `Verdict` section header that opens the block?"""
+    """Is this the `Verdict` section header that opens the block?
+
+    The documented header is the bare word, decorated: `⚖️ **Verdict**`,
+    `**Verdict**`, `Verdict`. The stripped remainder must equal `verdict`
+    exactly -- a `startswith` check would also take ordinary prose that
+    happens to open with the word, such as `Verdict is unclear, need more
+    evidence.`.
+    """
     if not JUDGEMENT_SECTION_RE.match(line):
         return False
     bare = re.sub(r"^" + _EMPHASIS_PREFIX, "", line).strip(EMPHASIS_CHARS)
-    return bare.lower().startswith("verdict")
+    return bare.lower() == "verdict"
 
 
 def _unfence(text: str) -> str:

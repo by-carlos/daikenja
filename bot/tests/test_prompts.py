@@ -311,6 +311,34 @@ class ExtractBlockTests(unittest.TestCase):
         text = "The verdict is that nobody agreed and there are no sections."
         self.assertEqual(extract_output(text, JUDGEMENT), text)
 
+    def test_a_verdict_sentence_starting_with_the_word_is_not_a_header(self):
+        # If "Verdict is unclear..." were mistaken for the header, the
+        # bullets below it would be taken as the block and the closing
+        # question would be dropped -- exactly the failure this guards.
+        text = (
+            "Verdict is unclear, need more evidence. Here is what we found:\n"
+            "- One finding that looks like a bullet.\n"
+            "- Another one.\n"
+            "\n"
+            "Want me to look further?"
+        )
+        self.assertEqual(extract_output(text, JUDGEMENT), text)
+
+    def test_a_report_directly_under_a_non_verdict_header_is_dropped(self):
+        # Observed shape: a section with no bullet, and the report glued
+        # straight underneath it with no blank line -- that report must not
+        # be folded in as if it were the section's own lead sentence.
+        text = (
+            "⚖️ **Verdict**\n"
+            "Nothing in the thread contradicts the ledger.\n"
+            "\n"
+            "\U0001F6A7 **Not checked**\n"
+            "Report: nothing else needs checking.\n"
+        )
+        extracted = extract_output(text, JUDGEMENT)
+        self.assertTrue(extracted.startswith("⚖️ **Verdict**"))
+        self.assertNotIn("Report: nothing else needs checking.", extracted)
+
 
 class UnavailableTests(unittest.TestCase):
     def test_the_instruction_names_the_skill_and_the_token(self):
