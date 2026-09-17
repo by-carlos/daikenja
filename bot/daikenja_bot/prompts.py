@@ -202,6 +202,31 @@ _SKILL_INVOCATION = {
     JUDGEMENT: "/daikenja:judgement message",
 }
 
+# What each skill invocation becomes if it reaches the deliverable.
+#
+# The instruction has to name the skill -- it is the first line of the prompt
+# and the availability check both. The skills, meanwhile, tell a session with
+# no reader to name `<command> project <key>` as the way to settle which
+# ledger to check, and the only command the session has been shown is the one
+# it was invoked with. So a real run posted `No project context. Add
+# `/daikenja:thread project <key>` if you want a ledger checked.` into a
+# channel: a Claude Code slash command, which nobody in Slack can type.
+#
+# `_NO_READER` already gives those sentences verbatim, with `@daikenja
+# summary` written out, precisely because a described rule had been ignored
+# before. This is the half that does not depend on the model complying.
+_SKILL_MENTION = {
+    invocation.split()[0].lstrip("/"): f"@daikenja {command}"
+    for command, invocation in _SKILL_INVOCATION.items()
+}
+# The leading slash is required. Without it, `daikenja:thread` is how a
+# session announces the skill it is using -- `Using daikenja:thread to gather
+# context` -- which is ordinary prose, not a command being handed to a
+# reader, and rewriting it produces nonsense.
+_SKILL_MENTION_RE = re.compile(
+    r"/(?:{})\b".format("|".join(re.escape(name) for name in _SKILL_MENTION))
+)
+
 _TASK = {
     SUMMARY: (
         "Produce the `message` form for that subject: the Step 2 summary "
@@ -555,9 +580,16 @@ def _scrub_paths(text: str) -> str:
     return _LOCAL_PATH_RE.sub(LOCAL_PATH_PLACEHOLDER, text)
 
 
+def _scrub_invocations(text: str) -> str:
+    """Rewrite a leaked skill invocation as the mention that does the same."""
+    return _SKILL_MENTION_RE.sub(
+        lambda match: _SKILL_MENTION[match.group(0).lstrip("/")], text
+    )
+
+
 def _clean(text: str) -> str:
     """What every pass of `extract_output` hands back."""
-    return _scrub_paths(_strip_fences(text))
+    return _scrub_paths(_scrub_invocations(_strip_fences(text)))
 
 
 def page_subject(title: str, body: str, source_url: str | None = None) -> Subject:
