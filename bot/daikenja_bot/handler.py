@@ -112,6 +112,13 @@ class Handler:
         self._fetch_confluence = fetch_confluence
         # Command name -> why it cannot run, from the startup skill check.
         self._unavailable = dict(unavailable or {})
+        # Re-fire guard's own memory, backing the Slack ack reaction rather
+        # than replacing it: (channel, ts) pairs answered this process's
+        # lifetime, so a failed `add_reaction` write -- the message it was
+        # meant to mark got deleted mid-answer, a scope issue, a network
+        # blip -- does not leave the guard blind to the same trigger firing
+        # again. Reset on restart, same as the rest of this instance's state.
+        self._answered_reactions: set[tuple[str, str]] = set()
 
     # -- entry point ---------------------------------------------------
 
@@ -218,10 +225,16 @@ class Handler:
             return
 
         ack = self._config.slack.ack_reaction
-        if ack and self._slack.has_reaction(message, ack):
+        answered_key = (reaction.channel_id, reaction.message_ts)
+        if ack and (
+            answered_key in self._answered_reactions
+            or self._slack.has_reaction(message, ack)
+        ):
             # Re-fire guard: removing and re-adding the trigger, or a second
             # person adding it, fires this event again for the same message.
-            # The bot's own ack on it is treated as "already answered".
+            # The bot's own ack on it is treated as "already answered" --
+            # backed by `_answered_reactions` for the case where that ack
+            # write itself failed and so never landed on the message.
             log.info("already answered %s -- skipping", reaction.message_ts)
             return
 
@@ -265,6 +278,10 @@ class Handler:
             return
 
         if ack:
+            # Recorded regardless of whether the write below succeeds: the
+            # answer has already been posted, and the point of this record
+            # is precisely to keep the guard working when that write fails.
+            self._answered_reactions.add(answered_key)
             self._slack.add_reaction(reaction.channel_id, reaction.message_ts, ack)
 
     # -- subjects ------------------------------------------------------

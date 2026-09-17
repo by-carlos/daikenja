@@ -672,6 +672,21 @@ class ReactionTriggerTests(unittest.TestCase):
         self.assertEqual(client.reactions[0]["name"], "eyes")
         self.assertEqual(client.reactions[0]["timestamp"], "1758067200.000100")
 
+    def test_a_failed_ack_still_stops_a_second_answer(self):
+        # The re-fire guard's usual memory is the bot's own eyes reaction on
+        # the message. When adding it fails -- the message was deleted while
+        # the two headless sessions ran, for instance -- this in-memory
+        # record is what keeps a second trigger on the same message from
+        # producing a second answer.
+        client = self._client(
+            history=self.PARENT, fail={"reactions_add": "message_not_found"}
+        )
+        handler, run = self._handler(client)
+        handler.handle_reaction(reaction())
+        handler.handle_reaction(reaction())
+        self.assertEqual(len(client.posted), 1)
+        self.assertEqual([c[0] for c in run.calls], ["summary", "judgement"])
+
     def test_an_already_answered_message_is_skipped(self):
         # fetch_message now resolves via conversations.replies before ever
         # trying conversations.history, so the thread it searches -- not
