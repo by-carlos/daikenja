@@ -47,6 +47,7 @@ class FakeSlackClient:
         channel_name: str | None = "harbor-rollout",
         fail: dict[str, str] | None = None,
         bot_user_id: str = "U0BOT",
+        history: dict[str, Any] | None = None,
     ) -> None:
         self._bot_user_id = bot_user_id
         self._pages = pages if pages is not None else [
@@ -55,10 +56,15 @@ class FakeSlackClient:
         self._users = users or {}
         self._channel_name = channel_name
         self._fail = fail or {}
+        # `conversations_history` stands in for a single-message lookup by
+        # timestamp -- a test sets the one message it wants `fetch_message`
+        # to return.
+        self._history = history
         self.posted: list[dict[str, Any]] = []
         self.ephemeral: list[dict[str, Any]] = []
         self.reactions: list[dict[str, Any]] = []
         self.replies_calls: list[dict[str, Any]] = []
+        self.history_calls: list[dict[str, Any]] = []
 
     def _maybe_fail(self, method: str) -> None:
         if method in self._fail:
@@ -71,6 +77,12 @@ class FakeSlackClient:
         if index < len(self._pages):
             return self._pages[index]
         return {"ok": True, "messages": [], "has_more": False}
+
+    def conversations_history(self, **kwargs: Any) -> dict[str, Any]:
+        self._maybe_fail("conversations_history")
+        self.history_calls.append(kwargs)
+        message = self._history
+        return {"ok": True, "messages": [message] if message else []}
 
     def auth_test(self, **kwargs: Any) -> dict[str, Any]:
         self._maybe_fail("auth_test")

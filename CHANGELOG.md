@@ -42,6 +42,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   documented. `bot/README.md` carries the Slack app manifest, the scopes,
   the configuration table and the tests; `bot/requirements.txt` introduces
   this repository's first runtime dependency, `slack-bolt`.
+- **A reaction can trigger the bot too.** `slack.reaction_trigger` names a
+  custom emoji; an allowed person adding it to any message runs `summary` and
+  `judgement` together and posts one combined reply in that message's
+  thread, with no @-mention needed -- a quieter way to ask than typing a
+  command everyone in the channel sees. A reaction on a thread reply is
+  resolved to the thread's parent, same as a typed command. `ack_reaction`
+  doubles as the re-fire guard: once the bot has marked a message with it,
+  removing and re-adding the trigger, or a second person adding it, does
+  nothing. Off by default -- it needs a custom emoji created in the
+  workspace first, plus the `reactions:read` scope and the `reaction_added`
+  event subscription, both documented in `bot/README.md`.
 - **A third file-location category.** `CLAUDE.md`, `AGENTS.md`,
   `CONTRIBUTING.md` and the README now say that `skills/` ships to users and
   Claude Code loads it, `bot/` ships to users and Claude Code never loads

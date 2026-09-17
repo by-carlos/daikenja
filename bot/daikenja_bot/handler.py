@@ -13,7 +13,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .commands import HELP, USAGE, Command, parse_command
+from .commands import HELP, JUDGEMENT, SUMMARY, USAGE, Command, parse_command
 from .config import BotConfig, ConfigError, resolve_secret
 from .confluence import ConfluenceError, ConfluenceNotConfigured, fetch_page
 from .links import forwarded_permalink, looks_like_confluence, parse_slack_permalink
@@ -61,6 +61,26 @@ class MentionEvent:
             # summary into everyone's view.
             thread_ts=str(event.get("thread_ts") or message_ts),
             text=str(event.get("text") or ""),
+        )
+
+
+@dataclass(frozen=True)
+class ReactionEvent:
+    """The parts of a ``reaction_added`` event this bot uses."""
+
+    user_id: str
+    channel_id: str
+    message_ts: str
+    reaction: str
+
+    @classmethod
+    def from_event(cls, event: Mapping[str, Any]) -> "ReactionEvent":
+        item = event.get("item") or {}
+        return cls(
+            user_id=str(event.get("user") or ""),
+            channel_id=str(item.get("channel") or ""),
+            message_ts=str(item.get("ts") or ""),
+            reaction=str(event.get("reaction") or ""),
         )
 
 
@@ -145,6 +165,89 @@ class Handler:
             return
 
         self._reply(mention, answer, source=subject)
+
+    def handle_reaction(self, event: Mapping[str, Any]) -> None:
+        """The quiet path in: a reaction instead of a typed command.
+
+        Nobody addressed the bot, so there is no ephemeral reply on any exit
+        here -- a stranger's reaction, a wrong channel, or an emoji that is
+        not the configured trigger all do nothing at all, silently.
+        """
+        reaction = ReactionEvent.from_event(event)
+        trigger = self._config.slack.reaction_trigger
+        if not trigger or reaction.reaction != trigger:
+            return
+        if not reaction.channel_id or not reaction.message_ts:
+            log.warning("ignoring a reaction with no channel or timestamp")
+            return
+
+        if not self._config.slack.may_trigger(reaction.user_id, reaction.channel_id):
+            log.info(
+                "ignoring a :%s: reaction from %s in %s -- not on the allowlist",
+                trigger,
+                reaction.user_id,
+                reaction.channel_id,
+            )
+            return
+
+        try:
+            message = self._slack.fetch_message(reaction.channel_id, reaction.message_ts)
+        except SlackError as exc:
+            log.warning("could not read the reacted message: %s", exc)
+            return
+        if message is None:
+            log.warning("the reacted message could not be found")
+            return
+
+        ack = self._config.slack.ack_reaction
+        if ack and self._slack.has_reaction(message, ack):
+            # Re-fire guard: removing and re-adding the trigger, or a second
+            # person adding it, fires this event again for the same message.
+            # The bot's own ack on it is treated as "already answered".
+            log.info("already answered %s -- skipping", reaction.message_ts)
+            return
+
+        for command_name in (SUMMARY, JUDGEMENT):
+            unavailable = self._unavailable.get(command_name)
+            if unavailable:
+                log.warning(
+                    "cannot answer a reaction: %s is unavailable (%s)",
+                    command_name,
+                    unavailable,
+                )
+                return
+
+        thread_ts = str(message.get("thread_ts") or reaction.message_ts)
+        try:
+            subject = self._thread_subject(
+                reaction.channel_id, thread_ts, follow_forward=True
+            )
+        except SlackError as exc:
+            log.warning("could not read the reacted thread: %s", exc)
+            return
+
+        answers: list[str] = []
+        for command_name in (SUMMARY, JUDGEMENT):
+            try:
+                answers.append(
+                    self._run(self._config, command_name, subject, environ=self._environ)
+                )
+            except RunnerError as exc:
+                log.warning("%s failed on a reaction trigger: %s", command_name, exc)
+                return
+
+        # No divider line between the two: `to_mrkdwn` drops a bare `---` as
+        # a markdown rule, and each block already opens with its own label
+        # (`Thread:` / `Verdict:`), so nothing is lost without one.
+        body = to_mrkdwn("\n\n".join(answers))
+        try:
+            self._slack.post(reaction.channel_id, thread_ts, truncate(body))
+        except SlackError as exc:
+            log.error("could not post into %s: %s", reaction.channel_id, exc)
+            return
+
+        if ack:
+            self._slack.add_reaction(reaction.channel_id, reaction.message_ts, ack)
 
     # -- subjects ------------------------------------------------------
 

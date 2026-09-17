@@ -106,6 +106,38 @@ class ParseTests(unittest.TestCase):
         config = parse_config({"slack": {"owner_user_id": "U0RIMURU", "ack_reaction": None}})
         self.assertIsNone(config.slack.ack_reaction)
 
+    def test_reaction_trigger_is_off_by_default(self):
+        config = parse_config(MINIMAL)
+        self.assertIsNone(config.slack.reaction_trigger)
+
+    def test_reaction_trigger_is_configurable(self):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": "daikenja"}}
+        )
+        self.assertEqual(config.slack.reaction_trigger, "daikenja")
+
+    def test_reaction_trigger_colons_are_stripped(self):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": ":daikenja:"}}
+        )
+        self.assertEqual(config.slack.reaction_trigger, "daikenja")
+
+    def test_reaction_trigger_null_is_off(self):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": None}}
+        )
+        self.assertIsNone(config.slack.reaction_trigger)
+
+    def test_a_non_string_reaction_trigger_is_rejected(self):
+        with self.assertRaises(ConfigError):
+            parse_config({"slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": 42}})
+
+    def test_a_reaction_trigger_of_only_colons_is_rejected(self):
+        with self.assertRaises(ConfigError):
+            parse_config(
+                {"slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": "::"}}
+            )
+
     def test_strangers_are_told_something_by_default(self):
         config = parse_config({"slack": {"owner_user_id": "U0RIMURU"}})
         assert config.slack.unauthorized_message is not None

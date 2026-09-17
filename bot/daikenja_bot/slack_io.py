@@ -79,6 +79,32 @@ class SlackIO:
 
         return messages
 
+    def fetch_message(self, channel_id: str, ts: str) -> dict[str, Any] | None:
+        """The single message at `ts`, wherever it sits in a thread.
+
+        `conversations.history` with `latest`/`inclusive`/`limit=1` is the
+        standard way to fetch one message by timestamp without knowing in
+        advance whether it is a thread parent or a reply -- unlike
+        `conversations.replies`, which needs a thread's own `ts` to start
+        from. The message it returns carries `thread_ts` when it is a reply,
+        and any `reactions` already on it.
+        """
+        response = self._call(
+            "conversations_history", channel=channel_id, latest=ts, inclusive=True, limit=1
+        )
+        messages = response.get("messages") or []
+        return messages[0] if messages else None
+
+    def has_reaction(self, message: Mapping[str, Any], name: str) -> bool:
+        """Has this bot already reacted to `message` with `name`?"""
+        own = self.bot_user_id()
+        if not own:
+            return False
+        for reaction in message.get("reactions") or []:
+            if reaction.get("name") == name and own in (reaction.get("users") or []):
+                return True
+        return False
+
     def channel_label(self, channel_id: str) -> str:
         """``#name`` when the bot can see the channel, the raw id otherwise."""
         if channel_id in self._channel_cache:

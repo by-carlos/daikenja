@@ -43,6 +43,21 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### The Slack bot can now be triggered by a reaction, not just a mention
+
+Only affects you if you run `bot/` and want to use the new reaction trigger.
+Nothing changes and there is nothing to do if you leave `slack.reaction_trigger`
+unset.
+
+To turn it on: create a custom emoji in your workspace (**Settings &
+administration → Customize workspace → Emoji**), add `reactions:read` to the
+bot token scopes and `reaction_added` to the event subscriptions at
+[api.slack.com/apps](https://api.slack.com/apps), **reinstall the app** under
+**Install App**, then set `slack.reaction_trigger` to the emoji's name (no
+colons) in `bot.yaml`. An allowed person reacting with it on any message then
+runs `summary` + `judgement` together and posts one combined reply in that
+message's thread.
+
 ### The Slack bot needs four more Slack scopes to answer in a DM
 
 Only affects you if you run `bot/` and want to use it in a direct message or a

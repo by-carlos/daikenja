@@ -26,8 +26,17 @@ slack:
   # app_token_file: ~/.claude/daikenja/slack-app-token
 
   # Emoji added to the mention while the answer is being written. Needs the
-  # reactions:write scope; set it to null to skip the reaction entirely.
+  # reactions:write scope; set it to null to skip the reaction entirely. Also
+  # doubles as the re-fire guard for reaction_trigger below.
   ack_reaction: eyes
+
+  # Optional. An emoji name (no colons) that, when an allowed person reacts
+  # with it on any message, runs summary + judgement on that message's
+  # thread and posts one combined reply -- no @-mention needed. The emoji
+  # has to exist in your workspace first (a workspace admin creates custom
+  # ones), and the app needs the reactions:read scope and the
+  # reaction_added event subscription. Unset means this is off.
+  # reaction_trigger: daikenja
 
   # What someone who is not on the allowlist is told. It goes out as an
   # ephemeral message -- only they see it, nobody is notified, and nothing is

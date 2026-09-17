@@ -137,6 +137,43 @@ class ReactionTests(unittest.TestCase):
         self.assertFalse(SlackIO(client).add_reaction("C0HARBOR", "1", "eyes"))
 
 
+class FetchMessageTests(unittest.TestCase):
+    def test_the_single_message_is_returned(self):
+        message = {"ts": "1758067200.000100", "user": "U0RIMURU", "text": "hi"}
+        client = FakeSlackClient(history=message)
+        found = SlackIO(client).fetch_message("C0HARBOR", "1758067200.000100")
+        self.assertEqual(found, message)
+        self.assertEqual(client.history_calls[0]["channel"], "C0HARBOR")
+        self.assertEqual(client.history_calls[0]["latest"], "1758067200.000100")
+        self.assertTrue(client.history_calls[0]["inclusive"])
+
+    def test_nothing_found_is_none(self):
+        client = FakeSlackClient(history=None)
+        self.assertIsNone(SlackIO(client).fetch_message("C0HARBOR", "1"))
+
+    def test_an_api_error_becomes_a_slack_error(self):
+        client = FakeSlackClient(fail={"conversations_history": "channel_not_found"})
+        with self.assertRaises(SlackError):
+            SlackIO(client).fetch_message("C0HARBOR", "1")
+
+
+class HasReactionTests(unittest.TestCase):
+    def test_the_bots_own_reaction_is_found(self):
+        message = {"reactions": [{"name": "eyes", "users": ["U0BOT", "U0RIMURU"]}]}
+        self.assertTrue(SlackIO(FakeSlackClient()).has_reaction(message, "eyes"))
+
+    def test_a_different_persons_reaction_does_not_count(self):
+        message = {"reactions": [{"name": "eyes", "users": ["U0RIMURU"]}]}
+        self.assertFalse(SlackIO(FakeSlackClient()).has_reaction(message, "eyes"))
+
+    def test_a_different_emoji_does_not_count(self):
+        message = {"reactions": [{"name": "thumbsup", "users": ["U0BOT"]}]}
+        self.assertFalse(SlackIO(FakeSlackClient()).has_reaction(message, "eyes"))
+
+    def test_no_reactions_at_all(self):
+        self.assertFalse(SlackIO(FakeSlackClient()).has_reaction({}, "eyes"))
+
+
 class ParticipantTests(unittest.TestCase):
     def test_only_real_users_are_returned(self):
         messages = [
