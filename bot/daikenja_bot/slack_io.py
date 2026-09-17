@@ -179,6 +179,16 @@ class SlackIO:
             log.info("could not post an ephemeral message to %s: %s", user_id, exc)
             return False
 
+    def delete(self, channel_id: str, timestamp: str) -> None:
+        """Remove one message this bot posted.
+
+        A bot token may delete only what that same token posted, so this can
+        never take somebody else's message down however it is called. It
+        raises rather than swallowing a failure: the person asked for a
+        message to go, and silence would leave them believing it had.
+        """
+        self._call("chat_delete", channel=channel_id, ts=timestamp)
+
     def add_reaction(self, channel_id: str, timestamp: str, name: str) -> bool:
         """Best-effort acknowledgement. Never fails a command."""
         try:
