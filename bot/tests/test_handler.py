@@ -160,7 +160,7 @@ class UsageTests(unittest.TestCase):
     def test_a_bare_mention_gets_the_usage_line(self):
         handler, client, run = build()
         handler.handle_mention(mention("<@U0BOT>"))
-        self.assertIn("two commands", client.posted[0]["text"])
+        self.assertIn("three commands", client.posted[0]["text"])
         self.assertEqual(run.calls, [])
 
     def test_an_unknown_word_is_named_back(self):
@@ -482,7 +482,76 @@ class NamedProjectTests(unittest.TestCase):
         handler, client, run = build()
         handler.handle_mention(mention("<@U0BOT> judgement project"))
         self.assertEqual(run.calls, [])
-        self.assertIn("two commands", client.posted[0]["text"])
+        self.assertIn("three commands", client.posted[0]["text"])
+
+
+class DeleteTests(unittest.TestCase):
+    """`delete` takes down the bot's own last post and nothing else."""
+
+    def thread_with_two_of_mine(self):
+        return [
+            {"user": "U0RIMURU", "ts": "1758067200.000100", "text": "the question"},
+            {"user": "U0BOT", "ts": "1758067300.000200", "text": "an early answer"},
+            {"user": "U0SHION", "ts": "1758067400.000300", "text": "a reply"},
+            {"user": "U0BOT", "ts": "1758067500.000400", "text": "the latest answer"},
+        ]
+
+    def test_the_latest_own_message_is_deleted(self):
+        client = FakeSlackClient(replies=self.thread_with_two_of_mine(), users=USERS)
+        handler, _, run = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> delete", thread_ts="1758067200.000100"))
+        self.assertEqual(len(client.deleted), 1)
+        self.assertEqual(client.deleted[0]["ts"], "1758067500.000400")
+        self.assertEqual(client.deleted[0]["channel"], "C0HARBOR")
+        self.assertEqual(run.calls, [])
+
+    def test_nothing_is_posted_into_the_thread(self):
+        client = FakeSlackClient(replies=self.thread_with_two_of_mine(), users=USERS)
+        handler, _, _ = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> delete", thread_ts="1758067200.000100"))
+        self.assertEqual(client.posted, [])
+        self.assertEqual(len(client.ephemeral), 1)
+        self.assertIn("Deleted my last post", client.ephemeral[0]["text"])
+
+    def test_the_count_of_what_is_left_is_reported(self):
+        client = FakeSlackClient(replies=self.thread_with_two_of_mine(), users=USERS)
+        handler, _, _ = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> delete", thread_ts="1758067200.000100"))
+        self.assertIn("1 earlier post of mine is", client.ephemeral[0]["text"])
+
+    def test_no_acknowledging_reaction(self):
+        client = FakeSlackClient(replies=self.thread_with_two_of_mine(), users=USERS)
+        handler, _, _ = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> delete", thread_ts="1758067200.000100"))
+        self.assertEqual(client.reactions, [])
+
+    def test_a_thread_with_nothing_of_mine_deletes_nothing(self):
+        client = FakeSlackClient(replies=THREAD, users=USERS)
+        handler, _, _ = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> delete", thread_ts="1758067200.000100"))
+        self.assertEqual(client.deleted, [])
+        self.assertIn("have not posted", client.ephemeral[0]["text"])
+
+    def test_a_stranger_cannot_delete(self):
+        client = FakeSlackClient(replies=self.thread_with_two_of_mine(), users=USERS)
+        handler, _, _ = build(client=client)
+        handler.handle_mention(
+            mention("<@U0BOT> delete", user="U0GOBTA", thread_ts="1758067200.000100")
+        )
+        self.assertEqual(client.deleted, [])
+
+    def test_a_failed_delete_is_reported_and_logged(self):
+        client = FakeSlackClient(
+            replies=self.thread_with_two_of_mine(),
+            users=USERS,
+            fail={"chat_delete": "message_not_found"},
+        )
+        handler, _, _ = build(client=client)
+        with self.assertLogs("daikenja_bot.handler", level="WARNING"):
+            handler.handle_mention(
+                mention("<@U0BOT> delete", thread_ts="1758067200.000100")
+            )
+        self.assertIn("message_not_found", client.ephemeral[0]["text"])
 
 
 def _raise(exc: Exception):

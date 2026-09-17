@@ -4,15 +4,20 @@ A personal-instance Slack bot for Daikenja. You run your own copy next to
 your own install and your own project ledgers, and it answers in the thread
 as its own Slack app -- never as you, and never with anyone else's records.
 
-Two commands, both triggered by an @-mention:
+Three commands, all triggered by an @-mention:
 
 | Command | What it posts |
 |---|---|
 | `@daikenja summary` | The `message` form of the [`thread`](../skills/thread/SKILL.md) skill's Step 2 summary: what the thread is, who is asking, what is open and who it is waiting on -- named, never "you", since every reader of a channel is a "you" -- plus the `Ledger` line when the thread matches one of your projects. |
 | `@daikenja judgement` | The shareable `message` form of the [`judgement`](../skills/judgement/SKILL.md) skill: what the thread claims or asks, checked against the project's ledger first and general knowledge second, with every statement labelled by where it came from. |
+| `@daikenja delete` | Nothing. It takes down the bot's own most recent post in that thread, and confirms to the person who asked in a message only they can see. |
 
-Either command takes a link as its argument and works on that instead of
-the thread it was typed in:
+`judgement` can also be written as :point_up_2: -- `@daikenja :point_up_2:`,
+either as the shortcode or as the character your keyboard produces, with or
+without a skin tone. It is the same command and takes the same argument.
+
+`summary` and `judgement` each take a link as their argument and work on
+that instead of the thread they were typed in:
 
 ```
 @daikenja summary https://example.slack.com/archives/C0HARBOR/p1758067200000100
@@ -77,6 +82,14 @@ earlier answers are dropped.** Otherwise a second command in a thread it has
 already answered summarises its own summary. Another app's messages stay --
 those are somebody's actual content.
 
+**`delete` can only ever remove the bot's own messages.** A bot token deletes
+what that same token posted and nothing else, so the command cannot take
+anybody else's message down however it is phrased -- including the `@daikenja
+delete` mention itself, which stays where you typed it. It removes one
+message per invocation, the most recent, and says how many of its own posts
+are still in the thread; run it again for the next one. Who may run it is the
+same allowlist as the other two commands.
+
 ## The split that matters
 
 **The model produces text. A separate layer posts it.** The model never
@@ -127,7 +140,7 @@ oauth_config:
   scopes:
     bot:
       - app_mentions:read   # receive the @-mention that triggers it
-      - chat:write          # post the answer
+      - chat:write          # post the answer, and delete it again
       - channels:history    # read a public thread
       - groups:history      # read a private thread, if you use it there
       - mpim:history        # read a thread in a group DM
@@ -417,7 +430,7 @@ goes through `slack_io.py`, which is the layer that is allowed to.
 daikenja_bot/__main__.py   the entry point and --check
 daikenja_bot/app.py        Socket Mode transport; the only slack_bolt import
 daikenja_bot/handler.py    what happens on a mention, start to finish
-daikenja_bot/commands.py   parsing `summary` / `judgement`, `project <key>` and the argument
+daikenja_bot/commands.py   parsing `summary` / `judgement` / `delete`, `project <key>` and the argument
 daikenja_bot/links.py      Slack permalinks and Confluence URLs
 daikenja_bot/slack_io.py   the only file that holds the Slack token
 daikenja_bot/transcript.py a fetched thread, rendered for a reader

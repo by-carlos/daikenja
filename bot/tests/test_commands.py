@@ -1,6 +1,15 @@
 import unittest
 
-from daikenja_bot.commands import HELP, JUDGEMENT, SUMMARY, parse_command, strip_mentions
+from daikenja_bot.commands import (
+    DELETE,
+    HELP,
+    JUDGEMENT,
+    SUMMARY,
+    parse_command,
+    strip_mentions,
+)
+
+PERMALINK = "https://example.slack.com/archives/C0HARBOR/p1758067200000100"
 
 PERMALINK = "https://example.slack.com/archives/C0HARBOR/p1758067200000100"
 
@@ -96,6 +105,52 @@ class ProjectArgumentTests(unittest.TestCase):
         command = parse_command(f"<@U0BOT> judgement <{PERMALINK}>")
         self.assertEqual(command.argument, PERMALINK)
         self.assertIsNone(command.project)
+
+    def test_an_alias_takes_the_keyword_too(self):
+        command = parse_command("<@U0BOT> :point_up_2: project harbor")
+        self.assertEqual(command.name, JUDGEMENT)
+        self.assertEqual(command.project, "harbor")
+
+    def test_delete_takes_no_project(self):
+        command = parse_command("<@U0BOT> delete project harbor")
+        self.assertEqual(command.name, DELETE)
+        self.assertIsNone(command.project)
+
+
+class AliasTests(unittest.TestCase):
+    def test_the_shortcode_form_is_judgement(self):
+        self.assertEqual(parse_command("<@U0BOT> :point_up_2:").name, JUDGEMENT)
+
+    def test_the_character_form_is_judgement(self):
+        self.assertEqual(parse_command("<@U0BOT> \N{WHITE UP POINTING BACKHAND INDEX}").name, JUDGEMENT)
+
+    def test_a_skin_tone_is_the_same_command(self):
+        text = "<@U0BOT> \N{WHITE UP POINTING BACKHAND INDEX}\U0001f3fd"
+        self.assertEqual(parse_command(text).name, JUDGEMENT)
+
+    def test_an_alias_still_takes_a_link(self):
+        command = parse_command(
+            "<@U0BOT> :point_up_2: <https://example.com/page|the page>"
+        )
+        self.assertEqual(command.name, JUDGEMENT)
+        self.assertEqual(command.argument, "https://example.com/page")
+
+    def test_another_emoji_is_not_a_command(self):
+        command = parse_command("<@U0BOT> :wave:")
+        self.assertEqual(command.name, HELP)
+        self.assertEqual(command.unknown_word, ":wave:")
+
+
+class DeleteTests(unittest.TestCase):
+    def test_bare_delete(self):
+        command = parse_command("<@U0BOT> delete")
+        self.assertEqual(command.name, DELETE)
+        self.assertTrue(command.is_known)
+
+    def test_delete_never_takes_an_argument(self):
+        command = parse_command(f"<@U0BOT> delete <{PERMALINK}>")
+        self.assertEqual(command.name, DELETE)
+        self.assertIsNone(command.argument)
 
 
 if __name__ == "__main__":

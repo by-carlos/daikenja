@@ -1,9 +1,10 @@
 """Read what was asked for out of the text of an @-mention.
 
-Two commands, `summary` and `judgement`. Either may carry one link as its
+Three commands. `summary` and `judgement` each may carry one link as their
 argument; with no argument, the subject is the thread the mention was typed
-in. Anything else comes back as `help`, which the transport answers with one
-line of usage rather than guessing.
+in. `delete` takes no argument and removes the bot's own last post in that
+thread. Anything else comes back as `help`, which the transport answers with
+one line of usage rather than guessing.
 """
 
 from __future__ import annotations
@@ -17,9 +18,26 @@ MENTION_RE = re.compile(r"<@[UWB][A-Z0-9]+(?:\|[^>]*)?>")
 
 SUMMARY = "summary"
 JUDGEMENT = "judgement"
+DELETE = "delete"
 HELP = "help"
 
-KNOWN_COMMANDS = (SUMMARY, JUDGEMENT)
+KNOWN_COMMANDS = (SUMMARY, JUDGEMENT, DELETE)
+
+# Commands that read a subject and run a headless session. `delete` does
+# neither: it is answered out of Slack alone.
+SUBJECT_COMMANDS = (SUMMARY, JUDGEMENT)
+
+# A command word may also be written as an emoji. Slack sends whichever form
+# the client produced -- the picker writes the `:shortcode:`, a phone keyboard
+# writes the character -- so both are accepted.
+ALIASES = {
+    ":point_up_2:": JUDGEMENT,
+    "\N{WHITE UP POINTING BACKHAND INDEX}": JUDGEMENT,
+}
+
+# Skin-tone modifiers and the emoji variation selector, dropped before an
+# alias is looked up: 👆🏽 is the same command as 👆.
+EMOJI_MODIFIERS = "️\U0001f3fb\U0001f3fc\U0001f3fd\U0001f3fe\U0001f3ff"
 
 # The word that names a project explicitly, ahead of any link: `judgement
 # project harbor`. The bot does not check the key against anything -- it has
@@ -30,11 +48,13 @@ KNOWN_COMMANDS = (SUMMARY, JUDGEMENT)
 PROJECT_KEYWORD = "project"
 
 USAGE = (
-    "I take two commands. `@daikenja summary` for what this thread is asking "
-    "and what is still open, and `@daikenja judgement` for a check of the "
-    "thread against the project's ledger. Either one takes a link -- a Slack "
-    "thread or a Confluence page -- to work on that instead of this thread, "
-    "and `project <key>` before it to say which project's ledger to check."
+    "I take three commands. `@daikenja summary` for what this thread is "
+    "asking and what is still open, `@daikenja judgement` (or :point_up_2:) "
+    "for a check of the thread against the project's ledger, and "
+    "`@daikenja delete` to remove my own last post here. `summary` and "
+    "`judgement` each take a link -- a Slack thread or a Confluence page -- "
+    "to work on that instead of this thread, and `project <key>` before it "
+    "to say which project's ledger to check."
 )
 
 
@@ -69,14 +89,19 @@ def parse_command(text: str) -> Command:
         return Command(name=HELP)
 
     parts = body.split()
-    word = parts[0].strip().lower().lstrip("/")
-    word = word.rstrip(":,.")
+    word = alias_for(parts[0])
+    if word is None:
+        # Not an emoji: the trailing `:` an alias needs is punctuation here.
+        word = parts[0].strip().lower().lstrip("/").rstrip(":,.")
 
     if word not in KNOWN_COMMANDS:
         return Command(name=HELP, unknown_word=parts[0])
 
     rest = parts[1:]
-    if not rest:
+    if not rest or word not in SUBJECT_COMMANDS:
+        # `delete` acts on the thread it was typed in and nothing else, so
+        # anything after it is not an argument and is not treated as one --
+        # neither a link nor a `project <key>`.
         return Command(name=word)
 
     project = None
@@ -92,6 +117,13 @@ def parse_command(text: str) -> Command:
     remainder = " ".join(rest).strip()
     argument = first_argument(remainder) if remainder else None
     return Command(name=word, argument=argument or None, project=project)
+
+
+def alias_for(token: str) -> str | None:
+    """The command an emoji token stands for, or None if it is not one."""
+    candidate = (token or "").strip().lower()
+    candidate = candidate.strip(EMOJI_MODIFIERS)
+    return ALIASES.get(candidate)
 
 
 def first_argument(remainder: str) -> str:

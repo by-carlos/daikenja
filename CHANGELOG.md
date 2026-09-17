@@ -17,6 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   key comes back as an answer naming the registered keys rather than as a
   parse error.
 
+- **`bot/`: `@daikenja delete`, and :point_up_2: as a way to write
+  `judgement`.** `delete` takes down the bot's own most recent post in the
+  thread it is typed in and confirms in a message only the person who asked
+  can see, so a bad answer can be removed from Slack rather than left to
+  stand. A bot token can delete only what that same token posted, so the
+  command cannot reach anybody else's message, and it removes one message per
+  invocation rather than clearing the thread. It needs no scope beyond the
+  `chat:write` the bot already has, runs no headless session, and is limited
+  to the same people and channels as the other commands. Separately,
+  `@daikenja :point_up_2:` now means `@daikenja judgement` -- the shortcode
+  or the character, with or without a skin tone, and it takes the same link
+  argument.
+
 - **`bot/`: a personal-instance Slack bot that answers in the thread.** A
   new Python service, shipped with the plugin and run by hand, takes two
   commands from an @-mention: `summary` posts the five-line thread summary

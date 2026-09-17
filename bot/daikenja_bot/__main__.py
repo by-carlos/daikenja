@@ -20,7 +20,7 @@ from pathlib import Path
 
 from . import __version__, preflight
 from .app import resolve_tokens, run
-from .commands import KNOWN_COMMANDS
+from .commands import SUBJECT_COMMANDS
 from .config import DEFAULT_CONFIG_PATH, ConfigError, load_config
 
 
@@ -134,7 +134,9 @@ def main(argv: list[str] | None = None) -> int:
         if not report.determined:
             print(f"  commands:   unknown -- could not read {report.source}")
         else:
-            for command in sorted(KNOWN_COMMANDS):
+            # `delete` is not listed: it needs no skill and is
+            # always available, so it has no state to report.
+            for command in sorted(SUBJECT_COMMANDS):
                 state = "unavailable" if command in unavailable else "ready"
                 print(f"  {command + ':':12}{state}")
         for command in sorted(unavailable):
