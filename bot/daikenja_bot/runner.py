@@ -107,12 +107,13 @@ def run_command(
     *,
     environ: Mapping[str, str],
     runner: "CommandRunner | None" = None,
+    project: str | None = None,
 ) -> str:
     """Produce the text for one command. Returns the answer, never posts it."""
     if subject.is_empty:
         raise RunnerError("there was nothing to read in that subject")
 
-    instruction = build_instruction(command_name, subject)
+    instruction = build_instruction(command_name, subject, project=project)
     argv = build_argv(config) + [instruction]
     stdin = build_input(subject)
 

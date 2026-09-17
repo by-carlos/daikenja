@@ -143,7 +143,11 @@ class Handler:
 
         try:
             answer = self._run(
-                self._config, command.name, subject, environ=self._environ
+                self._config,
+                command.name,
+                subject,
+                environ=self._environ,
+                project=command.project,
             )
         except RunnerError as exc:
             log.warning("%s failed: %s", command.name, exc)

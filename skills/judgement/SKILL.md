@@ -168,6 +168,15 @@ Resolve the project, in the order `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.
    Scope match is a **candidate**: say `Project: probably <key> -- confirm`
    and wait. Do not read a ledger on the strength of a candidate.
 
+   **With no reader, a candidate is no match**, per `project-card.md`
+   § Resolving a project by content, tier 2. A caller that says nobody can
+   answer -- a chat bot posting into a thread -- is never asked the question:
+   no ledger is read, the run continues on general knowledge as tier 3 does,
+   `Not checked` says the ledger was not read, and the candidate is named
+   once as the last bullet of `Suggestion` -- by its human-readable name,
+   with the command that would check it. The caller says how that command is
+   written; for the Slack bot it is `@daikenja judgement project <key>`.
+
 When a key or a directory resolved, still run the content check as a
 cross-check and report a decisive handle that points elsewhere as a mismatch,
 in one line, without switching project.
@@ -404,6 +413,7 @@ govern it and `response-format.md` does.
 | The named project key is not registered | Stop: name the key and list the registered ones. Never fall back to the directory. |
 | No project matches, and some registered projects have no card | Say the non-match line naming the cardless projects, continue on general knowledge, and say no ledger was checked -- in both forms. |
 | A Scope match, no decisive handle | Name the candidate and wait for confirmation. Do not read its ledger first. |
+| A Scope match, and the caller says there is no reader | Do not ask. Read no ledger, answer on general knowledge, and offer the candidate in `Suggestion` with the command that would check it. |
 | The resolved ledger does not exist | `No ledger at <path>. Run /daikenja:project-log to create one.`, then continue on general knowledge, saying so. |
 | A ledger line does not parse | Report it per `reading.md` § Notices, shared wording and skip it. Never repair the file. |
 | The subject asks for a reply, or the user asks for one | Decline per the hard rule; name `/daikenja:thread` and `/daikenja:compose`. |

@@ -27,6 +27,31 @@ that instead of the thread they were typed in:
 The answer still lands in the thread the command was typed in, so a verdict
 on an external page is visible where somebody asked for it.
 
+## Naming a project
+
+`summary` and `judgement` both take `project <key>` ahead of any link, to say
+which project's ledger to check:
+
+```
+@daikenja judgement project harbor
+@daikenja summary project harbor https://example.slack.com/archives/C0HARBOR/p1758067200000100
+```
+
+A key named this way is decisive: the session reads that project's ledger and
+falls back to nothing else. The bot does not check the key -- it has never
+read your `daikenja.yaml` -- so an unknown one comes back as an answer naming
+the keys that are registered, not as a parse error.
+
+**Without it, a project is resolved from the thread itself**, per
+[`project-card.md`](../docs/project-card.md) § Resolving a project by content:
+a channel, a tracker key or a repository that exactly one card owns decides
+it outright. A match on a card's *Scope* paragraph alone is weaker, and in a
+conversation the skill would stop and ask you to confirm it. **Here it never
+asks.** Nobody in a thread can answer, so the candidate is treated as no
+match: the answer comes back on general knowledge, says that no ledger was
+read, and names the candidate with the command that would check it. Run that
+command if it was the right project; ignore it if it was not.
+
 Two things happen on its own to the thread a command with no argument reads.
 **A forwarded message is followed to its original.** Sharing a message into
 another channel leaves its text in an attachment rather than in the message,
@@ -226,9 +251,16 @@ would post that into a public thread as the verdict.
 
 The session is asked to mark its deliverable between two sentinel lines, and
 usually does. When it does not, the deliverable is found by its own shape:
-the `Thread:` / `Asking:` / `Open:` block for `summary`, and the
-`AI review summary` header and its bullets for `judgement`. Both shapes are
+the `Thread` / `Asking` / `Open` block for `summary`, and the `Verdict`
+header and the sections that follow it for `judgement`. Both shapes are
 fixed by the skills, so this is reading a contract rather than guessing.
+
+Whatever comes out is then cleaned: stray code fences are dropped, and every
+absolute path is replaced with `a local path`. Both skills already say a
+`Ledger` line names the project and never the path -- a path carries the
+machine's own username and nobody in a channel can open it -- but that held
+only while the model complied, and once it did not, one went into a public
+thread. Links are left alone.
 
 That matters because the headless session is not a private one. It reads the
 user's own `CLAUDE.md` like any other session, so a personal conversational

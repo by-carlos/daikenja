@@ -93,6 +93,52 @@ class AliasTests(unittest.TestCase):
         self.assertEqual(command.unknown_word, ":wave:")
 
 
+class ProjectArgumentTests(unittest.TestCase):
+    def test_project_keyword_takes_the_next_token_as_the_key(self):
+        command = parse_command("<@U0BOT> judgement project sol-tokenization-service")
+        self.assertEqual(command.name, JUDGEMENT)
+        self.assertEqual(command.project, "sol-tokenization-service")
+        self.assertIsNone(command.argument)
+
+    def test_a_link_may_follow_the_key(self):
+        command = parse_command(f"<@U0BOT> judgement project harbor <{PERMALINK}>")
+        self.assertEqual(command.project, "harbor")
+        self.assertEqual(command.argument, PERMALINK)
+
+    def test_summary_takes_it_too(self):
+        command = parse_command("<@U0BOT> summary project harbor")
+        self.assertEqual(command.name, SUMMARY)
+        self.assertEqual(command.project, "harbor")
+
+    def test_an_alias_takes_it_too(self):
+        command = parse_command("<@U0BOT> :point_up_2: project harbor")
+        self.assertEqual(command.name, JUDGEMENT)
+        self.assertEqual(command.project, "harbor")
+
+    def test_the_keyword_is_matched_whatever_the_case(self):
+        command = parse_command("<@U0BOT> judgement Project harbor")
+        self.assertEqual(command.project, "harbor")
+
+    def test_the_key_itself_is_kept_as_typed(self):
+        command = parse_command("<@U0BOT> judgement project Harbor-Rollout")
+        self.assertEqual(command.project, "Harbor-Rollout")
+
+    def test_the_keyword_with_no_key_is_usage(self):
+        command = parse_command("<@U0BOT> judgement project")
+        self.assertEqual(command.name, HELP)
+        self.assertIsNone(command.unknown_word)
+
+    def test_a_link_alone_carries_no_project(self):
+        command = parse_command(f"<@U0BOT> judgement <{PERMALINK}>")
+        self.assertEqual(command.argument, PERMALINK)
+        self.assertIsNone(command.project)
+
+    def test_delete_takes_no_project(self):
+        command = parse_command("<@U0BOT> delete project harbor")
+        self.assertEqual(command.name, DELETE)
+        self.assertIsNone(command.project)
+
+
 class DeleteTests(unittest.TestCase):
     def test_bare_delete(self):
         command = parse_command("<@U0BOT> delete")

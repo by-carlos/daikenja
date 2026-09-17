@@ -121,6 +121,15 @@ make is reported here and logged, if at all, by the user through
    #harbor-rollout`, or `confirmed by you` -- since the user did not name it
    and is not standing in it.
 
+   **With no reader, a candidate is no match**, per `project-card.md`
+   § Resolving a project by content, tier 2. A caller that says nobody can
+   answer -- a chat bot posting into a thread -- is never asked to confirm
+   one: no ledger is read, and the `📒 Ledger` line carries the offer instead
+   of a finding -- the candidate by its human-readable name, that its ledger
+   was not read, and the command that would check it. The caller says how
+   that command is written; for the Slack bot it is
+   `@daikenja summary project <key>`.
+
 When a key or a directory resolved, still run the content check as a
 **cross-check**: a decisive handle on a *different* project's card is
 reported as a mismatch (`This thread is from #atlas-dev, which belongs to
