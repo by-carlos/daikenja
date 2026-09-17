@@ -175,6 +175,15 @@ first tier that decides:
    `Project: probably <key> -- confirm`, and let the user confirm or name
    another. A skill that goes on to read a ledger on the strength of a
    candidate says so on the `Ledger:` line.
+
+   **A caller with no reader never asks.** A chat bot, a headless run, any
+   consumer whose output lands where nobody can answer: there a candidate is
+   taken as no match. No ledger is read, tier 3 below is the outcome, and the
+   candidate is **offered rather than asked** -- named in the deliverable
+   alongside the command that would check it, for the person to run if they
+   want it. Waiting on a confirmation that cannot arrive does not produce a
+   cautious answer; it produces no answer at all, and whatever the run happened
+   to say while stopping is what the consumer posts in place of one.
 3. **Nothing fits.** Continue without a project. It is a normal outcome --
    most conversations are not project work -- and never a stop. Whether it
    is said is the caller's call: a skill asked to resolve says so in one

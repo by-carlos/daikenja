@@ -37,8 +37,8 @@ class Recorder:
         self.error = error
         self.calls: list[tuple] = []
 
-    def __call__(self, config, command_name, subject, *, environ):
-        self.calls.append((command_name, subject))
+    def __call__(self, config, command_name, subject, *, environ, project=None):
+        self.calls.append((command_name, subject, project))
         if self.error:
             raise self.error
         return self.answer
@@ -179,7 +179,7 @@ class ThreadSubjectTests(unittest.TestCase):
     def test_the_invoking_thread_is_read_and_rendered(self):
         handler, client, run = build()
         handler.handle_mention(mention("<@U0BOT> judgement", thread_ts="1758067200.000100"))
-        command, subject = run.calls[0]
+        command, subject, _ = run.calls[0]
         self.assertEqual(command, "judgement")
         self.assertEqual(subject.label, "#harbor-rollout, 4 messages")
         self.assertIn("@rigurd you owned the validation step", subject.body)
@@ -244,7 +244,7 @@ class ForwardedSubjectTests(unittest.TestCase):
         handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758069000.000500"))
         self.assertEqual(client.replies_calls[1]["channel"], "C0OTHER")
         self.assertEqual(client.replies_calls[1]["ts"], "1758067200.000100")
-        _, subject = run.calls[0]
+        _, subject, _ = run.calls[0]
         self.assertIn("Can we move the harbor cutover", subject.body)
 
     def test_the_forwarded_thread_is_named_as_the_source(self):
@@ -278,14 +278,14 @@ class OwnMessageTests(unittest.TestCase):
         client = FakeSlackClient(replies=THREAD + [self.OWN_REPLY], users=USERS)
         handler, client, run = build(client=client)
         handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758067200.000100"))
-        _, subject = run.calls[0]
+        _, subject, _ = run.calls[0]
         self.assertNotIn("an earlier summary this bot posted", subject.body)
         self.assertEqual(subject.label, "#harbor-rollout, 4 messages")
 
     def test_another_apps_message_is_kept(self):
         handler, client, run = build()
         handler.handle_mention(mention("<@U0BOT> summary", thread_ts="1758067200.000100"))
-        _, subject = run.calls[0]
+        _, subject, _ = run.calls[0]
         self.assertIn("Build 412 is green.", subject.body)
 
     def test_a_thread_of_nothing_but_the_bot_is_reported_not_summarised(self):
@@ -451,6 +451,38 @@ class AnswerTests(unittest.TestCase):
         with self.assertLogs("daikenja_bot.handler", level="ERROR") as logged:
             handler.handle_mention(mention("<@U0BOT> summary"))
         self.assertIn("msg_too_long", "\n".join(logged.output))
+
+
+class NamedProjectTests(unittest.TestCase):
+    def test_the_key_reaches_the_session(self):
+        handler, _, run = build()
+        handler.handle_mention(mention("<@U0BOT> judgement project harbor"))
+        self.assertEqual(run.calls[0][2], "harbor")
+
+    def test_the_thread_is_still_the_subject(self):
+        handler, _, run = build()
+        handler.handle_mention(mention("<@U0BOT> summary project harbor"))
+        _, subject, project = run.calls[0]
+        self.assertEqual(project, "harbor")
+        self.assertIn("hakurou", subject.body)
+
+    def test_a_key_with_a_link_reads_the_linked_thread(self):
+        handler, client, run = build()
+        handler.handle_mention(mention(f"<@U0BOT> judgement project harbor <{PERMALINK}>"))
+        _, subject, project = run.calls[0]
+        self.assertEqual(project, "harbor")
+        self.assertEqual(subject.source_url, PERMALINK)
+
+    def test_without_the_keyword_no_project_is_named(self):
+        handler, _, run = build()
+        handler.handle_mention(mention("<@U0BOT> judgement"))
+        self.assertIsNone(run.calls[0][2])
+
+    def test_the_keyword_with_no_key_is_answered_with_usage(self):
+        handler, client, run = build()
+        handler.handle_mention(mention("<@U0BOT> judgement project"))
+        self.assertEqual(run.calls, [])
+        self.assertIn("two commands", client.posted[0]["text"])
 
 
 def _raise(exc: Exception):

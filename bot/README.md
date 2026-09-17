@@ -35,6 +35,39 @@ answered: removing and re-adding the trigger, or a second person adding it,
 does nothing once that reaction is there. This is off by default; the emoji
 it reacts to has to be created in your workspace first (see below).
 
+## Naming a project
+
+`summary` and `judgement` both take `project <key>` ahead of any link, to say
+which project's ledger to check:
+
+```
+@daikenja judgement project harbor
+@daikenja summary project harbor https://example.slack.com/archives/C0HARBOR/p1758067200000100
+```
+
+A key named this way is decisive: the session reads that project's ledger and
+falls back to nothing else. The bot does not check the key -- it has never
+read your `daikenja.yaml` -- so an unknown one comes back as an answer naming
+the keys that are registered, not as a parse error.
+
+**Without it, a project is resolved from the thread itself**, per
+[`project-card.md`](../docs/project-card.md) § Resolving a project by content:
+a channel, a tracker key or a repository that exactly one card owns decides
+it outright. A match on a card's *Scope* paragraph alone is weaker, and in a
+conversation the skill would stop and ask you to confirm it. **Here it never
+asks.** Nobody in a thread can answer, so the candidate is treated as no
+match: the answer comes back on general knowledge and states which project it
+assumed, in one of two fixed sentences --
+
+```
+No ledger read. This looks like Harbor rollout -- say `@daikenja judgement project harbor` to check it.
+No project context. Add `@daikenja judgement project <key>` if you want a ledger checked.
+```
+
+-- so the answer always lands, and naming the project is a rephrase rather
+than a conversation. Run the command if it was the right project; ignore the
+line if it was not.
+
 Two things happen on its own to the thread a command with no argument reads.
 **A forwarded message is followed to its original.** Sharing a message into
 another channel leaves its text in an attachment rather than in the message,
@@ -235,9 +268,24 @@ would post that into a public thread as the verdict.
 
 The session is asked to mark its deliverable between two sentinel lines, and
 usually does. When it does not, the deliverable is found by its own shape:
-the `Thread:` / `Asking:` / `Open:` block for `summary`, and the
-`AI review summary` header and its bullets for `judgement`. Both shapes are
+the `Thread` / `Asking` / `Open` block for `summary`, and the `Verdict`
+header and the sections that follow it for `judgement`. Both shapes are
 fixed by the skills, so this is reading a contract rather than guessing.
+
+**A question is never posted.** If no block is recognised *and* the output
+asks something, a fixed line goes out instead -- *"I could not produce an
+answer for that. Ask me again, or name the project with `project <key>`."* --
+and the raw output goes to the log. The rules above tell the session not to
+ask, and a real run asked anyway; nobody in a thread can answer a question
+the bot is not waiting on, so the thread would simply stop there. Anything
+else unrecognised is still posted as it came.
+
+Whatever comes out is then cleaned: stray code fences are dropped, and every
+absolute path is replaced with `a local path`. Both skills already say a
+`Ledger` line names the project and never the path -- a path carries the
+machine's own username and nobody in a channel can open it -- but that held
+only while the model complied, and once it did not, one went into a public
+thread. Links are left alone.
 
 That matters because the headless session is not a private one. It reads the
 user's own `CLAUDE.md` like any other session, so a personal conversational
@@ -369,7 +417,7 @@ goes through `slack_io.py`, which is the layer that is allowed to.
 daikenja_bot/__main__.py   the entry point and --check
 daikenja_bot/app.py        Socket Mode transport; the only slack_bolt import
 daikenja_bot/handler.py    what happens on a mention, start to finish
-daikenja_bot/commands.py   parsing `summary` / `judgement` and its argument
+daikenja_bot/commands.py   parsing `summary` / `judgement`, `project <key>` and the argument
 daikenja_bot/links.py      Slack permalinks and Confluence URLs
 daikenja_bot/slack_io.py   the only file that holds the Slack token
 daikenja_bot/transcript.py a fetched thread, rendered for a reader

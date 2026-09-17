@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`bot/`: `project <key>` names the project a command checks.**
+  `@daikenja judgement project harbor`, with a link after it if the subject
+  is elsewhere, and the same for `summary`. A key named this way is decisive:
+  the session reads that project's ledger and falls back to nothing. The bot
+  does not validate it -- it has never read `daikenja.yaml` -- so an unknown
+  key comes back as an answer naming the registered keys rather than as a
+  parse error.
+
 - **`bot/`: a personal-instance Slack bot that answers in the thread.** A
   new Python service, shipped with the plugin and run by hand, takes two
   commands from an @-mention: `summary` posts the five-line thread summary
@@ -178,6 +186,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   asserted against an injected runner rather than the real one, so neither
   said anything. Both now pass the scrubbed environment, and the test exercises
   the real runner.
+
+- **A project matched only by a card's Scope paragraph no longer stalls a
+  bot answer.** `project-card.md` makes such a match a candidate the user
+  confirms, which is right in a conversation and wrong in a Slack thread,
+  where nobody can answer: a real run stopped at `Project: probably <key> --
+  confirm`, produced no deliverable, and the bot posted the whole
+  conversational report -- a question, register markers and an absolute
+  ledger path -- as the verdict. A caller with no reader now takes a
+  candidate as no match: no ledger is read, the answer comes back on general
+  knowledge saying so, and the candidate is *offered* with the command that
+  would check it (`@daikenja judgement project <key>`) instead of asked
+  about. `judgement` names it in `Suggestion`, `thread` on its `Ledger`
+  line.
+
+- **The bot no longer posts a question into a thread.** The rule above tells
+  the session to state which project it assumed rather than ask about it, and
+  a real run asked anyway -- `Should I check this against the
+  azure-to-gcp-migration ledger, or proceed on general knowledge only?` -- so
+  the last extraction pass, which posts whatever it got when no block is
+  recognised, put that in the thread. Nobody there can answer it and the bot
+  keeps no pending state, so the thread just stopped. Now an unrecognised
+  output that asks something is replaced by one fixed line naming
+  `project <key>` as the way to rephrase, with the raw output logged.
+  Anything else unrecognised is still posted as it came. The two sentences
+  the skills ask for are also given verbatim now rather than described, since
+  a sentence to copy is followed more reliably than one to compose.
+
+- **The bot no longer posts an absolute path into a thread.** Both skills
+  say a `Ledger` line names the project and never the path, because the path
+  carries the machine's own username and nobody in a channel can open it.
+  That relied on the model complying, and when it did not the path went into
+  a public thread. Every absolute path is now replaced with `a local path`
+  on the way out, whichever extraction pass the text came from; links are
+  left alone.
+
 - **The bot no longer opens a console window on Windows for every mention.**
   The Claude Code CLI installs as a batch file, so starting it runs
   `cmd.exe`; when the bot itself runs without a console -- `pythonw.exe`, a
