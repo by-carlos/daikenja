@@ -87,14 +87,20 @@ class ExtractOutputTests(unittest.TestCase):
         raw = f"{START_SENTINEL}\n```\nThread: two messages\n```\n{END_SENTINEL}"
         self.assertEqual(extract_output(raw), "Thread: two messages")
 
-    def test_a_fence_inside_a_longer_answer_is_kept(self):
+    def test_a_fence_inside_a_longer_answer_loses_its_fence(self):
         answer = (
             "The load window was agreed as follows, quoted from the ledger:\n"
             "```\nD-004 -> 02:00 to 04:00 UTC\n```\n"
             "and the thread contradicts it on both ends of the window."
         )
         raw = f"{START_SENTINEL}\n{answer}\n{END_SENTINEL}"
-        self.assertEqual(extract_output(raw), answer)
+        # A deliverable never legitimately carries a fence, so the fence
+        # lines around the D-004 snippet are stripped -- the snippet's
+        # content survives, only its fence does not. This exercises the
+        # sentinel return path specifically; the rule holds identically on
+        # both that path and the fallback path.
+        expected = answer.replace("```\nD-004 -> 02:00 to 04:00 UTC\n```", "D-004 -> 02:00 to 04:00 UTC")
+        self.assertEqual(extract_output(raw), expected)
 
     def test_a_fenced_answer_with_a_trailing_question_drops_the_question(self):
         # Observed against a real headless run: the session fenced the block
@@ -123,7 +129,41 @@ class ExtractOutputTests(unittest.TestCase):
             "wording of the decision is:\n```\nD-003\n```\nNot checked: the "
             "linked runbook, which nobody opened during this pass."
         )
-        self.assertEqual(extract_output(raw), raw)
+        # A deliverable never legitimately carries a fence, so the fence
+        # lines around the D-003 snippet are stripped -- the snippet's
+        # content survives, only its fence does not.
+        expected = raw.replace("```\nD-003\n```", "D-003")
+        self.assertEqual(extract_output(raw), expected)
+
+    def test_a_trailing_empty_fence_is_dropped(self):
+        raw = (
+            f"{START_SENTINEL}\n"
+            "\U0001F9F5 **Thread** -- cutover scheduling, 2 messages\n"
+            "⏳ **Waiting on** -- Carlos Eng: everything\n"
+            "```\n"
+            "```\n"
+            f"{END_SENTINEL}\n"
+        )
+        extracted = extract_output(raw, SUMMARY)
+        self.assertNotIn("```", extracted)
+        self.assertTrue(extracted.endswith("Carlos Eng: everything"))
+
+    def test_a_fence_around_content_keeps_the_content(self):
+        raw = (
+            f"{START_SENTINEL}\n"
+            "```\n"
+            "\U0001F9F5 **Thread** -- cutover scheduling, 2 messages\n"
+            "⏳ **Waiting on** -- Carlos Eng: everything\n"
+            "```\n"
+            f"{END_SENTINEL}\n"
+        )
+        extracted = extract_output(raw, SUMMARY)
+        self.assertNotIn("```", extracted)
+        self.assertIn("cutover scheduling", extracted)
+
+    def test_fences_go_even_when_nothing_else_matched(self):
+        raw = "I could not work this out.\n```\n```"
+        self.assertEqual(extract_output(raw, SUMMARY), "I could not work this out.")
 
 
 class ExtractBlockTests(unittest.TestCase):

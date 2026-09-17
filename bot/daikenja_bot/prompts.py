@@ -131,6 +131,12 @@ FIRST_FENCE_RE = re.compile(r"```[^\n]*\n(.*?)```", re.DOTALL)
 # stray line around it", not "the answer mentions a snippet".
 FENCE_SHARE = 0.5
 
+# Any line that opens a fence, wherever it sits. Neither skill's deliverable
+# legitimately contains one -- both are a fixed block of labelled lines and
+# bullets -- so every fence line is dropped on the way out rather than asked
+# away in a prompt that already says not to emit one.
+_FENCE_LINE_RE = re.compile(r"^\s*```")
+
 _SKILL_INVOCATION = {
     SUMMARY: "/daikenja:thread",
     JUDGEMENT: "/daikenja:judgement message",
@@ -238,7 +244,7 @@ def build_input(subject: Subject) -> str:
 def extract_output(raw: str, command_name: str | None = None) -> str:
     """Pull the deliverable out of the session's stdout.
 
-    Four passes, in order of how much the session cooperated:
+    Five passes, in order of how much the session cooperated:
 
     1. **The sentinels are there.** Take what is between them, and unwrap a
        fence if the whole of it is one.
@@ -252,6 +258,9 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
     4. **None of those.** Take the whole output. A session that answered
        well but in no recognisable shape is still worth posting; a bot that
        silently drops an answer is worse than one that posts a noisy one.
+    5. **Whatever comes out of the above, strip stray fence lines.** Neither
+       deliverable ever legitimately contains one, so every fence line found
+       anywhere in the result is dropped before it is handed back.
     """
     text = (raw or "").strip()
     if not text:
@@ -261,7 +270,7 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
     if start != -1:
         body = _unfence(text[start + len(START_SENTINEL) :].split(END_SENTINEL)[0].strip())
         if body:
-            return body
+            return _strip_fences(body)
 
     fenced = FIRST_FENCE_RE.search(text)
     if fenced:
@@ -270,7 +279,7 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
             text = inner
 
     block = extract_block(text, command_name)
-    return block or text
+    return _strip_fences(block or text)
 
 
 def extract_block(text: str, command_name: str | None) -> str:
@@ -376,6 +385,19 @@ def _unfence(text: str) -> str:
     """Strip one fence, but only when the whole text is that fence."""
     match = WHOLE_FENCE_RE.match(text)
     return match.group(1).strip() if match else text
+
+
+def _strip_fences(text: str) -> str:
+    """Drop every fence line from a deliverable.
+
+    Neither command's deliverable ever legitimately contains a code fence:
+    both are a fixed block of labelled lines and bullets. A real run posted a
+    summary followed by a bare fence pair, which Slack rendered as an empty
+    code block, so the fences are removed here rather than asked away in the
+    prompt -- the prompt already says not to emit them.
+    """
+    kept = [line for line in text.split("\n") if not _FENCE_LINE_RE.match(line)]
+    return "\n".join(kept).strip()
 
 
 def page_subject(title: str, body: str, source_url: str | None = None) -> Subject:
