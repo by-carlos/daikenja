@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Project cards: a per-project description beside the ledger.** A new
+  `docs/project-card.md` contract and `templates/project.md` define a short
+  file -- one paragraph of scope, the channels, repositories and trackers the
+  project owns, and the people on it -- sitting beside the ledger as
+  `project.md` (or `<name>.project.md` beside a ledger with another name).
+  Nothing changes in `daikenja.yaml` or in the ledger grammar; the card's path
+  is derived from the ledger's. `setup-project` offers to create it in a new
+  Step 3b and never touches an existing one; `project-summary` opens its
+  overview with the card's Scope when there is one. The card is optional, and
+  a project without one resolves and reads exactly as before (#250).
+
 - **`learn-voice` persists the "what to watch" report and compares re-runs
   against it.** Step 8 now writes the block to a dated
   `writing-style.watch.<YYYY-MM-DD>.md` beside the style file (locally, beside

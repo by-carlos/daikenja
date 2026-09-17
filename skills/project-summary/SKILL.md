@@ -27,6 +27,9 @@ Read these before doing anything. Do not work from memory of them.
   Body markers and § Reading rules for skills -- this is the one read skill
   that genuinely wants every section's own grammar, plus the markers it
   carries through unresolved.
+- `${CLAUDE_PLUGIN_ROOT}/docs/project-card.md` § Location, § Format and
+  § Reading a card -- the project card beside the ledger, which this overview
+  opens with when it exists.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. Read in full and not narrowed to a section: Step 3 explicitly
   follows only § Entries are named topic-first, ID in parentheses, but the
@@ -49,7 +52,19 @@ Follow `reading.md` § Step C. This is the one read skill that genuinely wants
 every section, so read them all in full -- the original four, plus Sources
 when the ledger has it.
 
+**Also read the project card**, at the path derived from the ledger path per
+`project-card.md` § Location, when it exists. Someone with no prior context
+needs "what is this project about" before "what was decided in it", and the
+card is the only place the first question is answered. No card is one line
+per `project-card.md` § Reading a card, then the overview continues without
+it.
+
 ## Step 3: build the overview
+
+**Scope, first.** When a card was read, its Scope paragraph opens the
+overview, followed by the Owns handles on one line each. People are left out
+here -- the ledger's owners already say who is doing what. With no card there
+is no Scope block; the one-line notice from Step 2 stands in for it.
 
 **Decisions.** List every decision **currently in force** -- skip an entry
 carrying `-> superseded by D-nnn`, since the entry that supersedes it is
@@ -82,6 +97,15 @@ per `response-format.md` -- the ledger line is ID-first, the reply is not.
 
 ```
 <project> ledger -- C:/GitHub/atlas/.daikenja/ledger.md
+Card: C:/GitHub/atlas/.daikenja/project.md
+
+Scope
+Atlas replaces the legacy order store for the payments team. It covers the
+data migration, the cutover and the 30-day fallback window; it does not
+cover the reporting warehouse, which stays on the legacy store.
+- channel: #atlas-migration
+- repo: northwind/atlas
+- tracker: ATL
 
 Decisions in force (4)
 - Cut over on a Saturday, not a weekday evening (D-005) -- @carlos
@@ -120,5 +144,7 @@ best-effort default location.
 | The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory -- an answer about the wrong project reads exactly like a right one. |
 | The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." A pathless project *with* an absolute `ledger:` resolves normally. |
 | No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
+| No project card beside the ledger | One line per `project-card.md` § Reading a card, naming `/daikenja:setup-project`, then the overview without a Scope block. Never a stop. |
+| The card is missing a section or has a line that does not parse | Report it -- name the heading or the line -- then show what the card does have. Never rewrite it. |
 | A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. |
 | A `Blocked by` or `Contradicts` marker names an ID with no entry | Report it -- which entry carries it, which ID it names -- then continue, per `ledger-format.md` § Reading rules, rule 6. |
