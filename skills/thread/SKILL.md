@@ -90,7 +90,10 @@ make is reported here and logged, if at all, by the user through
    § Resolving a project by content: the channel it came from, a tracker key
    or repository it names, then its subject against every registered card's
    Scope. A handle match is stated as a match; a Scope match is a candidate
-   the user confirms before its ledger is read as theirs.
+   the user confirms before its ledger is read as theirs. Either way the
+   `Ledger:` line says how the project was found -- `matched by
+   #harbor-rollout`, or `confirmed by you` -- since the user did not name it
+   and is not standing in it.
 
 When a key or a directory resolved, still run the content check as a
 **cross-check**: a decisive handle on a *different* project's card is
@@ -120,7 +123,8 @@ cutover decision (D-001); the proposed Friday start contradicts its Monday
 
 Keep it to one or two lines. Naming the project and the ledger path is what
 makes the rest checkable, so both stay even when nothing matched:
-`Ledger: harbor -- nothing on this subject.` is a complete, useful line.
+`Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- nothing on this
+subject.` is a complete, useful line.
 
 **When no project resolved**, or the project has no ledger, leave the
 `Ledger:` line out and say nothing about it. A thread that is not project

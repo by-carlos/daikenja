@@ -143,8 +143,9 @@ souei proposes pulling the ramp at 25% if p99 doubles, and diablo agrees.
   the open item the thread appears to resolve:
 
 ```
-Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- touches the ramp
-decision (D-001); appears to resolve the rollback-trigger question (O-001).
+Ledger: harbor, matched by #harbor-rollout (C:/GitHub/harbor/.daikenja/ledger.md)
+-- touches the ramp decision (D-001); appears to resolve the rollback-trigger
+question (O-001).
 ```
 
 What must not happen: `O-001` is not flipped, nothing is written, and the
@@ -166,8 +167,10 @@ should we move it to the config service before the next tenant wave?"
 Project: probably harbor -- confirm, and I will check its ledger.
 ```
 
-- On "yes, harbor": the `Ledger:` line follows, and it says the match was
-  confirmed by the user rather than decided by a handle.
+- On "yes, harbor": the `Ledger:` line follows, opening
+  `Ledger: harbor, confirmed by you (C:/GitHub/harbor/.daikenja/ledger.md)`,
+  so it says the match was confirmed by the user rather than decided by a
+  handle.
 
 What must not happen: reading harbor's ledger and reporting "touches D-001"
 before the user has confirmed the candidate.
@@ -184,7 +187,8 @@ headed `#atlas-dev -- 5 messages` about the fallback-window cost.
 ```
 This thread is from #atlas-dev, which belongs to atlas-migration, not to
 harbor.
-Ledger: harbor -- nothing on this subject.
+Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md) -- nothing on this
+subject.
 ```
 
 What must not happen: silently switching to atlas-migration's ledger. The
@@ -194,15 +198,17 @@ user chose the directory; the line lets them choose again.
 
 The user pastes a thread about "the invoice retry queue" from `C:/GitHub/scratch`.
 
-- `billing-api` has a ledger but no card, so it is never considered, and the
-  report says why. No other Scope fits.
+- `billing-api` has a ledger but no card, so it is never considered. No
+  other Scope fits.
+- The summary carries no `Ledger:` line and says nothing about resolution:
+  `thread` stays silent on a non-match, per `thread` § Step 2b and
+  `project-card.md` § Resolving a project by content, tier 3. The
+  one-line `No registered project matches this content. billing-api has no
+  card, so it could not be checked.` form is for a caller asked to resolve
+  outright, which nothing shipped yet is.
 
-```
-No registered project matches this content. billing-api has no card, so it
-could not be checked -- run /daikenja:setup-project there to add one.
-```
-
-- The summary carries no `Ledger:` line.
+What must not happen: a notice about `daikenja.yaml`, cards or resolution
+in the middle of the thread summary.
 
 ## Walk 5: a shared handle decides nothing
 

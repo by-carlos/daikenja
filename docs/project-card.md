@@ -164,18 +164,25 @@ first tier that decides:
 1. **Owns handles, decisive.** The content names a channel, a repository, a
    tracker key or a document that exactly one card owns -- the thread's
    channel, a `HARB-123` ticket, a repository link. That card's project is
-   the match, stated as `Project: <key> (matched by #harbor-rollout)`. Two
-   cards owning the same handle is a card problem, not a tie to break: report
-   both keys and treat it as undecided.
+   the match, stated as `Project: <key> (matched by #harbor-rollout)` -- or,
+   in a skill whose report already carries a project line, on that line
+   (`thread` says it on its `Ledger:` line). Two cards owning the same
+   handle is a card problem, not a tie to break: report both keys and treat
+   it as undecided.
 2. **Scope and People, suggestive.** No handle decided. Compare the content's
    subject against each card's Scope paragraph, with People as a tiebreaker.
    The best fit is a **candidate**, never a match: state it as
    `Project: probably <key> -- confirm`, and let the user confirm or name
    another. A skill that goes on to read a ledger on the strength of a
    candidate says so on the `Ledger:` line.
-3. **Nothing fits.** Say so in one line and continue without a project:
-   `No registered project matches this content.` It is a normal outcome --
-   most conversations are not project work -- and never a stop.
+3. **Nothing fits.** Continue without a project. It is a normal outcome --
+   most conversations are not project work -- and never a stop. Whether it
+   is said is the caller's call: a skill asked to resolve says so in one
+   line, naming any registered project that could not be checked for want of
+   a card (`No registered project matches this content. billing-api has no
+   card, so it could not be checked.`); a skill that only consults this route
+   on the way to something else (`thread`) stays silent, because narrating a
+   non-match in the middle of another job is noise.
 
 **Content resolution never overrides a key or a directory.** A key the user
 named is decisive per `config-resolution.md`, and a directory that resolves
