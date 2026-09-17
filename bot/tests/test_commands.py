@@ -2,6 +2,8 @@ import unittest
 
 from daikenja_bot.commands import HELP, JUDGEMENT, SUMMARY, parse_command, strip_mentions
 
+PERMALINK = "https://example.slack.com/archives/C0HARBOR/p1758067200000100"
+
 
 class StripMentionsTests(unittest.TestCase):
     def test_removes_plain_and_labelled_mentions(self):

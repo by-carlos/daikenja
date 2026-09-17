@@ -164,8 +164,10 @@ subject.` is a complete, useful line.
 **When no project resolved**, or the project has no ledger, leave the
 `Ledger` line out and say nothing about it. A thread that is not project
 work is the ordinary case, and `daikenja.yaml` being absent is not a reason
-to narrate configuration in the middle of a thread summary. The only notice
-this step ever adds on its own is the mismatch above.
+to narrate configuration in the middle of a thread summary. The only notices
+this step ever adds on its own are the mismatch above and, for a caller with
+no reader, the Scope candidate it was not able to ask about -- that one keeps
+the `Ledger` line, since the offer is the whole point of it.
 
 ## Form `message`: a summary that leaves the session
 
