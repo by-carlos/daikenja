@@ -9,6 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`verdict`: a read-only check of a thread or a document against the
+  ledger.** A new skill takes a Slack thread link, a Confluence page link, a
+  repository path or pasted text -- or, with no argument, the most recent
+  link or pasted block in the session -- triages what it claims or asks,
+  resolves its project by key, directory or content, and checks every claim
+  against the project's Decisions and Open items first and against general
+  knowledge second. Every statement in the result is labelled `ledger`, with
+  the entry named topic-first and its ID in parentheses, or `general
+  knowledge`, and carries a confidence of certain, likely or guessing. A
+  claim the subject presents as settled without establishing it is a
+  finding; a source is linked only when the subject or the ledger's Sources
+  already carry the link, otherwise named and marked `link needed`; and
+  every result closes with one line saying what was not checked. Two forms:
+  `answer`, the default, is a reply in the conversation opening with the
+  same summary block `thread` uses; `message` is a shareable deliverable for
+  a cold reader, headed *AI review summary*, bulleted, about 150 words, with
+  no conversational markers or emoji, written as an AI pass and never as the
+  user. A subject that matches no project is said outright, and the check
+  continues on general knowledge alone rather than reading another
+  project's ledger. It never drafts a reply, never edits the document and
+  never writes the ledger; a consumer that posts the `message` form into a
+  chat surface is separate work (#251).
+- **Voice-only mode for generated output.** `docs/config-resolution.md`
+  § Voice and writing style now defines a mode a skill may declare for one of
+  its outputs: `voice.md` applies in full and the user's `writing_style` and
+  `personas` are not read at all, for output written as an AI pass rather
+  than as the user. Layering stays the default for everything else; no
+  `daikenja.yaml` key selects the mode. `verdict`'s `message` form is the
+  one shipped use (#251).
 - **Project cards: a per-project description beside the ledger.** A new
   `docs/project-card.md` contract and `templates/project.md` define a short
   file -- one paragraph of scope, the channels, repositories and trackers the

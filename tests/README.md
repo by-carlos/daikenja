@@ -213,6 +213,24 @@ last released copy of the skill, so a result obtained any other way is void.
   applies today" for a 2024 cutover with nothing to support that. Exercises
   the full checklist in one document.
 
+### `verdict`
+
+- [`fixtures/verdict.md`](fixtures/verdict.md) -- an `ember` reporting
+  warehouse registry, card and ledger, whose storage-engine decision and
+  load-window decision are each contradicted by one of two subjects: a thread
+  in which two people assume the engine the ledger rejected and a third
+  presents an open retention question as settled, and a wiki page stating the
+  wrong load window, the same retention as agreed, an unassigned backfill as
+  owned, and one plain PostgreSQL fact the ledger says nothing about. Four
+  walks: the `answer` form on the thread from an unrelated directory (the
+  contradicted decision cited by ID, the Oracle-in-SQL-Server question
+  answered and labelled general knowledge); the `message` form on the page,
+  voice-only, with a `writing-style.md` present that must be ignored and a
+  named standard that must come back `link needed` rather than with an
+  invented URL; a thread that resolves to no project, where the reply says so
+  and says no ledger was checked; and the bare invocation with nothing in the
+  session to judge, which asks and stops.
+
 ### `self-review`
 
 Walking any fixture below against a real session needs a scratch

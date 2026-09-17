@@ -8,6 +8,7 @@ headings by tests/check-invariants.py):
 - § Resolving `ledger` -- project-list "Step 0: read the contracts", setup-project "Step 2: register the project"
 - § Resolving `writing_style` and `personas` -- preflight "Step 0: read the shared docs", setup-user "Offering Google Drive, without ever requiring it"
 - § Failure behavior -- preflight "Step 0: read the shared docs", self-review "Step 0: read the shared docs"
+- § Voice and writing style -- verdict "Voice in the message form"
 
 Daikenja reads user configuration from **one YAML file** outside the plugin
 directory. This document is the resolution core: where that file lives, how a
@@ -285,6 +286,19 @@ Which rule sits in which tier is the voice file's call, not this document's, and
 the file itself is **not part of this contract**. It belongs to `compose`, its
 main consumer. This document fixes only the layering rule and the fact that the
 two tiers exist, so that `compose` does not have to invent either.
+
+**Voice-only mode.** Layering is the default, and it is the right default for
+anything that goes out under the user's name. A skill may instead declare one
+of its outputs **voice-only**: `voice.md` applies in full, both tiers as
+shipped, and the user's `writing_style` pointer is **not read** -- not
+resolved, not layered, and its absence or failure is not a notice, because
+nothing asked for it. `personas` is not read either. The mode is for output
+written as an AI pass rather than as the user -- a review summary headed as
+one, handed to a reader who was not in the conversation -- where the user's
+own greetings and turns of phrase would misattribute it. It is not a user
+setting and no key in `daikenja.yaml` selects it: a skill names in its own
+`SKILL.md` which of its outputs are voice-only, and every other output stays
+layered. `verdict`'s `message` form is the one shipped use.
 
 ## Failure behavior
 
