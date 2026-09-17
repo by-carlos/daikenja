@@ -1,10 +1,18 @@
+import os
+import sys
 import unittest
 from pathlib import Path
 
 from daikenja_bot.commands import SUMMARY, VERDICT
 from daikenja_bot.config import ClaudeConfig, parse_config
-from daikenja_bot.prompts import END_SENTINEL, START_SENTINEL
-from daikenja_bot.runner import RunnerError, build_argv, run_command, scrubbed_env
+from daikenja_bot.prompts import END_SENTINEL, START_SENTINEL, UNAVAILABLE_TOKEN
+from daikenja_bot.runner import (
+    RunnerError,
+    build_argv,
+    resolve_command,
+    run_command,
+    scrubbed_env,
+)
 from daikenja_bot.subject import THREAD, Subject
 
 from .fakes import FakeRunner, make_config
@@ -75,6 +83,12 @@ class BuildArgvTests(unittest.TestCase):
         for forbidden in ("Bash", "Write", "Edit", "WebFetch"):
             self.assertNotIn(forbidden, tools)
 
+    def test_no_system_prompt_is_appended(self):
+        # Tried and reverted: telling the session it has no reader made it
+        # stop invoking the skill and answer in its own voice instead. The
+        # block extraction in prompts.py handles the register leak.
+        self.assertNotIn("--append-system-prompt", build_argv(make_config()))
+
     def test_optional_flags_are_only_added_when_set(self):
         argv = build_argv(make_config())
         self.assertNotIn("--model", argv)
@@ -97,6 +111,23 @@ class BuildArgvTests(unittest.TestCase):
         self.assertEqual(argv[argv.index("--model") + 1], "claude-sonnet-5")
         self.assertEqual(argv[argv.index("--plugin-dir") + 1], "/repo")
         self.assertEqual(argv[-1], "--verbose")
+
+
+class ResolveCommandTests(unittest.TestCase):
+    def test_a_bare_name_resolves_to_a_real_file(self):
+        # The interpreter is the one executable every machine running these
+        # tests certainly has. On Windows this also proves the PATHEXT
+        # lookup is happening, which is the whole point of the function.
+        resolved = resolve_command(os.path.basename(sys.executable))
+        self.assertTrue(os.path.isfile(resolved))
+
+    def test_a_full_path_comes_back_usable(self):
+        self.assertTrue(os.path.isfile(resolve_command(sys.executable)))
+
+    def test_a_missing_command_says_what_to_set(self):
+        with self.assertRaises(RunnerError) as caught:
+            resolve_command("daikenja-no-such-executable")
+        self.assertIn("claude.command", str(caught.exception))
 
 
 class WorkingDirTests(unittest.TestCase):
@@ -158,6 +189,16 @@ class RunCommandTests(unittest.TestCase):
         runner = FakeRunner(text="   ")
         with self.assertRaises(RunnerError):
             run_command(make_config(), SUMMARY, SUBJECT, environ={}, runner=runner)
+
+    def test_an_unloaded_skill_is_an_error_not_an_improvised_answer(self):
+        runner = FakeRunner(
+            text=f"{START_SENTINEL}\n{UNAVAILABLE_TOKEN}\n{END_SENTINEL}"
+        )
+        with self.assertRaises(RunnerError) as caught:
+            run_command(make_config(), VERDICT, SUBJECT, environ={}, runner=runner)
+        message = str(caught.exception)
+        self.assertIn("/daikenja:verdict", message)
+        self.assertIn("plugin_dir", message)
 
 
 if __name__ == "__main__":

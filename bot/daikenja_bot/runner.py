@@ -14,12 +14,19 @@ file or fetch a URL on the say-so of something it read in a thread.
 from __future__ import annotations
 
 import logging
+import shutil
 import subprocess
 from dataclasses import dataclass
 from typing import Mapping, Sequence
 
 from .config import BotConfig, secret_env_names
-from .prompts import build_input, build_instruction, extract_output
+from .prompts import (
+    build_input,
+    build_instruction,
+    extract_output,
+    is_unavailable,
+    skill_name,
+)
 from .subject import Subject
 
 log = logging.getLogger(__name__)
@@ -114,9 +121,16 @@ def run_command(
         tail = detail[-1] if detail else f"exit code {result.returncode}"
         raise RunnerError(f"the headless session failed: {tail}")
 
-    answer = extract_output(result.text)
+    answer = extract_output(result.text, command_name)
     if not answer:
         raise RunnerError("the headless session returned nothing")
+    if is_unavailable(answer):
+        raise RunnerError(
+            f"{skill_name(command_name)} is not loaded in my headless session. "
+            "Check that the Daikenja plugin is installed for the account the "
+            "bot runs as, and that its version ships that skill -- or point "
+            "claude.plugin_dir at a working tree that does."
+        )
     return answer
 
 
@@ -135,6 +149,24 @@ class CommandRunner:
         raise NotImplementedError
 
 
+def resolve_command(command: str) -> str:
+    """Find the executable, honouring Windows' PATHEXT.
+
+    On Windows the Claude Code CLI installs as `claude.CMD`, and Python's
+    subprocess does not apply PATHEXT to a bare name -- it hands the name
+    straight to CreateProcess, which fails with a plain "file not found".
+    `shutil.which` does apply it, and the resolved path launches fine. On
+    POSIX this is an ordinary PATH lookup.
+    """
+    resolved = shutil.which(command)
+    if resolved:
+        return resolved
+    raise RunnerError(
+        f"{command} was not found. Install the Claude Code CLI, or set "
+        "claude.command in bot.yaml to the full path of the executable."
+    )
+
+
 def _subprocess_runner(
     argv: Sequence[str],
     stdin: str,
@@ -143,6 +175,7 @@ def _subprocess_runner(
     env: Mapping[str, str],
     timeout: int,
 ) -> RunResult:
+    argv = [resolve_command(argv[0]), *argv[1:]]
     log.info("running %s in %s", argv[0], cwd)
     try:
         completed = subprocess.run(
@@ -157,11 +190,8 @@ def _subprocess_runner(
             timeout=timeout,
             check=False,
         )
-    except FileNotFoundError as exc:
-        raise RunnerError(
-            f"{argv[0]} is not on PATH. Set claude.command in bot.yaml to its "
-            "full path, or install the Claude Code CLI."
-        ) from exc
+    except OSError as exc:
+        raise RunnerError(f"{argv[0]} could not be started: {exc}") from exc
     except subprocess.TimeoutExpired as exc:
         raise RunnerError(
             f"the headless session did not finish within {timeout}s"

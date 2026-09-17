@@ -6,10 +6,13 @@ from daikenja_bot.prompts import (
     START_SENTINEL,
     SUBJECT_BEGIN,
     SUBJECT_END,
+    UNAVAILABLE_TOKEN,
     build_input,
     build_instruction,
     extract_output,
+    is_unavailable,
     page_subject,
+    skill_name,
 )
 from daikenja_bot.subject import PAGE, THREAD, Subject
 
@@ -78,6 +81,180 @@ class ExtractOutputTests(unittest.TestCase):
     def test_empty_output_stays_empty(self):
         self.assertEqual(extract_output(""), "")
         self.assertEqual(extract_output(None), "")
+
+    def test_a_fence_around_the_whole_answer_is_unwrapped(self):
+        raw = f"{START_SENTINEL}\n```\nThread: two messages\n```\n{END_SENTINEL}"
+        self.assertEqual(extract_output(raw), "Thread: two messages")
+
+    def test_a_fence_inside_a_longer_answer_is_kept(self):
+        answer = (
+            "The load window was agreed as follows, quoted from the ledger:\n"
+            "```\nD-004 -> 02:00 to 04:00 UTC\n```\n"
+            "and the thread contradicts it on both ends of the window."
+        )
+        raw = f"{START_SENTINEL}\n{answer}\n{END_SENTINEL}"
+        self.assertEqual(extract_output(raw), answer)
+
+    def test_a_fenced_answer_with_a_trailing_question_drops_the_question(self):
+        # Observed against a real headless run: the session fenced the block
+        # and then asked the skill's own next-step question, which has no
+        # reader and must not reach Slack.
+        raw = (
+            "```\n"
+            "Thread: 2 messages about cutover scheduling\n"
+            "Asking: hakurou proposes moving the cutover to Friday\n"
+            "Open: whether step 4 must run first\n"
+            "Waiting on you: your position on the hold\n"
+            "Tone: neutral\n"
+            "```\n\n"
+            "What outcome do you want from this reply?"
+        )
+        extracted = extract_output(raw)
+        self.assertTrue(extracted.startswith("Thread: 2 messages"))
+        self.assertNotIn("What outcome do you want", extracted)
+        self.assertNotIn("```", extracted)
+
+    def test_a_small_snippet_does_not_swallow_the_answer(self):
+        raw = (
+            "The thread contradicts the storage-engine decision (D-003), which "
+            "the ledger records in full, and it also presents the retention "
+            "question as settled when the ledger still has it open. The exact "
+            "wording of the decision is:\n```\nD-003\n```\nNot checked: the "
+            "linked runbook, which nobody opened during this pass."
+        )
+        self.assertEqual(extract_output(raw), raw)
+
+
+class ExtractBlockTests(unittest.TestCase):
+    """Real shapes observed from headless runs, with the noise they carried."""
+
+    NOISY_SUMMARY = (
+        "Using daikenja:thread to gather context before any reply is drafted.\n"
+        "\n"
+        "No project resolved, so no ledger check applies.\n"
+        "\n"
+        "Thread: pasted excerpt, 3 messages\n"
+        "Asking: hakurou wants to move cutover to Friday\n"
+        "Open: whether the Friday cutover happens\n"
+        "Waiting on you: not yet stated\n"
+        "Tone: tense\n"
+        "\n"
+        "WARNING: shion's line is doing something risky.\n"
+        "\n"
+        "Two questions before I can help with a reply:\n"
+        "1. What is your position?\n"
+    )
+
+    NOISY_VERDICT = (
+        "Using daikenja:verdict to check this thread against the ledger.\n"
+        "\n"
+        "No project can be resolved, so I proceed on general knowledge.\n"
+        "\n"
+        "AI review summary\n"
+        "Subject: Slack thread, 2025-09-17 (3 messages)\n"
+        "- Ledger: no project resolved, so no ledger was checked\n"
+        "- The SQL Server claim is false -- certain, general knowledge.\n"
+        "- Suggested: confirm what was actually agreed.\n"
+        "- Not checked: no ledger existed to check against.\n"
+        "\n"
+        "Report: the SQL Server claim is the headline problem. Want me to "
+        "check whether a ledger exists somewhere I have not been pointed to?\n"
+    )
+
+    def test_a_noisy_summary_keeps_only_the_block(self):
+        extracted = extract_output(self.NOISY_SUMMARY, SUMMARY)
+        self.assertTrue(extracted.startswith("Thread: pasted excerpt"))
+        self.assertTrue(extracted.endswith("Tone: tense"))
+        self.assertNotIn("Using daikenja", extracted)
+        self.assertNotIn("WARNING", extracted)
+        self.assertNotIn("What is your position", extracted)
+
+    def test_a_noisy_verdict_keeps_only_the_message(self):
+        extracted = extract_output(self.NOISY_VERDICT, VERDICT)
+        self.assertTrue(extracted.startswith("AI review summary"))
+        self.assertTrue(extracted.endswith("- Not checked: no ledger existed to check against."))
+        self.assertNotIn("Using daikenja", extracted)
+        self.assertNotIn("Want me to check", extracted)
+
+    EMPHASISED_SUMMARY = (
+        "Using daikenja:thread to build the picture before any reply.\n"
+        "\n"
+        "No project/ledger context given, so I'll skip Step 2b silently.\n"
+        "\n"
+        "**Thread: pasted, 3 messages**\n"
+        "**Asking:** hakurou wants to move cutover to Friday.\n"
+        "**Open:** rigurd objects -- step 4 untested at volume.\n"
+        "**Waiting on you:** unclear yet.\n"
+        "\n"
+        "**Query:** What's your position on the Friday move?\n"
+    )
+
+    def test_emphasised_labels_are_still_found(self):
+        extracted = extract_output(self.EMPHASISED_SUMMARY, SUMMARY)
+        self.assertTrue(extracted.startswith("**Thread: pasted, 3 messages**"))
+        self.assertTrue(extracted.endswith("**Waiting on you:** unclear yet."))
+        self.assertNotIn("Using daikenja", extracted)
+        self.assertNotIn("What's your position", extracted)
+
+    def test_a_document_summary_opens_on_its_own_label(self):
+        text = "preamble\n\nDocument: Cutover plan, a runbook\nClaims: Friday works\nOpen: nothing\n"
+        extracted = extract_output(text, SUMMARY)
+        self.assertTrue(extracted.startswith("Document: Cutover plan"))
+
+    def test_a_clean_summary_is_unchanged(self):
+        block = "Thread: #harbor-rollout, 4 messages\nAsking: hakurou\nTone: tense"
+        self.assertEqual(extract_output(block, SUMMARY), block)
+
+    def test_a_sentence_starting_with_the_word_thread_is_not_a_block(self):
+        text = "Thread: this is prose and there is no second label anywhere here."
+        self.assertEqual(extract_output(text, SUMMARY), text)
+
+    def test_an_unrecognisable_answer_survives_whole(self):
+        text = "I could not work out what this thread is about at all."
+        self.assertEqual(extract_output(text, SUMMARY), text)
+        self.assertEqual(extract_output(text, VERDICT), text)
+
+    def test_the_sentinels_still_win_over_the_shape(self):
+        raw = (
+            "Thread: the wrong block\nAsking: nobody\n\n"
+            f"{START_SENTINEL}\nThread: the right block\nAsking: hakurou\n{END_SENTINEL}"
+        )
+        self.assertEqual(
+            extract_output(raw, SUMMARY), "Thread: the right block\nAsking: hakurou"
+        )
+
+    def test_no_command_means_no_shape_matching(self):
+        self.assertEqual(
+            extract_output(self.NOISY_SUMMARY).strip(), self.NOISY_SUMMARY.strip()
+        )
+
+
+class UnavailableTests(unittest.TestCase):
+    def test_the_instruction_names_the_skill_and_the_token(self):
+        instruction = build_instruction(VERDICT, THREAD_SUBJECT)
+        self.assertIn("/daikenja:verdict is not loaded", instruction)
+        self.assertIn(UNAVAILABLE_TOKEN, instruction)
+        self.assertIn("do not improvise", instruction)
+
+    def test_the_skill_name_drops_the_form_argument(self):
+        self.assertEqual(skill_name(VERDICT), "/daikenja:verdict")
+        self.assertEqual(skill_name(SUMMARY), "/daikenja:thread")
+
+    def test_the_bare_token_is_recognised(self):
+        self.assertTrue(is_unavailable(UNAVAILABLE_TOKEN))
+        self.assertTrue(is_unavailable(f"  {UNAVAILABLE_TOKEN}.  "))
+
+    def test_an_answer_that_merely_mentions_it_is_not_a_report(self):
+        long_answer = (
+            f"The thread asks whether {UNAVAILABLE_TOKEN} means the plugin is "
+            "missing, and the ledger says nothing about it either way, so this "
+            "is general knowledge and not a recorded decision."
+        )
+        self.assertFalse(is_unavailable(long_answer))
+
+    def test_an_empty_answer_is_not_a_report(self):
+        self.assertFalse(is_unavailable(""))
+        self.assertFalse(is_unavailable(None))
 
 
 class PageSubjectTests(unittest.TestCase):
