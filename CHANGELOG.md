@@ -145,6 +145,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The bot's Slack app manifest asks for the DM scopes.** `channels:history`
+  and `groups:history` cover public and private channels only, so in a DM or a
+  group DM the bot received the mention and then failed with
+  `conversations_replies failed: missing_scope` -- it could see the mention but
+  not the thread around it. The manifest in `bot/README.md` now includes
+  `im:history`, `mpim:history`, `im:read` and `mpim:read`, and the page says a
+  group DM has no `/invite`: mention the bot and Slack offers to add it. An
+  app already installed needs reinstalling for a new scope to take effect --
+  see [`docs/upgrading.md`](docs/upgrading.md).
 - **The bot runs on Sonnet 5 at medium effort by default.** Reading a thread
   and writing a few lines to a fixed format does not need the largest model,
   and every mention pays for it, so the bot no longer inherits whatever the
