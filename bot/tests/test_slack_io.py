@@ -100,6 +100,32 @@ class PostTests(unittest.TestCase):
             SlackIO(client).post("C0HARBOR", "1", "x")
 
 
+class EphemeralTests(unittest.TestCase):
+    def test_it_is_addressed_to_one_person(self):
+        client = FakeSlackClient()
+        self.assertTrue(
+            SlackIO(client).post_ephemeral("C0HARBOR", "U0GOBTA", "not for you")
+        )
+        sent = client.ephemeral[0]
+        self.assertEqual(sent["channel"], "C0HARBOR")
+        self.assertEqual(sent["user"], "U0GOBTA")
+        self.assertEqual(sent["text"], "not for you")
+
+    def test_no_thread_is_sent_when_there_is_no_thread(self):
+        client = FakeSlackClient()
+        SlackIO(client).post_ephemeral("C0HARBOR", "U0GOBTA", "x", thread_ts=None)
+        self.assertNotIn("thread_ts", client.ephemeral[0])
+
+    def test_a_thread_is_passed_through_when_there_is_one(self):
+        client = FakeSlackClient()
+        SlackIO(client).post_ephemeral("C0HARBOR", "U0GOBTA", "x", thread_ts="1758067200.000100")
+        self.assertEqual(client.ephemeral[0]["thread_ts"], "1758067200.000100")
+
+    def test_a_failure_is_swallowed(self):
+        client = FakeSlackClient(fail={"chat_postEphemeral": "user_not_in_channel"})
+        self.assertFalse(SlackIO(client).post_ephemeral("C0HARBOR", "U0GOBTA", "x"))
+
+
 class ReactionTests(unittest.TestCase):
     def test_a_reaction_is_added(self):
         client = FakeSlackClient()

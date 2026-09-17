@@ -29,6 +29,13 @@ slack:
   # reactions:write scope; set it to null to skip the reaction entirely.
   ack_reaction: eyes
 
+  # What someone who is not on the allowlist is told. It goes out as an
+  # ephemeral message -- only they see it, nobody is notified, and nothing is
+  # left in the channel. `{owner}` becomes a mention of owner_user_id.
+  # Set it to null to say nothing at all.
+  # unauthorized_message: >-
+  #   Sorry, this bot is in beta and runs on {owner}'s own account.
+
 claude:
   # The Claude Code CLI. A full path works if it is not on PATH.
   command: claude

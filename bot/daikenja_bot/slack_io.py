@@ -113,6 +113,29 @@ class SlackIO:
             unfurl_media=False,
         )
 
+    def post_ephemeral(
+        self,
+        channel_id: str,
+        user_id: str,
+        text: str,
+        thread_ts: str | None = None,
+    ) -> bool:
+        """Post a message only one person can see. Never fails a command.
+
+        `chat.postEphemeral` needs no scope beyond `chat:write`, notifies
+        nobody, and leaves nothing behind in the channel -- which is what
+        makes it safe to answer a stranger at all.
+        """
+        kwargs: dict[str, Any] = {"channel": channel_id, "user": user_id, "text": text}
+        if thread_ts:
+            kwargs["thread_ts"] = thread_ts
+        try:
+            self._call("chat_postEphemeral", **kwargs)
+            return True
+        except SlackError as exc:
+            log.info("could not post an ephemeral message to %s: %s", user_id, exc)
+            return False
+
     def add_reaction(self, channel_id: str, timestamp: str, name: str) -> bool:
         """Best-effort acknowledgement. Never fails a command."""
         try:

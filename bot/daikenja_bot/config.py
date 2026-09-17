@@ -34,6 +34,15 @@ DEFAULT_ALLOWED_TOOLS = ("Read", "Glob", "Grep")
 
 DEFAULT_TIMEOUT_SECONDS = 300
 
+# Sent only to the person who mentioned the bot, and only they can see it.
+# `{owner}` becomes a mention of `slack.owner_user_id`, which renders as a
+# name without notifying anyone -- an ephemeral message never notifies.
+DEFAULT_UNAUTHORIZED_MESSAGE = (
+    "Sorry -- this is a personal instance of the Daikenja bot. It runs on "
+    "{owner}'s own machine, answers from their own project records, and only "
+    "they can trigger it. Ask them if you need something from it."
+)
+
 
 class ConfigError(Exception):
     """The config file is missing, unreadable, or does not say enough."""
@@ -51,20 +60,26 @@ class SlackConfig:
     bot_token: str | None = None
     app_token: str | None = None
     ack_reaction: str | None = "eyes"
+    # `None` is the silent form. `{owner}` in the text is replaced with a
+    # mention of `owner_user_id` by the posting layer -- after the mrkdwn
+    # conversion, which would otherwise escape the angle brackets.
+    unauthorized_message: str | None = DEFAULT_UNAUTHORIZED_MESSAGE
 
-    def may_trigger(self, user_id: str, channel_id: str) -> bool:
+    def allows_user(self, user_id: str) -> bool:
         """Owner-only unless the config widens it.
 
         The owner is always allowed: this is a personal instance, and a
         config that listed colleagues but forgot its owner would lock the
         person who runs the process out of their own bot.
         """
-        allowed_users = set(self.allowed_users) | {self.owner_user_id}
-        if user_id not in allowed_users:
-            return False
-        if self.allowed_channels and channel_id not in self.allowed_channels:
-            return False
-        return True
+        return user_id in set(self.allowed_users) | {self.owner_user_id}
+
+    def allows_channel(self, channel_id: str) -> bool:
+        """Empty `allowed_channels` means every channel it was invited to."""
+        return not self.allowed_channels or channel_id in self.allowed_channels
+
+    def may_trigger(self, user_id: str, channel_id: str) -> bool:
+        return self.allows_user(user_id) and self.allows_channel(channel_id)
 
 
 @dataclass(frozen=True)
@@ -156,6 +171,15 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
     if ack_reaction is not None and not isinstance(ack_reaction, str):
         raise ConfigError("slack.ack_reaction: expected an emoji name or null")
 
+    # An explicit `null` is the silent form, so absence and null differ here
+    # and the key cannot be read with `or`.
+    unauthorized = slack_raw.get("unauthorized_message", DEFAULT_UNAUTHORIZED_MESSAGE)
+    if unauthorized is not None and not isinstance(unauthorized, str):
+        raise ConfigError(
+            "slack.unauthorized_message: expected a line of text, or null to say "
+            "nothing at all"
+        )
+
     slack = SlackConfig(
         owner_user_id=owner,
         allowed_users=_as_str_tuple(slack_raw.get("allowed_users"), "slack.allowed_users"),
@@ -169,6 +193,7 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
         bot_token=slack_raw.get("bot_token"),
         app_token=slack_raw.get("app_token"),
         ack_reaction=ack_reaction or None,
+        unauthorized_message=unauthorized.strip() if unauthorized else None,
     )
 
     claude_raw = _section(data, "claude")

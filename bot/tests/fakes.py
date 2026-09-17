@@ -54,6 +54,7 @@ class FakeSlackClient:
         self._channel_name = channel_name
         self._fail = fail or {}
         self.posted: list[dict[str, Any]] = []
+        self.ephemeral: list[dict[str, Any]] = []
         self.reactions: list[dict[str, Any]] = []
         self.replies_calls: list[dict[str, Any]] = []
 
@@ -88,6 +89,11 @@ class FakeSlackClient:
     def chat_postMessage(self, **kwargs: Any) -> dict[str, Any]:
         self._maybe_fail("chat_postMessage")
         self.posted.append(kwargs)
+        return {"ok": True}
+
+    def chat_postEphemeral(self, **kwargs: Any) -> dict[str, Any]:  # noqa: N802
+        self._maybe_fail("chat_postEphemeral")
+        self.ephemeral.append(kwargs)
         return {"ok": True}
 
     def reactions_add(self, **kwargs: Any) -> dict[str, Any]:

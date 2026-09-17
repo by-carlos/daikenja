@@ -76,12 +76,70 @@ class MentionEventTests(unittest.TestCase):
 
 
 class AllowlistTests(unittest.TestCase):
-    def test_a_stranger_is_ignored_in_silence(self):
+    def test_a_stranger_gets_nothing_in_the_thread_and_no_session(self):
         handler, client, run = build()
         handler.handle_mention(mention("<@U0BOT> summary", user="U0GOBTA"))
         self.assertEqual(client.posted, [])
         self.assertEqual(client.reactions, [])
         self.assertEqual(run.calls, [])
+
+    def test_a_stranger_is_told_why_where_only_they_can_see_it(self):
+        handler, client, _ = build()
+        handler.handle_mention(mention("<@U0BOT> summary", user="U0GOBTA"))
+        self.assertEqual(len(client.ephemeral), 1)
+        sent = client.ephemeral[0]
+        self.assertEqual(sent["user"], "U0GOBTA")
+        self.assertEqual(sent["channel"], "C0HARBOR")
+        self.assertIn("personal instance", sent["text"])
+
+    def test_the_owner_placeholder_becomes_a_real_mention(self):
+        handler, client, _ = build()
+        handler.handle_mention(mention("<@U0BOT> summary", user="U0GOBTA"))
+        # Escaped angle brackets here would mean the substitution ran before
+        # the mrkdwn conversion, and the name would post as literal text.
+        self.assertIn("<@U0RIMURU>", client.ephemeral[0]["text"])
+        self.assertNotIn("{owner}", client.ephemeral[0]["text"])
+        self.assertNotIn("&lt;", client.ephemeral[0]["text"])
+
+    def test_a_top_level_mention_gets_the_channel_form(self):
+        # Slack only renders a threaded ephemeral message once the thread
+        # exists, and a mention that is itself the top message has no replies.
+        handler, client, _ = build()
+        handler.handle_mention(mention("<@U0BOT> summary", user="U0GOBTA"))
+        self.assertNotIn("thread_ts", client.ephemeral[0])
+
+    def test_a_mention_inside_a_thread_is_answered_in_that_thread(self):
+        handler, client, _ = build()
+        handler.handle_mention(
+            mention("<@U0BOT> summary", user="U0GOBTA", thread_ts="1758067200.000100")
+        )
+        self.assertEqual(client.ephemeral[0]["thread_ts"], "1758067200.000100")
+
+    def test_a_null_message_restores_the_silent_form(self):
+        handler, client, run = build(config=make_config(unauthorized_message=None))
+        handler.handle_mention(mention("<@U0BOT> summary", user="U0GOBTA"))
+        self.assertEqual(client.ephemeral, [])
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
+
+    def test_the_owner_in_the_wrong_channel_is_not_called_a_stranger(self):
+        handler, client, run = build(
+            config=make_config(allowed_channels=("C0ELSEWHERE",))
+        )
+        handler.handle_mention(mention("<@U0BOT> summary"))
+        self.assertEqual(run.calls, [])
+        self.assertIn("not switched on in this channel", client.ephemeral[0]["text"])
+        self.assertNotIn("personal instance", client.ephemeral[0]["text"])
+
+    def test_a_failed_ephemeral_reply_is_swallowed(self):
+        # The stranger may not be someone Slack will let the bot message.
+        # Nothing about that should raise out of the event handler.
+        client = FakeSlackClient(
+            replies=THREAD, users=USERS, fail={"chat_postEphemeral": "user_not_in_channel"}
+        )
+        handler, client, _ = build(client=client)
+        handler.handle_mention(mention("<@U0BOT> summary", user="U0GOBTA"))
+        self.assertEqual(client.posted, [])
 
     def test_the_owner_is_served(self):
         handler, client, run = build()

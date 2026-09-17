@@ -30,6 +30,14 @@ UNKNOWN_LINK = (
     "Confluence page URL."
 )
 
+# What `slack.unauthorized_message` writes to mean "the owner, by name".
+OWNER_PLACEHOLDER = "{owner}"
+
+WRONG_CHANNEL = (
+    "I am not switched on in this channel. `slack.allowed_channels` in "
+    "`bot.yaml` decides where I answer."
+)
+
 
 @dataclass(frozen=True)
 class MentionEvent:
@@ -86,14 +94,12 @@ class Handler:
             return
 
         if not self._config.slack.may_trigger(mention.user_id, mention.channel_id):
-            # Silence rather than a refusal: this bot sits in shared
-            # channels, and a reply to everyone who mentions it turns any
-            # passer-by into a way to fill the thread.
             log.info(
                 "ignoring a mention from %s in %s -- not on the allowlist",
                 mention.user_id,
                 mention.channel_id,
             )
+            self._decline(mention)
             return
 
         command = parse_command(mention.text)
@@ -195,6 +201,40 @@ class Handler:
         return self._fetch_confluence(confluence, url, token)
 
     # -- posting -------------------------------------------------------
+
+    def _decline(self, mention: MentionEvent) -> None:
+        """Tell a stranger why nothing happened -- and tell only them.
+
+        A refusal posted into the thread would turn any passer-by into a way
+        to fill it, so this goes out as an ephemeral message: the person who
+        mentioned the bot sees it, nobody else does, nothing is notified and
+        nothing is left in the channel. `unauthorized_message: null` in the
+        config restores the wholly silent behaviour.
+        """
+        slack = self._config.slack
+        if slack.allows_user(mention.user_id):
+            # The person is allowed; the channel is not. Telling them they
+            # are not on the allowlist would be simply untrue, and this one
+            # is not configurable because only the owner ever sees it.
+            text = WRONG_CHANNEL
+        else:
+            text = slack.unauthorized_message or ""
+        if not text:
+            return
+        # Substituted after the conversion, never before: `to_mrkdwn` escapes
+        # `<` and `>`, so a mention inserted first would arrive as literal
+        # text rather than as the owner's name.
+        body = to_mrkdwn(text).replace(
+            OWNER_PLACEHOLDER, f"<@{slack.owner_user_id}>"
+        )
+        # Slack renders a threaded ephemeral message only when the thread
+        # already exists. A mention that was itself a top-level message has
+        # no replies yet, so that one goes to the channel view instead --
+        # still visible to one person only.
+        in_thread = mention.thread_ts if mention.thread_ts != mention.message_ts else None
+        self._slack.post_ephemeral(
+            mention.channel_id, mention.user_id, body, thread_ts=in_thread
+        )
 
     def _acknowledge(self, mention: MentionEvent) -> None:
         reaction = self._config.slack.ack_reaction

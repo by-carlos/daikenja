@@ -88,6 +88,44 @@ class ParseTests(unittest.TestCase):
         config = parse_config({"slack": {"owner_user_id": "U0RIMURU", "ack_reaction": None}})
         self.assertIsNone(config.slack.ack_reaction)
 
+    def test_strangers_are_told_something_by_default(self):
+        config = parse_config({"slack": {"owner_user_id": "U0RIMURU"}})
+        assert config.slack.unauthorized_message is not None
+        self.assertIn("{owner}", config.slack.unauthorized_message)
+
+    def test_an_explicit_null_means_say_nothing(self):
+        # Absence and null differ for this key, so it cannot be read with
+        # `or` -- a default that survived `null` would be a surprise.
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "unauthorized_message": None}}
+        )
+        self.assertIsNone(config.slack.unauthorized_message)
+
+    def test_a_custom_message_is_kept(self):
+        config = parse_config(
+            {
+                "slack": {
+                    "owner_user_id": "U0RIMURU",
+                    "unauthorized_message": "  In beta, ask {owner}.  ",
+                }
+            }
+        )
+        self.assertEqual(config.slack.unauthorized_message, "In beta, ask {owner}.")
+
+    def test_a_non_string_message_is_rejected(self):
+        with self.assertRaises(ConfigError):
+            parse_config(
+                {"slack": {"owner_user_id": "U0RIMURU", "unauthorized_message": 42}}
+            )
+
+    def test_a_channel_allowlist_is_separable_from_the_user_one(self):
+        slack = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "allowed_channels": ["C0HARBOR"]}}
+        ).slack
+        self.assertTrue(slack.allows_user("U0RIMURU"))
+        self.assertFalse(slack.allows_channel("C0OTHER"))
+        self.assertFalse(slack.may_trigger("U0RIMURU", "C0OTHER"))
+
 
 class LoadTests(unittest.TestCase):
     def test_a_missing_file_says_where_it_looked(self):
