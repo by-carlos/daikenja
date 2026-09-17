@@ -158,6 +158,7 @@ today.
 Open: whether anyone objects before end of day; nothing else is put to the
 group.
 Ledger: ember, matched by #ember-warehouse (C:/GitHub/ember/.daikenja/ledger.md)
+Card: C:/GitHub/ember/.daikenja/project.md
 
 Verdict: The warehouse is PostgreSQL 16, not SQL Server -- the storage-engine
 decision (D-001) records SQL Server as evaluated and not chosen. SQL Server
@@ -211,6 +212,7 @@ Report lines:
 
 ```
 Ledger: ember (C:/GitHub/ember/.daikenja/ledger.md)
+Card: C:/GitHub/ember/.daikenja/project.md
 For your judgement: the page names a company data-retention standard that
 neither it nor the ledger links. Add the link before sharing if you know it.
 ```
@@ -222,9 +224,9 @@ AI review summary
 Subject: Ember load schedule (wiki page, pasted 2026-09-16)
 - Ledger: the page's load window, 01:00 to 03:00 UTC, contradicts the
   nightly load window decision (D-002): 02:00 to 04:00 UTC, agreed with the
-  platform on-call rota. Certain. Source: ledger.
-- The page states a 90-day retention as settled. The retention question
-  (O-001) is still open, with 90 days proposed. Certain. Source: ledger.
+  platform on-call rota. Certain.
+- Ledger: the page states a 90-day retention as settled. The retention
+  question (O-001) is still open, with 90 days proposed. Certain.
 - The page names the analytics team as backfill owner. The backfill owner
   item (O-002) is unassigned. Likely a claim ahead of a decision. Source:
   ledger.

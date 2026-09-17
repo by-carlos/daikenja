@@ -135,7 +135,8 @@ Tone: [neutral / tense / urgent -- only if it is not neutral]
 For a document, the same block with `Document:` in place of `Thread:` (title
 and what kind of document it is), `Claims:` in place of `Asking:` (what it
 states as fact), and `Open:` for what it leaves undecided. `Waiting on you`
-and `Tone` are usually empty for a document and are then omitted.
+and `Tone` are omitted whenever they would be empty, for a thread as much as
+for a document.
 
 Then list, for yourself, every **factual claim** and every **question** the
 subject carries, and for each claim whether the subject establishes it or
@@ -178,10 +179,16 @@ handles point nowhere.
 path and § Step C: read and parse: the Decisions and Open items sections in
 full, the Sources section when there is one (it is where a link may come
 from), and the card beside the ledger per `project-card.md` § Reading a
-card. Name the resolved ledger path and how the project was found:
+card. Name the resolved ledger path and, when content decided, how the
+project was found -- the same line shapes `thread` § Step 2b uses -- and the
+card's path on the line after it when a card was read, per `project-card.md`
+§ Reading a card:
 
 ```
-Ledger: <key>, matched by #<channel> (<absolute path>)
+Ledger: <key> (<absolute path>)                            key or directory
+Ledger: <key>, matched by #<channel> (<absolute path>)     decisive handle
+Ledger: <key>, confirmed by you (<absolute path>)          Scope candidate
+Card: <absolute path>
 ```
 
 A ledger that does not exist is reported with `reading.md`'s own line and the
@@ -232,6 +239,7 @@ Thread: ...
 Asking: ...
 Open: ...
 Ledger: <key>, matched by #<channel> (<absolute path>)
+Card: <absolute path>
 
 Verdict: <one or two sentences that answer what the thread asks or judge
 what it claims, each clause labelled>
@@ -258,8 +266,9 @@ every question answered by the thread itself -- is one line:
 not hold.` followed by the `Not checked:` line.
 
 **When no project resolved**, the `Ledger:` line is replaced by the one-line
-non-match from Step 3, and the verdict's first finding says the ledger check
-did not run. Nothing else changes.
+non-match from Step 3, and the first numbered finding says the ledger check
+did not run. The `Verdict:` sentence itself stays on the answer. Nothing
+else changes.
 
 ### Form `message`
 
@@ -274,9 +283,10 @@ shape:
 ```
 AI review summary
 Subject: <one line naming the subject -- channel and date, or document title>
-- Ledger: <the decision or open item the subject contradicts or depends on,
-  topic-first, ID in parentheses -- first, before any other finding; or
-  "no project resolved, so no ledger was checked">
+- Ledger: <the finding itself: what the subject says, the decision or open
+  item it contradicts or depends on, topic-first with the ID in parentheses,
+  and its confidence -- first, before any other finding; or "no project
+  resolved, so no ledger was checked">
 - <finding> -- <certain | likely | guessing>. Source: ledger (D-nnn) |
   general knowledge.
 - <a claim presented as settled but not established, if any>
@@ -284,12 +294,17 @@ Subject: <one line naming the subject -- channel and date, or document title>
 - Not checked: <one line>
 ```
 
+The `Ledger:` bullet **is** the ledger finding, complete with its confidence;
+it is not a heading that a second bullet then restates. One ledger finding
+per bullet; a second contradiction or dependency gets its own `Ledger:`
+bullet directly under the first.
+
 Sources named in it follow the links rule: title first, a link only when the
 subject or the ledger's Sources already carry it, otherwise `(link needed)`.
 
 The message is handed back inside a fenced block so the user can copy it
-whole. **Around it, a short report to the user** -- the `Ledger:` line, and
-anything that needs the user's own judgement: a candidate the user confirmed,
+whole. **Around it, a short report to the user** -- the `Ledger:` and
+`Card:` lines from Step 3, and anything that needs the user's own judgement: a candidate the user confirmed,
 a mismatch the cross-check found, a finding the user may not want shared, a
 term the reader might not know. That material goes in the report, never in
 the message; the message must stand without the conversation it came from.
