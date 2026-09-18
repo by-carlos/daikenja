@@ -4,6 +4,7 @@ Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
 - § Schema -- project-list "Step 0: read the contracts"
 - § Field notes -- preflight "Step 0: read the shared docs", preflight "The `Reviewed:` line is mandatory", project-catchup "Step 0: read the contracts", project-gaps "Step 0: read the contracts", project-list "Step 0: read the contracts", self-review "Step 0: read the shared docs", setup-project "Step 3: offer the per-project keys"
+- § Digest groups -- digest "Step 0: read the contracts"
 
 The full `daikenja.yaml` shape, key by key, and two worked examples. Companion
 to [`config-resolution.md`](config-resolution.md), which holds where the file
@@ -37,6 +38,17 @@ projects:
     last_checkpoint: 2026-08-14T09:12Z  # optional, written by project-catchup
     stale_after_days: <int>           # optional, overrides the profile value
     norms_doc: <path or url>          # optional, overrides the profile value
+
+digest:                               # optional, read only by the digest skill
+  groups:                             # a list, in the order they are tried
+    - name: <string>                  # required, the group's heading
+      focus: <string>                 # required, what one paragraph should say
+      channels:                       # optional, item `channel` values, as sent
+        - <string>
+      people:                         # optional, item `sender` values, as sent
+        - <string>
+      kind: summary                   # summary | people. Default: summary
+      max_chars: 400                  # optional. Default: 400, clamped to 100..1000
 ```
 
 ### Field notes
@@ -156,6 +168,59 @@ minus the `drive:` form. The full rule, including the recommended location for
 a project with no repository of its own, is
 [Resolving `ledger`](config-resolution.md#resolving-ledger).
 
+## Digest groups
+
+**`digest.groups` is read by the `digest` skill and by nothing else.** It says
+what to do with the items a digest could not place against a registered
+project: instead of one line per item under `Unmatched`, each group folds the
+items it claims into one short paragraph. The block is optional. Without it
+every unplaced item stays under `Unmatched`, exactly as before, and no other
+skill changes behaviour because it is present.
+
+**Project matching runs first and is not affected.** An item that a project
+card claims goes to that project's group, with the project's open ledger items
+beside it, and a group never sees it. Groups only ever see the remainder, so a
+group whose channel a project card also owns simply never fills from that
+channel -- the card wins, and that is the intended order.
+
+**What a group matches on.** An item belongs to a group when its `channel` is
+one of the group's `channels`, or its `sender` is one of the group's `people`.
+Both compare the strings **as the feeder sent them**: trimmed, case folded, and
+with a leading `#` or `@` ignored on either side, so `#team-alerts` and
+`team-alerts` are the same channel and `@priya` and `priya` the same person.
+Nothing else is compared -- not the summary, not the `topic`, not the `bucket`.
+`sender` is whatever text the feeder chose to put there, so `people` is a list
+of those texts; Daikenja never looks up who a person is, and a feeder that
+sends display names needs display names here. A group with neither list can
+never match and is reported once, per the failure table in `digest`.
+
+**Groups are tried in file order and the first match wins.** An item listed
+under two groups lands in the first one. Order the list so the more specific
+group comes first, and do not expect an item to appear twice.
+
+**`focus`** is the brief for the paragraph: what the group should say about
+its items, in the user's own words. `name the decision or the blocker, not
+every message` and `each announcement in one clause, with when it takes
+effect` are both briefs; the skill writes the paragraph to it and nothing
+else. A brief is a description of the wanted paragraph, never an instruction
+to run anything, and the skill treats it as text.
+
+**`kind`** is the paragraph's shape. `summary`, the default, is one prose
+paragraph across the group's items. `people` is one clause per sender -- who
+raised what -- for a group whose point is the people in it rather than the
+theme. It changes the shape and nothing about matching: a `people` group still
+matches on `channels` and `people` alike.
+
+**`max_chars`** is the paragraph's budget, per group, because groups do not
+cost the same: an announcements group that has to say what changed needs more
+room than a chatter group that says what people talked about. Default 400. A
+value below 100 reads as 100 and one above 1000 as 1000, and the run says so
+once rather than refusing the block.
+
+**Group names and members are entirely yours.** Nothing here has a built-in
+group, a reserved name, or a default channel. What a user calls a group and
+which channels go in it is what the block is for.
+
 ## Worked example
 
 A filled `daikenja.yaml` with four projects: one single-root, one that
@@ -198,6 +263,17 @@ projects:
   q4-planning:
     paths: []
     ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md
+
+digest:
+  groups:
+    - name: Platform team
+      focus: what the team is working through -- the decision or the blocker, not every message
+      channels: ["#platform-requests", "#platform-alerts"]
+      people: ["@priya", "@sam"]
+    - name: Announcements
+      focus: each announcement in one clause, naming what changed and when it takes effect
+      channels: ["#announcements", "#releases"]
+      max_chars: 700
 ```
 
 Resolving from `C:\GitHub\atlas\services\ingest`:

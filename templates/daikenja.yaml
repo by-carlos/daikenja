@@ -94,3 +94,26 @@ projects: {}
 #   q4-planning:
 #     paths: []
 #     ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md
+
+# Optional. Read only by the `digest` skill, which the bot's `--digest` runs.
+# Whatever the digest cannot place against a project above goes to the first
+# group here that lists the item's channel or sender, and each group folds
+# its items into one short paragraph written to its `focus`. Leave the block
+# out and every unplaced item is listed one per line under Unmatched instead.
+# Names, channels and people are yours; nothing here has a built-in group.
+# See docs/config-schema.md, Digest groups.
+#
+# digest:
+#   groups:
+#     - name: My team
+#       focus: what the team is working through -- the decision or the blocker, not every message
+#       channels: ["#team-requests", "#team-alerts"]
+#       people: ["@priya"]          # matched against the item's sender, as sent
+#     - name: Announcements
+#       focus: each announcement in one clause, naming what changed and when it takes effect
+#       channels: ["#announcements", "#releases"]
+#       max_chars: 700              # default 400, clamped to 100..1000
+#     - name: Chatter
+#       kind: summary               # summary (default) | people: one clause per sender
+#       focus: the themes people actually discussed, in one sentence; nothing if there was no real conversation
+#       channels: ["#watercooler", "#book-club"]
