@@ -43,6 +43,38 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### The digest can fold unmatched items into groups you configure
+
+Only affects you if you run the digest (`python -m daikenja_bot --digest`).
+Nothing changes and there is nothing to do if you leave the new block out:
+every item no project card claims is still listed one per line under
+`Unmatched`.
+
+To use it, add a `digest:` block at the top level of
+`~/.claude/daikenja/daikenja.yaml` -- a fourth top-level key beside
+`daikenja_version`, `profile` and `projects`:
+
+```yaml
+digest:
+  groups:
+    - name: My team
+      focus: what the team is working through -- the decision or the blocker, not every message
+      channels: ["#team-requests", "#team-alerts"]
+      people: ["@priya"]
+    - name: Announcements
+      focus: each announcement in one clause, naming what changed and when it takes effect
+      channels: ["#announcements", "#releases"]
+      max_chars: 700
+```
+
+Each group folds the unmatched items whose `channel` or `sender` it lists into
+one paragraph written to its `focus`. Write the channel and sender strings
+exactly as your feeder sends them; a leading `#` or `@` and letter case are
+ignored, nothing else is. The full key-by-key meaning is in
+[`config-schema.md` § Digest groups](config-schema.md#digest-groups), and
+[`../templates/daikenja.yaml`](../templates/daikenja.yaml) carries a commented
+copy of the block to paste from.
+
 ### The Slack bot can now be triggered by a reaction, not just a mention
 
 Only affects you if you run `bot/` and want to use the new reaction trigger.

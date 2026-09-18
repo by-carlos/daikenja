@@ -299,6 +299,16 @@ own categories; it is shown and never interpreted, so nothing here decides
 what is urgent. Any other field your feeder already carries -- a score, a
 message id -- is dropped rather than refused.
 
+**What no project claims can be folded into groups you configure.** A
+`digest.groups` block in `~/.claude/daikenja/daikenja.yaml` -- the plugin's
+own config, not `bot.yaml`, because the `digest` skill reads it and this bot
+never does -- names groups of channels and people, each with a `focus` brief
+and a `max_chars` budget, and each group renders the unmatched items it
+claims as one short paragraph instead of one line per item. Project matching
+runs first and is not weakened by a group. The block is optional; the key by
+key meaning is in the plugin's `docs/config-schema.md` under Digest groups,
+and `templates/daikenja.yaml` has a commented copy to paste from.
+
 **Nothing collects the items.** That is the feeder's job, and deliberately
 not this bot's: how a list is gathered, filtered and ranked is specific to
 one person's setup, and the half worth sharing is the grouping. A cron entry,

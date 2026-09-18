@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The digest folds what matched no project into groups you configure.**
+  A `digest.groups` block in `daikenja.yaml` names groups of channels and
+  people -- `#team-requests` and `#team-alerts` as one group, `#announcements`
+  and `#releases` as another, `@priya` as a person in either -- and each
+  group folds the items it claims into one short paragraph written to its own
+  `focus` brief and cut to its own `max_chars` budget (default 400, clamped to
+  100..1000), instead of one line per item under `Unmatched`. A `kind:
+  people` group is one clause per sender rather than a paragraph. Project
+  matching is untouched and runs first: an item a project card claims keeps
+  its project group and its open ledger items, and a configured group only
+  ever sees the remainder. Groups are tried in file order, the first match
+  wins, a group that claimed nothing is absent, and whatever no group claims
+  is still listed under `Unmatched`. Without the block nothing changes. The
+  block is read by the `digest` skill, not by `bot/`, so the same
+  configuration applies whether the digest is posted by the bot or run by
+  hand.
+
 - **A public digest layer: a feeder's item list, grouped by project and
   posted to your DM.** `python -m daikenja_bot --digest items.json` takes a
   list of messages something else collected, places each one against a
