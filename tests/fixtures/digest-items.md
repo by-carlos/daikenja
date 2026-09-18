@@ -162,14 +162,14 @@ Replace item 7 with one that has no channel and no ticket:
 ```
 
 No handle decides. billing-api is the project it is *about* -- but billing-api
-has no card, so there is nothing to compare against and it is not even a
-candidate. The item is unmatched, and the closing line still says why
+has no card, so there is nothing to compare against and it can never match.
+The item is unmatched, and the closing line still says why
 billing-api could not be checked.
 
 Now give billing-api a card whose Scope names the invoice retry queue. Tier 2
-now has a near miss. It still is **not** a match: nobody is reading the digest
-live, so per `project-card.md` § Resolving a project by content the candidate
-degrades to no match. Expected under Unmatched:
+now has a near miss. It still is **not** a match: per `project-card.md`
+§ Resolving a project by content, tier 2, Scope decides nothing. Expected
+under Unmatched:
 
 ```markdown
 - @gabiru -- [The invoice retry queue backed up again overnight](https://example.com/slack/p6)

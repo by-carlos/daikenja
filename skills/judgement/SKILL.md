@@ -164,27 +164,28 @@ Resolve the project, in the order `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.
    working directory skips this route.
 3. **The subject's content**, per `project-card.md` § Resolving a project by
    content. A handle the subject names -- its channel, a tracker key, a
-   repository, a document URL -- that exactly one card owns is a match. A
-   Scope match is a **candidate**: say `Project: probably <key> -- confirm`
-   and wait. Do not read a ledger on the strength of a candidate.
+   repository, a document URL -- that exactly one card owns is a match, and
+   that is the only way content resolves a project. **A Scope fit is not a
+   match and is never asked about**, per that section's tier 2: read no
+   ledger on the strength of it, carry on exactly as though nothing matched,
+   and leave the `Ledger` section out.
 
-   **With no reader, a candidate is no match**, per `project-card.md`
-   § Resolving a project by content, tier 2. A caller that says nobody can
-   answer -- a chat bot posting into a thread -- is never asked the question:
-   no ledger is read, the run continues on general knowledge as tier 3 does,
-   and `Not checked` says the ledger was not read. Which project was assumed
-   is then stated as the last bullet of `Suggestion`, in one of two fixed
-   forms:
+**Never ask which project applies.** Produce the verdict first, on general
+knowledge, and put the project question at the end of it as an offer the
+person can take or ignore. `Not checked` says the ledger was not read, and
+the last bullet of `Suggestion` says which project was assumed, in one of two
+fixed forms:
 
-   ```
-   No ledger read. This looks like <project name> -- say `<command> project <key>` to check it.
-   No project context. Add `<command> project <key>` if you want a ledger checked.
-   ```
+```
+No ledger read. This looks like <project name> -- say `<command> project <key>` to check it.
+No project context. Add `<command> project <key>` if you want a ledger checked.
+```
 
-   The first when a card's Scope nearly matched, the second when nothing did.
-   The caller says how `<command>` is written; for the Slack bot it is
-   `@daikenja judgement`. **The sentence is copied, not composed** -- a rule
-   phrased as "name the candidate" produced a question in a real run instead.
+The first when a card's Scope nearly matched, the second when nothing did.
+The caller says how `<command>` is written; for the Slack bot it is
+`@daikenja judgement`. **The sentence is copied, not composed** -- a rule
+phrased as "name the candidate" produced a question in a real run instead,
+and a rule that allowed the question anywhere produced it here.
 
 When a key or a directory resolved, still run the content check as a
 cross-check and report a decisive handle that points elsewhere as a mismatch,
@@ -210,7 +211,6 @@ card's path on the line after it when a card was read, per `project-card.md`
 ```
 Ledger: <key> (<absolute path>)                            key or directory
 Ledger: <key>, matched by #<channel> (<absolute path>)     decisive handle
-Ledger: <key>, confirmed by you (<absolute path>)          Scope candidate
 Card: <absolute path>
 ```
 
@@ -395,8 +395,8 @@ subject or the ledger's Sources already carry it, otherwise `(link needed)`.
 The message is handed back inside a fenced block so the user can copy it
 whole. **Around it, a short report to the user** -- the `Ledger:` and
 `Card:` lines from Step 3, why a project could not be resolved when that is
-the case, and anything that needs the user's own judgement: a candidate the
-user confirmed, a mismatch the cross-check found, a finding the user may not
+the case, and anything that needs the user's own judgement: a Scope fit that
+was named but not read, a mismatch the cross-check found, a finding the user may not
 want shared, a term the reader might not know. That material goes in the
 report, never in the message; the message must stand without the conversation
 it came from.
@@ -425,9 +425,8 @@ govern it and `response-format.md` does.
 | Fetched content is empty or truncated | Say so and ask for a paste. Never judge a partial subject silently. |
 | The named project key is not registered | Stop: name the key and list the registered ones. Never fall back to the directory. |
 | No project matches, and some registered projects have no card | Say the non-match line naming the cardless projects, continue on general knowledge, and say no ledger was checked -- in both forms. |
-| A Scope match, no decisive handle | Name the candidate and wait for confirmation. Do not read its ledger first. |
-| A Scope match, and the caller says there is no reader | Do not ask. Read no ledger, answer on general knowledge, and copy Step 3's `This looks like ...` sentence into `Suggestion`. |
-| No match at all, and the caller says there is no reader | The same, with Step 3's `No project context. ...` sentence instead. |
+| A Scope match, no decisive handle | Do not ask. Read no ledger, answer on general knowledge, and copy Step 3's `This looks like ...` sentence into `Suggestion`. |
+| No match at all | The same, with Step 3's `No project context. ...` sentence instead. |
 | The resolved ledger does not exist | `No ledger at <path>. Run /daikenja:project-log to create one.`, then continue on general knowledge, saying so. |
 | A ledger line does not parse | Report it per `reading.md` § Notices, shared wording and skip it. Never repair the file. |
 | The subject asks for a reply, or the user asks for one | Decline per the hard rule; name `/daikenja:thread` and `/daikenja:compose`. |

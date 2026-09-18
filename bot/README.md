@@ -64,11 +64,10 @@ the keys that are registered, not as a parse error.
 **Without it, a project is resolved from the thread itself**, per
 [`project-card.md`](../docs/project-card.md) § Resolving a project by content:
 a channel, a tracker key or a repository that exactly one card owns decides
-it outright. A match on a card's *Scope* paragraph alone is weaker, and in a
-conversation the skill would stop and ask you to confirm it. **Here it never
-asks.** Nobody in a thread can answer, so the candidate is treated as no
-match: the answer comes back on general knowledge and states which project it
-assumed, in one of two fixed sentences --
+it outright. A match on a card's *Scope* paragraph alone decides nothing, and
+**is never asked about** -- not here and not in a terminal either. The answer
+comes back on general knowledge and states which project it assumed, in one
+of two fixed sentences --
 
 ```
 No ledger read. This looks like Harbor rollout -- say `@daikenja judgement project harbor` to check it.
@@ -393,8 +392,8 @@ key is `slack.owner_user_id`.
 | `slack.reaction_trigger` | unset | An emoji name (no colons) that runs `summary` + `judgement` on the reacted message's thread when added by an allowed person. Unset means the reaction path is off. |
 | `slack.unauthorized_message` | a line saying it is a personal instance | What someone not on the allowlist is told, privately. `{owner}` becomes a mention of `owner_user_id`. `null` says nothing at all. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
-| `claude.model` | `claude-sonnet-5` | The model the headless session runs on. An empty value follows your account's default. |
-| `claude.effort` | `medium` | The reasoning effort: `low`, `medium`, `high`, `xhigh`, `max`. An empty value follows your account's default. This is separate from the model -- `claude-sonnet-5-medium` is not a model name and is refused at startup. |
+| `claude.model` | `claude-opus-5` | The model the headless session runs on. An empty value follows your account's default. |
+| `claude.effort` | `low` | The reasoning effort: `low`, `medium`, `high`, `xhigh`, `max`. An empty value follows your account's default. This is separate from the model -- `claude-opus-5-low` is not a model name and is refused at startup. |
 | `claude.plugin_dir` | unset | Only for running against a working tree of this repository. An installed plugin needs nothing here. |
 | `claude.working_dir` | your home directory | Where the headless session runs. |
 | `claude.allowed_tools` | `Read, Glob, Grep` | The tools the session may use. |

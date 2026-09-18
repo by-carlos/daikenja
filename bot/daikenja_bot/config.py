@@ -34,18 +34,25 @@ DEFAULT_ALLOWED_TOOLS = ("Read", "Glob", "Grep")
 
 DEFAULT_TIMEOUT_SECONDS = 300
 
-# What the headless session runs on unless `bot.yaml` says otherwise. The
-# work is reading a thread and writing a few lines to a fixed format, which
-# does not need the largest model, and every mention pays for it -- so the
-# default is the mid-size model at medium effort rather than whatever the
-# account's interactive default happens to be. `model: ` or `effort: ` left
-# empty in `bot.yaml` unpins it and follows the account default instead.
+# What the headless session runs on unless `bot.yaml` says otherwise. `model:
+# ` or `effort: ` left empty in `bot.yaml` unpins it and follows the account
+# default instead.
+#
+# The work is reading a thread and writing a few lines to a fixed format,
+# which is not hard reasoning -- so this was the mid-size model at medium
+# effort. It failed on the part that is not reasoning either: three runs in
+# one afternoon ignored the verbatim "never ask which project applies"
+# sentence in `prompts.py` and asked anyway, and two of them reached Slack as
+# the `NO_ANSWER` line. Following a long fixed-format instruction tracks the
+# model rather than the effort level, and the deliverable is short, so the
+# default is the largest model at the lowest effort: the compliance of the
+# bigger model, without paying for thinking a fixed format does not need.
 #
 # Effort is a separate dimension from the model: the CLI takes `--effort`,
-# and a model string with the level appended (`claude-sonnet-5-medium`) is
+# and a model string with the level appended (`claude-opus-5-low`) is
 # rejected as a model that does not exist.
-DEFAULT_MODEL = "claude-sonnet-5"
-DEFAULT_EFFORT = "medium"
+DEFAULT_MODEL = "claude-opus-5"
+DEFAULT_EFFORT = "low"
 
 # What `--effort` accepts. A value outside this set is refused at startup
 # rather than at the first mention, where it would surface as a failed run.

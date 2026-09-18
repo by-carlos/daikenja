@@ -202,17 +202,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **The bot runs on Sonnet 5 at medium effort by default.** Reading a thread
-  and writing a few lines to a fixed format does not need the largest model,
-  and every mention pays for it, so the bot no longer inherits whatever the
-  account's interactive default happens to be. `claude.model` and the new
+- **The bot runs on Opus 5 at low effort by default.** It no longer inherits
+  whatever the account's interactive default happens to be. This was Sonnet 5
+  at medium effort on the reasoning that reading a thread and writing a few
+  lines to a fixed format does not need the largest model; that held for the
+  reasoning and failed on the format, with runs ignoring a verbatim "never
+  ask which project applies" instruction and posting a question into Slack
+  instead of an answer. Following a long fixed-format instruction tracks the
+  model rather than the effort level, and the deliverable is short, so the
+  effort goes down as the model goes up. `claude.model` and the new
   `claude.effort` set both; an empty value for either follows the account
   default as before. The effort level is a separate setting from the model,
-  and a level appended to the model name (`claude-sonnet-5-medium`) is not a
+  and a level appended to the model name (`claude-opus-5-low`) is not a
   model -- `bot.yaml` is now checked for that at startup rather than letting
   it surface as a failed run at the first mention.
 
+- **A project is matched by a handle or not at all, and a near miss is never
+  asked about.** `project-card.md` § Resolving a project by content, tier 2
+  made a Scope match a *candidate* the user confirmed before its ledger was
+  read, with an exception for a caller whose output lands where nobody can
+  answer. Two rules in tension is what a run actually resolves, and runs
+  resolved it wrong: three in one afternoon stopped to ask which project
+  applied, produced no deliverable at all, and what they said while stopping
+  is what the Slack bot posted in place of an answer. Tier 2 now decides
+  nothing, for every caller: no ledger is read on a Scope fit, the answer is
+  produced on general knowledge, and the near miss is named at the end of it
+  as an offer -- `This looks like <project> -- say <command> project <key> to
+  check it.` Naming the project is one line, and that line is now always in
+  front of the reader. `thread`, `judgement` and `digest` all follow the one
+  rule; `digest` already did.
+
 ### Fixed
+
+- **`bot/`: an ask phrased without a question mark no longer reaches Slack as
+  the answer.** The guard that replaces a question with `I could not produce
+  an answer for that.` looked for a trailing `?`, and a run got past it in the
+  imperative -- `Project: probably <key> -- confirm, or say no project
+  applies` -- so the whole ledger-check preamble was posted into a public
+  thread as the verdict. The guard now also recognises the shapes that ask
+  takes, never the word `confirm` on its own: a verdict that legitimately says
+  somebody should confirm something is found by its own shape first.
 
 - **`bot/`: the reaction trigger no longer risks resolving to the wrong
   message.** `fetch_message` used `conversations.history`, which only

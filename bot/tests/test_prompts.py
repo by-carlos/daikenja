@@ -2,6 +2,7 @@ import unittest
 
 from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.prompts import (
+    DIGEST,
     END_SENTINEL,
     JUDGEMENT_SECTION_RE,
     NO_ANSWER,
@@ -49,7 +50,7 @@ class BuildInstructionTests(unittest.TestCase):
         instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
         self.assertNotIn("decisive", instruction)
 
-    def test_judgement_is_told_a_scope_candidate_never_waits(self):
+    def test_judgement_is_told_a_scope_match_never_waits(self):
         # The defect this exists to stop: a Scope match made the session ask
         # "confirm before I read its ledger" and post the question instead of
         # a verdict. There is nobody in a thread to confirm it.
@@ -57,6 +58,27 @@ class BuildInstructionTests(unittest.TestCase):
         self.assertIn("Scope", instruction)
         self.assertIn("do not wait", instruction)
         self.assertIn("project <key>", instruction)
+
+    def test_judgement_is_told_the_verdict_comes_before_the_offer(self):
+        # A run inverted it: a preamble saying which project it would check,
+        # and no verdict at all. The order is part of the instruction.
+        instruction = build_instruction(JUDGEMENT, THREAD_SUBJECT)
+        self.assertIn("Produce the verdict first", instruction)
+        self.assertIn("offer at the end", instruction)
+
+    def test_summary_is_told_the_summary_comes_first_too(self):
+        instruction = build_instruction(SUMMARY, THREAD_SUBJECT)
+        self.assertIn("Produce the summary first", instruction)
+
+    def test_no_command_is_told_the_rule_is_an_exception_for_it(self):
+        # The rule used to be "ask and wait", with an exception carved out
+        # for a caller with no reader, and a run resolved the tension by
+        # asking. `project-card.md` tier 2 now has one rule; nothing here may
+        # reintroduce the other by framing this as the special case.
+        for command in (SUMMARY, JUDGEMENT, DIGEST):
+            with self.subTest(command=command):
+                instruction = build_instruction(command, THREAD_SUBJECT)
+                self.assertNotIn("Nobody can answer", instruction)
 
     def test_summary_is_told_the_same(self):
         instruction = build_instruction(SUMMARY, THREAD_SUBJECT)
@@ -142,6 +164,40 @@ class QuestionGuardTests(unittest.TestCase):
 
     def test_the_fixed_line_names_the_project_parameter(self):
         self.assertIn("project <key>", NO_ANSWER)
+
+    def test_an_ask_phrased_without_a_question_mark_is_caught(self):
+        # Verbatim from the run that got past the trailing-`?` test and
+        # reached a public thread as the answer. Not one question mark in it.
+        raw = (
+            "📒 **Ledger check first, before I produce the message.**\n\n"
+            "The subject's content doesn't decisively match any registered "
+            "project's `Owns` handles.\n\n"
+            "Project: probably `azure-to-gcp-migration` -- confirm, or say no "
+            "project applies and I'll proceed on general knowledge only."
+        )
+        self.assertEqual(extract_output(raw, JUDGEMENT), NO_ANSWER)
+
+    def test_a_triage_preamble_asking_for_confirmation_is_caught(self):
+        # Also verbatim, from the run two minutes earlier.
+        raw = (
+            "📋 **Report:** Triage complete, but the subject only "
+            "Scope-matches one registered project -- need your confirmation "
+            "before reading its ledger."
+        )
+        self.assertEqual(extract_output(raw, JUDGEMENT), NO_ANSWER)
+
+    def test_a_verdict_that_says_somebody_should_confirm_survives(self):
+        # `confirm` alone is not the ask. A verdict may legitimately tell the
+        # thread to go and confirm something, and it is found by its shape
+        # before the question test is reached at all.
+        raw = (
+            "⚖️ **Verdict**\nNobody has confirmed that the vault survives "
+            "server deletion. _uncertain · not established_\n\n"
+            "💡 **Suggestion**\n- Ask Azure support to confirm it in writing."
+        )
+        answer = extract_output(raw, JUDGEMENT)
+        self.assertIn("Nobody has confirmed", answer)
+        self.assertNotEqual(answer, NO_ANSWER)
 
 
 class LocalPathTests(unittest.TestCase):
