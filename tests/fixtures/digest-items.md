@@ -93,7 +93,9 @@ The digest, in the markdown the skill writes:
 - _to:me_ -- #harbor-rollout -- @souei -- [Asked whether the ramp pauses at 25% if p99 doubles](https://example.com/slack/harbor-rollout/p11)
 - #harbor-rollout -- @diablo -- [Customer comms draft is ready for review](https://example.com/slack/harbor-rollout/p10)
 - #platform-eng -- @benimaru -- [Moving the limiter config out of env vars is back on the table](https://example.com/slack/platform-eng/p4)
-_Open items (2):_ Define the rollback trigger for the ramp: who pulls it and on what p99 number (O-001) -- @unassigned · Write the customer comms before Monday 2026-08-17 (O-002) -- @unassigned
+_Open items (2):_
+> Write the customer comms before Monday 2026-08-17 (O-002) -- @unassigned
+> Define the rollback trigger for the ramp: who pulls it and on what p99 number (O-001) -- @unassigned
 
 **atlas-migration** -- 2 items
 - #atlas-dev -- @priya -- [Cutover rehearsal moved to Thursday](https://example.com/slack/atlas-dev/p8)
@@ -116,7 +118,9 @@ actually looks like in Slack, and the two blocks must stay in step:
 • _to:me_ -- #harbor-rollout -- @souei -- <https://example.com/slack/harbor-rollout/p11|Asked whether the ramp pauses at 25% if p99 doubles>
 • #harbor-rollout -- @diablo -- <https://example.com/slack/harbor-rollout/p10|Customer comms draft is ready for review>
 • #platform-eng -- @benimaru -- <https://example.com/slack/platform-eng/p4|Moving the limiter config out of env vars is back on the table>
-_Open items (2):_ Define the rollback trigger for the ramp: who pulls it and on what p99 number (O-001) -- @unassigned · Write the customer comms before Monday 2026-08-17 (O-002) -- @unassigned
+_Open items (2):_
+> Write the customer comms before Monday 2026-08-17 (O-002) -- @unassigned
+> Define the rollback trigger for the ramp: who pulls it and on what p99 number (O-001) -- @unassigned
 
 *atlas-migration* -- 2 items
 • #atlas-dev -- @priya -- <https://example.com/slack/atlas-dev/p8|Cutover rehearsal moved to Thursday>
@@ -143,6 +147,11 @@ What must not happen:
   about.
 - **Any absolute path in the block.** Not `C:/GitHub/harbor/.daikenja/ledger.md`,
   not a shortened form of it.
+- **Anything after the last group.** No closing summary, no `---`, and no
+  `Ledger:` or `Card:` lines. The block is posted whole, so a line written
+  after atlas-migration's group is a line that lands in Slack.
+- **Non-ASCII punctuation.** A middle dot or an em dash between open items
+  survives Slack and does not survive `--dry-run` on a Windows console.
 
 ## Walk 2: a near miss is not a match
 
@@ -197,3 +206,31 @@ collected five items deserves to see them.
 
 What must not happen: an empty digest, or a run that stops with "no project
 matched" and posts nothing.
+
+## Walk 5: a ledger with more open items than fit
+
+harbor's ledger, with twenty-six open items instead of two. Same item list.
+
+Only the three most recent are shown, and the lead line says so:
+
+```markdown
+_Open items (26), 3 most recent:_
+> Migration execution has no tickets yet; scope and method still undefined (O-029) -- @vinty
+> Strawman planning session to define the workstream shape not yet run (O-028) -- @unassigned
+> The performance claim needs measurement before it drives an engine change (O-027) -- @unassigned
+```
+
+With three or fewer, the count stands alone -- `_Open items (2):_` -- and
+every one is shown. There is no "3 most recent" on a ledger that has three.
+
+Note what each quoted line is: the item's **topic**, reworded to fit a line,
+with its ID and owner. The ledger bodies behind those three run to a
+paragraph each -- the reasoning, the people, the references they cite.
+
+What must not happen, both seen on the first live run against a real ledger:
+
+- **All twenty-six printed.** A digest that buries three messages under
+  twenty-six open items is one nobody reads twice a day. The count is what
+  says there is more; `/daikenja:project-gaps` is what shows it.
+- **The full body of each one printed.** Three paragraphs where three lines
+  belong, which defeats the cap that was just applied.

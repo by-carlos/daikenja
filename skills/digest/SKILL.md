@@ -34,10 +34,10 @@ Read these before doing anything. Do not work from memory of them.
   grammar, § Body markers and § Reading rules for skills -- the one ledger
   section this skill reads, its four fields, and the markers it carries
   through unchanged.
-- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how anything said to a
-  reader is shaped. The digest block itself is fixed by Step 4 and carries no
-  register markers at all; this contract governs the rest of the reply when
-  the skill is run by hand rather than by the bot.
+- `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` § Entries are named
+  topic-first, ID in parentheses -- how every open item in Step 4 is written.
+  The digest block carries no register markers at all, but it names ledger
+  entries the same way every other read does.
 
 ## Step 1: read the item list
 
@@ -141,6 +141,24 @@ Order projects by item count, most first, then by key A-Z. Unmatched always
 comes last. Within a project, newest item first; an item with no `when` sorts
 after the dated ones.
 
+**At most three open items per project**, the three most recent, each on its
+own `> ` quoted line. When the ledger has more, the lead line says how many
+there are and that three are shown; when it has three or fewer, it gives the
+count alone.
+
+**One line each, named topic-first with the ID in parentheses**, per
+`response-format.md` § Entries are named topic-first, ID in parentheses. A
+ledger body can run to a paragraph -- the reasoning, the people, the
+references -- and reprinting it puts three paragraphs where three lines
+belong. Take what the item is *about*, reworded to fit a line, then `(O-nnn)`
+and the owner. `Decide who is on call during the cutover window (O-006) --
+@unassigned`, not the four sentences the ledger records behind it.
+
+This cap is not a style choice. A real project's ledger carries twenty-six
+open items, and a digest that printed all of them would bury the messages it
+exists to deliver under a wall the reader scrolls past twice a day. The count
+is what tells them there is more; `/daikenja:project-gaps` is what shows it.
+
 ```markdown
 **Digest** -- 7 items, 2 projects, since 2026-09-18T06:30:00Z
 
@@ -148,7 +166,10 @@ after the dated ones.
 - #harbor-rollout -- @diablo -- [The 30-day replica window may not survive the cutover move](https://example.com/archives/C0HARBOR/p1)
 - #harbor-rollout -- @benimaru -- [Staging cutover rehearsal is booked for Thursday](https://example.com/archives/C0HARBOR/p2)
 - _fyi_ -- #platform-eng -- @shion -- [Asked who owns the rollback runbook](https://example.com/archives/C0PLAT/p9)
-_Open items (2):_ Decide who is on call during the cutover window (O-006) -- @unassigned · Confirm the 30-day replica cost with finance (O-005) -- @sam
+_Open items (7), 3 most recent:_
+> Decide who is on call during the cutover window (O-006) -- @unassigned
+> Confirm the 30-day replica cost with finance (O-005) -- @sam
+> Write the rollback runbook and dry-run it once (O-004) -- @priya
 
 **quill-programme** -- 2 items
 - #quill-gateway -- @rimuru -- [Gateway latency budget needs a number before the review](https://example.com/archives/C0QUILL/p4)
@@ -163,8 +184,19 @@ _billing-api nearly fits the invoice item -- say `@daikenja summary project bill
 **Every line of that shape is load-bearing.** The bucket is shown in italics
 and only when the item has one. The link text is the summary, so the digest
 reads as sentences rather than as a list of URLs; an item with no `permalink`
-shows the summary as plain text instead. The open-items line is one line, not
-a nested list -- Slack indents badly and a digest is read on a phone.
+shows the summary as plain text instead. Open items are quoted lines rather
+than bullets so they do not read as more messages; the converter turns `> `
+into Slack's quote bar, which is the visual break the group needs.
+
+**Keep to ASCII punctuation.** A digest is printed to a console by
+`--dry-run` before it is ever posted, and a Windows console is not UTF-8: a
+middle dot or an em dash arrives there as a replacement character. `--` and
+`;` always survive.
+
+**The block ends with the last group.** Nothing follows it -- no summary
+line, no rule, no note about which ledgers were read. Those paths are in the
+session's own transcript for anyone running this by hand, and anything
+written after the last group is posted to Slack as part of the digest.
 
 **Say what could not be checked, once, at the end of the group it affects**:
 
@@ -177,13 +209,6 @@ a nested list -- Slack indents badly and a digest is read on a phone.
 
 **No absolute paths.** A digest is a message, not a console. Name the project,
 never the file it was read from.
-
-## Step 5: name what was used
-
-Only when the skill is run by hand. Print the `Ledger:` line for each project
-read, per `reading.md` § Notices, shared wording, after the digest block and
-outside it. When the bot runs this skill it takes only the block, and these
-lines are thrown away -- which is why they must never be inside it.
 
 ## Failure cases
 
