@@ -40,6 +40,12 @@ answered: removing and re-adding the trigger, or a second person adding it,
 does nothing once that reaction is there. This is off by default; the emoji
 it reacts to has to be created in your workspace first (see below).
 
+**And one way out that nobody triggers**: `--digest` takes a list of messages
+something else collected and posts one project-grouped summary of them to
+your own DM, with each project's open ledger items beside its group. It is a
+separate run on a schedule, not a fourth command -- see
+[The digest](#the-digest).
+
 ## Naming a project
 
 `summary` and `judgement` both take `project <key>` ahead of any link, to say
@@ -251,6 +257,62 @@ you are not logged in.
 **The config is read once, at startup.** Editing `bot.yaml` changes nothing
 until the process is restarted.
 
+## The digest
+
+Everything above is reactive: somebody mentions the bot, it answers in the
+thread. `--digest` is the other direction. Hand it a list of messages
+something else collected, and it posts one grouped message to your own DM:
+
+```bash
+cd bot && python -m daikenja_bot --digest items.json
+cd bot && python -m daikenja_bot --digest - < items.json   # or on stdin
+cd bot && python -m daikenja_bot --digest items.json --dry-run
+```
+
+It groups the items by project, adds each project's open ledger items beside
+its group, posts, and exits. `--dry-run` prints the digest instead of posting
+it, which is how to see what it will say before putting it on a schedule.
+
+**The items are JSON**, an array of objects (or an object with an `items`
+array). Only `summary` is required:
+
+```json
+[
+  {
+    "ts": "2026-09-18T08:14:00Z",
+    "channel": "#harbor-rollout",
+    "sender": "@souei",
+    "bucket": "to:me",
+    "topic": "harbor",
+    "permalink": "https://example.com/slack/harbor-rollout/p11",
+    "summary": "Asked whether the ramp pauses at 25% if p99 doubles."
+  }
+]
+```
+
+`topic` is a registered project key and is decisive when it is one -- the
+feeder usually knows. Without it the item is placed by what it names: the
+channel, a repository, a tracker key that exactly one project card owns. A
+card that only *nearly* fits decides nothing, because nobody is reading a
+digest live to confirm it, so that item comes back under **Unmatched** with
+the command that would settle it. `bucket` is whatever your feeder calls its
+own categories; it is shown and never interpreted, so nothing here decides
+what is urgent. Any other field your feeder already carries -- a score, a
+message id -- is dropped rather than refused.
+
+**Nothing collects the items.** That is the feeder's job, and deliberately
+not this bot's: how a list is gathered, filtered and ranked is specific to
+one person's setup, and the half worth sharing is the grouping. A cron entry,
+a scheduled task, or a script that writes `items.json` and then runs the two
+lines above is the whole integration.
+
+**It needs only the bot token.** `SLACK_APP_TOKEN` is for Socket Mode, which
+is how events are *received* -- a digest only sends. So a digest runs on a
+schedule beside the listener, or on a machine that never runs the listener at
+all, and it opens no socket either way. It posts to the DM using the same
+`chat:write` scope as everything else: no extra scope, and nothing to
+reinstall.
+
 ## What it needs from the plugin
 
 `summary` needs the `thread` skill and `judgement` needs the `judgement` skill,
@@ -276,6 +338,11 @@ release. Point `claude.plugin_dir` at a working tree in the meantime.
 The check is not a nicety. A session asked for a skill it does not have will
 answer anyway, in its own voice, from no source -- and without this the bot
 would post that into a public thread as the verdict.
+
+`--digest` needs the `digest` skill the same way, but is not part of the
+startup check: nothing is running yet when it is invoked. It fails at the
+point of use instead -- one line naming the skill, and nothing posted --
+which is the same protection arriving a few seconds later.
 
 ## How the answer is lifted out
 
@@ -439,6 +506,7 @@ daikenja_bot/preflight.py  which skills the headless session will actually find
 daikenja_bot/runner.py     the headless session, with the environment scrubbed
 daikenja_bot/confluence.py optional page fetching, standard library only
 daikenja_bot/mrkdwn.py     markdown to Slack's own dialect
+daikenja_bot/digest.py     the scheduled digest: a feeder's item list in, one DM out
 daikenja_bot/config.py     bot.yaml
 ```
 
@@ -454,3 +522,6 @@ daikenja_bot/config.py     bot.yaml
   that has not been scoped.
 - It does not read a channel it was not invited to, and it does not act on a
   message that is not an @-mention.
+- It does not decide what is worth digesting, and it does not page anyone.
+  `--digest` groups a list something else collected; what goes on that list,
+  and whether anything on it is urgent, was settled before this bot saw it.

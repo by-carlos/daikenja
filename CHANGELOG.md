@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A public digest layer: a feeder's item list, grouped by project and
+  posted to your DM.** `python -m daikenja_bot --digest items.json` takes a
+  list of messages something else collected, places each one against a
+  registered project, adds that project's open ledger items beside its group,
+  and posts one message to the owner's direct message. `--dry-run` prints it
+  instead. The item list is JSON -- `ts`, `channel`, `sender`, `summary`,
+  `permalink`, `bucket`, and `topic` or a project key, of which only
+  `summary` is required -- so any feeder can hand items over without this
+  layer knowing how it collected or ranked them. `bucket` is shown and never
+  interpreted: nothing here decides what is urgent.
+
+  It reuses the bot's existing Slack app, token and posting layer. A DM to
+  the owner needs only the `chat:write` scope the app already has, so there
+  is no new scope, nothing to reinstall, and no second app. It also needs no
+  app-level token -- that one is for Socket Mode, which is how events are
+  received -- so a digest runs on a machine that never runs the listener.
+
+  The grouping and the ledger enrichment are a new `digest` skill running in
+  the headless session, not Python in `bot/`: placing an item against a
+  project means reading project cards and ledgers, and a second copy of that
+  grammar beside the transport would be a second copy to keep true. A project
+  card that only nearly fits decides nothing, because nobody is reading a
+  digest live to confirm it -- that item comes back under Unmatched, with the
+  command that would settle it.
+
 - **`bot/`: `project <key>` names the project a command checks.**
   `@daikenja judgement project harbor`, with a link after it if the subject
   is elsewhere, and the same for `summary`. A key named this way is decisive:

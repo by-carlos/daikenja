@@ -2,10 +2,10 @@
 
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
-- § Location -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card", thread "Step 2b: place the thread"
-- § Format -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card"
-- § Reading a card -- project-summary "Step 0: read the contracts", thread "Step 2b: place the thread", judgement "Step 3: place the subject"
-- § Resolving a project by content -- thread "Step 2b: place the thread", judgement "Step 3: place the subject"
+- § Location -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card", thread "Step 2b: place the thread", digest "Step 0: read the contracts"
+- § Format -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card", digest "Step 0: read the contracts"
+- § Reading a card -- project-summary "Step 0: read the contracts", thread "Step 2b: place the thread", judgement "Step 3: place the subject", digest "Step 0: read the contracts"
+- § Resolving a project by content -- thread "Step 2b: place the thread", judgement "Step 3: place the subject", digest "Step 0: read the contracts"
 
 A project card says what a project **is about**. The registry entry in
 `daikenja.yaml` says where a project is; the ledger says what was decided in

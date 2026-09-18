@@ -29,15 +29,25 @@ log = logging.getLogger(__name__)
 MAX_CONCURRENT_RUNS = 1
 
 
-def resolve_tokens(config: BotConfig, environ: Mapping[str, str]) -> tuple[str, str]:
-    """The bot token and the app-level token, or a message saying where to put them."""
-    bot_token = resolve_secret(
+def resolve_bot_token(config: BotConfig, environ: Mapping[str, str]) -> str:
+    """The `xoxb-` token, which is all an outbound-only run needs.
+
+    Separate from `resolve_tokens` because the digest posts without ever
+    receiving an event: requiring the app-level token there would refuse to
+    send a digest on a machine that never listens.
+    """
+    return resolve_secret(
         label="the Slack bot token (xoxb-)",
         env_name=config.slack.bot_token_env,
         file_path=config.slack.bot_token_file,
         inline=config.slack.bot_token,
         environ=dict(environ),
     )
+
+
+def resolve_tokens(config: BotConfig, environ: Mapping[str, str]) -> tuple[str, str]:
+    """The bot token and the app-level token, or a message saying where to put them."""
+    bot_token = resolve_bot_token(config, environ)
     app_token = resolve_secret(
         label="the Slack app-level token (xapp-)",
         env_name=config.slack.app_token_env,
