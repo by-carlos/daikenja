@@ -173,13 +173,19 @@ degrades to no match. Expected under Unmatched:
 
 ```markdown
 - @gabiru -- [The invoice retry queue backed up again overnight](https://example.com/slack/p6)
-_billing-api nearly fits the invoice item -- say `@daikenja summary project billing-api` to check it._
+_The invoice item looks like billing-api -- add its channel to that project's card so the next digest groups it._
 ```
 
 What must not happen: billing-api's ledger being read, the item appearing under
 a `**billing-api**` group, or the digest asking "should I check this against
 billing-api?" -- there is nobody there to answer, and the question would be
 posted as the digest.
+
+Nor a `/daikenja:` command in that line. A real run offered
+`/daikenja:project-summary azure-to-gcp-migration`, which is a Claude Code
+slash command posted into Slack, where nobody can type one. The offer names
+the card to fix, because the same near miss recurs every digest until the
+card names the handle -- the durable fix, not a one-off lookup.
 
 ## Walk 3: a topic that names no project
 

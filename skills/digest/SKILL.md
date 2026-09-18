@@ -95,6 +95,14 @@ Then place each item, stopping at the first tier that decides:
    item goes to Unmatched, no ledger is read on the strength of it, and the
    near miss is named there once -- never asked about.
 
+   **The offer is to fix the card, not to re-run anything.** Name what the
+   near-missing items have in common -- usually a channel -- and say to add it
+   to that project's card. Never name a `/daikenja:` command: a digest is read
+   in Slack, where a Claude Code slash command cannot be typed, and the same
+   near miss recurs twice a day until the card names the handle. A channel
+   that keeps landing in Unmatched is a card that is out of date, and saying
+   so once per digest is what gets it fixed.
+
 An item that fits nothing is unmatched, which is a normal outcome and never a
 stop.
 
@@ -178,7 +186,7 @@ _No open items._
 **Unmatched** -- 2 items
 - #random -- @shuna -- [Lunch order for Friday](https://example.com/archives/C0RAND/p7)
 - #billing-questions -- @gabiru -- [Invoice run failed overnight, retried clean](https://example.com/archives/C0BILL/p3)
-_billing-api nearly fits the invoice item -- say `@daikenja summary project billing-api` to check it._
+_#billing-questions looks like billing-api -- add it to that project's card so the next digest groups it._
 ```
 
 **Every line of that shape is load-bearing.** The bucket is shown in italics

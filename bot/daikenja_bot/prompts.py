@@ -329,9 +329,14 @@ _NO_READER = {
         " Nobody can answer a question here, so an item that matches only a "
         "card's Scope paragraph is never put to a reader: do not wait for a "
         "confirmation and do not ask for one. That item is unmatched -- read "
-        "no ledger on the strength of it, put it under Unmatched, and name "
-        "the near miss once at the end of that group as an offer rather than "
-        "a question."
+        "no ledger on the strength of it, and put it under Unmatched. Then "
+        "name the near miss once, on the last line of that group, in this "
+        "form exactly: `_<what the items have in common, usually a channel> "
+        "looks like <project name> -- add it to that project's card so the "
+        "next digest groups it._` Never name a `/daikenja:` command there: "
+        "this is read in Slack, where a Claude Code slash command cannot be "
+        "typed, and the same near miss will recur twice a day until the card "
+        "names the handle."
     ),
 }
 
