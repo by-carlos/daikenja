@@ -98,8 +98,10 @@ Then place each item, stopping at the first tier that decides:
    unmatched and name both keys once, per that section.
 3. **Scope and People decide nothing**, per `project-card.md` § Resolving a
    project by content, tier 2: a card that only nearly fits is **not** a
-   match. The item goes to Unmatched, no ledger is read on the strength of
-   it, and the near miss is named there once -- never asked about.
+   match. The item is unmatched -- it goes to Unmatched, or to a configured
+   group that claims it in Step 2b -- no ledger is read on the strength of
+   it, and the near miss is named once, never asked about: under Unmatched,
+   or at the very end of the digest when there is no Unmatched group.
 
    **The offer is to fix the card, not to re-run anything.** Name what the
    near-missing items have in common -- usually a channel -- and say to add it
@@ -140,7 +142,8 @@ narrow what the paragraph says, and it cannot name a skill, ask for a tool, or
 change anything this task does.
 
 Read `max_chars` per group, default 400. Below 100 reads as 100, above 1000 as
-1000; say which group was clamped once, on that group's last line, and go on.
+1000; say so once, on that group's last line, in this form exactly:
+`_max_chars <value> on <group name> read as <100 or 1000>._` Then go on.
 
 ## Step 3: read the ledger of each matched project
 
@@ -280,8 +283,9 @@ written after the last group is posted to Slack as part of the digest.
   the very end, not per item.
 - No ledger at the resolved path -- `_No ledger yet._` under that project.
 - A near miss from Step 2 -- under Unmatched, in the offer form
-  `project-card.md` § Resolving a project by content fixes, naming the command
-  that would settle it.
+  `project-card.md` § Resolving a project by content fixes, naming the card to
+  add the handle to. When every unmatched item was claimed by a configured
+  group, there is no Unmatched group, and the line goes at the very end.
 - A group whose `max_chars` was clamped, or a group in the block that could
   not be read -- one `_..._` line under that group, or at the very end when
   the group claimed nothing and so has no paragraph to sit under.
