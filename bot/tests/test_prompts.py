@@ -385,6 +385,33 @@ class ExtractOutputTests(unittest.TestCase):
 class ExtractBlockTests(unittest.TestCase):
     """Real shapes observed from headless runs, with the noise they carried."""
 
+    NOISY_DIGEST = (
+        "Checked the config and all five project cards. No card owns any of "
+        "these channels, so every item goes to the configured groups. "
+        "Rendering now.\n"
+        "\n"
+        "**Digest** -- 2 items, 0 projects, since 2026-09-18T06:30:00Z\n"
+        "\n"
+        "**My team** -- 1 item\n"
+        "Daisy Ding [asked whether the failover test can move](https://example.com/p1).\n"
+        "\n"
+        "**Unmatched** -- 1 item\n"
+        "- #unrelated -- @someone -- [Parking permits renew next week](https://example.com/p2)\n"
+    )
+
+    def test_a_noisy_digest_starts_at_its_header_and_keeps_every_group(self):
+        extracted = extract_output(self.NOISY_DIGEST, DIGEST)
+        self.assertTrue(extracted.startswith("**Digest** -- 2 items"))
+        self.assertTrue(extracted.endswith("(https://example.com/p2)"))
+        self.assertNotIn("Rendering now", extracted)
+        self.assertIn("**My team** -- 1 item", extracted)
+
+    def test_a_digest_without_its_header_is_passed_through(self):
+        # No block recognised: the old path, so a run that never wrote the
+        # header still posts something rather than nothing.
+        text = "**My team** -- 1 item\nA paragraph."
+        self.assertEqual(extract_output(text, DIGEST), text)
+
     NOISY_SUMMARY = (
         "Using daikenja:thread to gather context before any reply is drafted.\n"
         "\n"

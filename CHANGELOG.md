@@ -251,6 +251,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`bot/`: a digest is posted from its `**Digest**` header, never from the
+  line before it.** The bot found the `summary` and `judgement` blocks by
+  their shape and dropped the session's narration around them, but had no
+  such finder for the digest, so a live run's "Checked the config and all
+  five project cards. Rendering now." would have gone to Slack as the
+  digest's first line. The digest block now starts at its header line and
+  runs to the end, as the skill fixes it.
+
 - **`bot/`: an ask phrased without a question mark no longer reaches Slack as
   the answer.** The guard that replaces a question with `I could not produce
   an answer for that.` looked for a trailing `?`, and a run got past it in the

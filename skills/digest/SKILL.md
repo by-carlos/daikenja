@@ -116,11 +116,17 @@ stop.
 
 ## Step 2b: fold the remainder into the configured groups
 
-Only for the items Step 2 left unmatched, and only when `daikenja.yaml` has a
-`digest.groups` block per `config-schema.md` § Digest groups. **Project
-matching is never weakened by a group**: an item a card claimed is in that
-project's group and is not looked at here, even when a group lists its
-channel. The card wins, and the group simply never fills from that channel.
+**Before placing anything, read the top-level `digest:` key of the same
+`daikenja.yaml` Step 2 resolved.** It is the block `config-schema.md` § Digest
+groups defines, and it is not under `projects:` -- a read that stopped at the
+project entries will not have seen it. Absent means this step does nothing.
+Present, it decides where every item Step 2 left unmatched goes, and an item
+whose `channel` or `sender` a group lists is **never** listed under Unmatched.
+
+This step sees only the items Step 2 left unmatched. **Project matching is
+never weakened by a group**: an item a card claimed is in that project's
+group and is not looked at here, even when a group lists its channel. The
+card wins, and the group simply never fills from that channel.
 
 Walk the groups **in file order** and place each unmatched item in the first
 group whose `channels` names the item's `channel`, or whose `people` names the

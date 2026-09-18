@@ -110,6 +110,13 @@ SUMMARY_OPENER_RE = re.compile(
     )
 )
 
+# The header line `digest` § Step 4 fixes: `**Digest** -- 7 items, ...`. The
+# same emphasis tolerance as the summary opener; the separator is what keeps
+# a sentence that merely starts with the word from opening a block.
+DIGEST_OPENER_RE = re.compile(
+    r"^{}Digest\s*{}".format(_EMPHASIS_PREFIX, _LABEL_SUFFIX)
+)
+
 # The sections `judgement` § Form `message` fixes. `Ledger` is matched on its
 # own word because its header carries the project name -- `📒 **Ledger --
 # harbor**` -- and `Not checked` before `Not` would never be reached, so the
@@ -370,7 +377,11 @@ _PROJECT_MATCH = {
         "next digest groups it._` Never name a `/daikenja:` command there: "
         "this is read in Slack, where a Claude Code slash command cannot be "
         "typed, and the same near miss will recur twice a day until the card "
-        "names the handle."
+        "names the handle. Before rendering, read the top-level `digest:` "
+        "key of `~/.claude/daikenja/daikenja.yaml` -- it sits beside "
+        "`projects:`, not inside it. When it has `groups`, an unmatched "
+        "item whose channel or sender a group lists goes into that group's "
+        "paragraph, per Step 2b of the skill, and never under Unmatched."
     ),
 }
 
@@ -551,6 +562,24 @@ def extract_block(text: str, command_name: str | None) -> str:
         return _summary_block(text)
     if command_name == JUDGEMENT:
         return _judgement_block(text)
+    if command_name == DIGEST:
+        return _digest_block(text)
+    return ""
+
+
+def _digest_block(text: str) -> str:
+    """`**Digest**` down to the end.
+
+    The block `digest` § Step 4 fixes opens with its header line and ends
+    with its last group, and the skill is told that nothing follows it. What
+    precedes it is not part of it: a live run put `Checked the config and
+    all five project cards. Rendering now.` ahead of the header, which
+    would have been posted as the first line of the digest.
+    """
+    lines = text.split("\n")
+    for index, line in enumerate(lines):
+        if DIGEST_OPENER_RE.match(line):
+            return "\n".join(line_.rstrip() for line_ in lines[index:]).strip()
     return ""
 
 
