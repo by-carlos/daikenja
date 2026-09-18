@@ -173,9 +173,12 @@ first tier that decides:
    match. Compare the content's subject against each card's Scope paragraph
    anyway, with People as a tiebreaker, but only to name the near miss: the
    best fit is **offered, never asked and never acted on**. No ledger is read
-   on the strength of it, tier 3 below is the outcome, and the near miss is
-   named in the deliverable alongside the command that would check it, for
-   the person to run if they want it.
+   on the strength of it, and tier 3 below is the outcome. Wherever tier 3
+   would say the non-match -- which is the caller's call, not this tier's --
+   the near miss is named instead, with whatever would settle it: usually the
+   command that would check that project, for the person to run if they want
+   it, and in `digest`, which is read where no command can be typed, the card
+   edit that would make the handle decisive next time.
 
    **There is no confirmation step, for any caller.** A Scope fit is not a
    candidate the user is asked about, in a terminal or anywhere else. The

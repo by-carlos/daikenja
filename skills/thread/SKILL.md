@@ -122,8 +122,11 @@ make is reported here and logged, if at all, by the user through
 
 **Never ask which project applies.** Summarize the thread first, and put the
 project question at the end of it as an offer the person can take or ignore.
-When no handle decided, no ledger is read and the `📒 Ledger` line carries
-which project was assumed instead of a finding, in one of two fixed forms:
+When no handle decided, no ledger is read. Whether the summary then says so
+is the rule below under "When no project resolved" -- in a conversation it
+stays silent, and for a caller whose output leaves the session the `📒 Ledger`
+line carries which project was assumed instead of a finding, in one of two
+fixed forms:
 
 ```
 No ledger read. This looks like <project name> -- say `<command> project <key>` to check it.

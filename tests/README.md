@@ -117,9 +117,10 @@ stage's acceptance checks can be re-run later against the same inputs.
   a pathless project's absolute ledger) and one project with a ledger but no
   card, plus seven walks: `thread` placing a thread by a decisive channel
   handle from an unrelated directory, a Scope fit that decides nothing and is
-  offered rather than asked about, and the cross-check that names a mismatch
-  without switching project; a cardless project reported as unmatchable; a handle shared by
-  two cards deciding nothing; `project-summary` opening with the card's
+  never asked about -- silent in the terminal run, named as an offer when the
+  same thread goes through the bot -- and the cross-check that names a
+  mismatch without switching project; a cardless project reported as
+  unmatchable; a handle shared by two cards deciding nothing; `project-summary` opening with the card's
   Scope, and its one-line notice when there is none; and `setup-project`
   offering a card once and never touching an existing one. The harbor ledger
   it reads against is the state `sample-thread.md` and its follow-up leave.

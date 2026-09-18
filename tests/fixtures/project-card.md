@@ -160,22 +160,27 @@ should we move it to the config service before the next tenant wave?"
 
 - No handle decides. harbor's Scope names the limiter and its configuration;
   atlas-migration's does not; q4-planning decides priorities, not designs.
-- harbor is a near miss, not a match. No ledger is read, the summary is
-  produced on what the thread itself says, and the near miss is named at the
-  end of it as an offer:
-
-```
-No ledger read. This looks like harbor -- say `/daikenja:thread project harbor` to check it.
-```
-
-- The user runs that command if harbor was right. It is a fresh run with a
-  decisive key, and its `Ledger:` line is the ordinary
+- harbor is a near miss, not a match. No ledger is read, and the summary is
+  produced on what the thread itself says.
+- **In this terminal run, nothing is said about it.** Whether the non-match
+  is narrated is tier 3's call, and `thread` stays silent on one, exactly as
+  in Walk 4 below. The user who wanted harbor checked says so --
+  `/daikenja:thread project harbor` -- and that is a fresh run with a
+  decisive key, whose `Ledger:` line is the ordinary
   `Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md)`.
+- **Run the same thread through the Slack bot and the near miss is named**,
+  because that caller's output leaves the session and its reader was not
+  here to say anything. The `📒 Ledger` line carries the offer instead of a
+  finding:
+
+```
+No ledger read. This looks like harbor -- say `@daikenja summary project harbor` to check it.
+```
 
 What must not happen, and this is the whole point of the walk: stopping to
-ask `Project: probably harbor -- confirm`. There is no confirmation step,
-here or anywhere. Also not: reading harbor's ledger and reporting "touches
-D-001" on the strength of a Scope fit.
+ask `Project: probably harbor -- confirm`. There is no confirmation step, in
+either run. Also not: reading harbor's ledger and reporting "touches D-001"
+on the strength of a Scope fit.
 
 ## Walk 3: the cross-check catches a mismatch
 
