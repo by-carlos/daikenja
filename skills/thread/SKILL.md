@@ -115,27 +115,26 @@ make is reported here and logged, if at all, by the user through
 3. **The thread's content**, per `${CLAUDE_PLUGIN_ROOT}/docs/project-card.md`
    § Resolving a project by content: the channel it came from, a tracker key
    or repository it names, then its subject against every registered card's
-   Scope. A handle match is stated as a match; a Scope match is a candidate
-   the user confirms before its ledger is read as theirs. Either way the
-   `Ledger:` line says how the project was found -- `matched by
-   #harbor-rollout`, or `confirmed by you` -- since the user did not name it
-   and is not standing in it.
+   Scope. Only a handle match is a match, and the `Ledger:` line says how it
+   was found -- `matched by #harbor-rollout` -- since the user did not name
+   it and is not standing in it. **A Scope fit is not a match and is never
+   asked about**, per that section's tier 2.
 
-   **With no reader, a candidate is no match**, per `project-card.md`
-   § Resolving a project by content, tier 2. A caller that says nobody can
-   answer -- a chat bot posting into a thread -- is never asked to confirm
-   one: no ledger is read, and the `📒 Ledger` line carries which project was
-   assumed instead of a finding, in one of two fixed forms:
+**Never ask which project applies.** Summarize the thread first, and put the
+project question at the end of it as an offer the person can take or ignore.
+When no handle decided, no ledger is read and the `📒 Ledger` line carries
+which project was assumed instead of a finding, in one of two fixed forms:
 
-   ```
-   No ledger read. This looks like <project name> -- say `<command> project <key>` to check it.
-   No project context. Add `<command> project <key>` if you want a ledger checked.
-   ```
+```
+No ledger read. This looks like <project name> -- say `<command> project <key>` to check it.
+No project context. Add `<command> project <key>` if you want a ledger checked.
+```
 
-   The first when a card's Scope nearly matched, the second when nothing did.
-   The caller says how `<command>` is written; for the Slack bot it is
-   `@daikenja summary`. **The sentence is copied, not composed** -- a rule
-   phrased as "name the candidate" produced a question in a real run instead.
+The first when a card's Scope nearly matched, the second when nothing did.
+The caller says how `<command>` is written; for the Slack bot it is
+`@daikenja summary`. **The sentence is copied, not composed** -- a rule
+phrased as "name the candidate" produced a question in a real run instead,
+and a rule that allowed the question anywhere produced it here.
 
 When a key or a directory resolved, still run the content check as a
 **cross-check**: a decisive handle on a *different* project's card is
@@ -173,10 +172,10 @@ subject.` is a complete, useful line.
 work is the ordinary case, and `daikenja.yaml` being absent is not a reason
 to narrate configuration in the middle of a thread summary. The only notices
 this step ever adds on its own are the mismatch above and, **for a caller
-with no reader, the sentence saying which project was assumed** -- either of
-the two fixed forms above, whether a card nearly matched or nothing did. That
-caller keeps the `Ledger` line for it, because a reader who cannot ask needs
-to be told what was and was not read.
+whose output leaves the session, the sentence saying which project was
+assumed** -- either of the two fixed forms above, whether a card nearly
+matched or nothing did. That caller keeps the `Ledger` line for it, because a
+reader who was not in the session needs to be told what was and was not read.
 
 ## Form `message`: a summary that leaves the session
 

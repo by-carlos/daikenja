@@ -152,7 +152,7 @@ What must not happen: `O-001` is not flipped, nothing is written, and the
 line does not say "resolved". If the user then says "log that", it is
 `/daikenja:project-log`'s run, not this skill's.
 
-## Walk 2: resolved by scope, as a candidate
+## Walk 2: a scope fit decides nothing, and is not asked about
 
 Same directory. The pasted thread has no channel header and names no ticket
 or repository. Its subject is "the limiter config still lives in env vars;
@@ -160,20 +160,22 @@ should we move it to the config service before the next tenant wave?"
 
 - No handle decides. harbor's Scope names the limiter and its configuration;
   atlas-migration's does not; q4-planning decides priorities, not designs.
-- harbor is a **candidate**, stated as such, and its ledger is not read as
-  the user's until they confirm:
+- harbor is a near miss, not a match. No ledger is read, the summary is
+  produced on what the thread itself says, and the near miss is named at the
+  end of it as an offer:
 
 ```
-Project: probably harbor -- confirm, and I will check its ledger.
+No ledger read. This looks like harbor -- say `/daikenja:thread project harbor` to check it.
 ```
 
-- On "yes, harbor": the `Ledger:` line follows, opening
-  `Ledger: harbor, confirmed by you (C:/GitHub/harbor/.daikenja/ledger.md)`,
-  so it says the match was confirmed by the user rather than decided by a
-  handle.
+- The user runs that command if harbor was right. It is a fresh run with a
+  decisive key, and its `Ledger:` line is the ordinary
+  `Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md)`.
 
-What must not happen: reading harbor's ledger and reporting "touches D-001"
-before the user has confirmed the candidate.
+What must not happen, and this is the whole point of the walk: stopping to
+ask `Project: probably harbor -- confirm`. There is no confirmation step,
+here or anywhere. Also not: reading harbor's ledger and reporting "touches
+D-001" on the strength of a Scope fit.
 
 ## Walk 3: the cross-check catches a mismatch
 
@@ -194,7 +196,7 @@ subject.
 What must not happen: silently switching to atlas-migration's ledger. The
 user chose the directory; the line lets them choose again.
 
-## Walk 4: a project with no card is not a candidate
+## Walk 4: a project with no card can never match
 
 The user pastes a thread about "the invoice retry queue" from `C:/GitHub/scratch`.
 
@@ -214,8 +216,9 @@ in the middle of the thread summary.
 
 Suppose atlas-migration's card also listed `- channel: #harbor-rollout`.
 Walk 1's thread then matches two cards on the same handle. The result is
-undecided, both keys are named, and the run falls through to Scope as a
-candidate at most -- never a coin toss between the two.
+undecided, both keys are named, and the run falls through to Scope -- which
+decides nothing either, so it ends as a near miss named in the answer. Never
+a coin toss between the two.
 
 ## Walk 6: `project-summary` opens with the card
 

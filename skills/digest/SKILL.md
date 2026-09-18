@@ -89,11 +89,10 @@ Then place each item, stopping at the first tier that decides:
    tracker key or document named in its `summary`, that exactly one card owns.
    Two cards owning the same handle is a card problem: leave the item
    unmatched and name both keys once, per that section.
-3. **Scope and People decide nothing here.** A digest is posted where nobody
-   can answer a question, so `project-card.md`'s "a caller with no reader never
-   asks" applies in full: a card that only nearly fits is **not** a match. The
-   item goes to Unmatched, no ledger is read on the strength of it, and the
-   near miss is named there once -- never asked about.
+3. **Scope and People decide nothing**, per `project-card.md` § Resolving a
+   project by content, tier 2: a card that only nearly fits is **not** a
+   match. The item goes to Unmatched, no ledger is read on the strength of
+   it, and the near miss is named there once -- never asked about.
 
    **The offer is to fix the card, not to re-run anything.** Name what the
    near-missing items have in common -- usually a channel -- and say to add it

@@ -169,21 +169,24 @@ first tier that decides:
    (`thread` says it on its `Ledger:` line). Two cards owning the same
    handle is a card problem, not a tie to break: report both keys and treat
    it as undecided.
-2. **Scope and People, suggestive.** No handle decided. Compare the content's
-   subject against each card's Scope paragraph, with People as a tiebreaker.
-   The best fit is a **candidate**, never a match: state it as
-   `Project: probably <key> -- confirm`, and let the user confirm or name
-   another. A skill that goes on to read a ledger on the strength of a
-   candidate says so on the `Ledger:` line.
+2. **Scope and People decide nothing.** No handle decided, so there is no
+   match. Compare the content's subject against each card's Scope paragraph
+   anyway, with People as a tiebreaker, but only to name the near miss: the
+   best fit is **offered, never asked and never acted on**. No ledger is read
+   on the strength of it, tier 3 below is the outcome, and the near miss is
+   named in the deliverable alongside the command that would check it, for
+   the person to run if they want it.
 
-   **A caller with no reader never asks.** A chat bot, a headless run, any
-   consumer whose output lands where nobody can answer: there a candidate is
-   taken as no match. No ledger is read, tier 3 below is the outcome, and the
-   candidate is **offered rather than asked** -- named in the deliverable
-   alongside the command that would check it, for the person to run if they
-   want it. Waiting on a confirmation that cannot arrive does not produce a
-   cautious answer; it produces no answer at all, and whatever the run happened
-   to say while stopping is what the consumer posts in place of one.
+   **There is no confirmation step, for any caller.** A Scope fit is not a
+   candidate the user is asked about, in a terminal or anywhere else. The
+   rule was written the other way once -- ask, and wait -- with an exception
+   carved out for callers whose output lands where nobody can answer. Two
+   rules in tension is what a run actually resolves, and the runs resolved it
+   wrong: they asked, produced no deliverable at all, and whatever the run
+   happened to say while stopping is what the consumer posted in place of an
+   answer. One rule, no exception, is the fix. Naming the project costs the
+   user one line -- `<command> project <key>` -- and that line is always in
+   front of them, in the answer they just got.
 3. **Nothing fits.** Continue without a project. It is a normal outcome --
    most conversations are not project work -- and never a stop. Whether it
    is said is the caller's call: a skill asked to resolve says so in one

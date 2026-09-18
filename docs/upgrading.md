@@ -81,11 +81,13 @@ the conversation.
 ### The Slack bot now picks its own model, instead of your account's default
 
 Only affects you if you run `bot/`. The bot now starts its headless session
-with `--model claude-sonnet-5 --effort medium`, where before it passed neither
-and got whatever your account's interactive default was. Nothing to do if that
+with `--model claude-opus-5 --effort low`, where before it passed neither and
+got whatever your account's interactive default was. Nothing to do if that
 suits you: an existing `bot.yaml` with no `model:` line picks this up on the
-next restart, and the change costs less per mention than the old behaviour on
-most accounts.
+next restart. The largest model at the lowest effort is deliberate -- the
+deliverable is a few lines in a fixed format, which is not hard reasoning, but
+mid-size runs were ignoring the fixed format's instructions and posting a
+question into Slack instead of an answer.
 
 To keep following your account's default instead, add an empty value to the
 `claude:` block of your `bot.yaml` -- an absent key now means "the bot's
@@ -98,7 +100,7 @@ claude:
 ```
 
 `claude.effort` takes `low`, `medium`, `high`, `xhigh` or `max` and is separate
-from the model name. A level appended to the model (`claude-sonnet-5-medium`)
+from the model name. A level appended to the model (`claude-opus-5-low`)
 is not a model, and `python -m daikenja_bot --check` now refuses it rather than
 letting it fail at the first mention.
 

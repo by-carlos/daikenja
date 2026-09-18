@@ -199,6 +199,31 @@ NO_ANSWER = (
 # shape is found by its shape long before this is reached.
 _QUESTION_LINE_RE = re.compile(r"\?\s*[*_`)\]]*\s*$")
 
+# The same ask, made without a question mark.
+#
+# A run got past `_QUESTION_LINE_RE` by asking in the imperative: `Project:
+# probably `azure-to-gcp-migration` -- confirm, or say no project applies and
+# I'll proceed on general knowledge only (no ledger checked).` There is no
+# question mark anywhere in that output, so the last pass of `extract_output`
+# posted the whole preamble into a public thread as the answer.
+#
+# These match the shape that ask takes, never the word `confirm` on its own:
+# a Verdict may legitimately say that somebody should confirm something, and
+# a run that answered well in an unrecognised shape is still worth posting.
+# Each pattern therefore needs the project question itself in it.
+_CONFIRMATION_RES = (
+    # `Project: probably <key>`, the line the skills used to fix for this.
+    re.compile(r"\bproject\b[^\n]{0,40}\bprobably\b", re.IGNORECASE),
+    re.compile(r"\bprobably\b[^\n]{0,60}\bconfirm\b", re.IGNORECASE),
+    # `confirm, or say no project applies`.
+    re.compile(r"\bno project applies\b", re.IGNORECASE),
+    # A preamble announcing that the deliverable has not been produced yet --
+    # `Ledger check first, before I produce the message.`
+    re.compile(r"\bbefore I (?:produce|write|post|give)\b", re.IGNORECASE),
+    # `need your confirmation before reading its ledger`.
+    re.compile(r"\byour confirmation\b", re.IGNORECASE),
+)
+
 LOCAL_PATH_PLACEHOLDER = "a local path"
 _LOCAL_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9])(?:[A-Za-z]:[\\/]|/(?:home|Users|root)/)[^\s`'\"<>|]*"
@@ -219,14 +244,14 @@ _MENTION_COMMANDS = (SUMMARY, JUDGEMENT)
 # What each skill invocation becomes if it reaches the deliverable.
 #
 # The instruction has to name the skill -- it is the first line of the prompt
-# and the availability check both. The skills, meanwhile, tell a session with
-# no reader to name `<command> project <key>` as the way to settle which
+# and the availability check both. The skills, meanwhile, tell a session to
+# name `<command> project <key>` as the way to settle which
 # ledger to check, and the only command the session has been shown is the one
 # it was invoked with. So a real run posted `No project context. Add
 # `/daikenja:thread project <key>` if you want a ledger checked.` into a
 # channel: a Claude Code slash command, which nobody in Slack can type.
 #
-# `_NO_READER` already gives those sentences verbatim, with `@daikenja
+# `_PROJECT_MATCH` already gives those sentences verbatim, with `@daikenja
 # summary` written out, precisely because a described rule had been ignored
 # before. This is the half that does not depend on the model complying.
 _SKILL_MENTION = {
@@ -283,17 +308,19 @@ _DESTINATION = {
 
 # What to do about a project that matches only a card's Scope paragraph.
 #
-# The skills make that a candidate the user confirms before its ledger is
-# read. That is right in a conversation and wrong here: there is no reader to
-# confirm it, so a real run stopped at `Project: probably <key> -- confirm`,
-# produced no deliverable at all, and the extractor's last pass posted the
-# whole conversational report -- a question, register markers and an absolute
-# ledger path -- into a public thread as the answer.
+# Nothing: it is not a match, and there is no confirmation step to reach for.
+# The skills said that only for a caller with no reader, and kept "ask, and
+# wait" as the rule everywhere else. Two rules in tension is what a run
+# resolves, and the runs resolved it wrong -- one stopped at `Project:
+# probably <key> -- confirm`, produced no deliverable at all, and the
+# extractor's last pass posted the whole conversational report (a question,
+# register markers and an absolute ledger path) into a public thread as the
+# answer. `project-card.md` § Resolving a project by content, tier 2 now has
+# one rule with no exception, and this repeats it rather than carving one.
 #
-# So the candidate degrades to no match, exactly as a subject that matched
-# nothing would, and is offered instead of asked: the answer states which
-# project it assumed, or that it assumed none, and names the command that
-# would settle it. The person runs that command if they want it. The offer is
+# So a Scope fit is offered instead of asked: the answer states which project
+# it assumed, or that it assumed none, and names the command that would
+# settle it. The person runs that command if they want it. The offer is
 # answered by `project <key>` -- an ordinary new mention -- so the bot needs
 # to remember nothing between the two.
 #
@@ -302,11 +329,13 @@ _DESTINATION = {
 # the run that asked `Should I check this against the azure-to-gcp-migration
 # ledger, or proceed on general knowledge only?` instead; a sentence to copy
 # is followed more reliably than a description of one to compose.
-_NO_READER = {
+_PROJECT_MATCH = {
     SUMMARY: (
-        " Nobody can answer a question here, so a project that matches only a "
-        "card's Scope paragraph is never put to a reader: do not wait for a "
-        "confirmation and do not ask for one. Read no ledger, and say which "
+        " A project that matches only a card's Scope paragraph is not a "
+        "match and is never put to a reader: do not wait for a confirmation "
+        "and do not ask for one, in any wording. Produce the summary first, "
+        "then let the project question be an offer at the end of it. Read no "
+        "ledger, and say which "
         "project you assumed on the Ledger line, in one of these two forms "
         "exactly: `No ledger read. This looks like <project name> -- say "
         "`@daikenja summary project <key>`` to check it.` when one nearly "
@@ -314,9 +343,11 @@ _NO_READER = {
         "<key>`` if you want a ledger checked.` when none did."
     ),
     JUDGEMENT: (
-        " Nobody can answer a question here, so a project that matches only a "
-        "card's Scope paragraph is never put to a reader: do not wait for a "
-        "confirmation and do not ask for one. Carry on as though nothing "
+        " A project that matches only a card's Scope paragraph is not a "
+        "match and is never put to a reader: do not wait for a confirmation "
+        "and do not ask for one, in any wording. Produce the verdict first, "
+        "then let the project question be an offer at the end of it. Carry "
+        "on as though nothing "
         "matched -- read no ledger, leave the Ledger section out, and say in "
         "Not checked that no ledger was read. Then say which project you "
         "assumed as the last bullet of Suggestion, in one of these two forms "
@@ -326,9 +357,9 @@ _NO_READER = {
         "<key>`` if you want a ledger checked.` when none did."
     ),
     DIGEST: (
-        " Nobody can answer a question here, so an item that matches only a "
-        "card's Scope paragraph is never put to a reader: do not wait for a "
-        "confirmation and do not ask for one. That item is unmatched -- read "
+        " An item that matches only a card's Scope paragraph is not a match "
+        "and is never put to a reader: do not wait for a confirmation "
+        "and do not ask for one, in any wording. That item is unmatched -- read "
         "no ledger on the strength of it, and put it under Unmatched. Then "
         "name the near miss once, on the last line of that group, in this "
         "form exactly: `_<what the items have in common, usually a channel> "
@@ -394,7 +425,7 @@ def build_instruction(
     """The positional prompt: what to do, and how to hand the answer back."""
     try:
         invocation = _SKILL_INVOCATION[command_name]
-        task = _TASK[command_name] + _NO_READER[command_name]
+        task = _TASK[command_name] + _PROJECT_MATCH[command_name]
     except KeyError:
         raise ValueError(f"no prompt for command {command_name!r}") from None
 
@@ -500,8 +531,15 @@ def _answer(text: str, command_name: str | None) -> str:
 
 
 def asks_a_question(text: str) -> bool:
-    """Does any line of this end in a question mark?"""
-    return any(_QUESTION_LINE_RE.search(line) for line in (text or "").split("\n"))
+    """Is this an ask rather than an answer?
+
+    Either a line ending in a question mark, or one of the fixed shapes the
+    project-confirmation ask takes when it is phrased without one.
+    """
+    body = text or ""
+    if any(_QUESTION_LINE_RE.search(line) for line in body.split("\n")):
+        return True
+    return any(pattern.search(body) for pattern in _CONFIRMATION_RES)
 
 
 def extract_block(text: str, command_name: str | None) -> str:
