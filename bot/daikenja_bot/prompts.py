@@ -288,7 +288,8 @@ _TASK = {
     DIGEST: (
         "Produce the digest block for that item list: exactly the shape "
         "Step 4 of the skill fixes -- the `**Digest**` header line, then one "
-        "group per project with its items and its open items, then "
+        "group per project with its items and its open items, then one "
+        "paragraph per configured digest group that claimed anything, then "
         "Unmatched. The block ends with the last group: no closing summary, "
         "no horizontal rule, and no note about which ledgers or cards were "
         "read. Anything written after the last group is posted as part of "

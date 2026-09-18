@@ -149,6 +149,23 @@ class BuildTests(unittest.TestCase):
         self.assertIn("/daikenja:digest", instruction)
         self.assertIn("direct message", instruction)
 
+    def test_the_shape_names_the_configured_groups_between_projects_and_unmatched(self):
+        # The skill reads `digest.groups` from daikenja.yaml itself; the bot
+        # only has to ask for the shape that includes them, in that order.
+        runner = answered("**Digest** -- 1 item")
+        build_digest(
+            make_config(),
+            parse_items(json.dumps(ONE_ITEM)),
+            environ={},
+            runner=runner,
+        )
+        instruction = runner.calls[0]["argv"][-1]
+        projects = instruction.index("group per project")
+        groups = instruction.index("configured digest group")
+        unmatched = instruction.index("Unmatched")
+        self.assertLess(projects, groups)
+        self.assertLess(groups, unmatched)
+
     def test_the_items_travel_on_standard_input(self):
         runner = answered("**Digest** -- 1 item")
         build_digest(
