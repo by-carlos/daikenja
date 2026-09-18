@@ -24,7 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is still listed under `Unmatched`. Without the block nothing changes. The
   block is read by the `digest` skill, not by `bot/`, so the same
   configuration applies whether the digest is posted by the bot or run by
-  hand.
+  hand. The same block takes a `digest.ignore` list of senders -- bots, and
+  the name the digest itself posts under, since a feeder that reads your DMs
+  hands yesterday's digest back as an item -- dropped before anything is
+  matched, with the header saying how many were ignored.
 
 - **A public digest layer: a feeder's item list, grouped by project and
   posted to your DM.** `python -m daikenja_bot --digest items.json` takes a

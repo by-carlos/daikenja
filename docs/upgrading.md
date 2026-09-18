@@ -56,6 +56,7 @@ To use it, add a `digest:` block at the top level of
 
 ```yaml
 digest:
+  ignore: ["Daikenja"]       # senders dropped before anything else, e.g. the digest's own posts
   groups:
     - name: My team
       focus: what the team is working through -- the decision or the blocker, not every message

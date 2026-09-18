@@ -104,6 +104,10 @@ projects: {}
 # See docs/config-schema.md, Digest groups.
 #
 # digest:
+#   # Senders whose items are dropped before anything else: bots, and the
+#   # digest's own posts when your feeder reads the DM they land in. Matched
+#   # against the item's sender exactly as `people` is.
+#   ignore: ["Daikenja"]
 #   groups:
 #     - name: My team
 #       focus: what the team is working through -- the decision or the blocker, not every message

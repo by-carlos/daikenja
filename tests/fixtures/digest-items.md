@@ -347,3 +347,42 @@ What must not happen:
   are listed. Project matching ran first and is not weakened by a group.
 - **A lookup of who `@gabiru` is.** `people` is matched against the `sender`
   text the feeder sent, and nothing else is consulted.
+
+## Walk 8: an ignored sender is dropped before anything
+
+Walk 1's item list and projects, with:
+
+```yaml
+digest:
+  ignore: ["shuna", "@daikenja"]
+```
+
+`shuna` matches `@shuna` on item 6, so it is dropped in Step 1b -- before
+project matching, and before anything is counted. No item carries a sender
+of `daikenja`, and that is not an error. The rest is Walk 1 exactly, with the
+header and the Unmatched group changed:
+
+```markdown
+**Digest** -- 6 items, 2 projects, 1 ignored, since 2026-09-18T07:12:00Z
+```
+
+```markdown
+**Unmatched** -- 1 item
+- #billing-questions -- @gabiru -- [Invoice retry queue failed overnight, retried clean](https://example.com/slack/billing-questions/p6)
+_billing-api has no card, so it could not be checked._
+```
+
+`since` moved too: item 6 was the earliest, and a dropped item does not set
+the range.
+
+Now set `ignore` to every sender in the list. The run stops with one line,
+`No items to digest after ignoring 7.`, and posts nothing.
+
+What must not happen:
+
+- **`7 items` in the header.** The count is what remained.
+- **`0 ignored`** in a digest where nothing was dropped.
+- **The lunch item under Unmatched or in a group.** Ignored is ignored, not
+  "unmatched with a note".
+- **An empty digest posted** when everything was ignored, or the ignored
+  items posted anyway because they were all there was.

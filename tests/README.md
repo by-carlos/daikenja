@@ -129,7 +129,7 @@ stage's acceptance checks can be re-run later against the same inputs.
   eight items over the same four projects `project-card.md` registers, plus
   the atlas ledger that fixture does not carry: a Decisions section and an
   **empty** Open items section, which is the case that has to render as
-  `_No open items._`. Seven walks over `digest`: the whole digest, pinning a
+  `_No open items._`. Eight walks over `digest`: the whole digest, pinning a
   `topic` key beating a channel no card owns, a tracker key deciding from
   outside its own channel, a cardless project named once at the end rather
   than guessed at, a summary-less item skipped without failing the run, and
@@ -144,7 +144,10 @@ stage's acceptance checks can be re-run later against the same inputs.
   clamped and said once, no empty Unmatched group, and a `focus` written as
   an instruction that is read as a brief; and a `kind: people` group whose
   senders are matched as the feeder sent them, where an item two groups
-  claim lands in the first and a group that claimed nothing is absent.
+  claim lands in the first and a group that claimed nothing is absent; and a
+  `digest.ignore` sender dropped before matching, with the header counting
+  what remained and the run stopping rather than posting when everything was
+  ignored.
 
 ### `meeting-review`
 

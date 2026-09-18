@@ -40,6 +40,8 @@ projects:
     norms_doc: <path or url>          # optional, overrides the profile value
 
 digest:                               # optional, read only by the digest skill
+  ignore:                             # optional, item `sender` values dropped outright
+    - <string>
   groups:                             # a list, in the order they are tried
     - name: <string>                  # required, the group's heading
       focus: <string>                 # required, what one paragraph should say
@@ -220,6 +222,18 @@ once rather than refusing the block.
 **Group names and members are entirely yours.** Nothing here has a built-in
 group, a reserved name, or a default channel. What a user calls a group and
 which channels go in it is what the block is for.
+
+**`digest.ignore`** is the list of senders whose items are dropped before
+anything else happens -- before project matching, before groups. It is for
+bots and for the digest's own posts: a feeder that reads your DMs will hand
+back yesterday's digest as an item, and the only thing that knows the name
+that digest was posted under is this file. The strings compare exactly as
+`people` does -- trimmed, case folded, a leading `@` ignored -- against the
+`sender` the feeder sent, so the name has to be the one your feeder uses.
+Dropped items are not in any group and are not counted as items; the header
+says how many were ignored, once, so a digest that shrank has a stated reason.
+The template lists `Daikenja` because that is the name the bot posts under
+when it is set up as its README describes; change it if yours differs.
 
 ## Worked example
 
