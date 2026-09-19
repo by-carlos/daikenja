@@ -299,6 +299,7 @@ and get overwritten on update.
 | Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
 | Your notes on the people you work with | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice`, which backs up the file before replacing it |
+| Your domain glossary -- one line per term you have had to explain | `~/.claude/daikenja/glossary.md` | you, plus any skill that glosses a term you defined for it, one dated line at a time |
 | A project's decision ledger | `<project root>/.daikenja/ledger.md`, or wherever that project's `ledger:` key points -- including outside the project. For a project spanning several directories the root is the first one registered | `project-log` only |
 
 The plugin ships blank starting points in `templates/`. Those get copied out to
