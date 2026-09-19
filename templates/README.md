@@ -21,11 +21,16 @@ starting points.
   same template into whichever the user chose. See
   [`../docs/config-resolution.md`](../docs/config-resolution.md) § Resolving
   `writing_style` and `personas`.
+- [`glossary.md`](glossary.md) -- the empty domain glossary `setup-user` copies
+  to `~/.claude/daikenja/glossary.md` if absent: one line per term, ten words
+  of gloss at most, with project, date and source. Always local, never a
+  pointer or a Drive file. Skills that gloss a term search it for that term
+  and never load it whole; a review skill may append a line the user defined.
 - [`tensei.md`](tensei.md) -- the conversational persona `/daikenja:tensei`
   installs to `~/.claude/daikenja/tensei.md`, imported from `~/.claude/CLAUDE.md`.
-  Unlike the two templates above, this one is not a blank starting point the
-  user fills in: it is maintained content, and the skill can update an
-  installed copy the user has not edited by hand. See
+  Unlike `personas.md`, `writing-style.md` and `glossary.md`, this one is
+  not a blank starting point the user fills in: it is maintained content, and
+  the skill can update an installed copy the user has not edited by hand. See
   [`../skills/tensei/SKILL.md`](../skills/tensei/SKILL.md).
 
 Nothing in this directory may contain personal or organization data.

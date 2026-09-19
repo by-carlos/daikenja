@@ -1,19 +1,19 @@
 ---
 name: setup-user
-description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona and writing-style files, and applies any pending version upgrade.'
+description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona, writing-style and glossary files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
-  version: 5
-  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
+  version: 6
+  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), ~/.claude/daikenja/glossary.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
 # Setup user
 
 The skill every other Daikenja skill assumes has already run. It writes
-`daikenja.yaml`, nothing else -- `personas.md` and `writing-style.md` get a
-blank starting copy if the user has none, and this skill never writes a word of
-their content afterwards.
+`daikenja.yaml`, nothing else -- `personas.md`, `writing-style.md` and
+`glossary.md` get a blank starting copy if the user has none, and this skill
+never writes a word of their content afterwards.
 
 **This is the once-per-person half of setup, and only that.** Everything with a
 per-project lifetime -- registering a directory under `projects:`, that
@@ -74,9 +74,10 @@ second run reconcile instead of clobber.
   stop, name the first line that does not parse, same as every other skill's
   failure behavior. Never rewrite a file you cannot parse. Note its
   `daikenja_version` if it has one; Step 2 needs it.
-- `~/.claude/daikenja/personas.md`, `~/.claude/daikenja/writing-style.md` --
-  note only whether each exists. Never open them to check content; existence is
-  the only thing that decides whether to copy the template.
+- `~/.claude/daikenja/personas.md`, `~/.claude/daikenja/writing-style.md`,
+  `~/.claude/daikenja/glossary.md` -- note only whether each exists. Never
+  open them to check content; existence is the only thing that decides whether
+  to copy the template.
 
 ## Step 2: the upgrade branch
 
@@ -204,7 +205,7 @@ here:
 
 ## Step 5: copy the prose templates, only if absent
 
-For each of `personas.md` and `writing-style.md`:
+For each of `personas.md`, `writing-style.md` and `glossary.md`:
 
 - **Missing.** Copy `${CLAUDE_PLUGIN_ROOT}/templates/<name>` to
   `~/.claude/daikenja/<name>` verbatim.
@@ -212,6 +213,12 @@ For each of `personas.md` and `writing-style.md`:
   already exists, not touched") and move on. This holds even if the existing
   file is still the untouched template -- existence is the only test, per the
   stage contract. Never inspect or overwrite user prose.
+
+`glossary.md` differs from the other two in one way: it is not a pointer in
+`daikenja.yaml` and has no Google Drive form. It always lives at
+`~/.claude/daikenja/glossary.md`, because the skills that use it -- a review or
+summary skill glossing a term it met -- search that fixed path and never load
+the file whole. The Drive offer below is for the two pointer files only.
 
 ### Offering Google Drive, without ever requiring it
 
@@ -322,7 +329,7 @@ clean run earns no report beyond it.
 ```
 Daikenja is set up. Wrote ~/.claude/daikenja/daikenja.yaml (profile: name=Carlos,
 tone=standard). writing-style.md and personas.md already existed and were not
-touched.
+touched; wrote glossary.md.
 ```
 
 **Then point at `/daikenja:setup-project`.** Personal setup is done once ever;
@@ -342,8 +349,8 @@ user takes it.
 
 ## Re-running this skill
 
-Safe at any time. It never overwrites `personas.md` or `writing-style.md` once
-they exist, never touches `projects:` at all, and only edits the `profile:` keys
+Safe at any time. It never overwrites `personas.md`, `writing-style.md` or
+`glossary.md` once they exist, never touches `projects:` at all, and only edits the `profile:` keys
 the user answers in Step 4 -- everything else already in `daikenja.yaml` is left
 as it was found.
 

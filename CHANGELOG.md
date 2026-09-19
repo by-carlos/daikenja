@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`setup-user` seeds a domain glossary, `~/.claude/daikenja/glossary.md`.**
+  A new `templates/glossary.md` is copied there if absent, the same way
+  `personas.md` and `writing-style.md` are, and never touched again: one line
+  per term -- bold term, a gloss of ten words or fewer, then project, date and
+  source in a bracket. It gives skills that gloss the terms they meet (a review
+  or summary skill in another plugin that declares Daikenja as a prerequisite)
+  a stable, local file to search, so the same acronym is explained the same
+  way every time and only what the user actually defined is ever written back.
+  Existing installs get it by re-running `/daikenja:setup-user`; until then
+  those skills simply run without a glossary. It is not a pointer in
+  `daikenja.yaml` and has no Google Drive form.
+
 - **A public digest layer: a feeder's item list, grouped by project and
   posted to your DM.** `python -m daikenja_bot --digest items.json` takes a
   list of messages something else collected, places each one against a
