@@ -13,7 +13,7 @@ you did not ask for.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Eighteen skills ship today.
+**Status:** in active development.
 
 ## What using it looks like
 
@@ -135,7 +135,7 @@ On a 1M-context model nothing is cut.)
 
 ## Skills
 
-Eighteen skills, grouped by what they do.
+The skills, grouped by what they do.
 
 **Writing a reply**
 
