@@ -21,31 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   those skills simply run without a glossary. It is not a pointer in
   `daikenja.yaml` and has no Google Drive form.
 
-- **A public digest layer: a feeder's item list, grouped by project and
-  posted to your DM.** `python -m daikenja_bot --digest items.json` takes a
-  list of messages something else collected, places each one against a
-  registered project, adds that project's open ledger items beside its group,
-  and posts one message to the owner's direct message. `--dry-run` prints it
-  instead. The item list is JSON -- `ts`, `channel`, `sender`, `summary`,
-  `permalink`, `bucket`, and `topic` or a project key, of which only
-  `summary` is required -- so any feeder can hand items over without this
-  layer knowing how it collected or ranked them. `bucket` is shown and never
-  interpreted: nothing here decides what is urgent.
-
-  It reuses the bot's existing Slack app, token and posting layer. A DM to
-  the owner needs only the `chat:write` scope the app already has, so there
-  is no new scope, nothing to reinstall, and no second app. It also needs no
-  app-level token -- that one is for Socket Mode, which is how events are
-  received -- so a digest runs on a machine that never runs the listener.
-
-  The grouping and the ledger enrichment are a new `digest` skill running in
-  the headless session, not Python in `bot/`: placing an item against a
-  project means reading project cards and ledgers, and a second copy of that
-  grammar beside the transport would be a second copy to keep true. A project
-  card that only nearly fits decides nothing, because nobody is reading a
-  digest live to confirm it -- that item comes back under Unmatched, with the
-  command that would settle it.
-
 - **`bot/`: `project <key>` names the project a command checks.**
   `@daikenja judgement project harbor`, with a link after it if the subject
   is elsewhere, and the same for `summary`. A key named this way is decisive:
@@ -241,8 +216,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   produced on general knowledge, and the near miss is named at the end of it
   as an offer -- `This looks like <project> -- say <command> project <key> to
   check it.` Naming the project is one line, and that line is now always in
-  front of the reader. `thread`, `judgement` and `digest` all follow the one
-  rule; `digest` already did.
+  front of the reader. Both `thread` and `judgement` follow the one rule.
+
+### Removed
+
+- **The digest layer is gone from this repo, before it ever shipped.** The
+  `digest` skill, `bot/daikenja_bot/digest.py`, `--digest`, `--dry-run` and
+  their tests and fixture are removed; they were added in this same unreleased
+  batch and no released version ever carried them, so nothing installed
+  changes. The digest is now its own plugin, `daikenja-digest-bot` in
+  [`by-carlos/claude-shared`](https://github.com/by-carlos/claude-shared),
+  which collects from Slack itself rather than taking a feeder's item list.
+  Keeping two digests in two formats was the thing worth not doing. A project
+  still matches by an exact `Owns` handle or not at all -- that rule is shared
+  with `summary` and `judgement` and is untouched.
 
 ### Fixed
 
