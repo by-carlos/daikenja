@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.10.0] - 2026-09-21
 
 ### The Slack bot can now be triggered by a reaction, not just a mention
 
