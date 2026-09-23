@@ -5,9 +5,13 @@ from daikenja_bot.confluence import (
     ConfluenceError,
     ConfluenceNotConfigured,
     fetch_page,
+    find_page,
+    read_page,
+    storage_links,
     storage_to_text,
 )
 from daikenja_bot.config import ConfluenceConfig
+from daikenja_bot.links import PageTitleRef, parse_confluence_page_id
 
 CONFIG = ConfluenceConfig(
     base_url="https://example.atlassian.net", email="rimuru@example.com"
@@ -122,3 +126,94 @@ class FetchPageTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StorageLinksTests(unittest.TestCase):
+    def test_anchors_and_internal_links_in_order(self):
+        storage = (
+            '<p><a href="https://example.atlassian.net/wiki/spaces/HARBOR/pages/1?a=1&amp;b=2">x</a></p>'
+            '<ac:link><ri:page ri:space-key="OPS" ri:content-title="Runbook &amp; rota" /></ac:link>'
+            '<ac:link><ri:page ri:content-title="Rollback" /></ac:link>'
+        )
+        self.assertEqual(
+            storage_links(storage),
+            [
+                "https://example.atlassian.net/wiki/spaces/HARBOR/pages/1?a=1&b=2",
+                PageTitleRef("Runbook & rota", "OPS"),
+                PageTitleRef("Rollback", None),
+            ],
+        )
+
+    def test_a_page_named_inside_an_attachment_or_image_is_not_a_link(self):
+        storage = (
+            '<ac:image><ri:attachment ri:filename="a.png">'
+            '<ri:page ri:content-title="Other" /></ri:attachment></ac:image>'
+        )
+        self.assertEqual(storage_links(storage), [])
+
+    def test_relative_and_mail_links_are_dropped(self):
+        storage = '<a href="/wiki/x">a</a><a href="mailto:a@example.com">b</a>'
+        self.assertEqual(storage_links(storage), [])
+
+
+class ReadPageTests(unittest.TestCase):
+    def test_the_page_comes_back_with_its_links_and_space(self):
+        payload = {
+            "title": "Cutover plan",
+            "body": {"storage": {"value": '<p>see <ri:page ri:content-title="Runbook" /></p>'}},
+        }
+        page = read_page(CONFIG, PAGE_URL, "t", fetch=responder(payload))
+        self.assertEqual(page.subject.label, "Cutover plan")
+        self.assertEqual(page.links, (PageTitleRef("Runbook"),))
+        self.assertEqual(page.space_key, "HARBOR")
+
+    def test_a_short_link_has_a_short_reason(self):
+        with self.assertRaises(ConfluenceError) as caught:
+            read_page(CONFIG, "https://example.atlassian.net/wiki/x/AbCd", "t")
+        self.assertEqual(caught.exception.reason, "short link has no page id")
+
+    def test_not_configured_has_a_short_reason(self):
+        with self.assertRaises(ConfluenceNotConfigured) as caught:
+            read_page(None, PAGE_URL, "t")
+        self.assertEqual(caught.exception.reason, "Confluence not configured")
+
+
+class FindPageTests(unittest.TestCase):
+    def test_the_lookup_uses_the_default_space_and_returns_a_readable_url(self):
+        seen: list = []
+        url = find_page(
+            CONFIG,
+            PageTitleRef("Runbook & rota"),
+            "t",
+            fetch=responder({"results": [{"id": "777"}]}, seen),
+            default_space="HARBOR",
+        )
+        self.assertIn("spaceKey=HARBOR", seen[0]["url"])
+        self.assertIn("title=Runbook+%26+rota", seen[0]["url"])
+        self.assertEqual(parse_confluence_page_id(url), "777")
+
+    def test_the_links_own_space_wins(self):
+        seen: list = []
+        find_page(
+            CONFIG,
+            PageTitleRef("Runbook", "OPS"),
+            "t",
+            fetch=responder({"results": [{"id": "1"}]}, seen),
+            default_space="HARBOR",
+        )
+        self.assertIn("spaceKey=OPS", seen[0]["url"])
+
+    def test_no_match_is_not_found(self):
+        with self.assertRaises(ConfluenceError) as caught:
+            find_page(CONFIG, PageTitleRef("Nope"), "t", fetch=responder({"results": []}))
+        self.assertEqual(caught.exception.reason, "not found or not visible")
+
+    def test_two_matches_are_not_guessed_between(self):
+        with self.assertRaises(ConfluenceError) as caught:
+            find_page(
+                CONFIG,
+                PageTitleRef("Runbook"),
+                "t",
+                fetch=responder({"results": [{"id": "1"}, {"id": "2"}]}),
+            )
+        self.assertEqual(caught.exception.reason, "title matches several pages")

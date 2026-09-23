@@ -731,3 +731,105 @@ class ReactionTriggerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+LINKED_PAGE_URL = "https://example.atlassian.net/wiki/spaces/HARBOR/pages/555/Runbook"
+LINKED_PAGE = Subject(kind=PAGE, label="Runbook", body="Step 1: drain", source_url=LINKED_PAGE_URL)
+THREAD_WITH_LINK = THREAD + [
+    {
+        "type": "message",
+        "user": "U0SHION",
+        "ts": "1758067500.000500",
+        "thread_ts": THREAD[0]["ts"],
+        "text": f"please review <{LINKED_PAGE_URL}|the runbook>",
+    }
+]
+
+
+def _wiki_config():
+    return parse_config(
+        {
+            "slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": "daikenja"},
+            "confluence": {
+                "base_url": "https://example.atlassian.net",
+                "email": "rimuru@example.com",
+                "token_env": "WIKI_TOKEN",
+            },
+        }
+    )
+
+
+def _pages(table):
+    def fetch(config, url, token):
+        if url not in table:
+            raise ConfluenceError("gone", reason="not found or not visible")
+        return table[url]
+
+    return fetch
+
+
+class FollowedLinkTests(unittest.TestCase):
+    def _handler(self, replies, table, run=None, config=None):
+        client = FakeSlackClient(replies=replies, users=USERS, history=replies[0])
+        run = run or Recorder()
+        handler = Handler(
+            config or _wiki_config(),
+            SlackIO(client),
+            environ={"WIKI_TOKEN": "t"},
+            run=run,
+            fetch_confluence=_pages(table),
+        )
+        return handler, client, run
+
+    def test_a_page_linked_in_the_thread_is_attached(self):
+        handler, client, run = self._handler(THREAD_WITH_LINK, {LINKED_PAGE_URL: LINKED_PAGE})
+        handler.handle_mention(mention("<@U0BOT> judgement", thread_ts=THREAD[0]["ts"]))
+        subject = run.calls[0][1]
+        self.assertEqual([a.label for a in subject.attachments], ["Runbook"])
+        self.assertEqual(subject.unread, ())
+
+    def test_a_linked_page_that_fails_is_noted_and_the_run_goes_on(self):
+        handler, client, run = self._handler(THREAD_WITH_LINK, {})
+        handler.handle_mention(mention("<@U0BOT> judgement", thread_ts=THREAD[0]["ts"]))
+        subject = run.calls[0][1]
+        self.assertEqual(subject.attachments, ())
+        self.assertEqual(subject.unread[0].reason, "not found or not visible")
+        self.assertEqual(len(client.posted), 1)
+
+    def test_an_unconfigured_bot_notes_the_page_and_still_answers(self):
+        handler, client, run = self._handler(
+            THREAD_WITH_LINK, {}, config=make_config()
+        )
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts=THREAD[0]["ts"]))
+        self.assertEqual(run.calls[0][1].unread[0].reason, "Confluence not configured")
+        self.assertIn("Thread: four messages", client.posted[0]["text"])
+
+    def test_an_extra_argument_is_attached_and_counted_in_the_header(self):
+        main = Subject(kind=PAGE, label="Cutover plan", body="Friday", source_url=PAGE_URL)
+        handler, client, run = self._handler(
+            THREAD, {PAGE_URL: main, LINKED_PAGE_URL: LINKED_PAGE}
+        )
+        handler.handle_mention(
+            mention(f"<@U0BOT> judgement <{PAGE_URL}> and <{LINKED_PAGE_URL}>")
+        )
+        self.assertEqual(run.calls[0][1].label, "Cutover plan")
+        self.assertEqual(run.calls[0][1].attachments[0].label, "Runbook")
+        self.assertTrue(
+            client.posted[0]["text"].startswith(f"_On_ <{PAGE_URL}> + 1 linked")
+        )
+
+    def test_the_header_is_unchanged_with_nothing_linked(self):
+        main = Subject(kind=PAGE, label="Cutover plan", body="Friday", source_url=PAGE_URL)
+        handler, client, run = self._handler(THREAD, {PAGE_URL: main})
+        handler.handle_mention(mention(f"<@U0BOT> judgement <{PAGE_URL}>"))
+        self.assertTrue(client.posted[0]["text"].startswith(f"_On_ <{PAGE_URL}>\n"))
+
+    def test_the_reaction_path_attaches_too(self):
+        run = CombinedRecorder()
+        handler, client, _ = self._handler(
+            THREAD_WITH_LINK, {LINKED_PAGE_URL: LINKED_PAGE}, run=run
+        )
+        handler.handle_reaction(reaction(ts=THREAD[0]["ts"]))
+        self.assertEqual([c[0] for c in run.calls], ["summary", "judgement"])
+        for _, subject in run.calls:
+            self.assertEqual([a.label for a in subject.attachments], ["Runbook"])

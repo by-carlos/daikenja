@@ -1,4 +1,4 @@
-"""Read the two kinds of link a command can take as its argument.
+"""Read the links a command takes as arguments, and the links a subject holds.
 
 Slack rewrites a URL inside a message as ``<https://...>``, or
 ``<https://...|the text the user saw>``. Everything here starts by undoing
@@ -7,6 +7,7 @@ that, because a link that still carries the angle brackets matches nothing.
 
 from __future__ import annotations
 
+import html
 import re
 from dataclasses import dataclass
 from typing import Any, Mapping
@@ -16,6 +17,31 @@ SLACK_ARCHIVE_RE = re.compile(
     r"^/archives/(?P<channel>[A-Z][A-Z0-9]+)/p(?P<ts>\d{10,}\d{6})/?$"
 )
 CONFLUENCE_PAGE_RE = re.compile(r"/pages/(?P<page_id>\d+)")
+
+# A Slack-wrapped link first, so its label is consumed with it and a URL
+# written inside the label is not counted twice; then a bare URL.
+ANY_LINK_RE = re.compile(
+    r"<(?P<wrapped>https?://[^|>\s]+)(?:\|[^>]*)?>|(?P<bare>https?://[^\s<>]+)"
+)
+# What a bare URL at the end of a sentence picks up and does not mean.
+TRAILING_PUNCTUATION = ".,;:!?)]}'\""
+
+
+@dataclass(frozen=True)
+class PageTitleRef:
+    """A Confluence page named by title, the way a page links to another.
+
+    Storage format writes an internal link as ``<ri:page ri:content-title=...>``
+    with an optional space key and no id, so it has no URL until it is looked
+    up. ``space_key`` of None means the linking page's own space.
+    """
+
+    title: str
+    space_key: str | None = None
+
+    def __str__(self) -> str:
+        where = f"{self.space_key}:" if self.space_key else ""
+        return f"Confluence page {where}{self.title}"
 
 
 @dataclass(frozen=True)
@@ -39,6 +65,23 @@ def unwrap_link(text: str) -> str:
         if "|" in token:
             token = token.split("|", 1)[0]
     return token.strip()
+
+
+def extract_links(text: str) -> list[str]:
+    """Every http(s) link in a piece of text, in order, each once.
+
+    Slack writes a link as ``<url>`` or ``<url|label>`` and escapes ``&`` as
+    ``&amp;``; both are undone, so the same link written two ways counts once.
+    """
+    found: list[str] = []
+    for match in ANY_LINK_RE.finditer(text or ""):
+        url = match.group("wrapped") or match.group("bare").rstrip(
+            TRAILING_PUNCTUATION
+        )
+        url = html.unescape(url)
+        if url and url not in found:
+            found.append(url)
+    return found
 
 
 def parse_slack_permalink(url: str) -> SlackThreadRef | None:

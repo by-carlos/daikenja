@@ -155,3 +155,30 @@ class DeleteTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExtraLinksTests(unittest.TestCase):
+    PAGE = "https://example.atlassian.net/wiki/spaces/HARBOR/pages/1"
+    OTHER = "https://example.atlassian.net/wiki/spaces/HARBOR/pages/2"
+    PERMALINK = "https://example.slack.com/archives/C0OTHER/p1758067200000100"
+
+    def test_one_link_has_no_extras(self):
+        command = parse_command(f"<@U0BOT> judgement <{self.PAGE}>")
+        self.assertEqual(command.argument, self.PAGE)
+        self.assertEqual(command.extra, ())
+
+    def test_further_links_become_extras_and_words_between_are_dropped(self):
+        command = parse_command(
+            f"<@U0BOT> judgement <{self.PERMALINK}|the thread>, <{self.PAGE}|the plan> and {self.OTHER}"
+        )
+        self.assertEqual(command.argument, self.PERMALINK)
+        self.assertEqual(command.extra, (self.PAGE, self.OTHER))
+
+    def test_extras_follow_a_named_project(self):
+        command = parse_command(f"<@U0BOT> summary project harbor <{self.PAGE}> <{self.OTHER}>")
+        self.assertEqual(command.project, "harbor")
+        self.assertEqual(command.argument, self.PAGE)
+        self.assertEqual(command.extra, (self.OTHER,))
+
+    def test_no_argument_has_no_extras(self):
+        self.assertEqual(parse_command("<@U0BOT> summary").extra, ())

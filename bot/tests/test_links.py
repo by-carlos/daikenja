@@ -1,6 +1,7 @@
 import unittest
 
 from daikenja_bot.links import (
+    extract_links,
     forwarded_permalink,
     looks_like_confluence,
     parse_confluence_page_id,
@@ -127,3 +128,22 @@ class ForwardedPermalinkTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExtractLinksTests(unittest.TestCase):
+    def test_wrapped_and_bare_links_in_order(self):
+        text = "see <https://a.example.com/1|the page> then https://b.example.com/2."
+        self.assertEqual(
+            extract_links(text), ["https://a.example.com/1", "https://b.example.com/2"]
+        )
+
+    def test_a_repeat_is_kept_once(self):
+        text = "<https://a.example.com/1> and https://a.example.com/1"
+        self.assertEqual(extract_links(text), ["https://a.example.com/1"])
+
+    def test_slack_escaped_ampersands_are_undone(self):
+        text = "<https://a.example.com/x?a=1&amp;b=2>"
+        self.assertEqual(extract_links(text), ["https://a.example.com/x?a=1&b=2"])
+
+    def test_mentions_and_non_web_links_are_not_links(self):
+        self.assertEqual(extract_links("<@U0RIMURU> <mailto:a@example.com> <#C0HARBOR>"), [])
