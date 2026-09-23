@@ -93,7 +93,7 @@ class BuildArgvTests(unittest.TestCase):
 
     def test_the_default_model_and_effort_are_on_the_command_line(self):
         argv = build_argv(make_config())
-        self.assertEqual(argv[argv.index("--model") + 1], "claude-opus-5")
+        self.assertEqual(argv[argv.index("--model") + 1], "claude-opus-5-5")
         self.assertEqual(argv[argv.index("--effort") + 1], "low")
 
     def test_optional_flags_are_only_added_when_set(self):

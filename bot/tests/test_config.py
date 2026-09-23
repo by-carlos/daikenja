@@ -26,7 +26,7 @@ class ParseTests(unittest.TestCase):
         self.assertEqual(config.claude.command, "claude")
         self.assertEqual(config.claude.allowed_tools, DEFAULT_ALLOWED_TOOLS)
         self.assertEqual(config.claude.timeout_seconds, 300)
-        self.assertEqual(config.claude.model, "claude-opus-5")
+        self.assertEqual(config.claude.model, "claude-opus-5-5")
         self.assertEqual(config.claude.effort, "low")
         self.assertIsNone(config.confluence)
         self.assertFalse(config.confluence_configured)

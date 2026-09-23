@@ -5,6 +5,15 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **The bot's default model is now `claude-opus-5-5`.** Anthropic's Opus 5
+  alias resolved to the retired Opus 5.0 rather than floating to the current
+  release, so the pinned default fell behind Opus 5.5 silently. Only affects
+  installs whose `bot.yaml` leaves `claude.model` unset.
+
 ## [0.11.0] - 2026-09-23
 
 ### Added

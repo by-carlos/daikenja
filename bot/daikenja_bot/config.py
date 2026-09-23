@@ -51,7 +51,7 @@ DEFAULT_TIMEOUT_SECONDS = 300
 # Effort is a separate dimension from the model: the CLI takes `--effort`,
 # and a model string with the level appended (`claude-opus-5-low`) is
 # rejected as a model that does not exist.
-DEFAULT_MODEL = "claude-opus-5"
+DEFAULT_MODEL = "claude-opus-5-5"
 DEFAULT_EFFORT = "low"
 
 # What `--effort` accepts. A value outside this set is refused at startup
