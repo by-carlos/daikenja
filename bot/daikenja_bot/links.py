@@ -11,12 +11,13 @@ import html
 import re
 from dataclasses import dataclass
 from typing import Any, Mapping
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, unquote, unquote_plus, urlparse
 
 SLACK_ARCHIVE_RE = re.compile(
     r"^/archives/(?P<channel>[A-Z][A-Z0-9]+)/p(?P<ts>\d{10,}\d{6})/?$"
 )
 CONFLUENCE_PAGE_RE = re.compile(r"/pages/(?P<page_id>\d+)")
+CONFLUENCE_DISPLAY_RE = re.compile(r"/wiki/display/(?P<space>[^/]+)/(?P<title>[^/?#]+)")
 JIRA_KEY = r"[A-Z][A-Z0-9_]+-\d+"
 JIRA_BROWSE_RE = re.compile(rf"/browse/(?P<key>{JIRA_KEY})(?:[/?#]|$)")
 JIRA_KEY_RE = re.compile(rf"^{JIRA_KEY}$")
@@ -206,6 +207,33 @@ def looks_like_jira(url: str, base_url: str | None = None) -> bool:
         base = urlparse(base_url if "//" in base_url else f"https://{base_url}")
         return bool(base.netloc) and host == base.netloc
     return host.endswith(".atlassian.net")
+
+
+def parse_confluence_display(url: str) -> PageTitleRef | None:
+    """The page a ``/wiki/display/SPACE/Title`` URL names, by space and title.
+
+    That older form carries no id, but unlike a ``/wiki/x/`` short link it
+    names the page outright, so one title lookup finds it.
+    """
+    parsed = urlparse(unwrap_link(url))
+    if parsed.scheme not in ("http", "https"):
+        return None
+    match = CONFLUENCE_DISPLAY_RE.search(parsed.path)
+    if not match:
+        return None
+    title = unquote_plus(match.group("title")).strip()
+    if not title:
+        return None
+    return PageTitleRef(title=title, space_key=unquote(match.group("space")))
+
+
+def names_a_confluence_page(url: str) -> bool:
+    """Does this Confluence URL name one page -- by id or by space and title?
+
+    A space home, a search or a short link does not, and a found link like
+    that would only ever be fetched to fail.
+    """
+    return bool(parse_confluence_page_id(url) or parse_confluence_display(url))
 
 
 def looks_like_confluence(url: str, base_url: str | None = None) -> bool:

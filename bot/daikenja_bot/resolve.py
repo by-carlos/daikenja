@@ -36,6 +36,9 @@ from .links import (
     forwarded_permalink,
     looks_like_confluence,
     looks_like_jira,
+    names_a_confluence_page,
+    parse_confluence_display,
+    parse_confluence_page_id,
     parse_slack_permalink,
     unwrap_link,
 )
@@ -95,7 +98,8 @@ class Resolver:
         why it is not answering would also claim every ``/wiki/`` URL on the
         web, so a found link must be on the configured site -- or, with no
         site configured, on Atlassian Cloud's own wiki path, which is then
-        recorded as not configured rather than ignored.
+        recorded as not configured rather than ignored -- and must name one
+        page: a space home or a search found in a thread is not followed.
         """
         if isinstance(link, PageTitleRef):
             return CONFLUENCE
@@ -114,7 +118,11 @@ class Resolver:
                 on_site = bool(base.netloc) and parsed.netloc == base.netloc
             else:
                 on_site = parsed.netloc.endswith(".atlassian.net")
-            if on_site and parsed.path.startswith("/wiki/"):
+            if (
+                on_site
+                and parsed.path.startswith("/wiki/")
+                and names_a_confluence_page(url)
+            ):
                 return CONFLUENCE
             return None
         if looks_like_confluence(url, base_url):
@@ -233,6 +241,10 @@ class Resolver:
             raise ConfluenceNotConfigured()
         token = self._token()
         fetch = fetcher(timeout) if timeout else _default_fetch
+
+        if isinstance(link, str) and not parse_confluence_page_id(link):
+            # A `/wiki/display/SPACE/Title` URL names its page by title.
+            link = parse_confluence_display(link) or link
 
         if isinstance(link, PageTitleRef):
             if self._find_confluence_page is not None:

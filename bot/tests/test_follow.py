@@ -125,7 +125,16 @@ class FollowTests(unittest.TestCase):
         self.assertLessEqual(total, MAX_TOTAL_CHARS + 100)
         self.assertEqual(len(out.attachments), 4)
         self.assertIn("truncated", out.attachments[-1].body)
-        self.assertEqual(out.unread[0].reason, "over the total size limit")
+        self.assertEqual(out.unread[0].reason, "over the size limit")
+
+    def test_too_little_room_left_drops_rather_than_clips(self):
+        urls = [f"{WIKI}/{n}" for n in range(5)]
+        # Four attachments of 9,900 leave 400 of the 40,000 -- under the
+        # useful minimum, so the fifth is dropped rather than clipped.
+        pages = {u: page(n, "y" * 9_900) for n, u in enumerate(urls)}
+        out = follow(THREAD_SUBJECT, (), StubResolver(pages), urls)
+        self.assertEqual(len(out.attachments), 4)
+        self.assertEqual(out.unread[0].reason, "over the size limit")
 
     def test_a_failure_is_recorded_not_raised(self):
         good, bad, off = f"{WIKI}/1", f"{WIKI}/2", f"{WIKI}/3"
@@ -187,6 +196,39 @@ class ResolverKindTests(unittest.TestCase):
     def test_an_unconfigured_bot_still_recognises_atlassian_cloud(self):
         resolver = self._resolver(confluence=False)
         self.assertEqual(resolver.kind_of(f"{WIKI}/1", found=True), CONFLUENCE)
+
+    def test_a_found_space_home_or_search_is_not_followed(self):
+        resolver = self._resolver()
+        base = "https://example.atlassian.net/wiki"
+        self.assertIsNone(resolver.kind_of(f"{base}/spaces/HARBOR/overview", found=True))
+        self.assertIsNone(resolver.kind_of(f"{base}/search?text=cutover", found=True))
+        self.assertIsNone(resolver.kind_of(f"{base}/x/AbCd", found=True))
+
+    def test_a_found_display_url_is_followed(self):
+        url = "https://example.atlassian.net/wiki/display/HARBOR/Cutover+plan"
+        self.assertEqual(self._resolver().kind_of(url, found=True), CONFLUENCE)
+
+    def test_a_display_url_is_looked_up_by_title(self):
+        seen = []
+        raw = {
+            "slack": {"owner_user_id": "U0RIMURU"},
+            "confluence": {
+                "base_url": "https://example.atlassian.net",
+                "email": "rimuru@example.com",
+                "token_env": "WIKI_TOKEN",
+            },
+        }
+        found_url = f"{WIKI}/777"
+        resolver = Resolver(
+            parse_config(raw),
+            SlackIO(FakeSlackClient()),
+            {"WIKI_TOKEN": "t"},
+            find_confluence_page=lambda config, ref, token: seen.append(ref) or found_url,
+            fetch_confluence=lambda config, url, token: page(777),
+        )
+        resolved = resolver.resolve("https://example.atlassian.net/wiki/display/HARBOR/Cutover+plan")
+        self.assertEqual(seen, [PageTitleRef("Cutover plan", "HARBOR")])
+        self.assertEqual(resolved.subject.label, "Page 777")
 
     def test_a_title_reference_is_confluence(self):
         self.assertEqual(self._resolver().kind_of(PageTitleRef("Runbook")), CONFLUENCE)

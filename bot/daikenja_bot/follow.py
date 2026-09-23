@@ -35,6 +35,9 @@ MAX_CHARS = 12_000
 MAX_TOTAL_CHARS = 40_000
 REQUEST_TIMEOUT = 15
 DEADLINE = 45
+# Below this much room left in the total, an attachment is dropped rather
+# than clipped: a few hundred characters of a page say too little to use.
+MIN_USEFUL_CHARS = 500
 
 # Sources a link *found in content* is followed into. A Slack permalink is
 # followed only when it was typed as an argument.
@@ -83,8 +86,8 @@ def follow(
         if isinstance(outcome, str):
             unread.append(UnreadLink(_name(link), outcome))
             continue
-        if budget <= 0:
-            unread.append(UnreadLink(_name(link), "over the total size limit"))
+        if budget < MIN_USEFUL_CHARS:
+            unread.append(UnreadLink(_name(link), "over the size limit"))
             continue
         body = truncate(outcome.body, min(MAX_CHARS, budget))
         budget -= len(body)

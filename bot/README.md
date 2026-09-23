@@ -487,7 +487,8 @@ confluence:
 The token is an [Atlassian API
 token](https://id.atlassian.com/manage-profile/security/api-tokens). Only
 the full page URL works -- a short `/wiki/x/...` link carries no page id,
-and the bot says so rather than guessing.
+and the bot says so rather than guessing. An older `/wiki/display/SPACE/Title`
+URL is found by one title lookup in that space.
 
 **The same block turns on Jira too.** On Atlassian Cloud both products
 share one host and accept one API token, so a Jira issue link -- `/browse/HAR-12`,

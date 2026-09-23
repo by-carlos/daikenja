@@ -1,6 +1,9 @@
 import unittest
 
 from daikenja_bot.links import (
+    PageTitleRef,
+    names_a_confluence_page,
+    parse_confluence_display,
     looks_like_jira,
     parse_jira_key,
     extract_links,
@@ -176,3 +179,22 @@ class JiraLinkTests(unittest.TestCase):
 
     def test_a_page_is_not_jira(self):
         self.assertFalse(looks_like_jira(f"{self.BASE}/wiki/spaces/HARBOR/pages/1", self.BASE))
+
+
+class ConfluenceDisplayTests(unittest.TestCase):
+    BASE = "https://example.atlassian.net/wiki"
+
+    def test_space_and_title_are_read(self):
+        self.assertEqual(
+            parse_confluence_display(f"<{self.BASE}/display/HARBOR/Cutover+plan%3A+Friday|plan>"),
+            PageTitleRef("Cutover plan: Friday", "HARBOR"),
+        )
+
+    def test_a_space_home_is_not_a_display_page(self):
+        self.assertIsNone(parse_confluence_display(f"{self.BASE}/display/HARBOR"))
+
+    def test_only_urls_naming_one_page_count(self):
+        self.assertTrue(names_a_confluence_page(f"{self.BASE}/spaces/HARBOR/pages/1/X"))
+        self.assertTrue(names_a_confluence_page(f"{self.BASE}/display/HARBOR/X"))
+        self.assertFalse(names_a_confluence_page(f"{self.BASE}/spaces/HARBOR/overview"))
+        self.assertFalse(names_a_confluence_page(f"{self.BASE}/x/AbCd"))
