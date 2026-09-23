@@ -91,6 +91,9 @@ class SlackConfig:
     # `None` means the reaction path is off. The emoji name, without colons
     # -- Slack's `reaction_added` event never sends them either way.
     reaction_trigger: str | None = None
+    # `:x:` on one of the bot's own messages deletes it. `None` turns this
+    # off; the emoji name is stored without colons, same as above.
+    delete_reaction: str | None = "x"
 
     def allows_user(self, user_id: str) -> bool:
         """Owner-only unless the config widens it.
@@ -215,6 +218,19 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
     if slack_raw.get("reaction_trigger") and not reaction_trigger:
         raise ConfigError("slack.reaction_trigger: expected an emoji name, or null")
 
+    delete_reaction = slack_raw.get("delete_reaction", "x")
+    if delete_reaction is not None and not isinstance(delete_reaction, str):
+        raise ConfigError("slack.delete_reaction: expected an emoji name or null")
+    delete_reaction = delete_reaction.strip().strip(":") if delete_reaction else None
+    if slack_raw.get("delete_reaction") and not delete_reaction:
+        raise ConfigError("slack.delete_reaction: expected an emoji name, or null")
+
+    if delete_reaction and reaction_trigger and delete_reaction == reaction_trigger:
+        raise ConfigError(
+            "slack.delete_reaction and slack.reaction_trigger cannot be the same "
+            "emoji -- one would always win and the other would never fire"
+        )
+
     slack = SlackConfig(
         owner_user_id=owner,
         allowed_users=_as_str_tuple(slack_raw.get("allowed_users"), "slack.allowed_users"),
@@ -230,6 +246,7 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
         ack_reaction=ack_reaction or None,
         unauthorized_message=unauthorized.strip() if unauthorized else None,
         reaction_trigger=reaction_trigger,
+        delete_reaction=delete_reaction,
     )
 
     claude_raw = _section(data, "claude")

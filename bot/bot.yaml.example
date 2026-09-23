@@ -38,6 +38,13 @@ slack:
   # reaction_added event subscription. Unset means this is off.
   # reaction_trigger: daikenja
 
+  # An emoji name (no colons) that, when an allowed person reacts with it on
+  # one of the bot's own messages, deletes that message -- the reaction
+  # equivalent of `@Daikenja delete`. Needs the reactions:read scope and the
+  # reaction_added event subscription (the same as reaction_trigger above).
+  # Set it to null to turn this off.
+  delete_reaction: x
+
   # What someone who is not on the allowlist is told. It goes out as an
   # ephemeral message -- only they see it, nobody is notified, and nothing is
   # left in the channel. `{owner}` becomes a mention of owner_user_id.

@@ -12,6 +12,12 @@ Three commands, all triggered by an @-mention:
 | `@daikenja judgement` | The shareable `message` form of the [`judgement`](../skills/judgement/SKILL.md) skill: what the thread claims or asks, checked against the project's ledger first and general knowledge second, with every statement labelled by where it came from. |
 | `@daikenja delete` | Nothing. It takes down the bot's own most recent post in that thread, and confirms to the person who asked in a message only they can see. |
 
+A `:x:` reaction on any of the bot's own messages does the same thing as
+`@daikenja delete`, without typing anything: it deletes that one message.
+Only an allowed person's `:x:` counts, and reacting to a message that is not
+the bot's own does nothing. Set `slack.delete_reaction` to a different emoji
+name, or to `null` to turn this off; it defaults to `x`.
+
 `judgement` can also be written as :point_up_2: -- `@daikenja :point_up_2:`,
 either as the shortcode or as the character your keyboard produces, with or
 without a skin tone. It is the same command and takes the same argument.
@@ -184,7 +190,7 @@ oauth_config:
       - im:read             # the same, for one-to-one DMs
       - users:read          # turn user IDs into names in the transcript
       - reactions:write     # optional: the acknowledging reaction
-      - reactions:read      # optional: trigger by reacting, see below
+      - reactions:read      # the delete-by-reaction and reaction-trigger paths, see below
 settings:
   event_subscriptions:
     bot_events:
@@ -198,9 +204,10 @@ on a laptop or a home server with no public URL and no certificate.
 `reactions:write` is optional: without it the bot still answers, it just
 cannot mark the mention as seen. Set `ack_reaction: null` in the config to
 skip it deliberately. `reactions:read` and the `reaction_added` subscription
-are needed only for `slack.reaction_trigger`; leave both out if you never set
-it. Adding a scope or an event subscription to an installed app takes effect
-only after you reinstall it under **Install App**.
+back both `slack.delete_reaction` (on by default) and `slack.reaction_trigger`
+(off by default); leave both out only if you set `delete_reaction: null` and
+never set `reaction_trigger`. Adding a scope or an event subscription to an
+installed app takes effect only after you reinstall it under **Install App**.
 
 Reacting with a custom emoji needs the emoji itself to exist first: an
 **Emoji** admin under your workspace's settings, uploaded once by a workspace
@@ -418,6 +425,7 @@ key is `slack.owner_user_id`.
 | `slack.bot_token` / `slack.app_token` | unset | The token written into the config file itself. Accepted, and the last choice -- see below. |
 | `slack.ack_reaction` | `eyes` | The emoji added to the mention while the answer is written. Also doubles as the re-fire guard on the reaction-trigger path. `null` turns it off. |
 | `slack.reaction_trigger` | unset | An emoji name (no colons) that runs `summary` + `judgement` on the reacted message's thread when added by an allowed person. Unset means the reaction path is off. |
+| `slack.delete_reaction` | `x` | An emoji name (no colons) that deletes one of the bot's own messages when an allowed person reacts to it. `null` turns this off. |
 | `slack.unauthorized_message` | a line saying it is a personal instance | What someone not on the allowlist is told, privately. `{owner}` becomes a mention of `owner_user_id`. `null` says nothing at all. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
 | `claude.model` | `claude-opus-5` | The model the headless session runs on. An empty value follows your account's default. |
