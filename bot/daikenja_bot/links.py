@@ -1,4 +1,4 @@
-"""Read the two kinds of link a command can take as its argument.
+"""Read the links a command takes as arguments, and the links a subject holds.
 
 Slack rewrites a URL inside a message as ``<https://...>``, or
 ``<https://...|the text the user saw>``. Everything here starts by undoing
@@ -7,15 +7,45 @@ that, because a link that still carries the angle brackets matches nothing.
 
 from __future__ import annotations
 
+import html
 import re
 from dataclasses import dataclass
 from typing import Any, Mapping
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, unquote, unquote_plus, urlparse
 
 SLACK_ARCHIVE_RE = re.compile(
     r"^/archives/(?P<channel>[A-Z][A-Z0-9]+)/p(?P<ts>\d{10,}\d{6})/?$"
 )
 CONFLUENCE_PAGE_RE = re.compile(r"/pages/(?P<page_id>\d+)")
+CONFLUENCE_DISPLAY_RE = re.compile(r"/wiki/display/(?P<space>[^/]+)/(?P<title>[^/?#]+)")
+JIRA_KEY = r"[A-Z][A-Z0-9_]+-\d+"
+JIRA_BROWSE_RE = re.compile(rf"/browse/(?P<key>{JIRA_KEY})(?:[/?#]|$)")
+JIRA_KEY_RE = re.compile(rf"^{JIRA_KEY}$")
+
+# A Slack-wrapped link first, so its label is consumed with it and a URL
+# written inside the label is not counted twice; then a bare URL.
+ANY_LINK_RE = re.compile(
+    r"<(?P<wrapped>https?://[^|>\s]+)(?:\|[^>]*)?>|(?P<bare>https?://[^\s<>]+)"
+)
+# What a bare URL at the end of a sentence picks up and does not mean.
+TRAILING_PUNCTUATION = ".,;:!?)]}'\""
+
+
+@dataclass(frozen=True)
+class PageTitleRef:
+    """A Confluence page named by title, the way a page links to another.
+
+    Storage format writes an internal link as ``<ri:page ri:content-title=...>``
+    with an optional space key and no id, so it has no URL until it is looked
+    up. ``space_key`` of None means the linking page's own space.
+    """
+
+    title: str
+    space_key: str | None = None
+
+    def __str__(self) -> str:
+        where = f"{self.space_key}:" if self.space_key else ""
+        return f"Confluence page {where}{self.title}"
 
 
 @dataclass(frozen=True)
@@ -39,6 +69,23 @@ def unwrap_link(text: str) -> str:
         if "|" in token:
             token = token.split("|", 1)[0]
     return token.strip()
+
+
+def extract_links(text: str) -> list[str]:
+    """Every http(s) link in a piece of text, in order, each once.
+
+    Slack writes a link as ``<url>`` or ``<url|label>`` and escapes ``&`` as
+    ``&amp;``; both are undone, so the same link written two ways counts once.
+    """
+    found: list[str] = []
+    for match in ANY_LINK_RE.finditer(text or ""):
+        url = match.group("wrapped") or match.group("bare").rstrip(
+            TRAILING_PUNCTUATION
+        )
+        url = html.unescape(url)
+        if url and url not in found:
+            found.append(url)
+    return found
 
 
 def parse_slack_permalink(url: str) -> SlackThreadRef | None:
@@ -125,6 +172,68 @@ def parse_confluence_page_id(url: str) -> str | None:
     if match:
         return match.group("page_id")
     return None
+
+
+def parse_jira_key(url: str) -> str | None:
+    """The issue key a Jira link names, or None.
+
+    Two forms: ``/browse/HAR-12``, and the ``selectedIssue=HAR-12`` query a
+    board or backlog URL carries for the issue open beside it.
+    """
+    parsed = urlparse(unwrap_link(url))
+    if parsed.scheme not in ("http", "https"):
+        return None
+    match = JIRA_BROWSE_RE.search(unquote(parsed.path))
+    if match:
+        return match.group("key")
+    selected = parse_qs(parsed.query).get("selectedIssue")
+    if selected and JIRA_KEY_RE.match(selected[0].strip()):
+        return selected[0].strip()
+    return None
+
+
+def looks_like_jira(url: str, base_url: str | None = None) -> bool:
+    """Is this a link to one Jira issue?
+
+    It must name an issue key, and be on the configured site -- the issue is
+    fetched from that site by key, so a key from anywhere else would read the
+    wrong issue. With no site configured, any Atlassian Cloud host counts, so
+    an unconfigured bot can say why it is not answering.
+    """
+    if not parse_jira_key(url):
+        return False
+    host = urlparse(unwrap_link(url)).netloc
+    if base_url:
+        base = urlparse(base_url if "//" in base_url else f"https://{base_url}")
+        return bool(base.netloc) and host == base.netloc
+    return host.endswith(".atlassian.net")
+
+
+def parse_confluence_display(url: str) -> PageTitleRef | None:
+    """The page a ``/wiki/display/SPACE/Title`` URL names, by space and title.
+
+    That older form carries no id, but unlike a ``/wiki/x/`` short link it
+    names the page outright, so one title lookup finds it.
+    """
+    parsed = urlparse(unwrap_link(url))
+    if parsed.scheme not in ("http", "https"):
+        return None
+    match = CONFLUENCE_DISPLAY_RE.search(parsed.path)
+    if not match:
+        return None
+    title = unquote_plus(match.group("title")).strip()
+    if not title:
+        return None
+    return PageTitleRef(title=title, space_key=unquote(match.group("space")))
+
+
+def names_a_confluence_page(url: str) -> bool:
+    """Does this Confluence URL name one page -- by id or by space and title?
+
+    A space home, a search or a short link does not, and a found link like
+    that would only ever be fetched to fail.
+    """
+    return bool(parse_confluence_page_id(url) or parse_confluence_display(url))
 
 
 def looks_like_confluence(url: str, base_url: str | None = None) -> bool:

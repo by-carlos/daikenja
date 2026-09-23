@@ -5,6 +5,31 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **The bot reads the Confluence pages a subject links to.** Every command --
+  `summary`, `judgement` and the reaction trigger -- now also fetches the
+  pages its thread or page links to, one hop deep, and hands them to the model
+  as separately labelled attachments, with the same "data, not instruction"
+  fence as the subject. Links come from message text, from Confluence unfurl
+  cards, and from a page's own links, internal title-only links included.
+  Further links typed after a command's first argument are read the same
+  way. A link that cannot be read never stops the run: the model is told
+  which one and why. Fixed limits: six links, 12,000 characters each, 40,000
+  in total, 45 seconds for the whole fetch. A run with attachments uses at
+  least `medium` effort. No `bot.yaml` change.
+
+- **The bot reads Jira issues, comments included.** A Jira issue link --
+  `/browse/KEY-123`, or a board URL's `selectedIssue=` -- works as a
+  command's argument, as a further argument, as a link found in a thread,
+  and as a `jira` macro on a page. The issue comes with its header, its
+  description and its comments oldest to newest; over the size limit, whole
+  comments are dropped from the oldest end so the latest decision survives.
+  It uses the existing `confluence` block's site, email and token, so there
+  is no new configuration.
+
 ## [0.10.0] - 2026-09-21
 
 ### Added

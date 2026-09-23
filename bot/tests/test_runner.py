@@ -1,3 +1,4 @@
+import dataclasses
 import os
 import shutil
 import sys
@@ -14,7 +15,7 @@ from daikenja_bot.runner import (
     run_command,
     scrubbed_env,
 )
-from daikenja_bot.subject import THREAD, Subject
+from daikenja_bot.subject import PAGE, THREAD, Subject
 
 from .fakes import FakeRunner, make_config
 
@@ -234,3 +235,38 @@ class RunCommandTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AttachmentEffortTests(unittest.TestCase):
+    PAGE = Subject(kind=PAGE, label="Cutover plan", body="Friday")
+
+    def _effort(self, configured, attachments=True):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU"}, "claude": {"effort": configured}}
+        )
+        subject = dataclasses.replace(
+            SUBJECT, attachments=(self.PAGE,) if attachments else ()
+        )
+        argv = build_argv(config, subject)
+        return argv[argv.index("--effort") + 1] if "--effort" in argv else None
+
+    def test_low_is_raised_to_medium_with_attachments(self):
+        self.assertEqual(self._effort("low"), "medium")
+
+    def test_low_stays_low_without_attachments(self):
+        self.assertEqual(self._effort("low", attachments=False), "low")
+
+    def test_a_higher_effort_is_never_lowered(self):
+        self.assertEqual(self._effort("high"), "high")
+        self.assertEqual(self._effort("max"), "max")
+
+    def test_an_unset_effort_is_left_to_the_cli(self):
+        self.assertIsNone(self._effort(""))
+
+    def test_run_command_passes_the_subject_through(self):
+        runner = FakeRunner(text=f"{START_SENTINEL}\nThread: hi\n{END_SENTINEL}")
+        subject = dataclasses.replace(SUBJECT, attachments=(self.PAGE,))
+        run_command(make_config(), SUMMARY, subject, environ={}, runner=runner)
+        argv = runner.calls[0]["argv"]
+        self.assertEqual(argv[argv.index("--effort") + 1], "medium")
+        self.assertIn("BEGIN ATTACHMENT 1", runner.calls[0]["stdin"])

@@ -19,7 +19,7 @@ import subprocess
 from dataclasses import dataclass
 from typing import Mapping, Sequence
 
-from .config import BotConfig, secret_env_names
+from .config import EFFORT_LEVELS, BotConfig, secret_env_names
 from .prompts import (
     build_input,
     build_instruction,
@@ -43,6 +43,11 @@ SCRUBBED_PREFIXES = ("SLACK_", "SLACK")
 # window for every mention. The flag suppresses that window; stdout and
 # stderr are still captured through the pipes. It does not exist on POSIX.
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
+# The least effort a run with attachments gets. Comparing a thread against
+# the pages it links to is reasoning; a plain thread keeps the configured
+# effort, and its cost.
+ATTACHMENT_EFFORT = "medium"
 
 
 class RunnerError(Exception):
@@ -72,12 +77,17 @@ def scrubbed_env(
     return out
 
 
-def build_argv(config: BotConfig) -> list[str]:
+def build_argv(config: BotConfig, subject: Subject | None = None) -> list[str]:
     """The `claude` command line, without the prompt.
 
     `--permission-prompts none` matters: in a headless run there is nobody
     to answer a permission prompt, so without it a tool outside the
     allowlist stalls the session instead of being refused.
+
+    A subject with attachments raises a configured effort below `medium` to
+    `medium`, and never lowers one. An unset effort is the CLI's own
+    default, which the bot has no business second-guessing, so it is left
+    alone.
     """
     claude = config.claude
     argv = [
@@ -92,8 +102,11 @@ def build_argv(config: BotConfig) -> list[str]:
     ]
     if claude.model:
         argv += ["--model", claude.model]
-    if claude.effort:
-        argv += ["--effort", claude.effort]
+    effort = claude.effort
+    if effort and subject is not None and subject.attachments:
+        effort = max(effort, ATTACHMENT_EFFORT, key=EFFORT_LEVELS.index)
+    if effort:
+        argv += ["--effort", effort]
     if claude.plugin_dir:
         argv += ["--plugin-dir", claude.plugin_dir]
     argv += list(claude.extra_args)
@@ -114,7 +127,7 @@ def run_command(
         raise RunnerError("there was nothing to read in that subject")
 
     instruction = build_instruction(command_name, subject, project=project)
-    argv = build_argv(config) + [instruction]
+    argv = build_argv(config, subject) + [instruction]
     stdin = build_input(subject)
 
     invoke = runner or _subprocess_runner

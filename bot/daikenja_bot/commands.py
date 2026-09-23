@@ -1,10 +1,11 @@
 """Read what was asked for out of the text of an @-mention.
 
-Three commands. `summary` and `judgement` each may carry one link as their
-argument; with no argument, the subject is the thread the mention was typed
-in. `delete` takes no argument and removes the bot's own last post in that
-thread. Anything else comes back as `help`, which the transport answers with
-one line of usage rather than guessing.
+Three commands. `summary` and `judgement` each may carry a link as their
+argument, and further links after it, which are read alongside as
+attachments; with no argument, the subject is the thread the mention was
+typed in. `delete` takes no argument and removes the bot's own last post in
+that thread. Anything else comes back as `help`, which the transport answers
+with one line of usage rather than guessing.
 """
 
 from __future__ import annotations
@@ -15,6 +16,8 @@ from dataclasses import dataclass
 from .links import unwrap_link
 
 MENTION_RE = re.compile(r"<@[UWB][A-Z0-9]+(?:\|[^>]*)?>")
+# One argument token: a Slack-wrapped link, label and all, or a bare word.
+TOKEN_RE = re.compile(r"<[^>]*>|\S+")
 
 SUMMARY = "summary"
 JUDGEMENT = "judgement"
@@ -52,9 +55,11 @@ USAGE = (
     "asking and what is still open, `@daikenja judgement` (or :point_up_2:) "
     "for a check of the thread against the project's ledger, and "
     "`@daikenja delete` to remove my own last post here. `summary` and "
-    "`judgement` each take a link -- a Slack thread or a Confluence page -- "
-    "to work on that instead of this thread, and `project <key>` before it "
-    "to say which project's ledger to check."
+    "`judgement` each take a link -- a Slack thread, a Confluence page or a "
+    "Jira issue -- "
+    "to work on that instead of this thread, further links after it to read "
+    "alongside, and `project <key>` before it to say which project's ledger "
+    "to check."
 )
 
 
@@ -66,6 +71,8 @@ class Command:
     argument: str | None = None
     unknown_word: str | None = None
     project: str | None = None
+    # Links after the first, read as attachments to the subject.
+    extra: tuple[str, ...] = ()
 
     @property
     def is_known(self) -> bool:
@@ -116,7 +123,27 @@ def parse_command(text: str) -> Command:
 
     remainder = " ".join(rest).strip()
     argument = first_argument(remainder) if remainder else None
-    return Command(name=word, argument=argument or None, project=project)
+    return Command(
+        name=word,
+        argument=argument or None,
+        project=project,
+        extra=extra_links(remainder),
+    )
+
+
+def extra_links(remainder: str) -> tuple[str, ...]:
+    """Every link after the first argument, in order, each once.
+
+    Words between them -- `and`, a comma -- are not arguments and are
+    dropped, so `judgement <a> and <b>` reads the same as `judgement <a> <b>`.
+    """
+    tokens = TOKEN_RE.findall(remainder or "")[1:]
+    found: list[str] = []
+    for token in tokens:
+        url = unwrap_link(token.rstrip(",;"))
+        if url.startswith(("http://", "https://")) and url not in found:
+            found.append(url)
+    return tuple(found)
 
 
 def alias_for(token: str) -> str | None:
