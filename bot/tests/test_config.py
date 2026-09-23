@@ -170,6 +170,18 @@ class ParseTests(unittest.TestCase):
                 {"slack": {"owner_user_id": "U0RIMURU", "delete_reaction": "::"}}
             )
 
+    def test_delete_reaction_cannot_match_reaction_trigger(self):
+        with self.assertRaises(ConfigError):
+            parse_config(
+                {
+                    "slack": {
+                        "owner_user_id": "U0RIMURU",
+                        "delete_reaction": "daikenja",
+                        "reaction_trigger": "daikenja",
+                    }
+                }
+            )
+
     def test_strangers_are_told_something_by_default(self):
         config = parse_config({"slack": {"owner_user_id": "U0RIMURU"}})
         assert config.slack.unauthorized_message is not None

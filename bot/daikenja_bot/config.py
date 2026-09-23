@@ -225,6 +225,12 @@ def parse_config(data: Any, source_path: Path | None = None) -> BotConfig:
     if slack_raw.get("delete_reaction") and not delete_reaction:
         raise ConfigError("slack.delete_reaction: expected an emoji name, or null")
 
+    if delete_reaction and reaction_trigger and delete_reaction == reaction_trigger:
+        raise ConfigError(
+            "slack.delete_reaction and slack.reaction_trigger cannot be the same "
+            "emoji -- one would always win and the other would never fire"
+        )
+
     slack = SlackConfig(
         owner_user_id=owner,
         allowed_users=_as_str_tuple(slack_raw.get("allowed_users"), "slack.allowed_users"),
