@@ -1,6 +1,12 @@
 import unittest
 
 from daikenja_bot.links import (
+    PageTitleRef,
+    names_a_confluence_page,
+    parse_confluence_display,
+    looks_like_jira,
+    parse_jira_key,
+    extract_links,
     forwarded_permalink,
     looks_like_confluence,
     parse_confluence_page_id,
@@ -127,3 +133,68 @@ class ForwardedPermalinkTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExtractLinksTests(unittest.TestCase):
+    def test_wrapped_and_bare_links_in_order(self):
+        text = "see <https://a.example.com/1|the page> then https://b.example.com/2."
+        self.assertEqual(
+            extract_links(text), ["https://a.example.com/1", "https://b.example.com/2"]
+        )
+
+    def test_a_repeat_is_kept_once(self):
+        text = "<https://a.example.com/1> and https://a.example.com/1"
+        self.assertEqual(extract_links(text), ["https://a.example.com/1"])
+
+    def test_slack_escaped_ampersands_are_undone(self):
+        text = "<https://a.example.com/x?a=1&amp;b=2>"
+        self.assertEqual(extract_links(text), ["https://a.example.com/x?a=1&b=2"])
+
+    def test_mentions_and_non_web_links_are_not_links(self):
+        self.assertEqual(extract_links("<@U0RIMURU> <mailto:a@example.com> <#C0HARBOR>"), [])
+
+
+class JiraLinkTests(unittest.TestCase):
+    BASE = "https://example.atlassian.net"
+
+    def test_a_browse_link(self):
+        self.assertEqual(parse_jira_key(f"{self.BASE}/browse/HAR-12"), "HAR-12")
+        self.assertEqual(parse_jira_key(f"<{self.BASE}/browse/HAR-12?focusedCommentId=1|HAR-12>"), "HAR-12")
+
+    def test_a_board_link_with_a_selected_issue(self):
+        url = f"{self.BASE}/jira/software/projects/HAR/boards/3?selectedIssue=HAR-7"
+        self.assertEqual(parse_jira_key(url), "HAR-7")
+
+    def test_a_board_link_without_one_is_not_an_issue(self):
+        self.assertIsNone(parse_jira_key(f"{self.BASE}/jira/software/projects/HAR/boards/3"))
+        self.assertIsNone(parse_jira_key(f"{self.BASE}/browse/har-12"))
+
+    def test_jira_needs_the_configured_site_when_there_is_one(self):
+        self.assertTrue(looks_like_jira(f"{self.BASE}/browse/HAR-12", self.BASE))
+        self.assertFalse(looks_like_jira("https://other.atlassian.net/browse/HAR-12", self.BASE))
+
+    def test_an_unconfigured_bot_recognises_atlassian_cloud(self):
+        self.assertTrue(looks_like_jira(f"{self.BASE}/browse/HAR-12"))
+        self.assertFalse(looks_like_jira("https://example.com/browse/HAR-12"))
+
+    def test_a_page_is_not_jira(self):
+        self.assertFalse(looks_like_jira(f"{self.BASE}/wiki/spaces/HARBOR/pages/1", self.BASE))
+
+
+class ConfluenceDisplayTests(unittest.TestCase):
+    BASE = "https://example.atlassian.net/wiki"
+
+    def test_space_and_title_are_read(self):
+        self.assertEqual(
+            parse_confluence_display(f"<{self.BASE}/display/HARBOR/Cutover+plan%3A+Friday|plan>"),
+            PageTitleRef("Cutover plan: Friday", "HARBOR"),
+        )
+
+    def test_a_space_home_is_not_a_display_page(self):
+        self.assertIsNone(parse_confluence_display(f"{self.BASE}/display/HARBOR"))
+
+    def test_only_urls_naming_one_page_count(self):
+        self.assertTrue(names_a_confluence_page(f"{self.BASE}/spaces/HARBOR/pages/1/X"))
+        self.assertTrue(names_a_confluence_page(f"{self.BASE}/display/HARBOR/X"))
+        self.assertFalse(names_a_confluence_page(f"{self.BASE}/spaces/HARBOR/overview"))
+        self.assertFalse(names_a_confluence_page(f"{self.BASE}/x/AbCd"))

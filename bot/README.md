@@ -16,16 +16,44 @@ Three commands, all triggered by an @-mention:
 either as the shortcode or as the character your keyboard produces, with or
 without a skin tone. It is the same command and takes the same argument.
 
-`summary` and `judgement` each take a link as their argument and work on
-that instead of the thread they were typed in:
+`summary` and `judgement` each take a link as their argument -- a Slack
+thread, a Confluence page or a Jira issue -- and work on that instead of the
+thread they were typed in:
 
 ```
 @daikenja summary https://example.slack.com/archives/C0HARBOR/p1758067200000100
 @daikenja judgement https://example.atlassian.net/wiki/spaces/HARBOR/pages/424242/Cutover+plan
+@daikenja judgement https://example.atlassian.net/browse/HAR-12
 ```
 
 The answer still lands in the thread the command was typed in, so a verdict
 on an external page is visible where somebody asked for it.
+
+**Linked pages and issues are read too, one hop deep.** Whatever a command
+works on -- the thread, the linked thread, the page, the issue, or the thread
+a reaction was added in -- the bot also fetches the Confluence pages and Jira
+issues it links to and hands them to the model as separately labelled
+attachments. That covers a link typed in a message, a page pasted as an
+"Added by Confluence Cloud" card, a page's own links to other pages, and a
+`jira` macro on a page. A Jira issue comes with its comments, since that is
+where a ticket records the actual decision; when one is too long, its oldest
+comments go first. Links inside an attachment are not followed, and
+neither is a Slack permalink found in the content. Further links typed after
+the first argument are read the same way, whatever their kind; words between
+them are ignored:
+
+```
+@daikenja judgement https://example.slack.com/archives/C0HARBOR/p1758067200000100 and https://example.atlassian.net/wiki/spaces/HARBOR/pages/424242/Cutover+plan
+```
+
+The reply header says how many were read (`On <link> + 2 linked`). A linked
+page or issue that cannot be read -- not found, not visible to the
+configured account, timed out, not configured -- never stops the run: the
+model is told which link failed and why, so the answer can say so rather
+than guess at it. The limits are fixed: six links, 12,000 characters each,
+40,000 across all of them, and 45 seconds for the whole fetch. A run that
+reads attachments uses at least `medium` effort, since comparing sources is
+reasoning; an `effort` already higher is left as it is.
 
 **A third way in: react instead of typing.** Set `slack.reaction_trigger` to a
 custom emoji's name and adding that reaction to any message runs `summary`
@@ -443,7 +471,7 @@ resolution by content does its job.
 Adding `Bash`, `Write` or `WebFetch` hands a capability to a session whose
 input is text other people wrote.
 
-### Confluence links
+### Confluence and Jira links
 
 `judgement <confluence link>` needs credentials the Slack app does not have,
 so it is off until you add a `confluence` block. Without one, the bot
@@ -459,7 +487,19 @@ confluence:
 The token is an [Atlassian API
 token](https://id.atlassian.com/manage-profile/security/api-tokens). Only
 the full page URL works -- a short `/wiki/x/...` link carries no page id,
-and the bot says so rather than guessing.
+and the bot says so rather than guessing. An older `/wiki/display/SPACE/Title`
+URL is found by one title lookup in that space.
+
+**The same block turns on Jira too.** On Atlassian Cloud both products
+share one host and accept one API token, so a Jira issue link -- `/browse/HAR-12`,
+or a board URL with `selectedIssue=HAR-12` -- is read from `base_url` with
+the same email and token. There is no separate `jira` block. Only an issue on
+`base_url` is read; a link to another site is not.
+
+The same block is also what lets the bot follow Confluence and Jira links
+found inside a thread or a page. Everything it follows is read with this
+token, so it sees exactly what that account sees: set it up as the person
+who triggers the commands, since they are the one reading.
 
 ## Tests
 
@@ -497,13 +537,16 @@ daikenja_bot/__main__.py   the entry point and --check
 daikenja_bot/app.py        Socket Mode transport; the only slack_bolt import
 daikenja_bot/handler.py    what happens on a mention, start to finish
 daikenja_bot/commands.py   parsing `summary` / `judgement` / `delete`, `project <key>` and the argument
-daikenja_bot/links.py      Slack permalinks and Confluence URLs
+daikenja_bot/links.py      Slack permalinks, Confluence URLs, and finding links in text
+daikenja_bot/resolve.py    one link to one fetched subject, whichever source it is
+daikenja_bot/follow.py     reading what a subject links to, one hop, within fixed limits
 daikenja_bot/slack_io.py   the only file that holds the Slack token
 daikenja_bot/transcript.py a fetched thread, rendered for a reader
 daikenja_bot/prompts.py    the prompt, and reading the answer back out
 daikenja_bot/preflight.py  which skills the headless session will actually find
 daikenja_bot/runner.py     the headless session, with the environment scrubbed
-daikenja_bot/confluence.py optional page fetching, standard library only
+daikenja_bot/confluence.py optional page fetching and its links, standard library only
+daikenja_bot/jira.py       optional issue fetching, comments included, on the same credentials
 daikenja_bot/mrkdwn.py     markdown to Slack's own dialect
 daikenja_bot/digest.py     the scheduled digest: a feeder's item list in, one DM out
 daikenja_bot/config.py     bot.yaml

@@ -22,20 +22,20 @@ from .commands import (
     Command,
     parse_command,
 )
-from .config import BotConfig, ConfigError, resolve_secret
-from .confluence import ConfluenceError, ConfluenceNotConfigured, fetch_page
-from .links import forwarded_permalink, looks_like_confluence, parse_slack_permalink
+from .config import BotConfig, ConfigError
+from .confluence import ConfluenceError, ConfluenceNotConfigured
+from .follow import follow
 from .mrkdwn import to_mrkdwn, truncate
+from .resolve import Resolved, Resolver
 from .runner import RunnerError, run_command
-from .slack_io import SlackError, SlackIO, thread_participants
+from .slack_io import SlackError, SlackIO
 from .subject import Subject
-from .transcript import render_thread
 
 log = logging.getLogger(__name__)
 
 UNKNOWN_LINK = (
-    "I did not recognise that link. I can read a Slack message permalink or a "
-    "Confluence page URL."
+    "I did not recognise that link. I can read a Slack message permalink, a "
+    "Confluence page URL or a Jira issue URL."
 )
 
 # What `slack.unauthorized_message` writes to mean "the owner, by name".
@@ -102,14 +102,24 @@ class Handler:
         *,
         environ: Mapping[str, str],
         run: Any = run_command,
-        fetch_confluence: Any = fetch_page,
+        fetch_confluence: Any = None,
+        fetch_jira: Any = None,
+        resolver: Resolver | None = None,
         unavailable: Mapping[str, str] | None = None,
     ) -> None:
         self._config = config
         self._slack = slack
         self._environ = environ
         self._run = run
-        self._fetch_confluence = fetch_confluence
+        # `fetch_confluence` and `fetch_jira` are the shortcuts the tests use
+        # to stand in for one fetch; a whole `resolver` replaces every source.
+        self._resolver = resolver or Resolver(
+            config,
+            slack,
+            environ,
+            fetch_confluence=fetch_confluence,
+            fetch_jira=fetch_jira,
+        )
         # Command name -> why it cannot run, from the startup skill check.
         self._unavailable = dict(unavailable or {})
         # Re-fire guard's own memory, backing the Slack ack reaction rather
@@ -161,7 +171,7 @@ class Handler:
         self._acknowledge(mention)
 
         try:
-            subject = self._resolve_subject(command, mention)
+            resolved = self._resolve_subject(command, mention)
         except ConfluenceNotConfigured as exc:
             self._reply(mention, str(exc))
             return
@@ -172,9 +182,20 @@ class Handler:
             self._reply(mention, f"I could not read that: {exc}")
             return
 
-        if subject is None:
+        if resolved is None:
             self._reply(mention, UNKNOWN_LINK)
             return
+
+        # What the subject links to is read here, before the session starts.
+        # Nothing about it can stop the run: a link that fails is noted for
+        # the model and surfaces only through the answer.
+        subject = follow(
+            resolved.subject,
+            command.extra,
+            self._resolver,
+            resolved.links,
+            space_key=resolved.space_key,
+        )
 
         try:
             answer = self._run(
@@ -250,12 +271,13 @@ class Handler:
 
         thread_ts = str(message.get("thread_ts") or reaction.message_ts)
         try:
-            subject = self._thread_subject(
+            resolved = self._resolver.thread(
                 reaction.channel_id, thread_ts, follow_forward=True
             )
         except SlackError as exc:
             log.warning("could not read the reacted thread: %s", exc)
             return
+        subject = follow(resolved.subject, (), self._resolver, resolved.links)
 
         answers: list[str] = []
         for command_name in (SUMMARY, JUDGEMENT):
@@ -288,94 +310,14 @@ class Handler:
 
     def _resolve_subject(
         self, command: Command, mention: MentionEvent
-    ) -> Subject | None:
+    ) -> Resolved | None:
         if not command.argument:
-            return self._thread_subject(
+            return self._resolver.thread(
                 mention.channel_id, mention.thread_ts, follow_forward=True
             )
-
-        permalink = parse_slack_permalink(command.argument)
-        if permalink:
-            return self._thread_subject(
-                permalink.channel_id,
-                permalink.thread_ts,
-                source_url=command.argument,
-            )
-
-        base_url = (
-            self._config.confluence.base_url if self._config.confluence else None
-        )
-        if looks_like_confluence(command.argument, base_url):
-            return self._confluence_subject(command.argument)
-
-        return None
-
-    def _thread_subject(
-        self,
-        channel_id: str,
-        thread_ts: str,
-        source_url: str | None = None,
-        follow_forward: bool = False,
-    ) -> Subject:
-        messages = self._slack.fetch_thread(channel_id, thread_ts)
-        if not messages:
-            raise SlackError("that thread came back empty")
-
-        if follow_forward:
-            # A thread whose parent is a forwarded message is a wrapper around
-            # the real subject. Followed once and only from the no-argument
-            # path: a link the user typed is what they asked for, whatever the
-            # thread around it holds. A failure here is reported rather than
-            # quietly falling back -- summarising the wrapper is the defect
-            # this exists to stop, and doing it silently is worse.
-            forwarded = forwarded_permalink(messages[0])
-            ref = parse_slack_permalink(forwarded) if forwarded else None
-            if ref:
-                return self._thread_subject(
-                    ref.channel_id, ref.thread_ts, source_url=forwarded
-                )
-
-        messages = self._without_own_messages(messages)
-        if not messages:
-            raise SlackError("that thread came back empty")
-        users = self._slack.user_names(thread_participants(messages))
-        return render_thread(
-            messages,
-            users=users,
-            channel_label=self._slack.channel_label(channel_id),
-            source_url=source_url,
-        )
-
-    def _without_own_messages(
-        self, messages: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
-        """Drop what this bot itself has already posted into the thread.
-
-        A second command in a thread the bot has answered would otherwise be
-        handed its own earlier answer as thread content, and summarise the
-        summary. Only this bot's messages go: another app's post is somebody's
-        actual content and stays.
-        """
-        own = self._slack.bot_user_id()
-        if not own:
-            return messages
-        return [m for m in messages if str(m.get("user") or "") != own]
-
-    def _confluence_subject(self, url: str) -> Subject:
-        confluence = self._config.confluence
-        if confluence is None:
-            raise ConfluenceNotConfigured(
-                "Confluence links are not configured on this bot. Add a "
-                "`confluence` block to bot.yaml to turn them on."
-            )
-        token = resolve_secret(
-            label="the Confluence token",
-            env_name=confluence.token_env,
-            file_path=confluence.token_file,
-            inline=confluence.token,
-            environ=dict(self._environ),
-        )
-        return self._fetch_confluence(confluence, url, token)
+        # A link the user typed is what they asked for, whatever the thread
+        # around it holds, so a permalink is not forward-followed.
+        return self._resolver.resolve(command.argument)
 
     # -- deleting ------------------------------------------------------
 
@@ -487,7 +429,9 @@ class Handler:
             # `?thread_ts=...&cid=...`, and a bare `&` is markup to Slack's
             # renderer. `<...>` is the documented form for a link, and the
             # post already has unfurling switched off.
-            body = f"_On_ <{source.source_url}>\n\n{body}"
+            linked = len(source.attachments)
+            also = f" + {linked} linked" if linked else ""
+            body = f"_On_ <{source.source_url}>{also}\n\n{body}"
         try:
             self._slack.post(mention.channel_id, mention.thread_ts, truncate(body))
         except SlackError as exc:

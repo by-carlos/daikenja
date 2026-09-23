@@ -82,8 +82,9 @@ claude:
   # How long one answer may take before it is abandoned.
   timeout_seconds: 300
 
-# Optional. Without this block, a Confluence link gets a one-line reply
-# saying Confluence is not configured, and nothing else happens.
+# Optional. Without this block, a Confluence or Jira link gets a one-line
+# reply saying it is not configured, and nothing else happens. The one block
+# turns on both products: on Atlassian Cloud they share a site and a token.
 # confluence:
 #   base_url: https://example.atlassian.net
 #   email: you@example.com
