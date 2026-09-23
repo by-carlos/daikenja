@@ -140,7 +140,7 @@ def _fetch_all(
 
     def fetch(link: "Link") -> Subject | str:
         resolved = resolver.resolve(
-            link, timeout=REQUEST_TIMEOUT, default_space=space_key
+            link, timeout=REQUEST_TIMEOUT, default_space=space_key, limit=MAX_CHARS
         )
         if resolved is None:
             return "not a link I can read"

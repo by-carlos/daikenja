@@ -5,9 +5,9 @@ from daikenja_bot.confluence import ConfluenceError, ConfluenceNotConfigured
 from daikenja_bot.config import parse_config
 from daikenja_bot.follow import MAX_CHARS, MAX_LINKS, MAX_TOTAL_CHARS, follow, truncate
 from daikenja_bot.links import PageTitleRef
-from daikenja_bot.resolve import CONFLUENCE, SLACK, Resolved, Resolver, thread_links
+from daikenja_bot.resolve import CONFLUENCE, JIRA, SLACK, Resolved, Resolver, thread_links
 from daikenja_bot.slack_io import SlackIO
-from daikenja_bot.subject import PAGE, THREAD, Subject
+from daikenja_bot.subject import ISSUE, PAGE, THREAD, Subject
 
 from .fakes import FakeSlackClient, make_config
 
@@ -36,7 +36,7 @@ class StubResolver:
             return SLACK
         return None
 
-    def resolve(self, link, *, timeout=None, default_space=None):
+    def resolve(self, link, *, timeout=None, default_space=None, limit=None):
         self.resolved.append((link, default_space))
         if self.block is not None and link in self.block[1]:
             self.block[0].wait(5)
@@ -211,3 +211,54 @@ class ThreadLinksTests(unittest.TestCase):
             {"text": f"again <{WIKI}/1>"},
         ]
         self.assertEqual(thread_links(messages), [f"{WIKI}/1", f"{WIKI}/2", f"{WIKI}/3"])
+
+
+class JiraResolverTests(unittest.TestCase):
+    ISSUE_URL = "https://example.atlassian.net/browse/HAR-12"
+
+    def _resolver(self, fetch_jira=None, confluence=True):
+        raw = {"slack": {"owner_user_id": "U0RIMURU"}}
+        if confluence:
+            raw["confluence"] = {
+                "base_url": "https://example.atlassian.net",
+                "email": "rimuru@example.com",
+                "token_env": "WIKI_TOKEN",
+            }
+        return Resolver(
+            parse_config(raw),
+            SlackIO(FakeSlackClient()),
+            {"WIKI_TOKEN": "t"},
+            fetch_jira=fetch_jira,
+        )
+
+    def test_an_issue_link_is_jira_typed_or_found(self):
+        resolver = self._resolver()
+        self.assertEqual(resolver.kind_of(self.ISSUE_URL), JIRA)
+        self.assertEqual(resolver.kind_of(self.ISSUE_URL, found=True), JIRA)
+
+    def test_an_issue_is_fetched_with_the_confluence_block_and_the_limit(self):
+        seen = []
+        issue = Subject(kind=ISSUE, label="HAR-12: x", body="b", source_url=self.ISSUE_URL)
+
+        def fetch(config, url, token, limit=None):
+            seen.append((config.base_url, url, token, limit))
+            return issue
+
+        resolved = self._resolver(fetch).resolve(self.ISSUE_URL, limit=500)
+        self.assertIs(resolved.subject, issue)
+        self.assertEqual(seen, [("https://example.atlassian.net", self.ISSUE_URL, "t", 500)])
+
+    def test_follow_hands_jira_the_attachment_cap(self):
+        seen = []
+
+        def fetch(config, url, token, limit=None):
+            seen.append(limit)
+            return Subject(kind=ISSUE, label="HAR-12: x", body="b", source_url=url)
+
+        out = follow(THREAD_SUBJECT, (), self._resolver(fetch), [self.ISSUE_URL])
+        self.assertEqual(seen, [MAX_CHARS])
+        self.assertEqual(out.attachments[0].kind, ISSUE)
+
+    def test_unconfigured_jira_is_recorded_by_follow(self):
+        out = follow(THREAD_SUBJECT, (), self._resolver(confluence=False), [self.ISSUE_URL])
+        self.assertEqual(out.unread[0].reason, "Jira not configured")

@@ -6,7 +6,7 @@ from daikenja_bot.confluence import ConfluenceError
 from daikenja_bot.handler import UNKNOWN_LINK, Handler, MentionEvent, ReactionEvent
 from daikenja_bot.runner import RunnerError
 from daikenja_bot.slack_io import SlackIO
-from daikenja_bot.subject import PAGE, Subject
+from daikenja_bot.subject import ISSUE, PAGE, Subject
 
 from .fakes import FakeSlackClient, load_fixture, make_config
 
@@ -833,3 +833,54 @@ class FollowedLinkTests(unittest.TestCase):
         self.assertEqual([c[0] for c in run.calls], ["summary", "judgement"])
         for _, subject in run.calls:
             self.assertEqual([a.label for a in subject.attachments], ["Runbook"])
+
+
+ISSUE_URL = "https://example.atlassian.net/browse/HAR-12"
+ISSUE_SUBJECT = Subject(kind=ISSUE, label="HAR-12: Move the cutover", body="HAR-12 (Story, Done)", source_url=ISSUE_URL)
+
+
+class JiraLinkTests(unittest.TestCase):
+    def _handler(self, replies=None, config=None):
+        client = FakeSlackClient(replies=replies or THREAD, users=USERS)
+        run = Recorder()
+        seen = []
+
+        def fetch_jira(config, url, token, limit=None):
+            seen.append((url, limit))
+            return ISSUE_SUBJECT
+
+        handler = Handler(
+            config or _wiki_config(),
+            SlackIO(client),
+            environ={"WIKI_TOKEN": "t"},
+            run=run,
+            fetch_jira=fetch_jira,
+        )
+        return handler, client, run, seen
+
+    def test_an_issue_is_a_subject_in_its_own_right(self):
+        handler, client, run, seen = self._handler()
+        handler.handle_mention(mention(f"<@U0BOT> judgement <{ISSUE_URL}>"))
+        self.assertEqual(seen, [(ISSUE_URL, None)])
+        self.assertEqual(run.calls[0][1].kind, ISSUE)
+        self.assertTrue(client.posted[0]["text"].startswith(f"_On_ <{ISSUE_URL}>"))
+
+    def test_an_issue_linked_in_the_thread_is_attached(self):
+        replies = THREAD + [
+            {
+                "type": "message",
+                "user": "U0SHION",
+                "ts": "1758067500.000500",
+                "thread_ts": THREAD[0]["ts"],
+                "text": f"tracked in <{ISSUE_URL}|HAR-12>",
+            }
+        ]
+        handler, client, run, seen = self._handler(replies=replies)
+        handler.handle_mention(mention("<@U0BOT> summary", thread_ts=THREAD[0]["ts"]))
+        self.assertEqual(run.calls[0][1].attachments, (ISSUE_SUBJECT,))
+
+    def test_unconfigured_jira_says_so_and_stops(self):
+        handler, client, run, _ = self._handler(config=make_config())
+        handler.handle_mention(mention(f"<@U0BOT> judgement <{ISSUE_URL}>"))
+        self.assertIn("Jira links are not configured", client.posted[0]["text"])
+        self.assertEqual(run.calls, [])

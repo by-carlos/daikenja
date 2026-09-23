@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in total, 45 seconds for the whole fetch. A run with attachments uses at
   least `medium` effort. No `bot.yaml` change.
 
+- **The bot reads Jira issues, comments included.** A Jira issue link --
+  `/browse/KEY-123`, or a board URL's `selectedIssue=` -- works as a
+  command's argument, as a further argument, as a link found in a thread,
+  and as a `jira` macro on a page. The issue comes with its header, its
+  description and its comments oldest to newest; over the size limit, whole
+  comments are dropped from the oldest end so the latest decision survives.
+  It uses the existing `confluence` block's site, email and token, so there
+  is no new configuration.
+
 ## [0.10.0] - 2026-09-21
 
 ### Added

@@ -27,11 +27,15 @@ from .confluence import (
     find_page,
     read_page,
 )
+from .jira import JiraNotConfigured, fetch_issue
+from .jira import _default_fetch as jira_default_fetch
+from .jira import fetcher as jira_fetcher
 from .links import (
     PageTitleRef,
     extract_links,
     forwarded_permalink,
     looks_like_confluence,
+    looks_like_jira,
     parse_slack_permalink,
     unwrap_link,
 )
@@ -43,6 +47,7 @@ log = logging.getLogger(__name__)
 
 SLACK = "slack"
 CONFLUENCE = "confluence"
+JIRA = "jira"
 
 # A link as `follow` handles it: a URL, or a page named only by its title.
 Link = Union[str, PageTitleRef]
@@ -69,6 +74,7 @@ class Resolver:
         *,
         fetch_confluence: Callable[..., Any] | None = None,
         find_confluence_page: Callable[..., str] | None = None,
+        fetch_jira: Callable[..., Subject] | None = None,
     ) -> None:
         self._config = config
         self._slack = slack
@@ -77,6 +83,7 @@ class Resolver:
         # back a bare subject; None means the real HTTP calls.
         self._fetch_confluence = fetch_confluence
         self._find_confluence_page = find_confluence_page
+        self._fetch_jira = fetch_jira
 
     # -- what a link is --------------------------------------------------
 
@@ -96,6 +103,10 @@ class Resolver:
         if parse_slack_permalink(url):
             return SLACK
         base_url = self._config.confluence.base_url if self._config.confluence else None
+        # Before Confluence: the loose Confluence test claims every
+        # `*.atlassian.net` URL, and a Jira link is one of those.
+        if looks_like_jira(url, base_url):
+            return JIRA
         if found:
             parsed = urlparse(url)
             if base_url:
@@ -118,11 +129,14 @@ class Resolver:
         *,
         timeout: float | None = None,
         default_space: str | None = None,
+        limit: int | None = None,
     ) -> Resolved | None:
         """Fetch one link. None when it belongs to no source this bot reads.
 
         ``timeout`` shortens each HTTP request, for a followed link; the main
-        subject keeps the fetcher's own default.
+        subject keeps the fetcher's own default. ``limit`` lets a Jira issue
+        trim itself to size from its oldest comments, where cutting the end
+        would lose the latest decision.
         """
         kind = self.kind_of(link)
         if kind == SLACK:
@@ -132,6 +146,8 @@ class Resolver:
             return self.thread(ref.channel_id, ref.thread_ts, source_url=url)
         if kind == CONFLUENCE:
             return self._page(link, timeout=timeout, default_space=default_space)
+        if kind == JIRA:
+            return self._issue(str(link), timeout=timeout, limit=limit)
         return None
 
     def thread(
@@ -184,19 +200,38 @@ class Resolver:
             return messages
         return [m for m in messages if str(m.get("user") or "") != own]
 
-    def _page(
-        self, link: Link, *, timeout: float | None, default_space: str | None
-    ) -> Resolved:
+    def _token(self) -> str:
         confluence = self._config.confluence
-        if confluence is None:
-            raise ConfluenceNotConfigured()
-        token = resolve_secret(
+        assert confluence is not None
+        return resolve_secret(
             label="the Confluence token",
             env_name=confluence.token_env,
             file_path=confluence.token_file,
             inline=confluence.token,
             environ=dict(self._environ),
         )
+
+    def _issue(self, url: str, *, timeout: float | None, limit: int | None) -> Resolved:
+        # Jira rides on the `confluence` block: one site, one token.
+        confluence = self._config.confluence
+        if confluence is None:
+            raise JiraNotConfigured()
+        token = self._token()
+        url = unwrap_link(url)
+        if self._fetch_jira is not None:
+            subject = self._fetch_jira(confluence, url, token, limit=limit)
+        else:
+            fetch = jira_fetcher(timeout) if timeout else jira_default_fetch
+            subject = fetch_issue(confluence, url, token, fetch, limit)
+        return Resolved(subject=subject)
+
+    def _page(
+        self, link: Link, *, timeout: float | None, default_space: str | None
+    ) -> Resolved:
+        confluence = self._config.confluence
+        if confluence is None:
+            raise ConfluenceNotConfigured()
+        token = self._token()
         fetch = fetcher(timeout) if timeout else _default_fetch
 
         if isinstance(link, PageTitleRef):

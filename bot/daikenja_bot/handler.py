@@ -34,8 +34,8 @@ from .subject import Subject
 log = logging.getLogger(__name__)
 
 UNKNOWN_LINK = (
-    "I did not recognise that link. I can read a Slack message permalink or a "
-    "Confluence page URL."
+    "I did not recognise that link. I can read a Slack message permalink, a "
+    "Confluence page URL or a Jira issue URL."
 )
 
 # What `slack.unauthorized_message` writes to mean "the owner, by name".
@@ -103,6 +103,7 @@ class Handler:
         environ: Mapping[str, str],
         run: Any = run_command,
         fetch_confluence: Any = None,
+        fetch_jira: Any = None,
         resolver: Resolver | None = None,
         unavailable: Mapping[str, str] | None = None,
     ) -> None:
@@ -110,10 +111,14 @@ class Handler:
         self._slack = slack
         self._environ = environ
         self._run = run
-        # `fetch_confluence` is the shortcut the tests use to stand in for
-        # the page fetch alone; a whole `resolver` replaces every source.
+        # `fetch_confluence` and `fetch_jira` are the shortcuts the tests use
+        # to stand in for one fetch; a whole `resolver` replaces every source.
         self._resolver = resolver or Resolver(
-            config, slack, environ, fetch_confluence=fetch_confluence
+            config,
+            slack,
+            environ,
+            fetch_confluence=fetch_confluence,
+            fetch_jira=fetch_jira,
         )
         # Command name -> why it cannot run, from the startup skill check.
         self._unavailable = dict(unavailable or {})

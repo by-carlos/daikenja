@@ -44,7 +44,13 @@ BLANK_LINES_RE = re.compile(r"\n{3,}")
 # A page reference inside an attachment or image names where a file lives,
 # not a document to read, so those blocks are dropped before the scan.
 LINK_RE = re.compile(
-    r"<a\s[^>]*?href=\"(?P<href>[^\"]+)\"|<ri:page\s(?P<page>[^>]*?)/?>",
+    r"<a\s[^>]*?href=\"(?P<href>[^\"]+)\""
+    r"|<ri:page\s(?P<page>[^>]*?)/?>"
+    r"|<ac:structured-macro\s[^>]*?ac:name=\"jira\"[^>]*>(?P<jira>.*?)</ac:structured-macro>",
+    re.IGNORECASE | re.DOTALL,
+)
+JIRA_KEY_PARAM_RE = re.compile(
+    r"<ac:parameter\s[^>]*?ac:name=\"key\"[^>]*>\s*(?P<key>[^<\s]+)\s*</ac:parameter>",
     re.IGNORECASE,
 )
 ATTR_RE = re.compile(r"(?P<name>[\w:-]+)=\"(?P<value>[^\"]*)\"")
@@ -111,8 +117,13 @@ def storage_to_text(storage: str) -> str:
     return BLANK_LINES_RE.sub("\n\n", "\n".join(lines)).strip()
 
 
-def storage_links(storage: str) -> list[PageLink]:
-    """The links in a page's storage format, in order, each once."""
+def storage_links(storage: str, base_url: str | None = None) -> list[PageLink]:
+    """The links in a page's storage format, in order, each once.
+
+    A `jira` macro names an issue by key, which becomes a link on
+    ``base_url`` -- the one site both products share. Without a base URL
+    there is nowhere to point it, and it is skipped.
+    """
     scanned = FILE_BLOCK_RE.sub("", storage or "")
     found: list[PageLink] = []
     for match in LINK_RE.finditer(scanned):
@@ -121,6 +132,10 @@ def storage_links(storage: str) -> list[PageLink]:
             href = html.unescape(match.group("href")).strip()
             if href.startswith(("http://", "https://")):
                 link = href
+        elif match.group("jira") is not None:
+            key = JIRA_KEY_PARAM_RE.search(match.group("jira"))
+            if key and base_url:
+                link = f"{base_url.rstrip('/')}/browse/{key.group('key')}"
         else:
             attrs = {
                 a.group("name").lower(): html.unescape(a.group("value"))
@@ -252,7 +267,7 @@ def read_page(
 
     return Page(
         subject=Subject(kind=PAGE, label=title, body=body, source_url=url),
-        links=tuple(storage_links(storage)),
+        links=tuple(storage_links(storage, config.base_url)),
         space_key=space_key_of(url),
     )
 

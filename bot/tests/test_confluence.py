@@ -217,3 +217,29 @@ class FindPageTests(unittest.TestCase):
                 fetch=responder({"results": [{"id": "1"}, {"id": "2"}]}),
             )
         self.assertEqual(caught.exception.reason, "title matches several pages")
+
+
+class JiraMacroTests(unittest.TestCase):
+    MACRO = (
+        '<p>tracked in <ac:structured-macro ac:name="jira" ac:schema-version="1">'
+        '<ac:parameter ac:name="server">System Jira</ac:parameter>'
+        '<ac:parameter ac:name="key">HAR-12</ac:parameter>'
+        '</ac:structured-macro> and <a href="https://example.com/x">x</a></p>'
+    )
+
+    def test_a_jira_macro_becomes_an_issue_link_in_order(self):
+        self.assertEqual(
+            storage_links(self.MACRO, "https://example.atlassian.net"),
+            ["https://example.atlassian.net/browse/HAR-12", "https://example.com/x"],
+        )
+
+    def test_without_a_site_the_macro_is_skipped(self):
+        self.assertEqual(storage_links(self.MACRO), ["https://example.com/x"])
+
+    def test_a_jql_macro_names_no_single_issue(self):
+        storage = (
+            '<ac:structured-macro ac:name="jira">'
+            '<ac:parameter ac:name="jqlQuery">project = HAR</ac:parameter>'
+            '</ac:structured-macro>'
+        )
+        self.assertEqual(storage_links(storage, "https://example.atlassian.net"), [])

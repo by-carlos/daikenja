@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 
 THREAD = "Slack thread"
 PAGE = "Confluence page"
+ISSUE = "Jira issue"
 # The digest's subject is not something anyone wrote: it is a list another
 # process collected. It is still other people's words, so it is still data
 # and not instruction, which is the only property the prompt cares about.

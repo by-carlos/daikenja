@@ -1,7 +1,7 @@
 # Design: the bot reads linked Confluence pages and Jira issues
 
 **Date:** 22 Sep 2026
-**Status:** approved design, not yet implemented.
+**Status:** implemented on `feat/atlassian-links`; hand acceptance pending.
 **Branch:** `feat/atlassian-links` (one integration branch, two tasks).
 **Affects:** `bot/daikenja_bot/` -- `links.py`, `confluence.py`, `subject.py`,
 `handler.py`, `prompts.py`, `runner.py`, `commands.py`, new `resolve.py`,

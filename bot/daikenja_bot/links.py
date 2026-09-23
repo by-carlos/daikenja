@@ -17,6 +17,9 @@ SLACK_ARCHIVE_RE = re.compile(
     r"^/archives/(?P<channel>[A-Z][A-Z0-9]+)/p(?P<ts>\d{10,}\d{6})/?$"
 )
 CONFLUENCE_PAGE_RE = re.compile(r"/pages/(?P<page_id>\d+)")
+JIRA_KEY = r"[A-Z][A-Z0-9_]+-\d+"
+JIRA_BROWSE_RE = re.compile(rf"/browse/(?P<key>{JIRA_KEY})(?:[/?#]|$)")
+JIRA_KEY_RE = re.compile(rf"^{JIRA_KEY}$")
 
 # A Slack-wrapped link first, so its label is consumed with it and a URL
 # written inside the label is not counted twice; then a bare URL.
@@ -168,6 +171,41 @@ def parse_confluence_page_id(url: str) -> str | None:
     if match:
         return match.group("page_id")
     return None
+
+
+def parse_jira_key(url: str) -> str | None:
+    """The issue key a Jira link names, or None.
+
+    Two forms: ``/browse/HAR-12``, and the ``selectedIssue=HAR-12`` query a
+    board or backlog URL carries for the issue open beside it.
+    """
+    parsed = urlparse(unwrap_link(url))
+    if parsed.scheme not in ("http", "https"):
+        return None
+    match = JIRA_BROWSE_RE.search(unquote(parsed.path))
+    if match:
+        return match.group("key")
+    selected = parse_qs(parsed.query).get("selectedIssue")
+    if selected and JIRA_KEY_RE.match(selected[0].strip()):
+        return selected[0].strip()
+    return None
+
+
+def looks_like_jira(url: str, base_url: str | None = None) -> bool:
+    """Is this a link to one Jira issue?
+
+    It must name an issue key, and be on the configured site -- the issue is
+    fetched from that site by key, so a key from anywhere else would read the
+    wrong issue. With no site configured, any Atlassian Cloud host counts, so
+    an unconfigured bot can say why it is not answering.
+    """
+    if not parse_jira_key(url):
+        return False
+    host = urlparse(unwrap_link(url)).netloc
+    if base_url:
+        base = urlparse(base_url if "//" in base_url else f"https://{base_url}")
+        return bool(base.netloc) and host == base.netloc
+    return host.endswith(".atlassian.net")
 
 
 def looks_like_confluence(url: str, base_url: str | None = None) -> bool:
