@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.11.1] - 2026-09-23
 
 ### The Slack bot's default model moved from `claude-opus-5` to `claude-opus-5-5`
 
