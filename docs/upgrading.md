@@ -41,6 +41,18 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### The Slack bot's default model moved from `claude-opus-5` to `claude-opus-5-5`
+
+Only affects you if you run `bot/` with `claude.model` unset (or set to
+`claude-opus-5` yourself) in `bot.yaml`. Anthropic's Opus 5 line moved on to
+5.5, and `claude-opus-5` had been resolving to the retired Opus 5.0 rather
+than tracking the current release, so an unset `claude.model` was silently
+running on last generation's model. Nothing to do if that suits you -- the
+new default picks up on the next restart. To pin the old model instead, set
+`claude.model` to `claude-opus-5` explicitly.
+
 ## [0.10.0] - 2026-09-21
 
 ### The Slack bot can now be triggered by a reaction, not just a mention

@@ -428,7 +428,7 @@ key is `slack.owner_user_id`.
 | `slack.delete_reaction` | `x` | An emoji name (no colons) that deletes one of the bot's own messages when an allowed person reacts to it. `null` turns this off. |
 | `slack.unauthorized_message` | a line saying it is a personal instance | What someone not on the allowlist is told, privately. `{owner}` becomes a mention of `owner_user_id`. `null` says nothing at all. |
 | `claude.command` | `claude` | The Claude Code CLI. A full path works. |
-| `claude.model` | `claude-opus-5` | The model the headless session runs on. An empty value follows your account's default. |
+| `claude.model` | `claude-opus-5-5` | The model the headless session runs on. An empty value follows your account's default. |
 | `claude.effort` | `low` | The reasoning effort: `low`, `medium`, `high`, `xhigh`, `max`. An empty value follows your account's default. This is separate from the model -- `claude-opus-5-low` is not a model name and is refused at startup. |
 | `claude.plugin_dir` | unset | Only for running against a working tree of this repository. An installed plugin needs nothing here. |
 | `claude.working_dir` | your home directory | Where the headless session runs. |
