@@ -220,11 +220,17 @@ class Handler:
         not the configured trigger all do nothing at all, silently.
         """
         reaction = ReactionEvent.from_event(event)
-        trigger = self._config.slack.reaction_trigger
-        if not trigger or reaction.reaction != trigger:
-            return
         if not reaction.channel_id or not reaction.message_ts:
             log.warning("ignoring a reaction with no channel or timestamp")
+            return
+
+        delete_reaction = self._config.slack.delete_reaction
+        if delete_reaction and reaction.reaction == delete_reaction:
+            self._delete_on_reaction(reaction)
+            return
+
+        trigger = self._config.slack.reaction_trigger
+        if not trigger or reaction.reaction != trigger:
             return
 
         if not self._config.slack.may_trigger(reaction.user_id, reaction.channel_id):
@@ -320,6 +326,45 @@ class Handler:
         return self._resolver.resolve(command.argument)
 
     # -- deleting ------------------------------------------------------
+
+    def _delete_on_reaction(self, reaction: ReactionEvent) -> None:
+        """An `:x:` on one of this bot's own messages takes it down.
+
+        Silent on every non-match, same as the rest of `handle_reaction`:
+        nobody addressed the bot, so a stranger's `:x:`, one on someone
+        else's message, or one from off the allowlist all do nothing at all.
+        """
+        if not self._config.slack.may_trigger(reaction.user_id, reaction.channel_id):
+            log.info(
+                "ignoring an :x: reaction from %s in %s -- not on the allowlist",
+                reaction.user_id,
+                reaction.channel_id,
+            )
+            return
+
+        own = self._slack.bot_user_id()
+        if not own:
+            log.warning("could not work out which messages are mine -- deleted nothing")
+            return
+
+        try:
+            message = self._slack.fetch_message(reaction.channel_id, reaction.message_ts)
+        except SlackError as exc:
+            log.warning("could not read the reacted message: %s", exc)
+            return
+        if message is None or str(message.get("user") or "") != own:
+            # Not one of ours -- nothing to delete.
+            return
+
+        try:
+            self._slack.delete(reaction.channel_id, reaction.message_ts)
+        except SlackError as exc:
+            log.warning(
+                "could not delete %s in %s: %s",
+                reaction.message_ts,
+                reaction.channel_id,
+                exc,
+            )
 
     def _delete_last_answer(self, mention: MentionEvent) -> None:
         """Take down the most recent message this bot posted in the thread.

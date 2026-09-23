@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **An `:x:` reaction on one of the bot's own messages deletes it.** The
+  reaction equivalent of `@daikenja delete`, backed by a new
+  `slack.delete_reaction` config key (default `x`, `null` turns it off).
+  Same allowlist as everything else, and reacting to a message that is not
+  the bot's own does nothing.
+
 - **The bot reads the Confluence pages a subject links to.** Every command --
   `summary`, `judgement` and the reaction trigger -- now also fetches the
   pages its thread or page links to, one hop deep, and hands them to the model

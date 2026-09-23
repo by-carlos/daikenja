@@ -729,6 +729,83 @@ class ReactionTriggerTests(unittest.TestCase):
         self.assertEqual(run.calls, [])
 
 
+class DeleteReactionTests(unittest.TestCase):
+    """An `:x:` on one of the bot's own messages deletes it."""
+
+    OWN_MESSAGE = {"user": "U0BOT", "ts": "1758067500.000400", "text": "an answer"}
+    OTHERS_MESSAGE = {"user": "U0SHION", "ts": "1758067500.000400", "text": "not mine"}
+
+    def _handler(self, client, config=None):
+        handler = Handler(
+            config or make_config(),
+            SlackIO(client),
+            environ={"PATH": "/bin"},
+            fetch_confluence=lambda *a, **k: None,
+        )
+        return handler
+
+    def test_x_on_the_bots_own_message_deletes_it(self):
+        client = FakeSlackClient(history=self.OWN_MESSAGE, users=USERS)
+        handler = self._handler(client)
+        handler.handle_reaction(reaction(name="x", ts="1758067500.000400"))
+        self.assertEqual(len(client.deleted), 1)
+        self.assertEqual(client.deleted[0]["ts"], "1758067500.000400")
+        self.assertEqual(client.deleted[0]["channel"], "C0HARBOR")
+
+    def test_x_on_someone_elses_message_deletes_nothing(self):
+        client = FakeSlackClient(history=self.OTHERS_MESSAGE, users=USERS)
+        handler = self._handler(client)
+        handler.handle_reaction(reaction(name="x", ts="1758067500.000400"))
+        self.assertEqual(client.deleted, [])
+
+    def test_a_stranger_cannot_delete_via_reaction(self):
+        client = FakeSlackClient(history=self.OWN_MESSAGE, users=USERS)
+        handler = self._handler(client)
+        handler.handle_reaction(
+            reaction(name="x", user="U0GOBTA", ts="1758067500.000400")
+        )
+        self.assertEqual(client.deleted, [])
+
+    def test_no_message_found_deletes_nothing(self):
+        client = FakeSlackClient(history=None, users=USERS)
+        handler = self._handler(client)
+        handler.handle_reaction(reaction(name="x", ts="1758067500.000400"))
+        self.assertEqual(client.deleted, [])
+
+    def test_delete_reaction_can_be_turned_off(self):
+        client = FakeSlackClient(history=self.OWN_MESSAGE, users=USERS)
+        handler = self._handler(client, config=make_config(delete_reaction=None))
+        handler.handle_reaction(reaction(name="x", ts="1758067500.000400"))
+        self.assertEqual(client.deleted, [])
+
+    def test_a_failed_delete_is_logged(self):
+        client = FakeSlackClient(
+            history=self.OWN_MESSAGE,
+            users=USERS,
+            fail={"chat_delete": "message_not_found"},
+        )
+        handler = self._handler(client)
+        with self.assertLogs("daikenja_bot.handler", level="WARNING"):
+            handler.handle_reaction(reaction(name="x", ts="1758067500.000400"))
+
+    def test_x_does_not_run_the_summary_judgement_path(self):
+        # `x` is not the reaction_trigger, so nothing else should fire even
+        # when that trigger is configured too.
+        client = FakeSlackClient(history=self.OWN_MESSAGE, users=USERS)
+        run = CombinedRecorder()
+        handler = Handler(
+            make_config(reaction_trigger="daikenja"),
+            SlackIO(client),
+            environ={"PATH": "/bin"},
+            run=run,
+            fetch_confluence=lambda *a, **k: None,
+        )
+        handler.handle_reaction(reaction(name="x", ts="1758067500.000400"))
+        self.assertEqual(len(client.deleted), 1)
+        self.assertEqual(client.posted, [])
+        self.assertEqual(run.calls, [])
+
+
 if __name__ == "__main__":
     unittest.main()
 

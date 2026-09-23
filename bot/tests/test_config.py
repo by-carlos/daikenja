@@ -138,6 +138,38 @@ class ParseTests(unittest.TestCase):
                 {"slack": {"owner_user_id": "U0RIMURU", "reaction_trigger": "::"}}
             )
 
+    def test_delete_reaction_defaults_to_x(self):
+        config = parse_config(MINIMAL)
+        self.assertEqual(config.slack.delete_reaction, "x")
+
+    def test_delete_reaction_is_configurable(self):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "delete_reaction": "wastebasket"}}
+        )
+        self.assertEqual(config.slack.delete_reaction, "wastebasket")
+
+    def test_delete_reaction_colons_are_stripped(self):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "delete_reaction": ":x:"}}
+        )
+        self.assertEqual(config.slack.delete_reaction, "x")
+
+    def test_delete_reaction_null_is_off(self):
+        config = parse_config(
+            {"slack": {"owner_user_id": "U0RIMURU", "delete_reaction": None}}
+        )
+        self.assertIsNone(config.slack.delete_reaction)
+
+    def test_a_non_string_delete_reaction_is_rejected(self):
+        with self.assertRaises(ConfigError):
+            parse_config({"slack": {"owner_user_id": "U0RIMURU", "delete_reaction": 42}})
+
+    def test_a_delete_reaction_of_only_colons_is_rejected(self):
+        with self.assertRaises(ConfigError):
+            parse_config(
+                {"slack": {"owner_user_id": "U0RIMURU", "delete_reaction": "::"}}
+            )
+
     def test_strangers_are_told_something_by_default(self):
         config = parse_config({"slack": {"owner_user_id": "U0RIMURU"}})
         assert config.slack.unauthorized_message is not None
