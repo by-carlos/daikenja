@@ -41,6 +41,28 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### The digest moved out of Daikenja
+
+Only affects you if you used the digest added in 0.10.0: the
+`/daikenja:digest` skill, or `python -m daikenja_bot --digest` (with or
+without `--dry-run`). Nothing else changes.
+
+If you do nothing, the skill is simply absent after the update, and a
+scheduled job that still runs `--digest` exits with an argument error instead
+of posting. Remove that job, or replace it with the `daikenja-digest-bot`
+plugin from [`by-carlos/claude-shared`](https://github.com/by-carlos/claude-shared),
+which collects from Slack itself and takes no item list:
+
+```
+before:  python -m daikenja_bot --digest items.json
+after:   (removed -- use daikenja-digest-bot instead)
+```
+
+`setup-user` cannot make this edit: the job lives in your scheduler, not in a
+file Daikenja reads. Reversible by pinning Daikenja to 0.11.1.
+
 ## [0.11.1] - 2026-09-23
 
 ### The Slack bot's default model moved from `claude-opus-5` to `claude-opus-5-5`

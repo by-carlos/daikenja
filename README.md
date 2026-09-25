@@ -13,7 +13,7 @@ you did not ask for.
 
 The writing and remembering side of a working week.
 
-**Status:** in active development. Eighteen skills ship today.
+**Status:** in active development.
 
 ## What using it looks like
 
@@ -135,7 +135,7 @@ On a 1M-context model nothing is cut.)
 
 ## Skills
 
-Eighteen skills, grouped by what they do.
+The skills, grouped by what they do.
 
 **Writing a reply**
 
@@ -351,14 +351,6 @@ replies in the same thread:
 Either command takes a Slack permalink or a Confluence page link as an
 argument and works on that instead, still answering in the thread you asked
 from.
-
-**It also sends a digest.** Hand it a list of messages something else
-collected -- a cron job, a script, whatever already knows what you care about
--- and it posts one message to your own DM, grouped by project, with each
-project's open ledger items beside its group. The grouping is the
-[`digest`](skills/digest/SKILL.md) skill, which the bot runs for you rather
-than something you type. It collects nothing itself and pages nobody; the
-list arrives as JSON and the grouping is the part worth sharing.
 
 **It is a personal instance.** It runs on your machine, reads your ledgers,
 and posts as its own Slack app -- never as you, and never with anybody
