@@ -12,8 +12,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from daikenja_bot.__main__ import build_parser, configure_logging, main, read_items
-from daikenja_bot.digest import DigestError
+from daikenja_bot.__main__ import build_parser, configure_logging
 
 
 class _CleanRoot:
@@ -65,37 +64,6 @@ class LogFileTests(unittest.TestCase):
             with _CleanRoot():
                 configure_logging("debug", str(target))
                 self.assertEqual(logging.getLogger().level, logging.DEBUG)
-
-
-class DigestArgumentTests(unittest.TestCase):
-    def test_the_listener_is_the_default(self):
-        args = build_parser().parse_args([])
-        self.assertIsNone(args.digest)
-        self.assertFalse(args.dry_run)
-
-    def test_a_digest_can_be_asked_for_dry(self):
-        args = build_parser().parse_args(["--digest", "items.json", "--dry-run"])
-        self.assertEqual(args.digest, "items.json")
-        self.assertTrue(args.dry_run)
-
-    def test_a_dry_run_on_its_own_is_refused(self):
-        # It would otherwise start the listener and silently ignore the flag,
-        # which reads exactly like a digest that produced nothing.
-        with _CleanRoot():
-            self.assertEqual(main(["--dry-run"]), 2)
-
-    def test_items_are_read_from_a_file(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            target = Path(tmp) / "items.json"
-            target.write_text('[{"summary": "x"}]', encoding="utf-8")
-            self.assertEqual(read_items(str(target)), '[{"summary": "x"}]')
-
-    def test_a_missing_item_file_says_where_it_looked(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            missing = str(Path(tmp) / "nothing.json")
-            with self.assertRaises(DigestError) as caught:
-                read_items(missing)
-            self.assertIn(missing, str(caught.exception))
 
 
 if __name__ == "__main__":  # pragma: no cover

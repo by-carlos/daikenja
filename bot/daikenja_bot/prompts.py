@@ -25,14 +25,7 @@ import logging
 import re
 
 from .commands import JUDGEMENT, SUMMARY
-from .subject import ITEMS, PAGE, Subject
-
-# The digest is not one of `commands.KNOWN_COMMANDS` and never will be: it is
-# not typed at the bot, it is pushed by a feeder on a schedule. It lives here
-# rather than in `commands` because the only thing it shares with a mention
-# command is this file -- an invocation, a task, and a way to read the answer
-# back.
-DIGEST = "digest"
+from .subject import PAGE, Subject
 
 log = logging.getLogger(__name__)
 
@@ -235,14 +228,7 @@ _LOCAL_PATH_RE = re.compile(
 _SKILL_INVOCATION = {
     SUMMARY: "/daikenja:thread message",
     JUDGEMENT: "/daikenja:judgement message",
-    DIGEST: "/daikenja:digest",
 }
-
-# The commands somebody can type at the bot. `_SKILL_MENTION` below is built
-# from this rather than from every key of `_SKILL_INVOCATION`, because the
-# digest has no mention form: rewriting `/daikenja:digest` as `@daikenja
-# digest` would hand the reader a command that does not exist.
-_MENTION_COMMANDS = (SUMMARY, JUDGEMENT)
 
 # What each skill invocation becomes if it reaches the deliverable.
 #
@@ -258,8 +244,8 @@ _MENTION_COMMANDS = (SUMMARY, JUDGEMENT)
 # summary` written out, precisely because a described rule had been ignored
 # before. This is the half that does not depend on the model complying.
 _SKILL_MENTION = {
-    _SKILL_INVOCATION[command].split()[0].lstrip("/"): f"@daikenja {command}"
-    for command in _MENTION_COMMANDS
+    invocation.split()[0].lstrip("/"): f"@daikenja {command}"
+    for command, invocation in _SKILL_INVOCATION.items()
 }
 # The leading slash is required. Without it, `daikenja:thread` is how a
 # session announces the skill it is using -- `Using daikenja:thread to gather
@@ -288,25 +274,6 @@ _TASK = {
         "than writing 'you'. Keep the short report the skill puts around it if "
         "you want to -- only the message itself is taken."
     ),
-    DIGEST: (
-        "Produce the digest block for that item list: exactly the shape "
-        "Step 4 of the skill fixes -- the `**Digest**` header line, then one "
-        "group per project with its items and its open items, then "
-        "Unmatched. The block ends with the last group: no closing summary, "
-        "no horizontal rule, and no note about which ledgers or cards were "
-        "read. Anything written after the last group is posted as part of "
-        "the digest."
-    ),
-}
-
-# Where the deliverable ends up. It decides nothing about the shape, but the
-# sentence that explains *why* the shape is fixed has to be true: a digest
-# lands in one person's DM, and telling the session it is posting into a
-# public channel invites it to hedge about people who are not there.
-_DESTINATION = {
-    SUMMARY: "a public Slack thread",
-    JUDGEMENT: "a public Slack thread",
-    DIGEST: "the owner's Slack direct message",
 }
 
 # What to do about a project that matches only a card's Scope paragraph.
@@ -359,19 +326,6 @@ _PROJECT_MATCH = {
         "matched, or `No project context. Add `@daikenja judgement project "
         "<key>`` if you want a ledger checked.` when none did."
     ),
-    DIGEST: (
-        " An item that matches only a card's Scope paragraph is not a match "
-        "and is never put to a reader: do not wait for a confirmation "
-        "and do not ask for one, in any wording. That item is unmatched -- read "
-        "no ledger on the strength of it, and put it under Unmatched. Then "
-        "name the near miss once, on the last line of that group, in this "
-        "form exactly: `_<what the items have in common, usually a channel> "
-        "looks like <project name> -- add it to that project's card so the "
-        "next digest groups it._` Never name a `/daikenja:` command there: "
-        "this is read in Slack, where a Claude Code slash command cannot be "
-        "typed, and the same near miss will recur twice a day until the card "
-        "names the handle."
-    ),
 }
 
 # Said only when the subject links to something. With no attachments the
@@ -422,7 +376,7 @@ a notice about which project resolved, anything you would normally say to
 the person -- stays outside them and is thrown away, so nothing is lost by
 writing it there.
 
-What sits between the lines is posted verbatim into {destination}.
+What sits between the lines is posted verbatim into a public Slack thread.
 So it carries no conversational markers, no emoji, no preamble and no
 closing offer, and it never asks a question -- there is nobody there to
 answer one. Keep its markdown to bold, bullets, inline code and links;
@@ -430,7 +384,7 @@ Slack has no headings.
 
 If {skill} is not loaded in this session, do not improvise an answer and do
 not offer to do the work another way: write exactly {unavailable} between
-the two lines and nothing else. In {destination}, a confident answer from
+the two lines and nothing else. In a public thread, a confident answer from
 the wrong source is worse than no answer.
 """
 
@@ -454,7 +408,6 @@ def build_instruction(
             "\n" + _NAMED_PROJECT.format(project=named) if named else ""
         ),
         skill=skill_name(command_name),
-        destination=_DESTINATION[command_name],
         unavailable=UNAVAILABLE_TOKEN,
         begin=SUBJECT_BEGIN,
         end=SUBJECT_END,

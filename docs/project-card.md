@@ -2,10 +2,10 @@
 
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
-- § Location -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card", thread "Step 2b: place the thread", digest "Step 0: read the contracts"
-- § Format -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card", digest "Step 0: read the contracts"
-- § Reading a card -- project-summary "Step 0: read the contracts", thread "Step 2b: place the thread", judgement "Step 3: place the subject", digest "Step 0: read the contracts"
-- § Resolving a project by content -- thread "Step 2b: place the thread", judgement "Step 3: place the subject", digest "Step 0: read the contracts"
+- § Location -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card", thread "Step 2b: place the thread"
+- § Format -- project-summary "Step 0: read the contracts", setup-project "Step 3b: offer the project card"
+- § Reading a card -- project-summary "Step 0: read the contracts", thread "Step 2b: place the thread", judgement "Step 3: place the subject"
+- § Resolving a project by content -- thread "Step 2b: place the thread", judgement "Step 3: place the subject"
 
 A project card says what a project **is about**. The registry entry in
 `daikenja.yaml` says where a project is; the ledger says what was decided in
@@ -177,8 +177,8 @@ first tier that decides:
    would say the non-match -- which is the caller's call, not this tier's --
    the near miss is named instead, with whatever would settle it: usually the
    command that would check that project, for the person to run if they want
-   it, and in `digest`, which is read where no command can be typed, the card
-   edit that would make the handle decisive next time.
+   it, or -- where the answer is read somewhere no command can be typed -- the
+   card edit that would make the handle decisive next time.
 
    **There is no confirmation step, for any caller.** A Scope fit is not a
    candidate the user is asked about, in a terminal or anywhere else. The

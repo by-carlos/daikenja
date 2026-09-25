@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+
+- **The digest layer is gone from this repo.** The `digest` skill,
+  `bot/daikenja_bot/digest.py`, the bot's `--digest` and `--dry-run` flags,
+  and their tests and fixture are removed. They shipped in 0.10.0, so anything
+  that runs `python -m daikenja_bot --digest` now fails at argument parsing;
+  see [`docs/upgrading.md`](docs/upgrading.md). The digest is now its own
+  plugin, `daikenja-digest-bot` in
+  [`by-carlos/claude-shared`](https://github.com/by-carlos/claude-shared),
+  which collects from Slack itself rather than taking a feeder's item list.
+  Keeping two digests in two formats was the thing worth not doing. A project
+  still matches by an exact `Owns` handle or not at all -- that rule is shared
+  with `summary` and `judgement` and is untouched.
+
 ## [0.11.1] - 2026-09-23
 
 ### Changed

@@ -4,11 +4,6 @@
 first thing to run after editing ``bot.yaml`` -- it catches a missing token
 or a typo in a key without opening a connection to Slack.
 
-``--digest`` is the other way in: it takes a list of items a feeder collected,
-posts one grouped digest to the owner's DM, and exits. It never opens a
-socket, so it runs perfectly well on a schedule beside a listener, or on a
-machine that never runs the listener at all.
-
 ``--log-file`` is what makes an unattended run readable: started from a
 scheduled task or a service manager there is no console for the log to reach,
 and without it a bot that failed to start leaves nothing behind to say why.
@@ -24,12 +19,9 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 from . import __version__, preflight
-from .app import resolve_bot_token, resolve_tokens, run
+from .app import resolve_tokens, run
 from .commands import SUBJECT_COMMANDS
-from .config import DEFAULT_CONFIG_PATH, BotConfig, ConfigError, load_config
-from .digest import DigestError, build_digest, parse_items, post_digest
-from .runner import RunnerError
-from .slack_io import SlackError, connect
+from .config import DEFAULT_CONFIG_PATH, ConfigError, load_config
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,18 +38,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--check",
         action="store_true",
         help="validate the config and the credentials, then exit",
-    )
-    parser.add_argument(
-        "--digest",
-        metavar="ITEMS",
-        default=None,
-        help="post one digest of the items in this JSON file, then exit. `-` "
-        "reads them from standard input. Needs only the bot token.",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="with --digest, print the digest instead of posting it",
     )
     parser.add_argument(
         "--log-level",
@@ -92,39 +72,6 @@ def configure_logging(level_name: str, log_file: str | None) -> None:
     )
 
 
-def read_items(source: str) -> str:
-    """The item list, from a file or from standard input."""
-    if source == "-":
-        return sys.stdin.read()
-    path = Path(source).expanduser()
-    if not path.is_file():
-        raise DigestError(f"no item list at {path}")
-    return path.read_text(encoding="utf-8")
-
-
-def run_digest(config: BotConfig, source: str, *, dry_run: bool) -> int:
-    """Build one digest and post it, or print it. Returns an exit code.
-
-    The token is resolved before the headless session starts, not after: a
-    digest that spends a minute being written and then finds there is no
-    token to post it with has wasted the whole run.
-    """
-    item_list = parse_items(read_items(source))
-    for line in item_list.skipped:
-        print(line, file=sys.stderr)
-
-    slack = None if dry_run else connect(resolve_bot_token(config, os.environ))
-
-    text = build_digest(config, item_list, environ=os.environ)
-    if slack is None:
-        print(text)
-        return 0
-
-    post_digest(slack, config, text)
-    print(f"digest posted to {config.slack.owner_user_id}: {len(item_list)} items")
-    return 0
-
-
 def _fail(message: str, *, also_log: bool) -> int:
     """Say why it will not start, somewhere the person will actually see it.
 
@@ -142,9 +89,6 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     configure_logging(args.log_level, args.log_file)
     logged = bool(args.log_file)
-
-    if args.dry_run and not args.digest:
-        return _fail("--dry-run only means something with --digest", also_log=logged)
 
     try:
         config = load_config(args.config)
@@ -198,18 +142,6 @@ def main(argv: list[str] | None = None) -> int:
         for command in sorted(unavailable):
             print(f"\n{unavailable[command]}", file=sys.stderr)
         return 0
-
-    if args.digest:
-        try:
-            return run_digest(config, args.digest, dry_run=args.dry_run)
-        except ConfigError as exc:
-            return _fail(f"credentials: {exc}", also_log=logged)
-        except (DigestError, RunnerError) as exc:
-            return _fail(f"digest: {exc}", also_log=logged)
-        except OSError as exc:
-            return _fail(f"digest: could not read the item list -- {exc}", also_log=logged)
-        except SlackError as exc:
-            return _fail(f"digest: could not post it -- {exc}", also_log=logged)
 
     try:
         run(config)

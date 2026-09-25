@@ -3,7 +3,6 @@ import unittest
 
 from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.prompts import (
-    DIGEST,
     END_SENTINEL,
     JUDGEMENT_SECTION_RE,
     NO_ANSWER,
@@ -76,7 +75,7 @@ class BuildInstructionTests(unittest.TestCase):
         # for a caller with no reader, and a run resolved the tension by
         # asking. `project-card.md` tier 2 now has one rule; nothing here may
         # reintroduce the other by framing this as the special case.
-        for command in (SUMMARY, JUDGEMENT, DIGEST):
+        for command in (SUMMARY, JUDGEMENT):
             with self.subTest(command=command):
                 instruction = build_instruction(command, THREAD_SUBJECT)
                 self.assertNotIn("Nobody can answer", instruction)
