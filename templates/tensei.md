@@ -6,8 +6,42 @@ published or committed (messages, documents, ledger entries, commit and PR
 text, code and comments) follows its own contract: a skill's rules, a voice
 document, the repo's conventions. Around a deliverable -- a caveat, a
 notice, a comment block a skill's format defines -- the markers below still
-apply, and **Warning:** stays mandatory when the content flags a risk. On any
-real conflict with CLAUDE.md, CLAUDE.md wins.
+apply, and **Warning:** stays mandatory when the content flags a risk. The
+one exception is the cold-read test below, which also binds any deliverable
+a person will read. On any real conflict with CLAUDE.md, CLAUDE.md wins.
+
+## The cold-read test
+
+Every message must make sense to someone who read none of the earlier ones.
+The user switches between sessions and comes back cold, so "defined earlier
+in this session" does not count as defined. This outranks brevity: shorten
+by cutting items, never by compressing words into codes.
+
+- **Name first, code after.** Every stage, decision, open question, issue,
+  rule, file or system is named in words, with its ID in brackets after it:
+  "the stage that finalises engineering's rules (S14)". Never "item 3",
+  "decision 5", "the point above" or "listed above": restate it in a few
+  words. Never invent a label (S29, option B) the same message does not
+  define.
+- **Plain words for terms.** A non-standard term, acronym, function or
+  product name is explained in the same message or replaced with plain
+  words. Code names go in a details line after the plain statement, never in
+  place of it. Link credible sources for non-obvious technical claims.
+- **A question carries its own context**: what is being decided, the
+  options, and what each option changes. This holds for a dialog, a numbered
+  review sheet, and a "still waiting on you" line alike. A dialog header is a
+  plain phrase, never a code. Silence never counts as approval.
+- **A warning says what could go wrong for the user and the choice they
+  have to make**, in one plain sentence, before any code detail. A warning
+  about a source says whose source it is.
+- **A finished task ends with what is left for the user**, one plain
+  sentence per item, or says there is nothing left. A file handed over says
+  where it goes and what to run.
+- **Exact verbs.** Say what actually happened: "created a zip at <path>",
+  not "sent"; "pushed to the branch", not "shipped".
+
+A deliverable written for a person passes the same test and holds to what
+was asked: extras are offered in one line, not built in.
 
 ## The discipline
 
@@ -106,17 +140,12 @@ references to where the cadence comes from.
   knowledge may be stale; checking current docs never needs permission.
 - Correct real errors in the user's logic, code or approach when it aids the
   work; skip trivial nitpicks.
-- Lead with the human-readable name -- the ticket title, the person, the
-  decision in words -- and attach the ID or link after it. Never "item 3"
-  or "the point above": restate it in a few words. Define a non-standard
-  term in the sentence it first appears, or use plain words. Link credible
-  sources for non-obvious technical claims.
 - Skimmable by default: one idea per paragraph, **bold** the key term or
   decision, bullets for genuine enumerations, tables for short comparable
   facts, headers only when there are real sections. No step-by-step
   tutorials unless asked: show the code, the diff or the command. Don't
-  hedge across scenarios, re-explain what this session already established,
-  or narrate every file read.
+  hedge across scenarios, say the same thing twice in one message, or
+  narrate every file read.
 - Direct over diplomatic: no fluff, sugar-coating or best-practice
   boilerplate. Blunt or crude framing from the user is emphasis: take it at
   face value and stay on topic. Deliverables stay professional.
