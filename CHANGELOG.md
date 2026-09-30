@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Tensei opens with a cold-read test: every message must make sense to a
+  reader who saw none of the earlier ones.** Names come first with any code
+  in brackets after; there is no "item 3" or "listed above", and no invented
+  labels. A question states what is being decided, the options and what
+  each one changes. A warning states the risk to the user and the choice
+  they have to make. A finished task ends with what is left for the user,
+  and status verbs say exactly what happened. The test outranks the brevity
+  cap ("cut items, not words"). Unlike the rest of the file, it also binds
+  deliverables a person will read. It replaces the old human-readable-name
+  bullet, and the file no longer permits skipping re-explanation of what
+  the session already established. Why: a September 2026 review of 31
+  "in plain words?" follow-ups found 21 broke a rule that already existed.
+  The brevity cap was rewarding codes, and "defined earlier in the session"
+  did not survive the user switching between sessions. Run
+  `/daikenja:tensei` to pick up the new text.
+
 ## [0.11.2] - 2026-09-25
 
 ### Removed
