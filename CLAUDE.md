@@ -116,10 +116,11 @@ Instructions for Claude Code and other agents working in this repo.
 ## Capturing follow-up work (GitHub issues)
 
 Follow-up work goes to this repo's GitHub issues (`by-carlos/daikenja`).
-**Before opening one, read `.claude/reference/github-issues.md`** -- it defines
-the required body format (Context / Options / AI prompt), the label rules, the
-public-repo scrub list, and when to suggest rather than file. Do not file
-without reading it.
+File through `plan-staged-rollout:create-issue`, which owns the body format,
+labels and board fields. **Before opening one, read
+`.claude/reference/github-issues.md`** -- it holds what is specific to this
+repo: the public-repo scrub list, the show-before-filing gate and the date
+rule. Do not file without reading it.
 
 - **Tracker & board:** issues live in `by-carlos/daikenja` and go to the
   **"Claude Plugins"** project (project 3). Its priority scale is **P0-P4**.
