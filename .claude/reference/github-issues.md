@@ -5,12 +5,14 @@ trigger lives in the repo `CLAUDE.md`; the detail is here so it costs nothing
 until you actually need it.
 
 Everything about *how* to file -- the floor test, when to file versus just
-fix it, the four-section body format, provenance, typed relationships,
-labels, and board fields -- lives in the shared `carlos:file-issue` skill
-(`by-carlos/claude-lab`, `plugins/carlos/skills/file-issue/`). Invoke it to
-file. Starting work on an already-filed issue -- the session-announcement
-comment, board `Status` moves -- is covered by `carlos:work-issue` (same
-plugin). This page covers only what is genuinely specific to this repo.
+fix it, the body format, provenance, labels, and board fields -- lives in the
+`plan-staged-rollout:create-issue` skill and the maintainer's GitHub ticket
+template it resolves. Invoke it to file; never write an issue body by hand or
+post one with `gh issue create`. Starting work on an already-filed issue is
+`plan-staged-rollout:work-issue`. That template lives in the maintainer's
+own setup; anyone without it files through the web forms instead, since
+create-issue's built-in default template has different sections. This page
+covers only what is genuinely specific to this repo.
 
 ## This repo is public
 
@@ -37,19 +39,13 @@ not by the filing being obviously routine. Public is a one-way door.
 The same rules apply to pull request bodies, review comments and issue
 comments.
 
-## The issue form is the authority on body shape
+## The ticket template is the authority on body shape
 
-`.github/ISSUE_TEMPLATE/follow-up.yml` defines the sections and the
-constraint on each one for this repo, and wins wherever it disagrees with the
-shared skill's body format. Read it before filing and fill every field it
-names, whether you are filing through the web form or building a body by
-hand.
-
-**`gh issue create` does not apply the form.** GitHub enforces templates only
-in the web UI, so `--body`, `--body-file`, or the shared skill's `ghpost.py`
-bypass it silently. Reproduce the form's sections by hand, as `### <label>`
-headings matching the form's own labels, so a CLI-filed issue reads the same
-as a web-filed one.
+There is one GitHub issue format, the maintainer's ticket template, and it
+applies here as everywhere. `.github/ISSUE_TEMPLATE/follow-up.yml` is only the
+web form for people filing in the browser; its field labels mirror the
+template's sections so both routes produce the same issue. When the two drift
+apart, change the form to match the template, never the other way round.
 
 ## Dates
 

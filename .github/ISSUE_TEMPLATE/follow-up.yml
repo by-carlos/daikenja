@@ -49,7 +49,7 @@ body:
   - type: textarea
     id: options
     attributes:
-      label: Options
+      label: Options / proposed fix
       description: >
         The candidate approaches with a recommendation, not just a problem
         statement. Say which one you would pick and why, and name any option

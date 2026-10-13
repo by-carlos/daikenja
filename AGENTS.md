@@ -65,9 +65,9 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
   a user's disk (the `daikenja.yaml` schema, the ledger grammar or location, a
   skill name, any path the plugin reads). Most changes add nothing there. A
   release only promotes that heading; it never writes the note.
-- **Before filing an issue, read `.claude/reference/github-issues.md`** — it
-  defines the required body format, label rules, and when to suggest rather than
-  file. Default to suggesting.
+- **File issues through `plan-staged-rollout:create-issue`**, which owns the
+  body format and labels; first read `.claude/reference/github-issues.md` for
+  this repo's public-repo rules. Default to suggesting.
 
 Everything else — and the reasoning behind these — is in
 [`CLAUDE.md`](CLAUDE.md).
