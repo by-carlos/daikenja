@@ -19,11 +19,13 @@ corrections can go straight to a pull request.
 
 ## What an issue needs
 
-Every issue carries three sections, in this order: **Context** (what was
-observed, when, with file paths and command output), **Options** (the candidate
-approaches, with a recommendation and what you rejected), and **AI prompt** (a
-self-contained blockquote a fresh session can act on cold). Use absolute dates
--- "15 Aug 2026", never "last Tuesday".
+Use the issue forms; the follow-up form carries four sections, in this order:
+**In plain terms** (what is wrong or wanted and why it matters, without file
+or issue names), **Context** (what was observed, when, with file paths and
+command output), **Options / proposed fix** (the candidate approaches, with a
+recommendation and what you rejected), and **AI prompt** (a self-contained
+brief a fresh session can act on cold). Use absolute dates -- "15 Aug 2026",
+never "last Tuesday".
 
 **This repository is public.** An issue body is published the moment it is
 filed, and stays indexed even if it is edited or deleted afterwards. Scrub
