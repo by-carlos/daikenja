@@ -9,8 +9,10 @@ fix it, the body format, provenance, labels, and board fields -- lives in the
 `plan-staged-rollout:create-issue` skill and the maintainer's GitHub ticket
 template it resolves. Invoke it to file; never write an issue body by hand or
 post one with `gh issue create`. Starting work on an already-filed issue is
-`plan-staged-rollout:work-issue`. This page covers only what is genuinely
-specific to this repo.
+`plan-staged-rollout:work-issue`. That template lives in the maintainer's
+own setup; anyone without it files through the web forms instead, since
+create-issue's built-in default template has different sections. This page
+covers only what is genuinely specific to this repo.
 
 ## This repo is public
 
