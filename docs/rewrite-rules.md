@@ -44,7 +44,8 @@ What counts as a flagged problem depends on the consumer:
 
 - **`compose`:** the edits Step 3 makes on purpose are exempt. Those are its
   clarity, tone, facts-over-judgement and structure edits, and edits for the
-  voice and the AI-tell check it drafts against. A blunt or hostile span is
+  voice and the AI-tell check it drafts against. Step 7's cut of hedging that
+  adds nothing is the same kind of edit. A blunt or hostile span is
   rewritten even though nothing else is wrong with it. A synonym swap, a clear
   and neutral sentence reworded, or a list put in a new order for no reason is
   an over-edit.
