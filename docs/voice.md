@@ -40,7 +40,10 @@ the writer's time zone is a narrower case; see § Relative soft deadlines.
 Most readers do not have English as a first language. This is the product
 premise rather than a preference, which is why the whole block is Fixed.
 
-- One idea per sentence. Aim under 20 words.
+- One idea per sentence. Aim under 20 words. That is a ceiling, not a
+  rhythm: sentences that all land near the same length read as
+  machine-written. Vary by going shorter, never longer, and give the short
+  sentence to what carries the weight -- the ask, the verdict, the deadline.
 - Common words over rare ones. "Use", not "leverage". "Start", not "kick off".
 - Avoid phrasal verbs when a single verb works ("submit", not "put in";
   "postpone", not "push out").

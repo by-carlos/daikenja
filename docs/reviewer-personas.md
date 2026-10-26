@@ -293,12 +293,36 @@ context is not a licence to report what a dispatched reviewer would have had to
 discard: a sentence that is merely long, or a phrase that is merely capable of
 two readings, is a finding only when the reader lands somewhere different for it.
 
-**The AI-tell check.** Does this read as machine-written? Tidy tricolons,
-hollow transitions ("that said", "at the end of the day"), symmetrical
-paragraphs, over-hedging, generic enthusiasm, and the register where every
-sentence is the same length. This is always on because `compose` drafts the
-user's messages, and an always-on drafting tool warrants an always-on
-counterweight.
+**The AI-tell check.** Does this read as machine-written? This is always on
+because `compose` drafts the user's messages, and an always-on drafting tool
+warrants an always-on counterweight.
+
+Each tell below has a condition for firing and a condition for not firing. A
+match only says where to look: it becomes a finding when it clears both bars,
+like any other.
+
+| Tell | Fires when | Does not fire when |
+|---|---|---|
+| **Flattering opener** ("great question", "you're absolutely right") | Praise comes before the content and says nothing about it. | The thanks names something specific: "thanks for catching the date". |
+| **Throat-clearing** ("here's the thing", "let me be clear", "to be honest") | The phrase delays the point and can be deleted with nothing lost. | It carries real reluctance before a hard statement, or it is quoted speech. |
+| **Lone-insider setup** ("what nobody tells you", "most people miss") | It frames everyone else as unaware and adds no evidence. | The message then shows what the common view is and why it is wrong. |
+| **Filler phrase** ("it's worth noting that", "due to the fact that", "when it comes to") | One phrase can be deleted with nothing lost, or two appear in one paragraph. | Removing it would make the sentence ambiguous. |
+| **Stacked hedges** ("it may possibly be the case that") | Three or more qualifiers sit on one claim, or the claim no longer asserts anything. | One qualifier marks a claim that really is uncertain. |
+| **Empty reframe** ("that said", "to be more precise", "in fairness") | It restates the previous sentence and adds no new fact or correction. | It introduces a real correction or new evidence. |
+| **Hollow three** ("it is your migration, it is your call, it is your timeline") | A three-part list or repetition adds rhythm but no information, or two lists of three appear where two or four items would serve as well. | The three is real: three systems, three dates, three steps. |
+| **Flat rhythm** | Three or more sentences in a row have the same length and the same shape (owner, verb, object, full stop). | The sentences are a list of parallel facts the reader will scan, such as status lines. |
+
+The fix for each tell is held to `rewrite-rules.md`. A stacked-hedge fix keeps
+one qualifier, because removing all of them changes the writer's confidence.
+A flat-rhythm fix shortens one sentence, or turns it into a question or a
+fragment ("No rush.", "Can you take this?"). It never lengthens or joins
+sentences, so it never works against the reader block in `voice.md`.
+
+**Not tells.** Formal register in policy text, release notes or anything
+written to a standard. Plain work verbs with no more natural replacement
+("align", "prioritize"). Ordinary closings such as "let me know if you need
+anything". A message that is simply polite. Flagging these teaches the user to
+write worse, not more like a person.
 
 Its findings are always `wording`. It can never add to the questions list,
 because a machine-sounding sentence never needs a new fact to fix.
