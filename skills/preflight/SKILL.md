@@ -376,7 +376,9 @@ direction.
 A fix that drifts is applied without the shift: the new wording keeps the
 source's hedge, number and causal claim. Where the fix cannot be made without
 the shift, it is discarded and the span stays as written. Neither is a question
-for the user, because the draft already says what the sender meant.
+for the user, because the draft already says what the sender meant. A
+discarded fix takes its finding with it, as a finding that misses Step 5's bars
+does: Step 7 records nothing against it, and it does not stand under Step 8.
 
 **Two reviewers can want incompatible things.** Where no single fix serves
 both, read `preflight-reference.md` § Conflicts for the order they resolve in
