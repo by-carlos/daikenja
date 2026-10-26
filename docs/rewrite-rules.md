@@ -32,6 +32,34 @@ Never:
 code blocks, quoted text, and any pasted lines that start with `>`. Only
 surrounding spacing and punctuation may change.
 
+## Change only what has a reason
+
+Every span the rewrite changes needs a reason: a problem that was flagged in
+that span. A span changed with no flagged problem in it is an over-edit. An
+over-edit is a finding against the rewrite, even when the new wording reads
+better. Fix it by putting the source wording back. It is never reported to the
+user as a problem in their draft.
+
+What counts as a flagged problem depends on the consumer:
+
+- **`compose`:** the edits Step 3 makes on purpose are exempt. Those are its
+  clarity, tone, facts-over-judgement and structure edits, and edits for the
+  voice and the AI-tell check it drafts against. A blunt or hostile span is
+  rewritten even though nothing else is wrong with it. A synonym swap, a clear
+  and neutral sentence reworded, or a list put in a new order for no reason is
+  an over-edit.
+- **`preflight`:** the flagged problems are the wording findings Step 6
+  accepted. Step 7's record pairs each edit with its finding, and an edit with
+  no finding against it is an over-edit. `docs/voice.md` decides how a fix is
+  worded. It is not a reason to change a span no finding touched.
+
+An intent block from `thread` has no source wording, so there is nothing to
+over-edit and this rule does not apply to it.
+
+Where a needed edit cannot be made without touching a neighbouring span, keep
+the smallest change that serves the edit, and leave the rest of that span as
+it was.
+
 ## Prior conversation context has a hard boundary
 
 Earlier turns in this session may inform framing, tone, audience, and what the

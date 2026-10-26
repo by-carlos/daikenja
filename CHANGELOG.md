@@ -21,6 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Daikenja's own words. They have not yet been tested against a corpus of
   real work messages.
 
+### Added
+
+- **Rewrites no longer change wording that had nothing wrong with it.**
+  `rewrite-rules.md` has a new rule: every span a rewrite changes needs a
+  flagged problem behind it, and a span changed without one goes back to the
+  source wording. `compose` keeps its deliberate clarity, tone, structure and
+  voice edits. `preflight` changes only the spans its accepted wording findings
+  point at. The idea is adapted from `devswha/patina` (MIT), restated in
+  Daikenja's own words.
+
 ## [0.12.0] - 2026-09-30
 
 ### Changed
