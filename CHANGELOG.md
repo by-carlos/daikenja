@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **The AI-tell check now says when each tell fires and when it does not.**
+  It was a one-paragraph list of tell names. It is now a table of eight
+  tells, each with a condition for firing and one for not firing, plus a list of
+  normal work writing that is never a tell (formal register, plain work
+  verbs, ordinary closings). A new tell, flat rhythm, catches runs of
+  sentences with the same length and shape; its fix only ever shortens.
+  `voice.md` now says the 20-word limit is a ceiling, not a rhythm, and
+  `compose` drafts against the table instead of leaving it to `preflight`.
+  Several conditions are adapted from `devswha/patina` (MIT), restated in
+  Daikenja's own words. They have not yet been tested against a corpus of
+  real work messages.
+
 ## [0.12.0] - 2026-09-30
 
 ### Changed

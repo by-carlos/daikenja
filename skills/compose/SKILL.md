@@ -3,7 +3,7 @@ name: compose
 description: Rewrites or writes a message so it stays clear, professional and easy to read for all audiences without changing the ask, stance or confidence level.
 metadata:
   owner: Carlos
-  version: 7
+  version: 8
   pairs-with: thread
 disable-model-invocation: true
 ---
@@ -28,6 +28,9 @@ Read these before doing anything. Do not work from memory of them.
   `personas` resolve, and the failure-behavior table.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. `voice.md` governs the message; this governs everything around it.
+- `${CLAUDE_PLUGIN_ROOT}/docs/reviewer-personas.md` § The two checks that never
+  dispatch -- the AI-tell table Step 3 drafts against. That section only; the
+  rest of the file is `preflight`'s.
 
 ## Input forms
 
@@ -81,6 +84,10 @@ missing piece to avoid the problem.
 
 Apply the default voice from `docs/voice.md` throughout this step -- sentence
 length, word choice, absolute dates, and everything in its `## Fixed` tier.
+
+Do not write anything the AI-tell check in `docs/reviewer-personas.md` § The
+two checks that never dispatch would flag, and do not remove anything its
+**Not tells** list protects.
 
 ## Step 4: voice
 
