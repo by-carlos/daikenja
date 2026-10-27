@@ -30,6 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   voice edits. `preflight` changes only the spans its accepted wording findings
   point at. The idea is adapted from `devswha/patina` (MIT), restated in
   Daikenja's own words.
+- **`preflight` now checks that a wording fix keeps the draft's claim.** A fix
+  can use only words already in the draft and still say something different.
+  Step 6 now names three shifts to check for, in either direction: a hedged
+  claim made firm, a number that loses precision, and a cause turned into a
+  correlation. A fix that shifts one is reworded to keep the source's claim,
+  or dropped. Step 7 checks its own edits against the same three. The idea is
+  adapted from `devswha/patina` (MIT), restated in Daikenja's own words.
 
 ## [0.12.0] - 2026-09-30
 

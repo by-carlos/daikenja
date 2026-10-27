@@ -355,6 +355,31 @@ ask in an agreement, and deleting the clause leaves the ask with no basis, so
 what the agreement actually was is a question. "As discussed, here is the
 staging failure" grounds nothing, and deleting it costs the message nothing.
 
+### A wording fix can still change the claim
+
+Passing the test above means a fix adds nothing. It does not mean the fix keeps
+the meaning: words already in the draft can be rearranged into a different
+claim. Before a wording fix is accepted, read the span as the fix would leave it
+next to the span as written, and check for three shifts. Each counts in either
+direction.
+
+- **Certainty.** A hedged claim made firm, or a firm one hedged. "I think the
+  export step failed" becomes "The export step failed". The sender's doubt is
+  part of the message.
+- **Precision.** A number that loses or gains precision. "41 of 312 calls
+  failed" becomes "about 13% failed" or "a few dozen failed": a count made a
+  share, a range made a point, an exact figure rounded.
+- **Causation.** A cause turned into a correlation, or the reverse. "The deploy
+  broke the login page" becomes "The login page broke around the deploy", or
+  "errors rose after the deploy" becomes "the deploy caused the errors".
+
+A fix that drifts is applied without the shift: the new wording keeps the
+source's hedge, number and causal claim. Where the fix cannot be made without
+the shift, it is discarded and the span stays as written. Neither is a question
+for the user, because the draft already says what the sender meant. A
+discarded fix takes its finding with it, as a finding that misses Step 5's bars
+does: Step 7 records nothing against it, and it does not stand under Step 8.
+
 **Two reviewers can want incompatible things.** Where no single fix serves
 both, read `preflight-reference.md` § Conflicts for the order they resolve in
 and which case is reported rather than resolved -- Step 7 and Step 10 both
@@ -377,6 +402,9 @@ writing style.
   file). A local pointer that does not resolve gets one notice, then the default
   voice alone; a `drive:` pointer that fails stops the run, per that document's
   § Failure behavior.
+- Check each edited span against Step 6 § A wording fix can still change the
+  claim before keeping it. An edit that shifts certainty, precision or
+  causation goes back to the source wording.
 - A rule that cannot be honoured is named in the report, never broken silently.
 
 **Keep a record of what this step changed, finding by finding.** Against each
