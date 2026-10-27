@@ -18,8 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `voice.md` now says the 20-word limit is a ceiling, not a rhythm, and
   `compose` drafts against the table instead of leaving it to `preflight`.
   Several conditions are adapted from `devswha/patina` (MIT), restated in
-  Daikenja's own words. They have not yet been tested against a corpus of
-  real work messages.
+  Daikenja's own words.
+- **Five AI-tell rows fire less often on ordinary writing.** The table was
+  checked against real work messages, and none of its hits on human
+  writing was a real tell. Flat rhythm now needs four same-shaped sentences
+  in a row, not three. Hollow three fires only when dropping an item would
+  lose nothing, and no longer fires on two lists of three. Throat-clearing
+  no longer fires on a trailing aside or on a phrase that heads off a
+  misreading. Empty enthusiasm skips praise that is the whole message, and
+  stacked hedges skip a claim whose writer says how sure they are.
 
 ### Added
 

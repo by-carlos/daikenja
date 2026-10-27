@@ -303,14 +303,14 @@ like any other.
 
 | Tell | Fires when | Does not fire when |
 |---|---|---|
-| **Empty enthusiasm** ("great question", "you're absolutely right", "excited to share") | Praise or excitement comes before the content and says nothing about it. | The thanks names something specific: "thanks for catching the date". |
-| **Throat-clearing** ("here's the thing", "let me be clear", "to be honest") | The phrase delays the point and can be deleted with nothing lost. | It carries real reluctance before a hard statement, or it is quoted speech. |
+| **Empty enthusiasm** ("great question", "you're absolutely right", "excited to share") | Praise or excitement comes before the content and says nothing about it. | The thanks names something specific: "thanks for catching the date". Or the praise is the whole message, as in a quick reply. |
+| **Throat-clearing** ("here's the thing", "let me be clear", "to be honest") | The phrase comes before the point, delays it, and can be deleted with nothing lost. | It carries real reluctance before a hard statement, it heads off a likely misreading of what the writer means, it is a trailing aside after the point, or it is quoted speech. |
 | **Lone-insider setup** ("what nobody tells you", "most people miss") | It frames everyone else as unaware and adds no evidence. | The message then shows what the common view is and why it is wrong. |
 | **Filler phrase** ("it's worth noting that", "due to the fact that", "when it comes to") | One phrase can be deleted with nothing lost, or two appear in one paragraph. | Removing it would make the sentence ambiguous. |
-| **Stacked hedges** ("it may possibly be the case that") | Three or more qualifiers sit on one claim, or the claim no longer asserts anything. | One qualifier marks a claim that really is uncertain. |
+| **Stacked hedges** ("it may possibly be the case that") | Three or more qualifiers sit on one claim, or the claim no longer asserts anything. | One qualifier marks a claim that really is uncertain, or the writer says how sure they are in the same sentence. |
 | **Empty reframe** ("that said", "to be more precise", "in fairness") | It restates the previous sentence and adds no new fact or correction. | It introduces a real correction or new evidence. |
-| **Hollow three** ("it is your migration, it is your call, it is your timeline") | A three-part list or repetition adds rhythm but no information, or two lists of three appear where two or four items would serve as well. | The three is real: three systems, three dates, three steps. |
-| **Flat rhythm** | Three or more sentences in a row have the same length and the same shape (owner, verb, object, full stop), or the paragraphs mirror each other in length and structure. | The sentences are a list of parallel facts the reader will scan, such as status lines. |
+| **Hollow three** ("it is your migration, it is your call, it is your timeline") | A three-part list or repetition adds rhythm but no information: the reader would lose nothing if one item were dropped. | The three is real: three systems, three dates, three steps, three distinct goals or traits. |
+| **Flat rhythm** | Four or more sentences in a row have the same length and the same shape (owner, verb, object, full stop), or the paragraphs mirror each other in length and structure. | The sentences are a list of parallel facts the reader will scan, such as status lines. |
 
 The fix for each tell is held to `rewrite-rules.md`. A stacked-hedge fix keeps
 one qualifier, because removing all of them changes the writer's confidence.
