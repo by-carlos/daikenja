@@ -57,9 +57,6 @@ the upgrade branch lives in `setup-user` and stays there.
 This skill never captures profile data. If the user offers a name, role or tone
 here, record nothing and point at `/daikenja:setup-user`.
 
-There is no environment gate in this skill. `setup-user` ran Step 0 already, and
-its config file could not exist otherwise.
-
 ## Step 1: read what already exists
 
 Before proposing anything:
@@ -78,11 +75,10 @@ Before proposing anything:
   This decides whether Step 4 is a first seed or a top-up, and it is read-only
   here.
 
-**Ledger files on disk with no matching `projects:` entry are a normal state**,
-not an error. The files on disk are the fact and the config is the index.
-Register the project and leave the files exactly as they are. A `DECISIONS.md`
-another tool wrote, plan-staged-rollout for one, is the same case: it is
-adopted as this repository's decisions file, never replaced.
+**Ledger files on disk with no matching entry are a normal state.** The files
+are the fact and the config is the index: register the project and leave them
+exactly as they are. A `DECISIONS.md` another tool wrote, plan-staged-rollout
+for one, is adopted the same way, never replaced.
 
 ## Step 2: register the project
 
@@ -140,10 +136,8 @@ adopted as this repository's decisions file, never replaced.
 decides:
 
 - **The repository root.** Register it as it stands.
-- **Inside a repository, not at its root.** Propose the root
-  `rev-parse --show-toplevel` printed, since `DECISIONS.md` sits at a
-  repository's root. Register the sub-folder itself only when the user asks
-  for it.
+- **Inside a repository, below its root.** Propose the root `rev-parse`
+  printed; register the sub-folder only when the user asks for it.
 - **Not a git repository** -- a plain folder for non-code work: notes, a
   programme, a bid. Offer `git init` in one line, and take no for an answer:
 
@@ -157,9 +151,8 @@ decides:
   and say so. Never register a folder that is not a repository.
 
 **A project with no folder** -- a programme spread across a wiki, a tracker and
-a chat space -- is not registered as one. Say so, and offer the plain-folder
-path above: a new folder for the project, named after its key, with `git init`.
-Never write an entry with no paths, and never invent a path to fill the gap.
+a chat space -- gets the same offer for a new folder named after its key. Never
+write an entry with no paths, and never invent one.
 
 **A prefix match that is not exact is a nested project.** The current directory
 sits inside a registered one. Say which project it resolves to today and ask
@@ -195,9 +188,8 @@ own default value is noise that reads like a deliberate override to the next
 person who opens the file.
 
 **Never write `last_checkpoint` here.** It belongs to `project-catchup`, which
-sets it after it has actually reported a delta. Writing it at registration would
-claim a report that never happened, and the first `project-catchup` run would
-then skip everything older than the moment of registration.
+sets it after it has actually reported a delta; written at registration, it
+would make the first catchup skip everything older than this moment.
 
 State the values you are about to write and wait for a yes, then edit them into
 the entry from Step 2.
@@ -258,10 +250,9 @@ turns out to be superseded.
 Look for the usual homes -- `DECISIONS.md` at each registered repository's
 root, `docs/adr/`, `doc/adr/`, `docs/decisions/`, `docs/rfc/`, `adr/`,
 `decisions/`, or a file whose name says the same thing. This is a scan of file
-names in each registered repository, not a read of it for material.
-`project-log`'s rule against reading the repository to guess what happened is
-about inventing material for an ordinary log entry; here the user has asked for
-exactly this and the results are shown before anything is proposed.
+names in each registered repository, not a read of it for material:
+`project-log`'s rule against reading the repository is about inventing
+material, and here the user asked and sees the results first.
 
 - **A `DECISIONS.md` already exists.** Say so: it is adopted as it stands, its
   entries are already the ledger's decisions, and seeding adds only what it
@@ -327,9 +318,8 @@ another skill: it shows the exact lines grouped by file, scaffolds a missing
 file inside the same approval, extends an existing `DECISIONS.md` and never
 overwrites it, and accepts partial approval.
 
-What seeding adds is a bound on how much is put in front of the user at once.
-Forty-one entries in one message makes "just the first two" unusable, and a
-tranche the user answers around is a tranche nobody approved.
+What seeding adds is a bound on how much is shown at once: forty-one entries
+in one message make "just the first two" unusable.
 
 - **One tranche at a time, in this order** -- decisions, then open items, then
   context links. Hand each to `project-log`, which proposes it and waits.
@@ -393,15 +383,10 @@ If seeding was declined or produced nothing, say that plainly and name
 
 ## Re-running this skill
 
-Safe at any time, and expected. An exact path match -- against any path of any
-entry -- leaves the entry and its key untouched, Step 3 shows what is already
-set before asking, and seeding a project that already has a ledger proposes
-only what is not already recorded -- `project-log`'s duplicate check is what
-enforces that, and an entry it matches comes back as a proposed edit rather
-than a near copy.
-
-Running it purely to seed an already-registered project is a normal use, not a
-workaround.
+Safe at any time, and expected. An exact path match leaves the entry and its
+key untouched, Step 3 shows what is already set before asking, and seeding a
+project that already has a ledger proposes only what `project-log`'s duplicate
+check finds missing. Running it purely to seed is a normal use.
 
 ## Failure cases
 
@@ -417,16 +402,13 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | The matched project needs migration | The one line from `config-resolution.md` § Legacy keys and unmigrated ledgers, naming `/daikenja:setup-user`. Steps 3 and 3b run; Step 4 does not. |
 | An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval, keeping the first path first; never rewrite it silently. |
 | The user names an existing project to add this directory to, and the key does not exist | Ask again, listing the registered keys. Never create a new entry under a key the user only half-remembered. |
-| The directory is not a git repository | Offer `git init` there. A no writes nothing. Never register it as it is. |
-| The user says the project has no directory | Offer a new folder for it with `git init`. Never write an entry with no paths. |
-| A `DECISIONS.md` already exists in a registered repository | Not a failure. It is adopted; seeding adds entries through `project-log` and never overwrites it. |
+| Not a git repository, or no directory at all | Offer `git init` in it, or in a new folder. A no writes nothing; never an entry with no paths. |
 | A project card already exists at `<home>/.daikenja/project.md` | Say so and leave it alone. Never inspect or rewrite it -- the user edits the card by hand. |
 | `<home>/.daikenja/` does not exist yet | Create the directory as part of the approved card write. `open.md` is still `project-log`'s to scaffold; a `.daikenja/` holding only a card is a normal state. |
 | The current directory is inside an already-registered project | Say which project it resolves to and ask before adding a second entry. Never assume a nested registration is wanted. |
 | The current directory is the user's home directory or `~/.claude` | **Stop.** Neither is a project. Say so and write nothing. |
 | `daikenja.yaml` is not writable | **Stop.** Name the path and the error. Do not write the entry anywhere else. |
-| A named source is unreachable this session | One notice naming the source and what is missing, then continue with the rest. Never stop, and never make the skill conditional on a connector. |
-| A source is reachable but empty, or the fetch fails halfway | One notice, then continue. Never guess at the content of something you could not read. |
+| A named source is unreachable, empty, or fails halfway | One notice naming it, then continue with the rest. Never stop, and never guess at content you could not read. |
 | The project already keeps its own decision records | Not a failure. Say what was found, offer the index-and-depth shape from Step 4a, and let the user decide whether Daikenja adds anything here. |
 | A seed open item has no recoverable date | Ask. If the user cannot supply one, drop that item and name it in the report. Never date it today and never invent one. |
 | A tranche goes unanswered | Restate what is still unwritten before proposing anything further. Silence is not approval. |
@@ -440,10 +422,7 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 - It does not write ledger content or commit anything. `/daikenja:project-log`
   writes `DECISIONS.md` and `open.md`, on its own approval, and it is the only
   skill that does; the user commits them.
-- It does not edit an existing project card. It creates one on approval when
-  none exists; after that the card is the user's, per
-  `docs/config-writers.md` § Who writes what.
-- It does not write `last_checkpoint`. That is `/daikenja:project-catchup`.
+- It does not edit an existing project card or write `last_checkpoint`.
 - It does not edit the project's own documents -- a decision record, a wiki page
   or a README that a seed run read stays exactly as it was found.
 - It does not migrate or convert anything from a previous Daikenja layout.
