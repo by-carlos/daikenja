@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.13.0] - 2026-11-03
+## [0.13.1] - 2026-11-04
 
 **Codename:** wow!
 
@@ -2265,8 +2265,8 @@ Initial public release.
   `personas.md`, `writing-style.md`) copied out to a user's machine on setup.
 - `tests/fixtures/` synthetic inputs the skills are exercised against by hand.
 
-[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.13.0...HEAD
-[0.13.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.13.0
+[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.13.1...HEAD
+[0.13.1]: https://github.com/by-carlos/daikenja/releases/tag/v0.13.1
 [0.12.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.12.0
 [0.11.2]: https://github.com/by-carlos/daikenja/releases/tag/v0.11.2
 [0.11.1]: https://github.com/by-carlos/daikenja/releases/tag/v0.11.1
