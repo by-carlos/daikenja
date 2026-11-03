@@ -44,23 +44,23 @@ stage's acceptance checks can be re-run later against the same inputs.
   the same conversation with two later messages. Logging it after the first
   fixture must update entries in place instead of appending near copies.
 - [`fixtures/sample-ledger.md`](fixtures/sample-ledger.md) -- a complete,
-  well-formed beacon-project ledger: four decisions with one supersession
-  pair (`D-002`/`D-004`), five open items with one resolved, one context
-  link, and a changelog accounting for every write, including one entry
-  written by `project-log` so the fixture covers both the pre- and
-  post-rename writer name. The healthy-ledger control fixture; its `D-003`
-  schema-freeze decision is what `sample-drafts-preflight.md`'s third draft
-  checks against.
-- [`fixtures/malformed-ledger.md`](fixtures/malformed-ledger.md) -- a ledger with
-  a misspelled section heading and an entry missing its owner field, plus a legal
-  continuation line as a control. A skill must report all of it and write
-  nothing.
-- [`fixtures/broken-supersession.md`](fixtures/broken-supersession.md) -- a
-  ledger with two mismatched supersession pairs (a body claiming `Supersedes`
-  with no matching tail, and a tail with no matching claim), plus a correctly
-  matched pair as a control. Exercises `project-decisions`' tail-is-authoritative
-  handling: it must report both mismatches, naming both IDs, and never repair
-  the ledger.
+  well-formed beacon-project ledger in the two-file shape: a `DECISIONS.md`
+  with three decisions in force across two areas, and an `open.md` with four
+  open items (two unowned), one context link and an empty Sources section.
+  The healthy-ledger control fixture; its events-table schema-freeze decision
+  is what `sample-drafts-preflight.md`'s third draft checks against.
+- [`fixtures/malformed-ledger.md`](fixtures/malformed-ledger.md) -- a ledger
+  whose `open.md` has a misspelled section heading and an open item missing its
+  owner field, plus a legal continuation line as a control, beside a
+  well-formed `DECISIONS.md`. A skill must report all of it and write nothing.
+- [`fixtures/catchup-git-history.md`](fixtures/catchup-git-history.md) -- a
+  two-repository `lumen-launch` project whose ledger has a short git history,
+  walked by `project-catchup` from four `last_checkpoint` values: changes
+  reported since a SHA, an unresolvable SHA and a missing entry each reported
+  as a first run, a scalar timestamp reported as predating the new ledger with
+  a per-repository SHA map proposed, and a SHA holding shell metacharacters
+  rejected before git sees it. An uncommitted edit is listed as "not committed
+  yet" in every walk.
 
 - [`fixtures/ledger-backfill.md`](fixtures/ledger-backfill.md) -- an
   incrementally kept `lantern` ledger plus three walks that exercise the four
