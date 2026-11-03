@@ -167,7 +167,7 @@ install it, how to try it, and where to read next. Depth lives in
 
 - **A change to what a user sees updates the guide in the same pull request.**
   That includes a skill's name, what it writes, whether it runs from plain
-  language, and anything in [Where your data lives](docs/guide/your-data.md).
+  language, and anything in [Your data](docs/guide/your-data.md).
 - **Every guide page opens with the same nav line**, current page in bold, then
   an **In short:** box. A new page is added to the nav line of every page and
   to the README's Documentation table.

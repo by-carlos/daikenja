@@ -61,7 +61,8 @@ history -- moving the ledger later does not remove what was already committed.
     your yes.
   - `learn-voice` rewrites your writing style in one go, after saving a dated
     backup of the old one.
-- **`tensei`** asks once, "Adopt this way of working?", before writing its file or changing your `CLAUDE.md`.
+- **`tensei`** asks once, "Adopt this way of working?", before writing its
+  file or changing your `CLAUDE.md`.
 
 ## Every file, and who writes it
 
@@ -88,14 +89,16 @@ keeps it in `~/.claude/daikenja/ledgers/` by default. For a project spanning
 several folders, the ledger is in the first folder registered.
 
 Backups are kept until you delete them. Nothing personal is stored in the
-plugin's own folder, which is replaced on every update.
+plugin's own folder, which is replaced on every update. The plugin ships blank
+starting points in its `templates/` folder; they are copied out once, and the
+copies are your live files.
 
 ## Google Drive, if you want it
 
 **Local files are the default; Google Drive is opt-in.**
 
 - **What can go there:** persona notes, your writing style, or both -- each is
-  your own choice. The ledger never moves; it stays with the project.
+  your own choice. The ledger is not part of this choice.
 - **How:** `setup-user` offers it once. It reaches Drive through Google's
   connector in Claude Code, under your own Google account, and works fine
   without it.

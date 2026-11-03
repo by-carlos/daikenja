@@ -84,5 +84,6 @@ two work together. [How it compares](why.md#how-it-compares)
   `remember-persona`. [Writing](writing.md#remember-how-someone-reads-remember-persona)
 - **Reviewers** are the built-in readers `preflight` checks a draft against.
   [Writing](writing.md#challenge-a-draft-before-it-goes-out-preflight)
-- **Tensei** is not a persona at all: it is the optional Daikenja way of working, for how Claude answers and works with *you*.
+- **Tensei** is not a persona at all: it is the optional Daikenja way of
+  working, for how Claude answers and works with *you*.
   [Tensei](tensei.md)

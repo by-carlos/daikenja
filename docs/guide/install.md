@@ -66,9 +66,9 @@ claude plugin install daikenja@daikenja
 
 **Open a session.** In the Desktop app, go to the **Code** tab and start a new
 **local** session. It asks for a folder to work in: pick a project's folder, or
-a new empty folder you made for the purpose -- not your home folder itself. On the command line, run `claude`.
-Type `/daikenja` in the message box: the list that appears is your sign the
-install worked.
+a new empty folder you made for the purpose -- not your home folder itself. On
+the command line, run `claude`. Type `/daikenja` in the message box: the list
+that appears is your sign the install worked.
 
 **Run `/daikenja:setup-user`, once per person.** It checks the environment,
 asks a few questions about you, and writes your settings into a `daikenja`
@@ -79,7 +79,8 @@ After this, every skill works.
 any body of work you want a running record for: a launch, a client, a
 programme, a repository. Without registering, `/daikenja:project-log` still
 works -- it creates `.daikenja/ledger.md` in the folder you are in the first
-time you log something, asking first if that folder is not a git repository. Registering adds:
+time you log something, asking first if that folder is not a git repository.
+Registering adds:
 
 - reaching the project by name from any folder;
 - one project spanning several folders, or none at all;
@@ -112,7 +113,7 @@ settings, notes or ledgers: they live outside the plugin's own folder.
 | You use | How to update |
 |---|---|
 | **Desktop app** | Open the **Plugins** pane and select Daikenja: its page shows your version and an **Update** button. If it shows a version behind the latest [release](https://github.com/by-carlos/daikenja/releases), remove Daikenja there and install it again: a reinstall always lands on the current version, and your settings stay. |
-| **Command line** | Run `/plugin`, open **Marketplaces**, select Daikenja, and choose **Update marketplace** -- or turn on **Enable auto-update** once and forget it. |
+| **Command line** | Run `/plugin`, open **Marketplaces**, select Daikenja, and choose **Update marketplace** -- or turn on **Enable auto-update** once, and Claude Code refreshes it in the background shortly after each session starts. |
 
 **Do not count on the Desktop app noticing a new release.** It has no
 auto-update toggle, and has been seen to report nothing for days after a

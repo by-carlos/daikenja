@@ -120,8 +120,9 @@ can read the project can read. Every file, and what leaves your machine:
 
 Questions, bugs and ideas go to
 [the issue tracker](https://github.com/by-carlos/daikenja/issues) (a free
-GitHub account is needed), or ask whoever recommended Daikenja to you. A problem with the marketplace listing itself
-belongs in [`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins),
+GitHub account is needed), or ask whoever recommended Daikenja to you. A
+problem with the marketplace listing itself belongs in
+[`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins),
 which owns the catalog.
 
 [`CONTRIBUTING.md`](CONTRIBUTING.md) has the rest: how to load the working
@@ -135,6 +136,6 @@ request.
 ## License
 
 Free for any use, including at work, except building a competing commercial
-product. Each release becomes Apache-2.0 two years after
-it is made available. Formally [FSL-1.1-ALv2](LICENSE); versions before 0.6.0
-were released under MIT.
+product. Each release becomes Apache-2.0 two years after it is made available.
+Formally [FSL-1.1-ALv2](LICENSE); versions before 0.6.0 were released under
+MIT.

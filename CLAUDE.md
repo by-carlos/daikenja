@@ -143,6 +143,11 @@ rule. Do not file without reading it.
   as frozen unless an issue explicitly scopes a format change.
 - **Templates.** Files under `templates/` are copied to a user's machine and
   never edited by the plugin afterwards. Changes there affect only new copies.
+- **User docs move with the change.** The README is a landing page; the
+  detail lives in `docs/guide/`. A change to anything a user sees -- a
+  skill's name, what it writes or asks before writing, whether it runs from
+  plain words, where data lives -- updates the matching guide page in the same
+  PR. `CONTRIBUTING.md` § User documentation has the page conventions.
 - **Three file-location categories, not two.** Where a file goes is decided by
   who reads it, and there are three answers:
   - **`skills/` ships to users and Claude Code loads it.** Never put
