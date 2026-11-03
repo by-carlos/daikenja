@@ -27,11 +27,11 @@ this stage.
 
 ## Steps
 
-- [ ] Copy `.plan/decisions-format.md` to `docs/decisions-format.md`
+- [x] Copy `.plan/decisions-format.md` to `docs/decisions-format.md`
   byte-identical (it is itself the upstream file). Verify against upstream with
   `gh api repos/by-carlos/plan-staged-rollout/contents/skills/staged-rollout/references/decisions-format.md -H "Accept: application/vnd.github.raw"`
   written to a scratch file, then `cmp` the two.
-- [ ] Write `docs/open-format.md`: first line `<!-- daikenja-open-format: 1 -->`;
+- [x] Write `docs/open-format.md`: first line `<!-- daikenja-open-format: 1 -->`;
   where the file lives (`.daikenja/open.md` in the home repository, D-8, D-9);
   the item line grammar (owner, date raised `YYYY-MM-DD`, text, and the optional
   `Blocked by: <other item in words>` prefix, D-2); closing an item deletes its
@@ -40,16 +40,16 @@ this stage.
   and warn once, `project-log` refuses and asks for a plugin update). Add no
   `Depends-on (reverse index ...)` block: no skill section cites the file yet.
   Keep it under 200 lines.
-- [ ] Write `templates/open.md`: an empty `open.md` with the version line and the
+- [x] Write `templates/open.md`: an empty `open.md` with the version line and the
   sections from the spec.
-- [ ] Write `templates/DECISIONS.md`: an empty file with
+- [x] Write `templates/DECISIONS.md`: an empty file with
   `<!-- decisions-format: 1 -->` and the shape `docs/decisions-format.md` defines.
   Leave `templates/ledger.md` in place (S9 removes it).
-- [ ] Update `templates/README.md` to list the two new templates.
+- [x] Update `templates/README.md` to list the two new templates.
 - No `CHANGELOG.md` entry here: S9 writes the entry set for S0, S2–S7 and S9
   (D-14). This stage touches nothing on a user's disk, so `docs/upgrading.md`
   gets no note.
-- [ ] Run `python3 tests/check-invariants.py` and fix anything it flags (D-16).
+- [x] Run `python3 tests/check-invariants.py` and fix anything it flags (D-16).
 
 <!-- Checkboxes are the resume mechanism: a session that stops mid-stage marks
 the row `doing`, ticks the boxes it finished, and writes a handoff note in the

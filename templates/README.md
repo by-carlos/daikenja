@@ -12,6 +12,12 @@ starting points.
 - [`ledger.md`](ledger.md) -- the empty ledger `project-log` scaffolds into a
   project's `.daikenja/`, with `{{PROJECT}}` replaced by the project name. Format:
   [`../docs/ledger-format.md`](../docs/ledger-format.md).
+- [`DECISIONS.md`](DECISIONS.md) -- the empty decisions file `project-log`
+  scaffolds at a repository's root, copied as it stands. Format:
+  [`../docs/decisions-format.md`](../docs/decisions-format.md).
+- [`open.md`](open.md) -- the empty open-items file `project-log` scaffolds
+  into the home repository's `.daikenja/`, with `{{PROJECT}}` replaced by the
+  project name. Format: [`../docs/open-format.md`](../docs/open-format.md).
 - [`project.md`](project.md) -- the empty project card `setup-project`
   scaffolds beside a project's ledger, with `{{PROJECT}}` replaced by the
   project name. Format: [`../docs/project-card.md`](../docs/project-card.md).
