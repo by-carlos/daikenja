@@ -707,7 +707,7 @@ class ExtractBlockTests(unittest.TestCase):
             "🚧 **Not checked**\n"
             "- The linked runbook.\n"
             "\n"
-            "Ledger: harbor (C:/Users/example/project/.daikenja/ledger.md)\n"
+            "Ledger: harbor (C:/Users/example/project/DECISIONS.md)\n"
             "Card: C:/Users/example/project/.daikenja/card.md\n"
         )
         extracted = extract_output(text, JUDGEMENT)
@@ -727,7 +727,7 @@ class ExtractBlockTests(unittest.TestCase):
             "🚧 **Not checked:**\n"
             "- The linked runbook.\n"
             "\n"
-            "Ledger: harbor (C:/Users/example/project/.daikenja/ledger.md)\n"
+            "Ledger: harbor (C:/Users/example/project/DECISIONS.md)\n"
         )
         extracted = extract_output(text, JUDGEMENT)
         self.assertTrue(extracted.startswith("⚖️ **Verdict:**"))
