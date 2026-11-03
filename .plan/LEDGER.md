@@ -18,7 +18,7 @@ protocol, finish protocol).
 | S1 Config, resolution and reading contracts | done | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
 | S2 project-log writes both files | todo | — | — | — |
 | S3 Catchup and decisions read git history | todo | — | — | — |
-| S4 Gaps, summary, list and sources skills | doing | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
+| S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | todo | — | — | — |
 | S6 setup-project registers git-backed projects only | todo | — | — | — |
 | S7 Slack bot reports unreadable project data | todo | — | — | — |
