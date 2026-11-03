@@ -38,7 +38,7 @@ Read these before doing anything. Do not work from memory of them.
   format, and the open items Step 5 scans.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. Read in full and not narrowed to a section: Step 6 explicitly
-  follows only § Entries are named topic-first, ID in parentheses, but the
+  follows only § Entries are named topic-first, location in parentheses, but the
   contract's own scope says a skill "implements it; it never redefines it" --
   every rule in the file (tone scaling, the clean-result line, itemised
   findings) governs this skill's replies whether or not Step 6 names it.
