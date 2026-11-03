@@ -19,7 +19,7 @@ protocol, finish protocol).
 | S2 project-log writes both files | todo | — | — | — |
 | S3 Catchup and decisions read git history | todo | — | — | — |
 | S4 Gaps, summary, list and sources skills | todo | — | — | — |
-| S5 Judgement, thread, meeting-review and other readers | todo | — | — | — |
+| S5 Judgement, thread, meeting-review and other readers | doing | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | todo | — | — | — |
 | S7 Slack bot reports unreadable project data | todo | — | — | — |
 | S8 Migration from the old ledger | todo | — | — | — |
@@ -192,7 +192,112 @@ _(empty)_
 _(empty)_
 
 ### S5 Judgement, thread, meeting-review and other readers
-_(empty)_
+
+As built:
+
+- **The token (S7 consumes it).** Exact text `DAIKENJA-PROJECT-DATA-UNREADABLE`.
+  In the `message` form of `judgement` and `thread` -- the path the bot calls
+  (`/daikenja:judgement message`, `/daikenja:thread message`) -- the whole
+  deliverable is one line, nothing before or after it:
+
+  ```
+  DAIKENJA-PROJECT-DATA-UNREADABLE <key> needs-migration
+  DAIKENJA-PROJECT-DATA-UNREADABLE <key> newer-format
+  ```
+
+  `<key>` is the project key, or `-` for an unregistered directory. The
+  matching `reading.md` notice line goes in the report around the message,
+  outside the sentinels. Needs migration = no repository in `daikenja.yaml`, or
+  `.daikenja/ledger.md` at home with no `open.md` (D-21); newer format = any
+  file's version line above what the plugin knows (D-4). The `answer` form is
+  unchanged in kind: needs migration gives the notice and stops; a newer
+  version is read with one warning.
+- **Citations without IDs:** a decision is named topic-first with the
+  repository whose `DECISIONS.md` holds it in parentheses -- `the cutover-day
+  decision (harbor)` -- and an `open.md` item with `(open item)`.
+  `response-format.md` § Entries are named topic-first, ID in parentheses now
+  says this in its body.
+- `judgement` reads every registered repository's `DECISIONS.md` in full; the
+  superseded-decision rule became "every entry is in force; two repositories'
+  entries that disagree are both named". `Ledger:` lines carry `<files>` per
+  `reading.md` § Step B.
+- `meeting-review` hands `project-log` decisions as rule + why (no owner field
+  in `DECISIONS.md`, so who closed it stays in the report and handoff) and
+  open items with owner and date raised; no IDs, no markers, no Changelog
+  writer.
+- `preflight`/`preflight-reference.md`: check 6 reads both files; needs
+  migration reports "already answered" as not checked; newer version read with
+  its warning.
+- `remember-persona` now cites `open-format.md` § Section: Open items for what
+  an owner handle refers to.
+- `self-review` and `learn-voice`: no change needed -- their mentions are the
+  word "ledger" only (D-7) and "contradicts a `Fixed` rule", not the format.
+
+Acceptance (run in `../daikenja-s5`):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=<origin plan branch> HEAD_SHA=<HEAD> python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+```
+
+Hand walk 1, `tests/fixtures/judgement.md` Walk 1 (`answer` form, Subject A)
+against the fixture's synthetic `C:/GitHub/ember/DECISIONS.md` (invented
+project `ember`, invented people gabiru/hakurou/shion): content resolves
+`ember` by `#ember-warehouse`; `Ledger: ember, matched by #ember-warehouse
+(C:/GitHub/ember/DECISIONS.md, C:/GitHub/ember/.daikenja/open.md)`; the
+verdict cites "the storage-engine decision (ember)" and "the retention
+question (open item)" -- no ID anywhere. Walks 2 and 6 cite "the nightly load
+window decision (ember)" the same way.
+
+Hand walk 2, `judgement` unreadable data (fixture Walks 7 and 8, Subject B):
+
+- Needs migration: `message project ember`, `.daikenja/ledger.md` present and
+  no `open.md` -> legacy check of `reading.md` § Step B fires first, nothing
+  read; report line `The ledger at C:/GitHub/ember/.daikenja/ledger.md needs
+  migration -- run /daikenja:setup-user.`; message
+  `DAIKENJA-PROJECT-DATA-UNREADABLE ember needs-migration`, no verdict.
+- Newer format: `DECISIONS.md` line 1 `<!-- decisions-format: 2 -->` -> report
+  line `C:/GitHub/ember/DECISIONS.md was written by a newer format (version 2);
+  update the Daikenja plugin.`; message
+  `DAIKENJA-PROJECT-DATA-UNREADABLE ember newer-format`, no verdict.
+
+Hand walk 3, `thread` unreadable data (`/daikenja:thread message project
+ember`, the fixture's Subject A as the thread):
+
+- Needs migration (same files as walk 2): Step 2b gives the notice in place of
+  the `Ledger` line and reads nothing; § Form `message` -> "Project data
+  unreadable produces no summary" -> deliverable
+  `DAIKENJA-PROJECT-DATA-UNREADABLE ember needs-migration`, no Thread/Asking
+  block.
+- Newer format (same file as walk 2): Step 2b reads with one warning; the
+  message form -> `DAIKENJA-PROJECT-DATA-UNREADABLE ember newer-format`, no
+  block.
+
+Follow-ups (not this stage's):
+
+- **S9:** rename `response-format.md` § Entries are named topic-first, ID in
+  parentheses to drop "ID in parentheses", with its reverse index and the
+  citing skills (catchup, decisions, gaps, summary, sources, preflight,
+  project-log, compose) once S2-S4 have landed -- renaming it now would
+  collide with three parallel stages. `docs/README.md:52` and
+  `skills/compose/SKILL.md:191` still say "ID in parentheses".
+- **S9:** `docs/ledger-format.md`'s reverse index still lists remember-persona
+  under § Who an owner handle refers to; it goes with the file.
+- **S3:** `tests/fixtures/sample-ledger.md` is still old-format;
+  `sample-drafts-preflight.md` Draft 3 now expects "the events-table schema
+  freeze (beacon)", so S3's conversion should keep that entry's words and put
+  it in a repository named `beacon`.
+- **S2:** `sample-thread.md` and `sample-thread-followup.md` describe
+  `project-log`'s proposals (scaffold, duplicates); only the scaffold sentence
+  was repointed here.
+- `tests/fixtures/judgement.md` Walks 1-3 still show an older answer shape
+  (`Verdict:` lines, `AI review summary` header in Walk 2) than the skill's
+  current markers -- predates this plan; left as is.
+
+Actuals: 2026-11-03T07:33:01.914Z → 2026-11-03T07:43:12.064Z · 10 min · tokens in=110 out=33383 cache_read=8739823 cache_write=162317 · subagents=0
+Artifacts check: match
 
 ### S6 setup-project registers git-backed projects only
 _(empty)_
