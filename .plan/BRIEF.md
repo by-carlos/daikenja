@@ -1,4 +1,4 @@
-Generated from PLAN.md @ d41461f3ebfd — do not edit
+Generated from PLAN.md @ a99ce0485efb — do not edit
 # Replace the ledger with DECISIONS.md, open.md and git history — plan brief
 
 > One page to check this plan against what you expect. Feedback goes in chat
@@ -107,7 +107,8 @@ flowchart LR
   S1 --> S2 & S3 & S4 & S5
   S2 --> S6[S6 setup-project] --> S8[S8 Migration]
   S5 --> S7[S7 Slack bot]
-  S2 & S3 & S4 & S5 & S6 & S7 & S8 --> S9[S9 User docs] --> SF[SF Plan review]
+  S2 & S3 & S4 & S5 & S6 & S7 & S8 --> S9[S9 User docs] --> S10[S10 Fix: migration exemption] --> SF[SF Plan review]
+  S9 --> SF
 ```
 
 | Stage | Depends | Gate | Estimate |
@@ -122,8 +123,9 @@ flowchart LR
 | S7 Slack bot reports unreadable project data | S5 | auto | 1–2h |
 | S8 Migration from the old ledger | S6 | auto | 2–4h |
 | S9 User guide, README and retiring ledger-format.md | S2–S8 | auto | 2–3.5h |
-| SF Plan review | S9 | auto | 0.5–1h |
+| S10 Fix: align the migration batch exemption | S9 | auto | 0.5–1h |
+| SF Plan review | S9, S10 | auto | 0.5–1h |
 
 Plan flags: `merge: auto` · `plan-dir: delete`
 
-Plan estimate: summed 16–31h · elapsed 10.5–20h
+Plan estimate: summed 16.5–32h · elapsed 11–21h

@@ -24,7 +24,8 @@ protocol, finish protocol).
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | done | yes | 2026-11-03 | Guide, README, diagrams and changelog describe the new ledger; ledger-format.md, its template and fixture retired |
-| SF Plan review | todo | — | — | — |
+| S10 Fix: align the migration batch exemption | todo | — | — | — |
+| SF Plan review | todo | no | 2026-11-04 | Pass 1 added fix S10; SF re-runs from the top as a redo once S10 is done |
 
 ## Notes
 
@@ -1211,6 +1212,10 @@ Artifacts check: outside: docs/future-work.md, templates/README.md (by hand, `gi
               "Adding a stage").
 -->
 
+### S10 Fix: align the migration batch exemption
+
+Added by SF — `project-log`'s text stops a no-folder migration that `docs/ledger-migration.md` exempts, so a pathless ledger cannot migrate as written (#292 item 5, Done check 6) — referee: grows
+
 ### SF Plan review
 
 Preflight (2026-11-04): clone clean and synced, plan branch not ahead, brief
@@ -1235,26 +1240,26 @@ resolved.
    (§ Writing, in order, step 4 after step 3), so a pathless project's entry
    still reads `paths: []` when `project-log` resolves it: followed as
    written, the skill stops, and a no-folder migration ends after `git init`
-   and the backup copy. Repairs #292 item 5 and Done check 6. -> **proposed
-   fix**, pending the maintainer.
+   and the backup copy. Repairs #292 item 5 and Done check 6. -> **fix: S10** (maintainer's
+   yes, 4 Nov 2026).
 2. **`config-resolution.md` § Legacy keys says "the migration in
    `setup-user`"** (line 187); it runs in `setup-project`, reached from
-   `setup-user` (S8, S9). -> with 1, proposed fix.
+   `setup-user` (S8, S9). -> **fix: S10**, with 1.
 3. **`config-writers.md` card and projects rows** omit the migration: the card
    row says an existing card is never touched by any skill, and the
    `daikenja.yaml` projects row does not mention the migration's edit or the
-   backup rename (S8, S9). -> with 1, proposed fix.
+   backup rename (S8, S9). -> **fix: S10**, with 1.
 4. **`config-writers.md` reverse index** does not list `project-catchup`,
-   which cites § Who writes what (S3, S9). -> with 1, proposed fix.
+   which cites § Who writes what (S3, S9). -> **fix: S10**, with 1.
 5. **`response-format.md` heading "Entries are named topic-first, ID in
    parentheses"** -- the body is right (entries carry no IDs; the parentheses
    hold the repository or `open item`), only the heading's name is stale, with
    its citations in eight skills' `Depends-on` lines, `docs/README.md:59` and
    `skills/compose/SKILL.md:191` (S5, S9). Touches skill files and size
-   baselines. -> **issue**, pending yes.
+   baselines. -> **issue**: by-carlos/daikenja#319 (filed 4 Nov 2026).
 6. **`project-log <key>` from outside the project** could now be allowed,
    since files sit at fixed paths (S2). A feature, changes
-   `project-resolution.md` walk 3d. -> **issue**, pending yes.
+   `project-resolution.md` walk 3d. -> **issue**: by-carlos/daikenja#320 (filed 4 Nov 2026).
 7. **Pathless backup name** is `<stem>.<YYYY-MM-DD>.bak.md`
    (`q4-planning.<date>.bak.md` for `ledgers/q4-planning.md`), not D-11's
    `ledger.<date>.bak.md` (S8). -> **accepted, won't fix**: the stem form
@@ -1355,7 +1360,7 @@ Same files and counts as S9's run. Every hit outside `CHANGELOG.md` and
 `docs/upgrading.md` is a D-21 rule line (`paths: []` -> needs migration) or a
 test/fixture exercising it.
 
-#### #293 note (draft, not posted)
+#### #293 note (posted 4 Nov 2026 after the maintainer's yes, comment 6603263432; read back identical)
 
 > Since #292 landed, the ledger is `DECISIONS.md` plus `.daikenja/open.md`,
 > and this issue's references to `docs/ledger-format.md` (lines 487-574) point
@@ -1377,3 +1382,20 @@ test/fixture exercising it.
 >   an addition needs a matching cut.
 > - **Every project now lives in a git repository**; projects without a folder
 >   are gone, which matters for where a glossary file "beside the ledger" goes.
+
+#### Fixes
+
+1. S10 Fix: align the migration batch exemption -- repairs #292 "When this
+   closes" item 5 and Done check 6 (loose ends 1-4). Approved by the
+   maintainer on 4 Nov 2026; referee: grows.
+
+Every loose end above maps to exactly one outcome: fix S10 (1-4), issue
+(5, 6), accepted, won't fix (7-17). Fixes used: 1 of 3.
+
+**This pass added a fix**, so it wrote no `DECISIONS.md`, README change or
+pointer line: Decision triage, README and cold reader wait for the redo. SF's
+row is back to `todo`; once S10 is `done`, SF re-runs from the top as a redo
+(`feat/292-replace-ledger-decisions-md-open-sf-redo-1`, `../daikenja-sf-redo-1`).
+
+Actuals: 2026-11-03T11:29:23.827Z → 2026-11-03T12:20:29.632Z · 51 min · tokens in=156 out=53977 cache_read=11740225 cache_write=422491 · subagents=3
+Artifacts check: match
