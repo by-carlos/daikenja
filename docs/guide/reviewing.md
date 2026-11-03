@@ -3,7 +3,7 @@
 [Home](../../README.md) · [Install](install.md) · [Commands](commands.md) · [Writing](writing.md) · [Ledger](ledger.md) · **Reviewing** · [Tensei](tensei.md) · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
 
 > **In short:** four skills that read something and report on it, without
-> rewriting it. A meeting transcript becomes proposed ledger entries; a
+> rewriting it. A meeting transcript becomes proposed ledger lines; a
 > document gets a checklist review; a thread or page is checked against what
 > the project already decided; and a thread you took part in gets private
 > coaching on your own moves.
@@ -47,7 +47,7 @@ padded one.
 
 `/daikenja:judgement`, or "is this right?", takes a thread or a document and
 tells you three things: which parts a recorded decision already settles, which
-are plain fact, and which are presented as settled without being established.
+are plain fact, and which are presented as settled but not established.
 
 By default it answers you in the conversation. Add the word `message` --
 `/daikenja:judgement message` -- to get a shareable "AI review summary" to paste
@@ -62,7 +62,8 @@ your own moves, with evidence from the thread.
 - **Every finding is about you.** Other people appear only as the situation you
   were responding to, never as the subject of a finding.
 - **It builds findings only from what you could see.** Nothing from a private
-  channel you were not in is quoted to you.
+  channel you were not in is quoted to you. What it reads is processed by
+  Claude, like anything else in the session.
 - **It writes nothing** and produces nothing you could paste anywhere.
 
 It runs only when you type it.

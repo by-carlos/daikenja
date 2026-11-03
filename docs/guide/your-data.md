@@ -36,20 +36,17 @@ posts as its own Slack app.
 | File | Who can read it |
 |---|---|
 | Your settings, persona notes, writing style, glossary | **You**, on your machine -- or in your own Google Drive, if you moved persona notes or writing style there, with whoever you share that folder with |
-| A project's ledger and project card | **Everyone who can read the project.** In a git repository, everyone with access to it -- the whole world, if the repository is public |
+| A project's ledger and project card, in the project's folder | **Everyone who can read the project.** In a git repository, everyone with access to it -- the whole world, if the repository is public |
+| The ledger of a project with no folder, in your own Daikenja folder | **You**, unless you chose a shared location |
 
-**Persona notes are about real colleagues.** They are never written into a
-ledger or a project. Keep them factual, write them as you would want them
-read, and check whether your organization treats notes about colleagues as
-personal data.
+**Persona notes are about real colleagues.** Keep them factual, write them as
+you would want them read, and check whether your organization treats notes
+about colleagues as personal data.
 
-**Before you log something, remember the ledger is shared.** Its lines name
-owners by handle and record what was decided. Write a line the way you would
-write a commit message, for the whole team. Daikenja marks superseded lines
-rather than deleting them, and in a git repository every line stays in the
-history. If the repository is public or broadly shared and the decisions are
-not, point the project's ledger at a private location with
-`/daikenja:setup-project`.
+**Before you log something, remember a project's ledger is shared.** Write a
+line the way you would write a commit message, for the whole team. Replaced
+lines are marked, not deleted, and in a git repository every line stays in the
+history -- moving the ledger later does not remove what was already committed.
 
 ## When it asks first
 
@@ -74,7 +71,7 @@ open any of these files for you.
 
 | What | Where | Written by |
 |---|---|---|
-| Your settings: profile, registered projects, checkpoints | `~/.claude/daikenja/daikenja.yaml` (a plain-text settings file) | `setup-user`, `setup-project`; `project-catchup` for the checkpoint only |
+| Your settings: who you are, registered projects, checkpoints | `~/.claude/daikenja/daikenja.yaml` (a plain-text settings file) | `setup-user`, `setup-project`; `project-catchup` for the checkpoint only |
 | Your notes on the people you write to | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` |
 | Backups of your writing style, and what `learn-voice` noticed but kept out | `~/.claude/daikenja/writing-style.*.md`, dated | `learn-voice` |
@@ -82,11 +79,12 @@ open any of these files for you.
 | The Tensei persona, if you installed it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |
 | Tensei backups | `~/.claude/backups/tensei-<timestamp>/` | `tensei` |
 | A project's ledger | `.daikenja/ledger.md` in the project's folder by default -- see note | `project-log` only |
-| A project's card | `project.md` beside the ledger | `setup-project`, when you accept it |
-| The Slack bot's settings and log, if you run it | `~/.claude/daikenja/bot.yaml`, plus a log file wherever you point `--log-file` | you, and the bot |
+| A project's card | `project.md` beside the ledger (`<name>.project.md` beside a ledger with another file name) | `setup-project`, when you accept it |
+| The Slack bot's settings and log, if you run it | `~/.claude/daikenja/bot.yaml`, plus a log file wherever you point `--log-file` | you write `bot.yaml`; the bot writes the log |
 
-**Ledger location note.** A project registered with `setup-project` can point
-its ledger anywhere, including outside the project. For a project spanning
+**Ledger location note.** A project registered with `setup-project` can keep
+its ledger elsewhere, including outside the project; a project with no folder
+keeps it in `~/.claude/daikenja/ledgers/` by default. For a project spanning
 several folders, the ledger is in the first folder registered.
 
 Backups are kept until you delete them. Nothing personal is stored in the

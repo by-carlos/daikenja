@@ -44,8 +44,8 @@
   <g>
     <rect x="170" y="108" width="225" height="96" rx="10" fill="#FFFFFF" stroke="#93B4E8" stroke-width="1.5"/>
     <text class="body" x="184" y="136">"Help me answer this."</text>
-    <text class="body" x="184" y="160">You paste the thread</text>
-    <text class="body" x="184" y="182">or its link.</text>
+    <text class="body" x="184" y="160">You paste the</text>
+    <text class="body" x="184" y="182">thread text.</text>
 
     <rect x="425" y="108" width="225" height="96" rx="10" fill="#FFFFFF" stroke="#93B4E8" stroke-width="1.5"/>
     <text class="body" x="439" y="136">Where you stand: what</text>

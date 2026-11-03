@@ -35,7 +35,9 @@ faster:
 ## When not to use it
 
 - **You want an agent that acts for you.** Daikenja never sends, posts or
-  schedules anything. That is a design rule, not a missing feature.
+  schedules anything for you. That is a design rule, not a missing feature.
+  The optional Slack bot, which you run yourself, posts its own summaries;
+  that is the one exception.
 - **You are not in Claude Code.** It runs only in a local Claude Code session.
 - **Your team needs one shared, access-controlled record.** The ledger is a
   file in a project; sharing it is sharing the project. The Slack bot answers

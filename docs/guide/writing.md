@@ -26,7 +26,7 @@ it says so and asks for a paste.
 **It does not draft.** That is the point: a reply drafted before you have said
 where you stand is a reply in someone else's words. Add the word `message` --
 `/daikenja:thread message` -- to get the summary written for a channel instead,
-with people named rather than "you".
+with people named rather than "you"; that form stops at the summary.
 
 ## Draft or rewrite: `compose`
 
@@ -84,8 +84,7 @@ challenges every technical claim", "the director reads only the first line".
 Say it while drafting, or run `/daikenja:remember-persona`, and later drafts
 and `preflight` reviews are written for that reader.
 
-It is the only skill that writes persona notes. When you simply describe someone new, their note
-is added straight away and reported after (if you described them alongside
-something you pasted, it asks first); a change to anything you wrote
-yourself is shown first and waits for your yes. The notes stay in your own
-files and are never written into a project -- see [Your data](your-data.md).
+It is the only skill that writes persona notes, and a note for someone new can
+be added without asking -- see
+[When it asks first](your-data.md#when-it-asks-first). The notes stay in your
+own files and are never written into a project.

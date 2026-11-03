@@ -1,18 +1,22 @@
 # Daikenja
 
+A Claude Code plugin that helps you answer long threads well and remember what
+your projects decided.
+
 **Not an assistant -- a sage you consult. It knows your work, the work around
 you, and where to go next.**
 
-Daikenja is a plugin for **Claude Code** -- the **Code** tab of the Claude
-Desktop app, or the `claude` command line. It is for anyone who owes answers to
-long threads and has to remember what a project decided. It reads the threads,
-documents and meetings you are buried in, asks what you are actually trying to
-do, and hands back something you can act on: a reply you can send, a verdict on
-a draft, or a **ledger** -- a plain text file of what a project decided and
-what is still open.
+Daikenja runs in **Claude Code** -- the **Code** tab of the Claude Desktop app,
+or the `claude` command line. It reads the threads, documents and meetings you
+are buried in, asks what you are actually trying to do, and hands back
+something you can act on: a reply you can send, a verdict on a draft, or a
+**ledger** -- a plain text file of what a project decided and what is still
+open.
 
-It never sends a message or posts anything for you. You copy the result out
-and send it yourself.
+It never sends a message or posts anything for you: you copy the result out and
+send it yourself. (The optional [Slack bot](docs/guide/slack-bot.md), which you
+run yourself, is the one thing that posts.) As in any Claude Code session, what
+it reads is processed by Claude -- see [Your data](docs/guide/your-data.md).
 
 **Status:** pre-1.0 and in active development -- see
 [releases](https://github.com/by-carlos/daikenja/releases). A release that
@@ -31,7 +35,7 @@ what **changed** while you were away.
 A ledger line looks like this, and any text editor opens the file:
 
 ```
-- 2026-08-13 -- D-004 -- @rimuru -- Roll the beacon service out region by region, not all at once.
+- 2026-08-10 -- D-003 -- @diablo -- Freeze schema changes on the events table until the rollout completes.
 ```
 
 ## Is it for me?
@@ -57,11 +61,12 @@ tab, or the command line. It does not appear in the Desktop app's Chat or
 Cowork tabs, or on claude.ai.
 
 **Claude Desktop app**, no terminal: click **+** next to the message box, then
-**Plugins** > **Add**, type `by-carlos/daikenja` and click **Sync**. In the
-plugin directory that opens, switch to its **Code** tab and click **+** on the
-Daikenja card.
+**Plugins** > **Add**, type `by-carlos/daikenja` and click **Sync**. The plugin
+directory opens: switch to the directory's own **Code** tab (not the app's) and
+click **+** on the Daikenja card.
 
-**Command line**, from inside a Claude Code session:
+**Command line** -- for developers; skip it if you use the Desktop app. From
+inside a Claude Code session:
 
 ```
 /plugin marketplace add by-carlos/daikenja
@@ -73,9 +78,10 @@ Screenshots, updating, and what to do when it does not show up:
 
 ## Try it in five minutes
 
-1. **Open a session.** In the Desktop app, go to the **Code** tab, start a new
-   **local** session and pick any folder -- an empty one is fine. On the
-   command line, run `claude`.
+1. **Open a session.** First make a new empty folder, for example `Daikenja`
+   in your Documents. Then in the Desktop app, go to the **Code** tab, start a
+   new **local** session and pick that folder. On the command line, run
+   `claude`.
 2. **Set yourself up.** Type `/daikenja:setup-user` in the message box and
    press Enter. It asks a few questions and writes your settings. Once per
    person.
@@ -88,14 +94,11 @@ Typing `/` in the message box lists every command you have installed.
 
 ## Your data
 
-Daikenja has no server and adds no hooks. What it writes are plain files:
-your settings and notes in a folder in your home directory (or your own Google
-Drive, if you opt in), and a project's ledger in the project, where everyone
-who can read the project can read it.
-
-Like anything else in a Claude Code session, what a skill reads -- a thread
-you paste, a document, your own notes -- is sent to Claude for processing.
-Every file, who writes it, and what leaves your machine:
+What a skill reads -- a thread you paste, a document, your own notes -- is
+sent to Claude for processing, as in any Claude Code session. What Daikenja
+writes are plain files: your settings and notes in your home folder (or your
+own Google Drive, if you opt in), and a project's ledger, which everyone who
+can read the project can read. Every file, and what leaves your machine:
 [Your data](docs/guide/your-data.md).
 
 ## Documentation
@@ -117,7 +120,7 @@ Every file, who writes it, and what leaves your machine:
 
 Questions, bugs and ideas go to
 [the issue tracker](https://github.com/by-carlos/daikenja/issues) (a free
-GitHub account is needed). A problem with the marketplace listing itself
+GitHub account is needed), or ask whoever recommended Daikenja to you. A problem with the marketplace listing itself
 belongs in [`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins),
 which owns the catalog.
 

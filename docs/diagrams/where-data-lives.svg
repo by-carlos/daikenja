@@ -23,7 +23,7 @@
   <text class="body" x="70" y="246">writing-style.md -- how</text>
   <text class="body" x="70" y="268">you write</text>
   <text class="body" x="70" y="296">glossary.md -- your terms</text>
-  <text class="body" x="70" y="320">tensei.md -- if installed</text><text class="body" x="70" y="344">dated backups</text>
+  <text class="body" x="70" y="320">tensei.md -- if installed</text><text class="body" x="70" y="344">backups of your style file</text>
 
   <!-- Drive -->
   <rect x="420" y="30" width="360" height="330" rx="14" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="7 5"/>

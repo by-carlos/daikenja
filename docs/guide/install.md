@@ -2,11 +2,10 @@
 
 [Home](../../README.md) · **Install** · [Commands](commands.md) · [Writing](writing.md) · [Ledger](ledger.md) · [Reviewing](reviewing.md) · [Tensei](tensei.md) · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
 
-> **In short:** install from the Claude Desktop app's **Plugins** pane or with
-> two commands, then run `/daikenja:setup-user` once. Everything works from
-> there; `/daikenja:setup-project` is optional and adds per-project extras. It
-> runs only in Claude Code: a local session in the Desktop app's **Code** tab,
-> or the command line.
+> **In short:** it runs only in Claude Code -- a local session in the Desktop
+> app's **Code** tab, or the command line. Install from the Desktop app's
+> **Plugins** pane or with two commands, then run `/daikenja:setup-user` once.
+> `/daikenja:setup-project` is optional and adds per-project extras.
 
 ## Where it runs
 
@@ -27,8 +26,9 @@ appears only there.
 
 Daikenja is listed on the shared
 [`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins)
-marketplace, and the Daikenja repository is also a marketplace of its own -- so
-you can install it without adding anything else first.
+marketplace, and the Daikenja repository is also a marketplace of its own. The
+steps below add the Daikenja repository directly, so you do not need the shared
+catalog.
 
 ### Claude Desktop app
 
@@ -65,8 +65,8 @@ claude plugin install daikenja@daikenja
 ## After installing
 
 **Open a session.** In the Desktop app, go to the **Code** tab and start a new
-**local** session. It asks for a folder to work in; any folder is fine, and an
-empty one you make for the purpose works. On the command line, run `claude`.
+**local** session. It asks for a folder to work in: pick a project's folder, or
+a new empty folder you made for the purpose -- not your home folder itself. On the command line, run `claude`.
 Type `/daikenja` in the message box: the list that appears is your sign the
 install worked.
 
@@ -79,20 +79,30 @@ After this, every skill works.
 any body of work you want a running record for: a launch, a client, a
 programme, a repository. Without registering, `/daikenja:project-log` still
 works -- it creates `.daikenja/ledger.md` in the folder you are in the first
-time you log something. Registering adds:
+time you log something, asking first if that folder is not a git repository. Registering adds:
 
 - reaching the project by name from any folder;
 - one project spanning several folders, or none at all;
-- the catch-up checkpoint, so `project-catchup` knows what you have seen;
+- the catch-up checkpoint, so `project-catchup` shows only what is new to you;
 - a project card, and seeding the ledger from a decision log, a wiki space or
-  a Slack channel you already have. Seeding proposes entries and hands them to
+  a Slack channel you already have -- paste the text if your session is not
+  connected to that tool. Seeding proposes ledger lines and hands them to
   `project-log` for your yes; it never writes the ledger itself.
 
-**A project with no folder** -- one that lives in Slack, a wiki and meetings --
-is fine. Run `/daikenja:setup-project` and say the project has no directory. It
-proposes keeping that project's ledger in your own Daikenja folder, at
-`ledgers/<project name>.md`, and you reach it by name. See
-[The project ledger § One project, many places](ledger.md#one-project-many-places).
+### A project with no folder
+
+A project that lives in Slack, a wiki and meetings is fine:
+
+1. Run `/daikenja:setup-project`.
+2. When it asks about the project's folder, answer that it has none, and give
+   the project a short name, such as `atlas-launch`.
+3. It suggests keeping the ledger in your own Daikenja folder, at
+   `~/.claude/daikenja/ledgers/atlas-launch.md`. Accept, or name a folder you
+   can see more easily, such as one in your Documents.
+
+From then on, add the name to any ledger command --
+`/daikenja:project-summary atlas-launch` -- from any session. Only you can read
+that ledger unless you put it somewhere shared.
 
 ## Updating
 
@@ -101,13 +111,12 @@ settings, notes or ledgers: they live outside the plugin's own folder.
 
 | You use | How to update |
 |---|---|
-| **Desktop app** | Open the **Plugins** pane and select Daikenja: its page shows your version and an **Update** button. If it shows a version behind the latest [release](https://github.com/by-carlos/daikenja/releases), remove Daikenja there and install it again -- a reinstall always lands on the current version. |
+| **Desktop app** | Open the **Plugins** pane and select Daikenja: its page shows your version and an **Update** button. If it shows a version behind the latest [release](https://github.com/by-carlos/daikenja/releases), remove Daikenja there and install it again: a reinstall always lands on the current version, and your settings stay. |
 | **Command line** | Run `/plugin`, open **Marketplaces**, select Daikenja, and choose **Update marketplace** -- or turn on **Enable auto-update** once and forget it. |
 
-**Do not count on the Desktop app noticing a new release.** In testing, a
-plugin sat on an old version for days after a release, with **Update**
-inactive and **Check for updates** reporting nothing. The Desktop app has no
-auto-update toggle, so the reinstall is the dependable route there.
+**Do not count on the Desktop app noticing a new release.** It has no
+auto-update toggle, and has been seen to report nothing for days after a
+release, so the reinstall is the dependable route there.
 
 On the command line, check auto-update is actually on: Claude Code enables it
 by default for Anthropic's own marketplaces, not necessarily for others. The
@@ -150,7 +159,7 @@ falls back to skill names only, and plain words stop starting them.
 The fix is the `skillListingBudgetFraction` setting in your Claude Code
 `settings.json`, which gives skill descriptions more room; `0.03` was enough
 for a full Daikenja install on a 200K-context model when this was measured. On
-a 1M-context model nothing is cut. Daikenja's own six descriptions come to
-about 2,000 characters (measured 3 Nov 2026), well under the 8,000-character
-default, so the setting matters only when other plugins fill the rest.
+a 1M-context model nothing is cut. Daikenja's own six descriptions are well
+under Claude Code's default budget, so the setting matters only when other
+plugins fill the rest.
 Background: [by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199).

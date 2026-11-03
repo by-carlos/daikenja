@@ -7,25 +7,8 @@
 > Google Drive file Daikenja cannot read. Each answer below is short and links
 > to the full story.
 
-**Install and setup**
-
-- [I installed it, but it does not show up.](#i-installed-it-but-it-does-not-show-up)
-- [I asked in plain words and nothing happened.](#i-asked-in-plain-words-and-nothing-happened)
-- [Do I have to re-run setup after an update?](#do-i-have-to-re-run-setup-after-an-update)
-- [Do I need git, or a code repository?](#do-i-need-git-or-a-code-repository)
-
-**Privacy**
-
-- [Does it send or post anything?](#does-it-send-or-post-anything)
-- [Who can see what I told it about a colleague?](#who-can-see-what-i-told-it-about-a-colleague)
-- [Who can see the ledger?](#who-can-see-the-ledger)
-
-**Using it**
-
-- [My writing style was not applied.](#my-writing-style-was-not-applied)
-- [It answered about the wrong project.](#it-answered-about-the-wrong-project)
-- [How is the ledger different from ADRs or a wiki?](#how-is-the-ledger-different-from-adrs-or-a-wiki)
-- [Persona, reviewer, Tensei -- what is the difference?](#persona-reviewer-tensei----what-is-the-difference)
+Jump to: [Install and setup](#install-and-setup) · [Privacy](#privacy) ·
+[Using it](#using-it)
 
 ## Install and setup
 
@@ -50,7 +33,7 @@ Only when a skill prints a line telling you to.
 
 No. The writing and reviewing skills work anywhere, and a project with no
 folder keeps its ledger wherever you choose.
-[A project with no folder](install.md#after-installing)
+[A project with no folder](install.md#a-project-with-no-folder)
 
 ## Privacy
 
@@ -63,14 +46,16 @@ by Claude, as in any Claude Code session.
 
 ### Who can see what I told it about a colleague?
 
-You, and the Claude session that reads the notes when drafting. They stay in
-your own files and are never written into a project.
+You, and the Claude session that reads the notes when drafting -- plus Google
+and anyone you share the folder with, if you keep them in Drive. They are
+never written into a project.
 [Who can see what](your-data.md#who-can-see-what)
 
 ### Who can see the ledger?
 
 Everyone who can read the project -- in a git repository, everyone with access
-to it. [Before you log something](your-data.md#who-can-see-what)
+to it. A project with no folder keeps its ledger in your own files.
+[Who can see what](your-data.md#who-can-see-what)
 
 ## Using it
 
