@@ -119,6 +119,70 @@ the Slack client and the headless session are both injected.
 There is no test runner for the skills themselves. The fixtures under
 `tests/fixtures/` are exercised by hand through the skills.
 
+## Development
+
+Load the working tree straight into a session, from the repo root:
+
+```bash
+claude --plugin-dir .
+```
+
+Run `/reload-plugins` after editing a skill to pick up the change without
+restarting. Validate the manifest with:
+
+```bash
+claude plugin validate .
+```
+
+Installing this repo as a **local marketplace** is not a substitute for the
+above: it copies the tree into the plugin cache at install time rather than
+referencing it live, so edits go stale until you reinstall. Use
+`--plugin-dir .` for development.
+
+Layout:
+
+```
+.claude-plugin/plugin.json        the manifest
+.claude-plugin/marketplace.json   lists this repo as its own marketplace
+skills/                           one directory per skill, each with a SKILL.md
+bot/                              the optional Slack service, and its own tests
+templates/                        blank files copied out to the user
+docs/                             the contracts the skills implement
+docs/guide/                       the user guide the README links to
+docs/diagrams/                    hand-drawn SVG diagrams used by the guide
+tests/                            invariant checks and the hand-run fixtures
+.claude/                          guidance for people working on this repo
+```
+
+`docs/` holds the contracts. A skill implements a contract and never redefines
+one, so a format change happens in `docs/` first. `tests/check-invariants.py`,
+run in CI, catches the parts of this it can check mechanically (like a
+skill's headings drifting from what a contract's reverse index expects).
+
+## User documentation
+
+The README is a landing page: what Daikenja is, whether it fits, how to
+install it, how to try it, and where to read next. Depth lives in
+[`docs/guide/`](docs/guide/), one page per thing a reader is trying to do.
+
+- **A change to what a user sees updates the guide in the same pull request.**
+  That includes a skill's name, what it writes, whether it runs from plain
+  language, and anything in [Your data](docs/guide/your-data.md).
+- **Every guide page opens with the same nav line**, current page in bold, then
+  an **In short:** box. A new page is added to the nav line of every page and
+  to the README's Documentation table.
+- **One name per concept, one canonical place per fact.** Other pages link to
+  it rather than restating it. "Persona" (notes on a real person), "reviewer"
+  (`preflight`'s built-in readers) and "Tensei" are kept apart.
+- **Diagrams.** The SVGs in `docs/diagrams/` are hand-written source with a
+  `<title>`, `<desc>` and `aria-label`; a change that alters what one shows
+  updates it in the same pull request. Mermaid blocks inside guide pages
+  follow the same rule.
+- **The FAQ answers questions people actually asked.** Each answer is short
+  and links to the page that owns the full story; it never describes
+  behaviour no other page does.
+- `tests/check-invariants.py` fails on a relative link that does not resolve.
+
 ## Releases
 
 Releases are the maintainer's call and land as one atomic change: bump
