@@ -15,7 +15,7 @@ protocol, finish protocol).
 | Stage | Status | Verified | Date | Result |
 |---|---|---|---|---|
 | S0 Format specs and file templates | done | yes | 2026-11-03 | Shared spec copied byte-identical; open-format.md (199 lines) and both templates landed |
-| S1 Config, resolution and reading contracts | doing | — | 2026-11-03 | In progress |
+| S1 Config, resolution and reading contracts | doing | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
 | S2 project-log writes both files | todo | — | — | — |
 | S3 Catchup and decisions read git history | todo | — | — | — |
 | S4 Gaps, summary, list and sources skills | todo | — | — | — |
@@ -89,7 +89,98 @@ Actuals: 2026-11-03T06:59:45.244Z → 2026-11-03T07:04:03.589Z · 4 min · token
 Artifacts check: match
 
 ### S1 Config, resolution and reading contracts
-_(empty)_
+
+As built — what S2 to S6 cite (all in `docs/config-resolution.md` unless named):
+
+- **Renamed headings.** § Finding the ledger → **§ Finding `DECISIONS.md` and
+  `open.md`** (anchor `#finding-decisionsmd-and-openmd`); § Resolving `ledger`
+  is gone, replaced by **§ Reading several repositories** and **§ Legacy keys
+  and unmigrated ledgers** (D-21). `reading.md` keeps its Step A0–D headings,
+  so no skill's `Depends-on` citation of it moved.
+- **Lookup:** `<path>/DECISIONS.md` for every path, in `paths` order, plus any
+  `Moved:` file; `<home>/.daikenja/open.md`, home = first path; no match → the
+  current directory is the one root. A missing file of the pair reads as empty;
+  none existing → `No ledger yet in <home>. Run /daikenja:project-log to create one.`
+- **`Ledger:` line** now lists every file read, absolute, a missing one marked
+  `(not created yet)`. New notice shapes are in `reading.md` § Notices, shared
+  wording (needs-migration ×2, leftover `ledger:`, newer format, `<file>, line <n>`).
+- **Card** is `<home>/.daikenja/project.md`; the `<name>.project.md` form is
+  gone (`project-card.md` § Location). S8 moves cards kept beside old ledgers.
+- **`last_checkpoint`** (`config-schema.md` § Field notes): map of repository
+  path, written exactly as in `paths`, to SHA. Missing entry, unresolvable SHA
+  or an old scalar timestamp → first run for that repository, reason stated
+  (F13); catchup writes the map on its next write. S3 implements.
+- **`project-log` and a key:** the pathless-only key rule is removed from the
+  config docs; they now defer to `project-log`'s own § Step 2. Fixture walk 3d
+  (refuse a key that has paths) is kept as today's behaviour — S2 decides.
+- **D-21 amended:** the legacy check keys on `.daikenja/ledger.md` at home with
+  **no `open.md` beside it**, whether or not a `DECISIONS.md` exists, so a
+  plan-staged-rollout `DECISIONS.md` cannot hide an unmigrated ledger.
+  `project-log` refuses to scaffold or write either file over it. S2 implements
+  the refusal.
+
+**Outside Artifacts (one-phrase citation repoints only, for the acceptance
+grep):** `skills/project-list/SKILL.md` (Step 0 and Step 2 item 3),
+`skills/project-log/SKILL.md` (Step 2 item 3), `skills/setup-project/SKILL.md`
+(Step 2), `docs/ledger-format.md` (intro). Each now names the renamed heading;
+the surrounding text still describes the `ledger:` key and pathless projects
+and is S4's, S2's, S6's and S9's to rewrite. `check-skill-size.py` (with
+BASE_SHA/HEAD_SHA set): no file crossed the size trigger.
+
+Acceptance (run in `../daikenja-s1`):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ git grep -n "Finding the ledger" -- . ":!.plan" ":!CHANGELOG.md" ":!docs/upgrading.md"
+(exit 1, no output)
+$ git grep -nE "ledger:|paths: \[\]" -- docs/config-schema.md docs/config-resolution.md templates/daikenja.yaml
+docs/config-resolution.md:189:- **A leftover `ledger:` key** is ignored. The run says so in one line naming
+docs/config-resolution.md:191:- **A `paths: []` entry**, or one with neither `path` nor `paths`, is
+docs/config-resolution.md:305:| A project entry still has a `ledger:` key | Ignored. One line naming the key and `/daikenja:setup-user`, then continue with the fixed paths. |
+```
+
+All three hits are D-21 legacy-handling sentences (§ Legacy keys and
+unmigrated ledgers, and its Failure behavior row); no live use remains.
+
+Hand walk, `tests/fixtures/project-resolution.md` against the new rules — all
+twelve walks hold:
+
+- Walk 1: `harbor-rollout` by longest prefix; `Ledger:` names
+  `C:/GitHub/harbor/DECISIONS.md` and `.daikenja/open.md`.
+- Walk 2: from `quill-web`, home is `quill-gateway` (first path), so `open.md`
+  is read there; all three `DECISIONS.md` named, `quill-infra`'s not created yet.
+- Walks 3, 3b, 3c: `beacon-charter` (`paths: []` + absolute `ledger:`) — by key
+  it stops on "needs migration" for read and write; by directory it never
+  matches, so its old ledger folder resolves as unregistered with no ledger.
+- Walk 3d: `project-log quill-programme` refused, no fallback — unchanged.
+- Walk 4: key from the wrong directory reads quill's two existing
+  `DECISIONS.md`, each entry naming its repository.
+- Walks 5, 9: unknown key stops and lists the four registered keys.
+- Walk 6: nested `harbor-migrator` wins; files under its own path.
+- Walks 7, 8: `project-list` reports per-file existence and `beacon-charter`
+  as needing migration (exact report format is S4's).
+
+Hand walk, default-location case (`tests/fixtures/ledger-location.md` Config
+F): home `C:/GitHub/shion-kitchen` has `.daikenja/ledger.md` and no `open.md`
+→ § Legacy keys and unmigrated ledgers applies before "No ledger yet" → one
+line and stop, nothing parsed:
+
+```
+The ledger at C:/GitHub/shion-kitchen/.daikenja/ledger.md needs migration -- run /daikenja:setup-user.
+```
+
+The variant with a plan-staged-rollout `DECISIONS.md` present ends the same way.
+
+Follow-ups (not this stage's): `docs/future-work.md` § The ledger still
+describes body markers per `ledger-format.md` — S9 with the retirement.
+`docs/config-versioning.md` needed no change (its one "ledger entry" mention is
+generic). `docs/README.md` still lists `ledger-format.md` and not the two new
+specs — S9, per S0's note. S8 extends the S1 `docs/upgrading.md` section
+("Your ledger's config moves to …") with the migration part.
+
+Actuals: 2026-11-03T07:14:30.948Z → 2026-11-03T07:25:43.776Z · 11 min · tokens in=114 out=59293 cache_read=9415398 cache_write=194955 · subagents=0
+Artifacts check: outside: docs/ledger-format.md, skills/project-list/SKILL.md, skills/project-log/SKILL.md, skills/setup-project/SKILL.md
 
 ### S2 project-log writes both files
 _(empty)_
