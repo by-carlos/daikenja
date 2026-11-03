@@ -25,7 +25,7 @@ protocol, finish protocol).
 | S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | done | yes | 2026-11-03 | Guide, README, diagrams and changelog describe the new ledger; ledger-format.md, its template and fixture retired |
 | S10 Fix: align the migration batch exemption | done | yes | 2026-11-04 | project-log exempts the migration batch from both refusals; config docs name the migration; no-folder walk writes both files |
-| SF Plan review | doing | yes | 2026-11-04 | Redo 1 clean: root DECISIONS.md (14 entries from 22 decisions), pointer line, cold reader no misses; one issue for closeout |
+| SF Plan review | done | yes | 2026-11-04 | Redo 1 clean: root DECISIONS.md (14 entries from 22 decisions), pointer line, cold reader no misses; one issue for closeout |
 
 ## Notes
 
