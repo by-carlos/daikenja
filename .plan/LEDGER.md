@@ -308,6 +308,8 @@ $ BASE_SHA=<origin plan branch> HEAD_SHA=<HEAD> python3 tests/check-skill-size.p
 check-skill-size: no file crossed the size trigger.
 ```
 
+Both re-run after merging S4 (#311) into the stage branch: same output.
+
 Hand walk 1, `tests/fixtures/judgement.md` Walk 1 (`answer` form, Subject A)
 against the fixture's synthetic `C:/GitHub/ember/DECISIONS.md` (invented
 project `ember`, invented people gabiru/hakurou/shion): content resolves
