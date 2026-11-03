@@ -225,7 +225,8 @@ As built -- what S3 to S9 can assume of `project-log`'s output:
 No `docs/upgrading.md` note and no changelog entry: nothing on disk changes
 beyond S1's note; S9 writes this stage's changelog entry (D-14).
 
-Acceptance (run in `../daikenja-s2`):
+Acceptance (run in `../daikenja-s2`, re-run after merging S4's landing into
+the stage branch):
 
 ```
 $ python3 tests/check-invariants.py
@@ -233,6 +234,11 @@ All invariant checks passed.
 $ BASE_SHA=<origin plan branch> HEAD_SHA=<HEAD> python3 tests/check-skill-size.py
 check-skill-size: no file crossed the size trigger.
 ```
+
+After the S4 merge, `ledger-relationships.md` Walk 2 was aligned to S4's
+gaps report shape (header suffix, block annotation on an indented line, the
+`reading.md` § Notices line for a closed blocker) -- which also settles S4's
+follow-up on that fixture.
 
 Hand walk, `tests/fixtures/dictated-log-requests.md` (today 2026-09-15):
 
