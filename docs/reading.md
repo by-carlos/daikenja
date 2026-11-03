@@ -11,16 +11,18 @@ headings by tests/check-invariants.py):
 
 Shared mechanism for the five read skills: `project-catchup`,
 `project-summary`, `project-decisions`, `project-gaps`, `project-sources`. All
-five take the same optional project-key argument, resolve config, find a
-ledger, and parse it the same way. They differ only in what they filter for
+five take the same optional project-key argument, resolve config, find the
+ledger -- the project's `DECISIONS.md` files and its `open.md` -- and parse it
+the same way. They differ only in what they filter for
 and how they format the result. This document is that shared mechanism,
 written once so it cannot drift five ways. `preflight` also reads a ledger
 through this document, for lookup only -- it is not one of the five and never
 writes.
 
 A read skill implements this document plus its own filter and output shape. It
-does not restate parsing rules from `ledger-format.md` or resolution rules from
-`config-resolution.md` -- those are the contracts. This document is the recipe
+does not restate parsing rules from `decisions-format.md` and `open-format.md`
+or resolution rules from `config-resolution.md` -- those are the contracts.
+This document is the recipe
 that combines them for a read, not a third contract.
 
 ## Step A0: did the user name a project?
@@ -47,8 +49,8 @@ standing in, so the reply has to say which one.
 Read `~/.claude/daikenja/daikenja.yaml`, per `config-resolution.md` §
 Resolution order.
 
-- **Absent.** Not fatal for a read. Continue on defaults: ledger at
-  `.daikenja/ledger.md` under the current directory, `stale_after_days: 21`.
+- **Absent.** Not fatal for a read. Continue on defaults: `DECISIONS.md` and
+  `.daikenja/open.md` under the current directory, `stale_after_days: 21`.
   A key given in Step A0 has nothing to resolve against: say the configuration
   is missing, name `/daikenja:setup-user`, and stop.
 - **Malformed YAML.** Stop. Name the first line that does not parse. Never
@@ -59,10 +61,15 @@ Resolution order.
   path of every `projects:` entry -- its `paths` list, or its `path` scalar
   read as a one-element list -- normalized (forward slashes, no trailing slash,
   case-insensitive) and longest-prefix-wins across all of them. An entry with
-  no paths is not a candidate; it is reachable only by key. No match means the
-  project is unregistered: say so in one line and name
-  `/daikenja:setup-project` as the skill that registers it, then continue -- an
-  unregistered project still has a ledger to read if one exists on disk.
+  no paths is not a candidate, per `config-resolution.md` § Legacy keys and
+  unmigrated ledgers. No match means the project is unregistered: say so in one
+  line and name `/daikenja:setup-project` as the skill that registers it, then
+  continue -- an unregistered project still has ledger files to read if they
+  exist on disk.
+- **A legacy key on the matched entry** -- no paths, or a leftover `ledger:`
+  -- gets its one line per `config-resolution.md` § Legacy keys and unmigrated
+  ledgers. No paths stops the read for that project; a leftover `ledger:` is
+  ignored and the read continues.
 
 **Then check the version marker**, per `config-versioning.md` § Version marker
 and upgrades. That contract defines when the notice fires and how it is worded; this
@@ -72,49 +79,43 @@ that does.
 
 ## Step B: resolve the ledger path
 
-1. The matched project's `ledger:` key, if it has one -- resolved per its
-   pointer form (relative or absolute), per `config-resolution.md` § Resolving
-   `ledger`. An explicit key is authoritative: the default filename in the
-   next step is not also checked.
-2. Otherwise `.daikenja/ledger.md` under the project root (or under the
-   current directory, when nothing matched). **The project root is the first
-   path in the entry**, not the path that matched: one project has one ledger,
-   per `config-resolution.md` § Finding the ledger.
-3. **A ledger found on disk wins over the config.** This applies only when no
-   project matched at all -- check the default path even then. It does not
-   apply to a matched project's explicit `ledger:` key: that key's resolved
-   path is the ledger, whether or not a file happens to sit at the default
-   location too.
-4. **A project with no paths has no root**, so nothing relative can be
-   resolved against it. An **absolute** `ledger:` key resolves normally and is
-   how such a project keeps a ledger at all. Without one, stop with one line
-   and read nothing:
+Per `config-resolution.md` § Finding `DECISIONS.md` and `open.md`:
 
-   ```
-   <key> has no path and no absolute ledger in daikenja.yaml, so its ledger has no location.
-   ```
+1. **`<path>/DECISIONS.md` for every path in the entry**, in `paths` order, plus
+   any file a `Moved:` line in one of them names. A read skill reads all of
+   them, per § Reading several repositories, not only the one under the current
+   directory.
+2. **`<home>/.daikenja/open.md`**, where home is the first path in the entry.
+3. **No project matched:** both files under the current directory, and files
+   found there win over the config.
+4. **The legacy check runs first.** `.daikenja/ledger.md` at home with no
+   `open.md` beside it means the ledger was never migrated: say so in one line
+   per `config-resolution.md` § Legacy keys and unmigrated ledgers, read
+   nothing, and stop.
 
-**Name the resolved path before the answer**, every time, success or failure
--- one line, so someone who ran a read skill from the wrong directory can
-tell which project's ledger they are looking at without digging. This is
-always the fully resolved **absolute** path, even when the configured
-`ledger:` value was relative:
+**Name the files before the answer**, every time, success or failure -- one
+line, so someone who ran a read skill from the wrong directory can tell which
+project's ledger they are looking at without digging. Every path is absolute,
+and a file that does not exist yet is marked so rather than left out:
 
 ```
-Ledger: <path>
+Ledger: <path>/DECISIONS.md, <home>/.daikenja/open.md
 ```
 
-If the file does not exist, a read skill does **not** scaffold it. Report:
+A file of the pair that does not exist is read as empty: a repository with no
+`DECISIONS.md` has no decisions recorded, and a missing `open.md` has no open
+items, links or sources. When **none** of the files exists, a read skill does
+**not** scaffold them. Report:
 
 ```
-No ledger at <path>. Run /daikenja:project-log to create one.
+No ledger yet in <home>. Run /daikenja:project-log to create one.
 ```
 
-and stop -- this notice already names the path, so the `Ledger:` line above
-is not repeated. Reading is not the skill that creates the file.
+and stop -- this notice already names the place, so the `Ledger:` line above
+is not repeated. Reading is not the skill that creates the files.
 
-**The project card, when a skill wants it, is beside the ledger** -- its path
-is derived from the resolved ledger path per `project-card.md` § Location, and
+**The project card, when a skill wants it, is beside `open.md`** -- its path
+is derived from the home repository per `project-card.md` § Location, and
 it is read per § Reading a card. Only the skills that say so read it
 (`project-summary` shows it; `thread` matches against it); the other read
 skills do not open it, and its absence is never a notice for a skill that did
@@ -122,35 +123,29 @@ not ask.
 
 ## Step C: read and parse
 
-Read the whole ledger. Locate each H2 section by its exact heading, per
-`ledger-format.md` § Reading rules. The original four are always present; if
-one is missing, report it and ask before continuing over what remains, per
-rule 8. `## Sources` may legitimately be absent, per `ledger-format.md` § File
-skeleton -- a ledger without the heading tracks no sources, and no skill
-reports the absence as a defect. Apply those rules verbatim:
-ignore comments and blank lines, treat a two-space indented markerless line as
-a continuation, and report -- not silently skip -- any other line that does
-not match the entry grammar.
+Read each file whole, version line first, per `open-format.md` § Version line:
+a newer version is still read, with one warning per run; no version line reads
+as version 1.
 
-Parse every Decisions and Open items entry into its four fields (date, id,
-owner, body) plus tail, per `ledger-format.md` § Entry grammar. When the
-ledger has a Sources section, parse each source per § Section: Sources: the
-head line splits on ` -- ` at most twice (id, label, target), and its field
-lines are ordinary continuation lines read as `<name>: <value>` -- an absent
-field means unknown, never a default. Parse the
-Changelog into (timestamp, writer, summary) per § Section: Changelog, and
-resolve the two summary compactions defined there before reading it: join any
-indented continuation lines to the summary, then expand any
-`<verb><first>..<last>` range into the individual IDs it stands for. A summary
-read without doing both under-reports what a bulk write changed.
+**`DECISIONS.md`**, per `decisions-format.md` § Shape: each `##` heading is an
+area, its `Paths:` line the repository-relative paths it covers, and each
+bullet one decision in force -- the bold rule, its why clause, `Revisit:` and
+`Source:`. An area holding only a `Moved:` line has its entries in the file it
+names. There are no IDs, dates or markers to parse: an entry is found by its
+area and its words, and every entry in the file is in force.
 
-**Body markers need no parsing of their own.** `Supersedes D-nnn.`,
-`Imposed.`, `Blocked by <id>.`, `Contradicts <id>.` and `Approximate date.` are
-ordinary body text in a fixed order at the front of `<body>`, per
-`ledger-format.md` § Body markers -- they are not fields and not tails, so
-every skill already reads and shows them without doing anything. A skill that
-acts on one resolves the ID it names against the entries it just parsed, and
-reports a reference that resolves to nothing per § Reading rules, rule 6.
+**`open.md`**, per `open-format.md` § Reading rules for skills: locate
+`## Open items`, `## Context links` and `## Sources` by their exact headings,
+and report a missing one and ask before continuing over what remains. Split
+each open item on ` -- ` at most twice into (date raised, owner, text), per §
+Section: Open items; a text opening `Blocked by:` names another item in words,
+per § `Blocked by:`. Context links and source head lines split once into
+(label, target), and a source's field lines are read as `<name>: <value>` --
+an absent field means unknown, never a default.
+
+For both files: ignore other comments and blank lines, treat a two-space
+indented markerless line as a continuation, and report -- not silently skip --
+any other line that does not match its section's grammar.
 
 **Never rewrite the file.** Only `project-log` writes. A read skill that finds a
 malformed line reports it in its output and moves on; it does not fix it, even
@@ -168,16 +163,18 @@ output, per `config-resolution.md` § Precedence.
 Use these exact shapes so the five skills read as one system:
 
 ```
-Ledger: <path>
+Ledger: <path>/DECISIONS.md, <home>/.daikenja/open.md
 Project: <key>  (only when the user named one)
 No project called <key> in daikenja.yaml. Registered: <key>, <key>, <key>.
-<key> has no path and no absolute ledger in daikenja.yaml, so its ledger has no location.
+<key> has no repository in daikenja.yaml and needs migration -- run /daikenja:setup-user.
+<key> still has a ledger: key, which is no longer read -- run /daikenja:setup-user.
+The ledger at <home>/.daikenja/ledger.md needs migration -- run /daikenja:setup-user.
+<file> was written by a newer format (version <n>); update the Daikenja plugin.
 Daikenja is not configured -- run /daikenja:setup-user.
-This project is not in daikenja.yaml. Using the ledger at <path> anyway.
-No ledger at <path>. Run /daikenja:project-log to create one.
-This ledger has no Sources section. /daikenja:project-log records the first source.
-Line <n>: <what is wrong>. Skipped.
-<topic> (<id>) is marked "<marker>", and this ledger has no <id>.
+This project is not in daikenja.yaml. Using the ledger files under <path> anyway.
+No ledger yet in <home>. Run /daikenja:project-log to create one.
+<file>, line <n>: <what is wrong>. Skipped.
+"<item>" is blocked by "<words>", which names an item no longer open.
 Using this project's <N>-day staleness threshold.
 daikenja.yaml was written by Daikenja <recorded>; <installed> is installed -- run /daikenja:setup-user.
 daikenja.yaml predates version tracking; <installed> is installed -- run /daikenja:setup-user.
@@ -187,8 +184,8 @@ daikenja.yaml predates version tracking; <installed> is installed -- run /daiken
 
 | Skill | Filter | Output |
 |---|---|---|
-| `project-catchup` | Changelog lines newer than `last_checkpoint` | delta by ID, then proposes advancing the checkpoint |
+| `project-catchup` | `git log <sha>..HEAD -- DECISIONS.md .daikenja/open.md` per repository, from `last_checkpoint`, plus uncommitted changes to both files | what changed since the last report, per repository, then proposes advancing each SHA |
 | `project-summary` | everything | oriented overview, no assumed context |
-| `project-decisions` | Decisions section, matched against a query | dated entries with links, the supersession chain, and one hop of relationships in both directions |
-| `project-gaps` | Open items with `- [ ] ` and (`@unassigned` or older than the staleness threshold) | audit list, each reported item naming its `Blocked by` entry if it has one |
+| `project-decisions` | every `DECISIONS.md`, matched against a query by area, `Paths:` and words | the entries in force, each naming its repository, with their history from git |
+| `project-gaps` | Open items that are `@unassigned` or older than the staleness threshold | audit list, each reported item naming what it is `Blocked by:` if it says |
 | `project-sources` | Sources section | staleness report -- which sources moved, comparing each stored `modified:` against what the source's system reports now; offers to record a re-read through `project-log` |

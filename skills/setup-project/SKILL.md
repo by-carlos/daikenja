@@ -122,7 +122,7 @@ project has no directory, and never invent a path to fill the gap.
 optional here.** With no root there is nothing for a relative pointer to
 resolve against, so a pathless entry without one resolves as a project and then
 fails the moment anything asks for its ledger. Propose the convention from
-`docs/config-resolution.md` § Resolving `ledger` --
+`docs/config-resolution.md` § Legacy keys and unmigrated ledgers --
 `~/.claude/daikenja/ledgers/<project-key>.md` -- as part of the same entry:
 
 ```yaml

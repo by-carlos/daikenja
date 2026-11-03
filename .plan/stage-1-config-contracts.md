@@ -25,38 +25,38 @@ them, so they must be settled before any skill is rewritten.
 
 ## Steps
 
-- [ ] `docs/config-schema.md`: remove the `ledger:` key, the `paths: []` shape
+- [x] `docs/config-schema.md`: remove the `ledger:` key, the `paths: []` shape
   and the pathless example (D-9, D-21); make `last_checkpoint` a map from
   repository path to commit SHA (D-3); state that home is the first entry of
   `paths` (D-8). Update its `Depends-on` reverse index if headings change.
-- [ ] `docs/config-resolution.md`: replace "Finding the ledger" with finding
+- [x] `docs/config-resolution.md`: replace "Finding the ledger" with finding
   `DECISIONS.md` (every registered path) and `.daikenja/open.md` (home only);
   describe multi-repository reading and the D-21 handling of a leftover
   `ledger:` key, a `paths: []` project, and a project with no `DECISIONS.md`
   but an old-format ledger at the legacy location (`.daikenja/ledger.md`, no key
   needed): readers say "needs migration" in one line pointing at `setup-user`,
   and `project-log` refuses to scaffold over it (S2 implements the refusal).
-- [ ] `docs/config-writers.md`, `docs/config-versioning.md` (if it mentions the
+- [x] `docs/config-writers.md`, `docs/config-versioning.md` (if it mentions the
   ledger), `docs/reading.md` (the per-skill reading contract), `docs/project-card.md`,
   `docs/future-work.md` (drop the pathless limitations) and the `docs/README.md`
   index.
-- [ ] `templates/daikenja.yaml`: remove `ledger:` and any pathless example, show
+- [x] `templates/daikenja.yaml`: remove `ledger:` and any pathless example, show
   `last_checkpoint` as a path-to-SHA map.
-- [ ] `docs/upgrading.md` `## [Unreleased]`: the config part, in the file's
+- [x] `docs/upgrading.md` `## [Unreleased]`: the config part, in the file's
   five-part shape: `ledger:` key removed, `paths: []` removed, `last_checkpoint`
   timestamp replaced by a per-repository SHA map. Say that those removals (the
   `ledger:` key, `paths: []`, a scalar `last_checkpoint`) happen inside the
   migration, in the same approval as the file move (S8), not as a standalone
   `setup-user` edit. S8 extends this section with the migration part.
-- [ ] Update the fixtures that cite changed headings (`tests/fixtures/ledger-location.md`,
+- [x] Update the fixtures that cite changed headings (`tests/fixtures/ledger-location.md`,
   `project-resolution.md`, `project-card.md` as needed), and add a
   default-location case to `tests/fixtures/ledger-location.md`: no
   `DECISIONS.md` plus an old-format ledger at `.daikenja/ledger.md` reads as
   "needs migration". No fixture is added or removed, so `tests/README.md` is
   not edited.
-- [ ] Add a `CHANGELOG.md` entry under `## [Unreleased]`, saying plainly that
+- [x] Add a `CHANGELOG.md` entry under `## [Unreleased]`, saying plainly that
   pathless projects are gone (D-15).
-- [ ] Run `python3 tests/check-invariants.py` and fix anything it flags (D-16).
+- [x] Run `python3 tests/check-invariants.py` and fix anything it flags (D-16).
 
 <!-- Checkboxes are the resume mechanism: a session that stops mid-stage marks
 the row `doing`, ticks the boxes it finished, and writes a handoff note in the
