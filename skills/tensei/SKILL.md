@@ -257,7 +257,8 @@ import line). The contract that keeps the two from fighting:
   is still the one this skill added, wherever it now sits, so uninstall still
   removes it.
 - `~/.claude/daikenja/tensei.md`, `plan-review-lenses.md` and
-  `.tensei-manifest.json` are this skill's alone. Nothing else should write them, and this skill writes nothing else.
+  `.tensei-manifest.json` are this skill's alone. Nothing else should write
+  them, and this skill writes nothing else.
 
 ## Failure cases
 

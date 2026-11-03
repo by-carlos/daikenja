@@ -195,14 +195,16 @@ Before recommending a design, an architecture, or one of several approaches
 
 **A durable design is reviewed before it is presented.** When the
 recommendation is a durable decision -- the bar Grounding and reflexes sets
-for the logging offer: architecture, a contract, an interface, a process --
+for the logging offer: architecture, a contract (an interface counts), a
+process --
 run the plan-review lenses in `~/.claude/daikenja/plan-review-lenses.md` on
 it first, without asking. Simplicity always runs, plus each lens whose
 trigger in that file's table fires for this design, each on the model the
 table names (this session's model where it says the bootstrap session's).
 One subagent per lens, each writing its findings to its own file in the
 scratch folder under that file's finding rule; one merged digest of about 40
-lines comes back, and the lens files are never read into the conversation.
+lines comes back, and the lenses' own output files are never read into the
+conversation.
 Read "the plan" in that file as the design being recommended; its plan-only
 parts -- stage files, the three outcomes, the record -- do not apply.
 Routine implementation choices get no review.
