@@ -21,7 +21,7 @@ protocol, finish protocol).
 | S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | done | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | todo | — | — | — |
-| S7 Slack bot reports unreadable project data | doing | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
+| S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | todo | — | — | — |
 | S9 User guide, README and retiring ledger-format.md | todo | — | — | — |
 | SF Plan review | todo | — | — | — |
