@@ -24,7 +24,7 @@ protocol, finish protocol).
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | done | yes | 2026-11-03 | Guide, README, diagrams and changelog describe the new ledger; ledger-format.md, its template and fixture retired |
-| S10 Fix: align the migration batch exemption | doing | yes | 2026-11-04 | project-log exempts the migration batch from both refusals; config docs name the migration; no-folder walk writes both files |
+| S10 Fix: align the migration batch exemption | done | yes | 2026-11-04 | project-log exempts the migration batch from both refusals; config docs name the migration; no-folder walk writes both files |
 | SF Plan review | todo | no | 2026-11-04 | Pass 1 added fix S10; SF re-runs from the top as a redo once S10 is done |
 
 ## Notes
