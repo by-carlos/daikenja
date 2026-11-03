@@ -29,12 +29,14 @@ Read these before doing anything. Do not work from memory of them.
   without restating it (a config marked absent or a project left unregistered
   has no literal wording inline in Step A -- only in § Notices, shared
   wording).
-- `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Section: Sources -- the head
-  line, the fields, the baseline rule, and the Changelog verbs.
+- `${CLAUDE_PLUGIN_ROOT}/docs/open-format.md` § Version line, § Section:
+  Sources and § Reading rules for skills -- the head line, the fields and the
+  baseline rule. The Sources section lives in the home repository's
+  `.daikenja/open.md`.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
   is shaped. Read in full and not narrowed to a section: Step 4 explicitly
-  follows § The answer comes first, § Entries are named topic-first, ID in
-  parentheses and § A clean result is one line, but the contract's own scope
+  follows § The answer comes first and § A clean result is one line, but the
+  contract's own scope
   says a skill "implements it; it never redefines it" -- every rule in the
   file governs this skill's replies whether or not Step 4 names it.
 
@@ -49,19 +51,18 @@ directory. Do not restate the resolution here.
 
 ## Step 2: read the ledger
 
-Follow `reading.md` § Step C. The Sources section is what this skill is for;
-the rest of the file is read so the report can note nothing else, not to be
-reported on.
+Follow `reading.md` § Step C: `open.md` in the home repository and the
+`DECISIONS.md` of every registered repository, each version line first (a
+newer version warns once per run and is still read). `## Sources` in `open.md`
+is what this skill is for; the rest is read so a malformed line or a version
+warning is reported, not to be reported on.
 
-- **No `## Sources` heading, or the section is empty.** One line and stop --
-  there is nothing to check:
-
-  ```
-  This ledger has no Sources section. /daikenja:project-log records the first source.
-  ```
-
-  (For a heading that is present but empty: "No sources tracked." -- same
-  outcome, worded for what is actually there.)
+- **The section is empty.** One line and stop -- there is nothing to check:
+  "No sources tracked. /daikenja:project-log records the first source."
+- **No `## Sources` heading.** The section is required, so this is a defect,
+  reported by name per `open-format.md` § Reading rules for skills, naming
+  `/daikenja:project-log` as the repair path. With no section there is nothing
+  to check, so stop.
 
 ## Step 3: check each source
 
@@ -95,23 +96,23 @@ Classify each source by comparison:
 
 ## Step 4: report
 
-Answer first, per `response-format.md`: lead with what moved. Topic first, ID
-in parentheses. Group in this order and drop any empty group -- moved, no
-baseline, could not check, unchanged (a count is enough for unchanged unless
-the user asks):
+Answer first, per `response-format.md`: lead with what moved. Name each source
+by its label; sources carry no IDs. Group in this order and drop any empty
+group -- moved, no baseline, could not check, unchanged (a count is enough for
+unchanged unless the user asks):
 
 ```
-Ledger: C:/GitHub/atlas/.daikenja/ledger.md
+Ledger: C:/GitHub/atlas/DECISIONS.md, C:/GitHub/atlas/.daikenja/open.md
 
 2 of 6 sources moved since you last read them:
-- Platform standards page (S-001) -- read 2026-08-11; its system now reports 2026-08-19T14:02Z, stored 2026-08-10T09:12Z.
-- Rollout epic (S-004) -- read 2026-08-15; now reports revision 41, stored revision 37.
+- Platform standards page -- read 2026-08-11; its system now reports 2026-08-19T14:02Z, stored 2026-08-10T09:12Z.
+- Rollout epic -- read 2026-08-15; now reports revision 41, stored revision 37.
 
 No baseline:
-- Vendor evaluation sheet (S-002) -- read 2026-08-15, no modified value stored, so there is nothing to compare.
+- Vendor evaluation sheet -- read 2026-08-15, no modified value stored, so there is nothing to compare.
 
 Could not check:
-- On-call rota (S-005) -- no connector for example-chat is available in this session.
+- On-call rota -- no connector for example-chat is available in this session.
 
 3 sources unchanged.
 ```
@@ -133,27 +134,28 @@ Two offers, each once, neither acted on without a yes:
    sources whose content the user has now seen (in this session, or because
    they say they read it). Never for sources that merely moved: updating
    `modified:` without a re-read erases the staleness signal, per
-   `ledger-format.md` § Section: Sources. A source with no baseline gets its
+   `open-format.md` § Section: Sources. A source with no baseline gets its
    first `modified:` the same way -- the offer names it as establishing the
    baseline.
 
-On a yes, hand the exact field updates to `/daikenja:project-log`, which shows
-the lines and writes on approval, one run, one Changelog line, `~S-nnn` per
-source touched, writer `project-log via project-sources`. This skill never
-writes the ledger itself, and never registers a new source -- that is
-`/daikenja:project-log` directly.
+On a yes, hand the exact field updates to `/daikenja:project-log`, naming each
+source by its label, which shows the lines and writes them to `open.md` in one
+approved batch. This skill never writes the ledger itself, and never registers
+a new source -- that is `/daikenja:project-log` directly.
 
 ## Failure cases
 
 | Situation | What to do |
 |---|---|
-| `daikenja.yaml` absent | One notice, continue on ledger defaults. |
+| `daikenja.yaml` absent | One notice, continue on the default file locations. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. |
 | The user named a project key that is not in `daikenja.yaml` | **Stop.** Name the key and list the registered ones. Never fall back to the current directory. |
-| The named project has no path and no absolute `ledger:` | **Stop.** One line: "`<key>` has no path and no absolute ledger in daikenja.yaml, so its ledger has no location." |
-| No ledger at the resolved path | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
-| No `## Sources` heading, or an empty section | One line per Step 2 and stop. Not an error, and not a defect in the ledger. |
-| A source head line that does not parse | Report it -- name the line and what is wrong -- then continue with the rest, per `ledger-format.md` § Reading rules. |
+| The project has no repository (`paths: []`), or its home has an unmigrated `.daikenja/ledger.md` | **Stop** with the `reading.md` § Notices needs-migration line. Parse nothing. |
+| No ledger at the resolved paths | Report per `reading.md` § Step B and stop. Name `/daikenja:project-log`. |
+| An empty `## Sources` section | One line per Step 2 and stop. Not an error. |
+| No `## Sources` heading in `open.md` | Report the missing section by name, naming `/daikenja:project-log`, and stop, per Step 2. |
+| `open.md` or a `DECISIONS.md` is a newer format version | Warn once with the § Notices line, then read and check as normal. |
+| A source head line that does not parse | Report it -- name the line and what is wrong -- then continue with the rest, per `open-format.md` § Reading rules for skills. |
 | A connector is missing, or a target is unreachable | One line naming which sources could not be checked and why, then continue with the ones that can be. Never a hard stop. |
 | The system reports no last-modified for a target | That source is "could not check" this run; the stored fields are left alone. Never substitute a fetch date. |
 
