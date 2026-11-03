@@ -4,7 +4,7 @@
 Daikenja project card. Format spec: docs/project-card.md in the Daikenja plugin.
 
 What this project is about, in enough words that a thread, a report or a
-conversation can be checked against it. It sits beside the ledger and is read
+conversation can be checked against it. It sits beside open.md and is read
 by every skill that needs to know what the project covers. `setup-project`
 scaffolds it; you edit it by hand.
 
