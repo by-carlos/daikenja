@@ -87,10 +87,12 @@ these two.
 
 The skills that accept a key argument freely are the five read skills, per
 [`reading.md`](reading.md) section Step A0, and `project-list`, whose whole job
-is to report them. Whether `project-log` accepts one, and how it then picks
-which repository's `DECISIONS.md` a decision lands in, is its own `SKILL.md`
-§ Step 2: a key names the project and its home, but not which of several
-repositories a decision belongs to. `setup-project` still resolves by directory
+is to report them. `project-log` accepts one too, from any directory: the
+entry alone fixes every file it can write, per
+[Finding `DECISIONS.md` and `open.md`](#finding-decisionsmd-and-openmd). Which
+of several repositories' `DECISIONS.md` a decision lands in is not a location
+question; `project-log` asks it per decision, however the project was
+resolved. `setup-project` still resolves by directory
 only; it registers a *new* entry's own root, and a name alone cannot say what
 that root should be.
 

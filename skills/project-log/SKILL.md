@@ -96,11 +96,11 @@ skill). Every other run, `setup-project`'s seed included, resolves in short:
    does not parse and stop.
 2. **A project key was named.** Match it per `config-resolution.md` § By key.
    No match: say so, list the registered keys, stop. A match with no paths:
-   item 4's "needs migration" line, and stop. Any other match: refuse in one
-   line, naming the key and saying that logging against it means running from
-   one of its own directories. Never fall back to directory matching -- a
-   named key is decisive. **No key was named:** match the current directory
-   against every path of every entry, longest prefix wins.
+   item 4's "needs migration" line, and stop. Any other match: use it, from
+   any directory -- item 3 places every file from the entry alone. Never fall
+   back to directory matching -- a named key is decisive. **No key was
+   named:** match the current directory against every path of every entry,
+   longest prefix wins.
 3. Resolve the files per `config-resolution.md` § Finding `DECISIONS.md` and
    `open.md`: `DECISIONS.md` at the root of every path in the entry, and
    `.daikenja/open.md` in the home repository, which is the **first** path.
@@ -337,7 +337,9 @@ the date on the open items this run writes:
 ### Show the proposal
 
 Show exactly what will be written, verbatim, grouped by file, in one fenced
-block. Every line the user approves lands in the file byte for byte.
+block, each file under its absolute path -- a run by key may write far from
+the current directory. Every line the user approves lands in the file byte
+for byte.
 
 ```
 C:/GitHub/atlas/DECISIONS.md
@@ -403,7 +405,7 @@ Then say the change is not committed:
 
 ```
 Wrote 2 entries -- the reload decision to C:/GitHub/atlas/DECISIONS.md, and
-the reload-window item to .daikenja/open.md. Not committed: commit them with
+the reload-window item to C:/GitHub/atlas/.daikenja/open.md. Not committed: commit them with
 the work they belong to.
 ```
 

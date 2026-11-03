@@ -230,7 +230,7 @@ missing thing is the task itself.
 | `daikenja.yaml` absent | One notice, then continue on the defaults: the current directory is the one root, owner `@unassigned` unless the user names one. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never rewrite the file. |
 | A named project key matches no entry | **Stop.** Name the key, list the registered keys, write nothing. Never fall back to directory matching. |
-| A named project key matches an entry | **Refuse.** Name the key and say logging against it means running from one of its own directories. |
+| A named project key matches an entry that has paths | **Use it**, from any directory. Its files resolve from the entry alone; the proposal names each by absolute path. Never fall back to directory matching. |
 | The project's entry is `paths: []` or has no path | **Stop** with the "needs migration" line from `reading.md` § Notices, shared wording. |
 | The entry still has a `ledger:` key | One line naming the key and `/daikenja:setup-user`, then continue with the fixed paths. |
 | `.daikenja/ledger.md` at home with no `open.md` beside it | **Refuse** with the "needs migration" line. Scaffold nothing and write nothing, whether or not a `DECISIONS.md` exists. Not applied to the migration's own batch. |

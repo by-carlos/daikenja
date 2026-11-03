@@ -72,8 +72,10 @@ for the team; see [Who can see what](your-data.md#who-can-see-what).
 ## Writing to it: `project-log`
 
 Say "log this" or "record this decision", or run `/daikenja:project-log` from
-one of the project's folders. It shows you every line it wants to add, change
-or delete, grouped under the file each lands in, and **waits for your yes**
+one of the project's folders. From anywhere else, name the project:
+`/daikenja:project-log atlas-migration`. It shows you every line it wants to
+add, change or delete, grouped under the full path of the file each lands in,
+and **waits for your yes**
 before writing anything. It checks for duplicates, asks for the why and the
 revisit condition when they are missing, attributes each open item to an
 owner, and tells you when an owner's handle is new. The first time, it creates
