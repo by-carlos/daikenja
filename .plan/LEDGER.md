@@ -18,7 +18,7 @@ protocol, finish protocol).
 | S1 Config, resolution and reading contracts | done | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
 | S2 project-log writes both files | todo | — | — | — |
 | S3 Catchup and decisions read git history | todo | — | — | — |
-| S4 Gaps, summary, list and sources skills | todo | — | — | — |
+| S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | doing | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | todo | — | — | — |
 | S7 Slack bot reports unreadable project data | todo | — | — | — |
@@ -189,7 +189,73 @@ _(empty)_
 _(empty)_
 
 ### S4 Gaps, summary, list and sources skills
-_(empty)_
+
+As built:
+
+- **`project-gaps`** reads `open.md` (every line is open; no checkbox filter)
+  plus every repository's `DECISIONS.md` for version warnings and malformed
+  lines only. Staleness from the date raised. `Blocked by:` is matched against
+  the other items by words: still open → "blocked by <words> (still open, since
+  <date>)"; no match → the `reading.md` § Notices "names an item no longer
+  open" line; several matches → says ambiguous, never picks. One hop.
+- **`project-summary`** lists every `DECISIONS.md` entry grouped by repository,
+  then area; no superseded count (history is `project-decisions`' job, from
+  git). Open items keep `Blocked by:` as text. Sources always listed (the
+  section is now required).
+- **`project-list`**: an entry with no paths is reported only as "needs
+  migration" (no "reachable by name" line); per-repository `DECISIONS.md` and
+  home `open.md` existence; leftover `ledger:` noted; home `ledger.md` without
+  `open.md` → needs migration. Unregistered scan looks for `.daikenja/open.md`
+  and legacy `.daikenja/ledger.md`, never a bare `DECISIONS.md` (other tools
+  write it). `project-resolution.md` Walks 7–9 already match this shape.
+- **`project-sources`** reads Sources from `open.md`, names sources by label
+  (no `S-nnn`, no Changelog line); a missing `## Sources` heading is now a
+  reported defect, an empty one a one-line stop.
+- **Fixture** `sources-ledger.md` is now `meridian` across
+  `meridian-controls` (home) and `meridian-services`, with a `Blocked by:` to
+  an open item, one to a closed item, and a newer-format variant. The old
+  pointer to `sample-ledger.md` as the "no Sources section" case is dropped.
+
+Acceptance (run in `../daikenja-s4`):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=<merge-base> HEAD_SHA=<head> python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+```
+
+Hand walk, `tests/fixtures/sources-ledger.md`, today 2026-09-15:
+
+- Step B resolves `meridian` to three files:
+  `Ledger: C:/GitHub/meridian-controls/DECISIONS.md, C:/GitHub/meridian-services/DECISIONS.md, C:/GitHub/meridian-controls/.daikenja/open.md`.
+  Run from `C:/GitHub/meridian-services` the same line comes back (longest
+  prefix → `meridian`; home is the first path).
+- `project-summary` shows **2** decisions: Tracking from `meridian-controls`
+  and Controls from `meridian-services` (imposed by the board). Reading only
+  the first repository would show 1 — the case the fixture exists to catch.
+- `project-gaps` at 21 days: unowned + stale = the reconciliation-owner item
+  (25 days). At 5 days the reconciliation schedule is stale and annotated
+  "blocked by who reconciles the control list (still open, since 2026-08-21)"
+  — its words match the open unowned item; the ingest item's "the exemption
+  renewal sign-off" matches nothing, so it gets the no-longer-open line.
+- `project-sources`: moved 2 (standards page, control sheet), no baseline 1,
+  could not check 1, unchanged 1 — unchanged from before; field lines read as
+  continuations.
+- Variant `decisions-format: 2` in `meridian-services`: one warning line, then
+  the same results.
+
+Follow-ups (not this stage's): `tests/fixtures/ledger-relationships.md` still
+walks `project-gaps` against `Blocked by O-007.` / `Contradicts` markers from
+`ledger-format.md`; its `Depends on` headings still resolve, so the invariants
+pass, but its content is the old grammar — S9 with the `ledger-format.md`
+retirement. `ledger-backfill.md`, `ledger-location.md` and
+`setup-user-upgrade.md` mention these skills only in passing and were left.
+The `project-catchup` and `project-log` lines in `sources-ledger.md` are
+minimal; S2/S3 may sharpen them.
+
+Actuals: 2026-11-03T07:32:54.495Z → 2026-11-03T07:39:04.884Z · 6 min · tokens in=62 out=28316 cache_read=4352539 cache_write=133613 · subagents=0
+Artifacts check: match
 
 ### S5 Judgement, thread, meeting-review and other readers
 
