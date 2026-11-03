@@ -69,6 +69,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`project-log` takes a project name from any folder.**
+  `/daikenja:project-log <key>` used to refuse a project that has
+  repositories unless it ran from one of them. That refusal guarded which
+  root a write landed in, and the ledger's fixed paths now settle that from
+  the entry alone: `DECISIONS.md` at each repository's root, `open.md` in the
+  home repository. The key is now used from any directory, the proposal heads
+  each file with its absolute path, and an unknown key or a `paths: []` entry
+  still stops as before. Which repository a decision belongs in is still
+  asked when its paths do not say (`skills/project-log/SKILL.md`,
+  `docs/project-log-reference.md`, `docs/config-resolution.md`,
+  `tests/fixtures/project-resolution.md`, `docs/guide/`) (#320).
 - **The reply-naming rule's heading no longer promises an ID.** In
   `docs/response-format.md`, "Entries are named topic-first, ID in
   parentheses" is now "Entries are named topic-first, location in

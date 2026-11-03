@@ -63,11 +63,12 @@ More: [Install and update](install.md#after-installing), [Tensei](tensei.md).
 Some commands take a word after them:
 
 - **A project name**, for the five reading commands (`project-catchup`,
-  `project-summary`, `project-decisions`, `project-gaps`, `project-sources`):
-  `/daikenja:project-summary atlas-migration` reads that project from any
-  folder. The name is the one the project was registered under with
-  `setup-project`; `/daikenja:project-list` shows them all. `project-log`
-  does not take a name: run it from one of the project's folders.
+  `project-summary`, `project-decisions`, `project-gaps`, `project-sources`)
+  and for `project-log`: `/daikenja:project-summary atlas-migration` reads
+  that project from any folder, and `/daikenja:project-log atlas-migration`
+  writes to it from any folder, showing each file's full path before your
+  yes. The name is the one the project was registered under with
+  `setup-project`; `/daikenja:project-list` shows them all.
   `setup-project` takes one to migrate a project still on the old ledger --
   `/daikenja:setup-user` tells you when.
 - **`message`**: `/daikenja:thread message` writes the thread summary for a

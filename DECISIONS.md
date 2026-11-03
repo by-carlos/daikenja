@@ -27,6 +27,11 @@ Paths: `docs/decisions-format.md`, `docs/open-format.md`, `templates/DECISIONS.m
 - **`project-log` never commits; `project-catchup` lists uncommitted changes to
   the two files.** — no skill commits on whatever branch the user is on.
   Revisit: never. Source: #292
+- **`project-log <key>` writes to a project with paths from any directory, with
+  no branch warning; the proposal names each file by absolute path.** — fixed
+  paths settle where a write lands, so the old refusal guarded nothing.
+  Revisit: if a ledger file's location stops following from the entry alone.
+  Source: #320
 
 ## Projects and configuration
 

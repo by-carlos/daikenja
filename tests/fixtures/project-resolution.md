@@ -146,24 +146,30 @@ new pair somewhere arbitrary -- the current directory, or Daikenja's own config
 folder -- because a location was missing and a default had to come from
 somewhere.
 
-## Walk 3d -- `project-log` refuses a key that has paths
+## Walk 3d -- `project-log` writes to a key that has paths, from elsewhere
 
-Run `/daikenja:project-log quill-programme` from `C:\GitHub\harbor`.
+Run `/daikenja:project-log quill-programme` from `C:\GitHub\harbor`, logging
+an open item ("confirm the gateway timeout with the web team") and a decision
+that constrains `quill-web`'s code.
 
-1. Step 2's key check matches `quill-programme`, but the entry has paths.
-   Refused: one line naming the key and saying that logging against it means
-   running from one of its own directories.
-2. Directory resolution does not run as a fallback. `harbor-rollout` would
+1. Step 2's key check matches `quill-programme`, and the entry has paths, so
+   the key is used. Directory resolution does not run: `harbor-rollout` would
    have matched `C:\GitHub\harbor` by directory, and it is not consulted --
    the named key is decisive, per `config-resolution.md` § Finding the
    project, the same as a read skill's Step A0.
-3. Nothing is written.
+2. The files resolve from the entry alone. The open item goes to the home
+   repository's `C:/GitHub/quill-gateway/.daikenja/open.md`; the decision goes
+   to `C:/GitHub/quill-web/DECISIONS.md`, the repository whose code it
+   constrains. Had the decision's paths not said which repository, Step 5
+   asks -- the key never picks one.
+3. The proposal heads each file with its absolute path. Nothing is written
+   under `C:\GitHub\harbor`, and nothing is written before the user's yes.
 
-**The failure this catches:** two ways a rooted project could still be
-written to the wrong root -- silently falling back to whatever directory the
-user happens to be standing in once the named key is refused, or accepting
-the key anyway and guessing which of `quill-programme`'s three repositories is
-meant. Both are worse than refusing and saying why.
+**The failure this catches:** two ways a named project could still be
+written to the wrong place -- falling back to whatever directory the user
+happens to be standing in, so quill's entries land in harbor's ledger, or
+treating the key as an answer to which of `quill-programme`'s three
+repositories a decision belongs in.
 
 ## Walk 4 -- a key that resolves, from the wrong directory
 
@@ -209,9 +215,9 @@ Run `/daikenja:project-log` from `C:\GitHub\harbor\tools\migrator\src`.
    `C:/GitHub/harbor/tools/migrator/DECISIONS.md` and
    `C:/GitHub/harbor/tools/migrator/.daikenja/open.md`.
 3. No key was named here, so this is unaffected by `project-log`'s key rule
-   either way. Had one been named, `harbor-migrator` has a path, so
-   `/daikenja:project-log harbor-migrator` from anywhere else would refuse
-   rather than redirect here -- see Walk 3d.
+   either way. Had one been named, `/daikenja:project-log harbor-rollout` from
+   this same directory would write to `C:/GitHub/harbor`'s files instead --
+   the key beats the longest prefix -- see Walk 3d.
 
 **The failure this catches:** letting the multi-path change disturb nesting.
 Longest-prefix-wins runs across every path of every entry, and an entry's own
