@@ -119,6 +119,50 @@ the Slack client and the headless session are both injected.
 There is no test runner for the skills themselves. The fixtures under
 `tests/fixtures/` are exercised by hand through the skills.
 
+## Development
+
+Load the working tree straight into a session, from the repo root:
+
+```bash
+claude --plugin-dir .
+```
+
+Run `/reload-plugins` after editing a skill to pick up the change without
+restarting. Validate the manifest with:
+
+```bash
+claude plugin validate .
+```
+
+Installing this repo as a **local marketplace** is not a substitute for the
+above: it copies the tree into the plugin cache at install time rather than
+referencing it live, so edits go stale until you reinstall. Use
+`--plugin-dir .` for development.
+
+Layout:
+
+```
+.claude-plugin/plugin.json        the manifest
+.claude-plugin/marketplace.json   lists this repo as its own marketplace
+skills/                           one directory per skill, each with a SKILL.md
+bot/                              the optional Slack service, and its own tests
+templates/                        blank files copied out to the user
+docs/                             the ledger and config specifications
+tests/                            invariant checks and the hand-run fixtures
+.claude/                          guidance for people working on this repo
+```
+
+Where a file belongs is decided by who reads it. `skills/` is downloaded by
+every installer and loaded by Claude Code. `bot/` is downloaded by every
+installer and never loaded by Claude Code, so it stays lean and holds
+nothing a skill needs -- no skill can reach it. `.claude/` is for people
+working on this repository and ships nothing.
+
+`docs/` holds the contracts. A skill implements a contract and never redefines
+one, so a format change happens in `docs/` first. `tests/check-invariants.py`,
+run in CI, catches the parts of this it can check mechanically (like a
+skill's headings drifting from what a contract's reverse index expects).
+
 ## Releases
 
 Releases are the maintainer's call and land as one atomic change: bump
