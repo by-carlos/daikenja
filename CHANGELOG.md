@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.13.0] - 2026-11-03
 
+**Codename:** wow!
+
 ### Added
 
 - **Tensei now carries a way of working, not only a conversational
