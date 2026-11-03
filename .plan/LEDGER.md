@@ -21,7 +21,7 @@ protocol, finish protocol).
 | S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | done | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | todo | — | — | — |
-| S7 Slack bot reports unreadable project data | todo | — | — | — |
+| S7 Slack bot reports unreadable project data | doing | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | todo | — | — | — |
 | S9 User guide, README and retiring ledger-format.md | todo | — | — | — |
 | SF Plan review | todo | — | — | — |
@@ -479,7 +479,65 @@ Artifacts check: match
 _(empty)_
 
 ### S7 Slack bot reports unreadable project data
-_(empty)_
+
+As built:
+
+- **Token handling (`prompts.py`).** `UNREADABLE_TOKEN =
+  "DAIKENJA-PROJECT-DATA-UNREADABLE"`, reasons `needs-migration` /
+  `newer-format`. `extract_output` checks the raw output first, before the
+  sentinel pass: a line that is the token, a key and a known reason (stray
+  backticks, `>` or `*` around it tolerated; mid-sentence or an unknown
+  reason is not a match) logs `project data unreadable: project <key>,
+  <reason>` at WARNING and returns `PROJECT_DATA_UNREADABLE`: "I could not
+  read this project's ledger, so I have not answered. Its project data needs
+  attention from whoever runs me." No `setup-user` text, no key in the
+  thread. `runner.py` needed no code change -- the line flows out as the
+  answer the handler posts, like `NO_ANSWER`.
+- **`--check` (done, no git).** `config.project_data_states()` reads
+  `~/.claude/daikenja/daikenja.yaml` and each project's files on disk:
+  needs-migration = no `path`/`paths`, or home `.daikenja/ledger.md` with no
+  `open.md`; newer-format = a root `DECISIONS.md` or the home `open.md` whose
+  version line is above `decisions-format: 1` / `daikenja-open-format: 1`.
+  `__main__.project_data_line()` prints `projects:   needs attention: <key>
+  (<state>), ...`, `N, all readable`, `none registered`, or `unknown -- <why>`.
+  `Moved:` sub-folder `DECISIONS.md` files are not version-checked (root files
+  only).
+- **Docs.** `config.py` comment, `runner.py` docstring and `bot/README.md`
+  name `DECISIONS.md` and `.daikenja/open.md`; README gains the `projects:`
+  line and an "Unreadable project data" paragraph. Test fixtures citing
+  `.daikenja/ledger.md` as the current ledger now use the new paths; the
+  `LocalPathTests` docstring keeps the old path because it quotes a real run.
+  "Ledger" stays the user-facing word (D-7).
+- **Tests added:** `UnreadableProjectDataTests` (7, both states assert the
+  fixed line and the log line), a `run_command` test per state in
+  `test_runner.py`, `ProjectDataLineTests` (4) in `test_main.py`.
+
+Acceptance (run in `../daikenja-s7`):
+
+```
+$ python -m pytest bot/tests -q
+477 passed, 11 subtests passed in 1.30s
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ git diff --stat origin/feat/292-replace-ledger-decisions-md-open -- bot/requirements.txt
+(no output)
+$ git grep -nE "subprocess|git " -- bot/daikenja_bot
+bot/daikenja_bot/config.py:381:    asks git (D-17). A project is `needs-migration` when it has no repository
+bot/daikenja_bot/preflight.py:21,88,122  (existing: `claude plugin details`)
+bot/daikenja_bot/runner.py:20,47,135,181,195,206,221  (existing: `claude -p`)
+```
+
+The only new hit is the docstring line saying the bot never asks git; no new
+call into git or any new subprocess.
+
+Follow-ups (not this stage's):
+
+- **S9:** `docs/guide/slack-bot.md` should mention the fixed
+  "could not read this project's ledger" line and `--check`'s `projects:`
+  line in its operator-after-upgrade sequence.
+
+Actuals: 2026-11-03T07:58:35.395Z → 2026-11-03T08:06:49.659Z · 8 min · tokens in=98 out=27956 cache_read=6743070 cache_write=119672 · subagents=0
+Artifacts check: match
 
 ### S8 Migration from the old ledger
 _(empty)_
