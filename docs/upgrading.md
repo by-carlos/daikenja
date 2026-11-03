@@ -135,6 +135,37 @@ it does not know:
 5. Run `python -m daikenja_bot --check` from `bot/`; it names any project still
    unreadable.
 
+### Tensei gained a design review and a second installed file
+
+Only affects you if you installed Tensei with `/daikenja:tensei`.
+
+- **What changed on disk:** nothing yet. The shipped `templates/tensei.md`
+  gained a rule in *Recommending a design* that reads
+  `~/.claude/daikenja/plan-review-lenses.md`, and the plugin now ships that
+  file as `templates/plan-review-lenses.md`. Neither reaches your machine by
+  itself.
+- **If you do nothing:** your sessions keep the older text and run no design
+  review. If you update `tensei.md` by hand without the lens file, a durable
+  design recommendation says the lens file is missing and goes out
+  unreviewed. Nothing breaks.
+- **The edit:**
+
+  ```
+  before:  ~/.claude/daikenja/tensei.md            (no lens review)
+  after:   ~/.claude/daikenja/tensei.md            matching the shipped template
+           ~/.claude/daikenja/plan-review-lenses.md  matching the shipped template
+  ```
+
+- **Can `setup-user` make it for you?** No. Run `/daikenja:tensei`: it shows
+  what changed, asks once, and writes both files. A `tensei.md` you edited by
+  hand is never overwritten without asking; the lens file is still added,
+  but it does nothing until your copy has the new paragraph in *Recommending
+  a design*: copy it in from the shipped template, or take the overwrite
+  option.
+- **Reversible?** Yes. Replaced copies are backed up under
+  `~/.claude/backups/tensei-<UTC timestamp>/`, and uninstalling removes both
+  files.
+
 ### Tensei gained a way-of-working section
 
 Only affects you if you installed Tensei with `/daikenja:tensei`.

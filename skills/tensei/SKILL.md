@@ -4,7 +4,7 @@ description: 'Installs, updates, or removes Tensei, the Daikenja way of working 
 metadata:
   owner: Carlos
   version: 2
-  writes: ~/.claude/daikenja/tensei.md, an import line appended to ~/.claude/CLAUDE.md, ~/.claude/daikenja/.tensei-manifest.json, backups under ~/.claude/backups/tensei-<UTC timestamp>/
+  writes: ~/.claude/daikenja/tensei.md, ~/.claude/daikenja/plan-review-lenses.md, an import line appended to ~/.claude/CLAUDE.md, ~/.claude/daikenja/.tensei-manifest.json, backups under ~/.claude/backups/tensei-<UTC timestamp>/
 disable-model-invocation: true
 ---
 
@@ -39,6 +39,18 @@ has not hand-edited can be updated to a newer shipped version. Step 2's
 five-state model is what makes that safe: it never overwrites a copy the user
 changed without saying so first.
 
+**One companion file: `plan-review-lenses.md`.** Tensei's *Recommending a
+design* section runs the plan-review lenses from
+`~/.claude/daikenja/plan-review-lenses.md`, a byte-identical copy of the
+planning plugin's lens spec that this plugin ships as
+`templates/plan-review-lenses.md`. Tensei is imported as plain context and
+cannot read `${CLAUDE_PLUGIN_ROOT}`, so the copy has to sit next to it. It is
+a reference copy, not a file the user edits: it gets no state of its own and
+no manifest field. It is `current` when it matches the shipped file and
+`missing` otherwise (absent or different). Any adopt option in Step 3 writes
+a `missing` lens file -- also when a `local-edit` `tensei.md` is left in
+place -- and Step 5 removes it with `tensei.md`.
+
 ## Step 0: the environment gate
 
 Try to list `~/.claude/` (the real OS home directory, not the project working
@@ -61,6 +73,7 @@ exists there.
 Before asking anything:
 
 - `~/.claude/daikenja/tensei.md` -- read it if present.
+- `~/.claude/daikenja/plan-review-lenses.md` -- note whether it is present.
 - `~/.claude/daikenja/.tensei-manifest.json` -- read it if present. Malformed
   JSON: **stop**, name the file, say the user should fix or remove it. Never
   rewrite a file that could not be read.
@@ -116,8 +129,17 @@ Report the import line's presence in the same pass: missing -- propose adding
 it alongside a file install. A bare import line with no file behind it is
 never useful, so never propose it alone.
 
-A `plan` reporting `unchanged` with the import line already present is one
-line: "Already installed and current -- nothing to change." No gate follows.
+Hash the lens file against `${CLAUDE_PLUGIN_ROOT}/templates/plan-review-lenses.md`
+the same way and report it in the same pass. A `missing` one is proposed
+alongside whatever else the run writes, or on its own when nothing else
+moved -- a clean Adopt that writes only the lens file. One that is present
+but differs is reported as differing from the shipped copy, not as a hand
+edit -- after a plugin update that is the usual cause -- and the report says
+writing replaces it (backed up first).
+
+A `plan` reporting `unchanged` with the import line already present and the
+lens file `current` is one line: "Already installed and current -- nothing
+to change." No gate follows.
 
 **Adoption.** `unchanged` with **no manifest** is the one exception: the file
 matches the payload but nothing records that, so the next update would read a
@@ -136,8 +158,10 @@ the summary in its own turn.
 
 Options -- on a clean `new` or `update` only the first and last appear:
 
-- **Adopt (Recommended)** -- writes the file (`new`/`update`) and the
-  import line if missing. Never touches a `local-edit` or `conflict` file.
+- **Adopt (Recommended)** -- writes the file (`new`/`update`), the import
+  line if missing, and a `missing` lens file. Never touches a `local-edit`
+  or `conflict` `tensei.md`. When the lens file is the only thing to write,
+  the question is "Install the design-review lenses Tensei reads?".
 - **Adopt and overwrite my local edit** -- offered only when the state is
   `local-edit` or `conflict`; say plainly that the local version is backed
   up, not discarded outright.
@@ -154,12 +178,16 @@ is reported anywhere else.
 
 1. **Back up whatever is about to be replaced**, before writing anything:
    copy the current `~/.claude/daikenja/tensei.md` (if it exists) to
-   `~/.claude/backups/tensei-<UTC timestamp>/tensei.md`, and, only if the
-   import line is about to be added and `~/.claude/CLAUDE.md` already exists,
-   copy it to `~/.claude/backups/tensei-<UTC timestamp>/CLAUDE.md` first.
+   `~/.claude/backups/tensei-<UTC timestamp>/tensei.md`, a lens file about
+   to be replaced to `plan-review-lenses.md` in the same folder, and, only if
+   the import line is about to be added and `~/.claude/CLAUDE.md` already
+   exists, copy it to `~/.claude/backups/tensei-<UTC timestamp>/CLAUDE.md`
+   first.
 2. **Write `~/.claude/daikenja/tensei.md`** verbatim from
    `${CLAUDE_PLUGIN_ROOT}/templates/tensei.md`, if the gate approved a file
-   write.
+   write, and `~/.claude/daikenja/plan-review-lenses.md` verbatim from
+   `${CLAUDE_PLUGIN_ROOT}/templates/plan-review-lenses.md` when it is
+   `missing`.
 3. **Append the import line** (`@~/.claude/daikenja/tensei.md`, on its own
    line, at the end of the file) if the gate approved it and it is not
    already present. Keep the file's existing line ending (CRLF stays CRLF),
@@ -175,6 +203,13 @@ is reported anywhere else.
      "import_line_added_by_skill": true
    }
    ```
+
+   Write it only when this run wrote `tensei.md`, added the import line, or
+   took the manifest-only option -- a run that writes only the lens file
+   leaves the manifest as it was. `installed_hash` is always the hash of
+   `tensei.md`, never of the lens file, and it changes only when this run
+   wrote `tensei.md` or recorded the manifest; otherwise carry it forward,
+   so a hand-edited copy is never recorded as installed.
 
    Set `import_line_added_by_skill` only if this run is the one that added
    it; otherwise carry forward whatever the existing manifest already had for
@@ -194,7 +229,9 @@ On an explicit ask to remove or revert the persona (not the default flow):
 1. One closed gate first (`Uninstall?`), same mechanics as Step 3.
 2. **Back up the current file and `CLAUDE.md`** exactly as in Step 4 before
    removing anything.
-3. **Remove `~/.claude/daikenja/tensei.md`** if the user chose to.
+3. **Remove `~/.claude/daikenja/tensei.md`** and
+   `~/.claude/daikenja/plan-review-lenses.md` (backed up with it) if the user
+   chose to.
 4. **Remove the import line** only if
    `~/.claude/daikenja/.tensei-manifest.json` records
    `"import_line_added_by_skill": true`. A line the user wrote in by hand
@@ -228,15 +265,16 @@ import line). The contract that keeps the two from fighting:
   `import_line_added_by_skill` stays whatever this skill recorded -- the line
   is still the one this skill added, wherever it now sits, so uninstall still
   removes it.
-- `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json` are this skill's
-  alone. Nothing else should write them, and this skill writes nothing else.
+- `~/.claude/daikenja/tensei.md`, `plan-review-lenses.md` and
+  `.tensei-manifest.json` are this skill's alone. Nothing else should write
+  them, and this skill writes nothing else.
 
 ## Failure cases
 
 | Situation | What to do |
 |---|---|
 | No persistent `~/.claude` (Step 0) | **Stop.** Nothing written. Never write into the project tree instead. |
-| `${CLAUDE_PLUGIN_ROOT}/templates/tensei.md` cannot be read | **Stop.** Name the path. Never reconstruct the payload from memory. |
+| `${CLAUDE_PLUGIN_ROOT}/templates/tensei.md` or `templates/plan-review-lenses.md` cannot be read | **Stop.** Name the path. Never reconstruct the payload from memory. |
 | `.tensei-manifest.json` will not parse | **Stop.** Name the file, say the user should fix or remove it. Never rewrite a file that could not be read. |
 | No manifest, and the installed file differs from shipped | Correct behaviour, not an error: reads as `conflict`. Show the diff and ask. |
 | No manifest, and the installed file matches shipped | `unchanged`, untracked. Offer to record the manifest (Step 2, Adoption); never treat it as an error. |

@@ -1,0 +1,11 @@
+{
+  "files": [
+    {
+      "path": "templates/plan-review-lenses.md",
+      "upstream_repo": "by-carlos/plan-staged-rollout",
+      "upstream_path": "skills/staged-rollout/references/plan-review.md",
+      "commit": "10b2fa02e71ef05d8335d474a2f16af7c126bcc7",
+      "blob": "89a0af89666d9817c1184f9433a989f3ba0b7351"
+    }
+  ]
+}
