@@ -199,6 +199,9 @@ same commit; feedback on the brief is applied here, never to the brief.
   `project-log` refuses to scaffold or write either file over it. *(Amended in
   S1: keyed on the missing `open.md` rather than a missing `DECISIONS.md`, so a
   `DECISIONS.md` another tool wrote does not hide an unmigrated ledger.)*
+  *(Amended in S2: the migration's own batch, handed to `project-log` by
+  `docs/ledger-migration.md`, is exempt from that refusal -- it is the run the
+  refusal points at. `setup-project`'s seed and every other run are not.)*
 - **D-22 — Pathless migration target folder** *(Default for now — revisit at S8
   if users have no registered root)*. `setup-project` asks for the folder and
   suggests a sibling of an already-registered root, named after the project key.
