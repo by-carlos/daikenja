@@ -42,20 +42,19 @@ and the report says where it looked so the absence can be read correctly.
 
 ## The ledger
 
-**Relationships are a documented convention, not a parsed form.** `Blocked by
-<id>.` and `Contradicts <id>.` are literal sentences at the front of a body,
-per [`ledger-format.md`](ledger-format.md) § Body markers -- ordinary text to
-the grammar, which is what makes them free to add and free to change. A skill
-finds them by looking; nothing validates them at write time beyond the checks
-`project-log` runs, and a marker a human types by hand with the wrong shape is
-simply body text nobody reads as a relationship. Tightening them into a parsed
-form is deliberately left until real use shows which relationships recur.
+**`Blocked by:` names the other item in words, not by an ID.** Open items
+carry no IDs, so the prefix per [`open-format.md`](open-format.md) §
+`Blocked by:` is matched against the other items by their words. A skill
+finds it by looking; when the words match several items it says the match is
+ambiguous rather than picking one, and when they match none it reads the
+blocker as no longer open. Nothing validates the words at write time beyond
+the checks `project-log` runs.
 
-**Those two are the only relationships.** "Evidence for", "depends on",
-"reopens" and anything else are prose in the body, exactly as all of them were
-before. The pair shipped is the pair that came out of real use; a third is a
-change to the contract, not a convention a user can add locally and have skills
-understand.
+**It is the only marker.** `DECISIONS.md` is current-only, so a contradiction
+is settled when the entry is written rather than recorded, and an imposed
+decision says so in its why clause. "Evidence for", "depends on", "reopens"
+and anything else are prose. A new marker is a change to the format, not a
+convention a user can add locally and have skills understand.
 
 **A relationship is recorded in one direction and never walked further than one
 hop.** The entry it names carries nothing, so a reader finds the other end by
@@ -172,10 +171,10 @@ dead text and the third cannot happen at all.
 
 **`project-log` cannot usefully fork either, including by halves.** Forking the
 classify-and-propose half and keeping the approval loop inline is the obvious
-boundary and it does not pay: Step 7's insert rule and body-marker order and
-Step 8's Changelog verbs all live in [`ledger-format.md`](ledger-format.md),
-much the largest contract this skill reads, and they all execute in the parent
-after the user approves -- so the parent reads that file whatever the boundary
+boundary and it does not pay: the write rules live in
+[`decisions-format.md`](decisions-format.md) and
+[`open-format.md`](open-format.md), and they all execute in the parent after
+the user approves -- so the parent reads both files whatever the boundary
 is. Two mid-run questions also sit inside the proposed fork: Step 1's "nothing
 was given, ask what to log", and Step 3's confirmation before scaffolding a
 ledger, which is a separate approval from Step 5's.

@@ -46,7 +46,8 @@ any that fail beside the draft. It never holds the draft back.
 
 1. **Substance checks.** Six questions every request has to pass: enough
    context to act on, what you already tried, the options framed, one
-   specific question, the right person, and not already answered elsewhere.
+   specific question, the right person, and not already answered elsewhere --
+   including in the project's decisions and open items.
 2. **Reviewers.** It puts the draft in front of several readers, each looking
    for a different failure: the busy reader, the fact-checker, the risk reader,
    the executive, the tone-sensitive reader, and others. Up to two of the

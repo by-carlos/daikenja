@@ -77,38 +77,39 @@ After this, every skill works.
 
 **`/daikenja:setup-project` is optional, once per project.** A **project** is
 any body of work you want a running record for: a launch, a client, a
-programme, a repository. Without registering, `/daikenja:project-log` still
-works -- it creates `.daikenja/ledger.md` in the folder you are in the first
+programme, a repository. Every project lives in a git repository. Without
+registering, `/daikenja:project-log` still works -- it creates the
+[ledger files](ledger.md#what-it-looks-like) in the folder you are in the first
 time you log something, asking first if that folder is not a git repository.
 Registering adds:
 
 - reaching the project by name from any folder;
-- one project spanning several folders, or none at all;
+- one project spanning several repositories, with one of them as its home;
 - the catch-up checkpoint, so `project-catchup` shows only what is new to you;
-- a project card, and seeding the ledger from a decision log, a wiki space or
-  a Slack channel you already have -- paste the text if your session is not
-  connected to that tool. Seeding proposes ledger lines and hands them to
+- a project card, and seeding the ledger from a decision log, ADRs, a wiki
+  space or a Slack channel you already have -- paste the text if your session
+  is not connected to that tool. Seeding proposes entries and hands them to
   `project-log` for your yes; it never writes the ledger itself.
 
-### A project with no folder
+### A project that is not code
 
-A project that lives in Slack, a wiki and meetings is fine:
+A project that lives in Slack, a wiki and meetings still gets a folder:
+projects without a folder are gone. Run `/daikenja:setup-project` from the
+folder you keep its notes in; if that folder is not a git repository, it
+offers to run `git init` there first. If you have no folder for it at all, it
+offers to make one named after the project, such as `atlas-launch`. Nothing
+has to be pushed anywhere: a local repository stays on your machine, and git
+keeps the ledger's history there.
 
-1. Run `/daikenja:setup-project`.
-2. When it asks about the project's folder, answer that it has none, and give
-   the project a short name, such as `atlas-launch`.
-3. It suggests keeping the ledger in your own Daikenja folder, at
-   `~/.claude/daikenja/ledgers/atlas-launch.md`. Accept, or name a folder you
-   can see more easily, such as one in your Documents.
-
-From then on, add the name to any ledger command --
-`/daikenja:project-summary atlas-launch` -- from any session. Only you can read
-that ledger unless you put it somewhere shared.
+From then on, add the name to any reading command --
+`/daikenja:project-summary atlas-launch` -- from any session.
 
 ## Updating
 
 New versions ship on the `release` branch. Updating never touches your
-settings, notes or ledgers: they live outside the plugin's own folder.
+settings, notes or ledgers: they live outside the plugin's own folder. A
+release that changes how a ledger is kept tells you, and the change waits for
+your yes -- see [Do I have to re-run setup?](#do-i-have-to-re-run-setup).
 
 | You use | How to update |
 |---|---|
@@ -143,7 +144,10 @@ daikenja.yaml was written by Daikenja 0.6.0; 0.7.0 is installed -- run /daikenja
 ```
 
 When you see that line, run `/daikenja:setup-user`: it proposes the exact edits
-and waits for your approval. Without that line there is nothing to do after an
+and waits for your approval. A project still on the old single-file ledger is
+reported as needing migration; `setup-user` lists it with the command that
+migrates it -- see
+[Moving from the old ledger](ledger.md#moving-from-the-old-ledger). Without that line there is nothing to do after an
 update. The notice stays quiet for releases that need nothing, so it does not
 become something you learn to skip. [Upgrading](../upgrading.md) is the same
 information written out to apply by hand, newest version first.

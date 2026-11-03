@@ -31,9 +31,17 @@ Only when a skill prints a line telling you to.
 
 ### Do I need git, or a code repository?
 
-No. The writing and reviewing skills work anywhere, and a project with no
-folder keeps its ledger wherever you choose.
-[A project with no folder](install.md#a-project-with-no-folder)
+Not for writing and reviewing: those skills work anywhere. A project's ledger
+needs git, but not code: a folder of notes works once `git init` has run in
+it, which `setup-project` offers to do, and nothing has to be pushed.
+[A project that is not code](install.md#a-project-that-is-not-code)
+
+### Where did my project with no folder go?
+
+Projects without a folder are gone. Skills report such a project as needing
+migration; `/daikenja:setup-user` lists it with the command that moves its
+ledger into a git repository you choose, with a dated backup of the old file.
+[Moving from the old ledger](ledger.md#moving-from-the-old-ledger)
 
 ## Privacy
 
@@ -53,8 +61,8 @@ never written into a project.
 
 ### Who can see the ledger?
 
-Everyone who can read the project -- in a git repository, everyone with access
-to it. A project with no folder keeps its ledger in your own files.
+Everyone who can read the project's git repository -- and nobody else, if it
+is a local repository you never push.
 [Who can see what](your-data.md#who-can-see-what)
 
 ## Using it
@@ -75,8 +83,15 @@ name the project: `/daikenja:project-summary atlas-migration`.
 ### How is the ledger different from ADRs or a wiki?
 
 An architecture decision record (ADR) or a wiki page is a full document per
-decision; a ledger line is one sentence, written as the decision happens. The
-two work together. [How it compares](why.md#how-it-compares)
+decision; a `DECISIONS.md` entry is a sentence or two, kept current as the
+decision changes. The two work together: an entry can link to its ADR.
+[How it compares](why.md#how-it-compares)
+
+### I logged something, but my colleagues cannot see it.
+
+`project-log` writes the files and never commits them. Commit and push them
+like any other change; until then, `project-catchup` lists them as "not
+committed yet". [Writing to it](ledger.md#writing-to-it-project-log)
 
 ### Persona, reviewer, Tensei -- what is the difference?
 

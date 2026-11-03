@@ -9,12 +9,10 @@ stage's acceptance checks can be re-run later against the same inputs.
   clean; every `skills/*/SKILL.md` frontmatter block parses as YAML with
   a `name` matching its directory and a `description`; `docs/upgrading.md`'s
   version headings are well-formed, newest-first and each named in
-  `CHANGELOG.md` too; `fixtures/ledger-backfill.md` agrees with
-  `docs/ledger-format.md` -- its two bulk writes replayed through the stated
-  insert rule, and its Changelog lines through the continuation-join and
-  range expansion, the only fixture checked by script rather than by hand,
-  because the ordering rule is the only part of the ledger contract that is
-  arithmetic instead of judgement; this directory's own index agrees with
+  `CHANGELOG.md` too; `docs/decisions-format.md` and `docs/open-format.md`,
+  and their templates `templates/DECISIONS.md` and `templates/open.md`, start
+  with their format-version lines, each template at its spec's version; this
+  directory's own index agrees with
   what's on disk -- every file under `fixtures/` is named in this README and
   vice versa; every fixture's `Depends on:` line names a real doc/skill
   section, quoted verbatim from its heading; and every reference doc's
@@ -25,8 +23,8 @@ stage's acceptance checks can be re-run later against the same inputs.
   `python tests/check-invariants.py`; CI runs it on every push and pull
   request via `.github/workflows/ci.yml`. A new fixture must carry a
   `Depends on:` line in its prose header naming the contract sections it
-  exercises, e.g. `Depends on: ledger-format.md "Body markers", project-log
-  "Say when a handle is new"` -- bare doc/skill names, section titles quoted
+  exercises, e.g. `Depends on: open-format.md "Section: Open items",
+  project-log "Say when a handle is new"` -- bare doc/skill names, section titles quoted
   verbatim from the `#`/`##`/`###` heading they name. A reference doc cited by
   section from a skill's `Depends-on:`-eligible citation carries the reverse:
   `Depends-on (reverse index -- hand-maintained, checked against SKILL.md
@@ -62,60 +60,51 @@ stage's acceptance checks can be re-run later against the same inputs.
   rejected before git sees it. An uncommitted edit is listed as "not committed
   yet" in every walk.
 
-- [`fixtures/ledger-backfill.md`](fixtures/ledger-backfill.md) -- an
-  incrementally kept `lantern` ledger plus three walks that exercise the four
-  rules a bulk backfill depends on: a first bulk write whose entries are all
-  older than what is already in the file, a second bulk write arriving three
-  days later that supersedes an entry the first one wrote, and a
-  `project-catchup` run over both. It fixes the resulting entry order (IDs and
-  dates deliberately decorrelated, and never renumbered), two `Approximate
-  date.` entries with the derivation the user supplied, a Changelog line
-  carrying both compactions -- a dense ID range and a continuation line -- and
-  the twelve changes `catchup` must recover from them. Its "what must not
-  happen" lists are the point: a sparse range, a renumbering and an invented
-  date are each shown as the wrong answer. Two malformed ranges at the end
-  exercise the report-and-continue path.
-
 - [`fixtures/owner-handles.md`](fixtures/owner-handles.md) -- a synthetic
   personas file plus eight walks over `project-log`'s owner-handle check,
-  against `sample-ledger.md`: a handle the ledger already uses, a handle only
+  against a `beacon` `open.md`: a handle `open.md` already uses, a handle only
   the personas file knows, a handle neither knows, two spellings of one person,
   `@unassigned`, no personas file at all, an unresolvable `drive:` pointer, and
-  a dictated write. It fixes the two things the check is easiest to get wrong --
-  that a handle the ledger already knows never reads `personas.md`, and that
+  a decision, which writes no handle. Walks 9-11 cover `meeting-review`'s
+  attribution step. It fixes the two things the check is easiest to get wrong
+  -- that a handle `open.md` already knows never reads `personas.md`, and that
   the notice is a notice rather than a question the run waits on.
 
 - [`fixtures/ledger-relationships.md`](fixtures/ledger-relationships.md) -- a
-  `lattice` gateway ledger built by one team inside a programme run by others,
-  plus nine walks over the body markers `docs/ledger-format.md` § Body markers
-  defines. It fixes the four things easiest to get wrong: a `Contradicts`
-  marker found from both ends although the file records only one, a `Blocked
-  by` whose blocker is already resolved and which nothing rewrites, an imposed
-  decision with no owner that is never a gap, and a body containing `->` as
-  punctuation that must not parse as a tail. One entry carries a marker naming
-  an ID the ledger does not have, so the report-and-continue path of reading
-  rule 6 has something to report. The walks pin today to 2026-09-15 and the
-  threshold to 21 days, so the `project-gaps` output is exact rather than
-  drifting with the calendar.
+  `lattice` gateway's `DECISIONS.md` and `open.md`, built by one team inside a
+  programme run by others, plus eight walks over the two relationships the
+  ledger still records: a `Blocked by:` prefix between open items and an
+  imposed decision's origin in its why clause. It fixes the four things
+  easiest to get wrong: an imposed decision carries no owner and is never a
+  gap; a `Blocked by:` naming an item no longer in the file is reported, and
+  nothing rewrites it; a contradiction is never recorded -- the open item a
+  new decision settles is closed in the same batch, or the user is asked; and
+  a relationship is written only where the material states it. The walks pin
+  today to 2026-09-15 and the threshold to 21 days, so the `project-gaps`
+  output is exact rather than drifting with the calendar.
 - [`fixtures/dictated-log-requests.md`](fixtures/dictated-log-requests.md) --
-  four scenarios walking `project-log`'s same-turn dictated-write path against
-  `sample-ledger.md`: a clean write, an unnamed owner that must default to
+  seven scenarios walking `project-log` against a `beacon` `DECISIONS.md` and
+  `open.md`: a clean dictated write, an unnamed owner that must default to
   `@unassigned` rather than asking, a duplicate that drops to
-  propose-then-wait, and a pasted thread whose two ambiguities land in one
-  "Questions before I write" round instead of being asked one at a time.
+  propose-then-wait, a pasted thread whose batch names both files and whose
+  two ambiguities land in one "Questions before I write" round, a newer
+  `DECISIONS.md` format that refuses the whole batch, an existing
+  `DECISIONS.md` another tool wrote that is extended rather than replaced, and
+  an old ledger at the legacy location that is refused.
 - [`fixtures/sources-ledger.md`](fixtures/sources-ledger.md) -- a `meridian`
-  compliance-programme ledger carrying a Sources section, plus a
-  connector-report table, exercising `docs/ledger-format.md` § Section:
-  Sources against `project-sources`, `project-summary`, `project-catchup` and
-  `project-log`. Pins four cases: a fully-populated source, one with no
-  `modified:` baseline (read date only, never "moved" or "unchanged"), one
-  that moved since its recorded read, and the no-Sources-section case, which
-  is covered instead by `sample-ledger.md`. Walks assume today is 2026-09-15.
+  compliance programme spanning two repositories, `meridian-controls` (home)
+  and `meridian-services`, whose `open.md` carries a Sources section, plus a
+  connector-report table, exercising `docs/open-format.md` § Section:
+  Sources against `project-sources`, `project-summary`, `project-gaps`,
+  `project-catchup` and `project-log`. Pins a fully-populated source, one with
+  no `modified:` baseline (read date only, never "moved" or "unchanged"), one
+  that moved since its recorded read, both repositories' `DECISIONS.md` read
+  together, a `Blocked by:` naming an open item and one naming a closed item,
+  and a newer-format variant. Walks assume today is 2026-09-15.
 
 - [`fixtures/project-card.md`](fixtures/project-card.md) -- a four-project
-  registry, three project cards (one in the `<name>.project.md` form beside
-  a pathless project's absolute ledger) and one project with a ledger but no
-  card, plus seven walks: `thread` placing a thread by a decisive channel
+  registry, three project cards, each at `.daikenja/project.md` in its
+  project's home repository, and one project with a ledger but no card, plus seven walks: `thread` placing a thread by a decisive channel
   handle from an unrelated directory, a Scope fit that decides nothing and is
   never asked about -- silent in the terminal run, named as an offer when the
   same thread goes through the bot -- and the cross-check that names a
@@ -319,14 +308,14 @@ your own norms document in place of the fixture's.
 ### Project resolution
 
 - [`fixtures/project-resolution.md`](fixtures/project-resolution.md) -- one
-  `daikenja.yaml` holding every legal project shape -- a single-value `path`
-  written before `paths` existed, a three-repository `paths` list, a
-  `paths: []` project with an absolute `ledger:`, a `paths: []` project with
-  no ledger location at all, and a project nested inside another -- plus ten
-  walks over it. Covers the scalar form resolving unchanged, a multi-path
-  project resolving its ledger against its **first** path rather than the path
-  that matched, a pathless project resolving through its absolute `ledger:`,
-  the same shape without one stopping on the ledger rather than on the project,
+  `daikenja.yaml` holding every project shape a reader meets -- a single-value `path`
+  written before `paths` existed, a three-repository `paths` list, a legacy
+  entry with no repository and an absolute `ledger:`, and a project nested
+  inside another -- plus ten walks over it. Covers the
+  scalar form resolving unchanged, a multi-path project reading every
+  repository's `DECISIONS.md` and its `open.md` from its **first** path rather
+  than the path that matched, a legacy entry with no repository reported as
+  needing migration by key and never matched by directory,
   a project key that resolves from the wrong directory, a key that resolves to
   nothing, nesting still winning on the longest prefix, the `project-list`
   report over the whole file, and `project-list` narrowed to one entry by a
