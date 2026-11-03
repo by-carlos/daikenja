@@ -20,7 +20,7 @@ protocol, finish protocol).
 | S3 Catchup and decisions read git history | todo | — | — | — |
 | S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | done | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
-| S6 setup-project registers git-backed projects only | todo | — | — | — |
+| S6 setup-project registers git-backed projects only | doing | yes | 2026-11-03 | Registration is git-only, home asked and written first, seed via project-log; skill 23203→23144 bytes |
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | todo | — | — | — |
 | S9 User guide, README and retiring ledger-format.md | todo | — | — | — |
@@ -476,7 +476,117 @@ Actuals: 2026-11-03T07:33:01.914Z → 2026-11-03T07:43:12.064Z · 10 min · toke
 Artifacts check: match
 
 ### S6 setup-project registers git-backed projects only
-_(empty)_
+
+As built -- what S8 and S9 can assume of `setup-project`:
+
+- **Git-only registration.** Every path written is a git repository, checked
+  with `git -C <dir> rev-parse --show-toplevel` in Step 1. Inside a repository
+  below its root, the root is proposed (a sub-folder only on request). A plain
+  folder gets a one-line `git init` offer; a no writes nothing. "No folder at
+  all" gets the offer of a new folder named after the key. The pathless branch,
+  the `paths: []` + absolute `ledger:` write and the `ledger` per-project key
+  (Step 3) are gone; Step 3 now offers `stale_after_days` and `norms_doc` only.
+  `writes:` frontmatter names `git init`; skill metadata version 2 → 3.
+- **Home (D-8).** Asked in the same round as the key when registering a new
+  project ("does it span other repositories, and which is home?"), and written
+  first. Appending a repository to an existing entry never reorders -- matches
+  `config-resolution.md`'s "do not reorder the list afterwards".
+- **Card** is `<home>/.daikenja/project.md` (Step 3b), per S1's
+  `project-card.md` § Location; the `<name>.project.md` derivation is gone.
+- **Needs migration.** An exact match whose home holds `.daikenja/ledger.md`
+  with no `open.md` gets the `config-resolution.md` § Legacy keys line naming
+  `/daikenja:setup-user`; Steps 3 and 3b run, Step 4 (seed) does not. **S8**
+  replaces this with the migration branch (D-20) -- Step 2's "A matched entry
+  that needs migration" paragraph and its failure-table row are the hook.
+  "What this skill does not do" still says it does not migrate; S8 rewords.
+- **Seeding** hands batches to `project-log` per
+  `project-log-reference.md` § A batch handed over by another skill (one
+  tranche = one approval; project-log scaffolds either file inside it). Step 4a
+  now also looks for an existing `DECISIONS.md` (adopted, only what it lacks
+  is added) and `doc/adr/`. ADR rules rewritten for the new format: one entry
+  per decision in force with `Source: <ADR>`, newest only; a replaced record
+  and an answered register question are not proposed; `project-log` adds the
+  `ADRs:` line. Dropped: ID-order allocation, `Approximate date.` marker
+  (approximations now per § Backfilling), the supersession-pair rule.
+  Decisions carry no date; why/revisit missing → questions. Step 5 says the
+  files are not committed (D-6).
+- `SKILL.md` 23203 → 23144 bytes (v0.12.0 baseline 23187). Headings cited
+  elsewhere (Steps 0, 1, 2, 3, 3b, 4a, 4c, "Setup project") unchanged.
+- `templates/README.md`: intro names both ledger files and the card beside
+  `open.md`; `ledger.md` described as no longer scaffolded, kept until its
+  format doc is retired (S9 deletes both). `templates/project.md`: comment says
+  "beside open.md".
+- `tests/fixtures/ledger-location.md` not edited: its one `setup-project`
+  mention (refusing `~` / `~/.claude`, Config E) still holds.
+
+**For S9's changelog entry (D-14, D-15):** `setup-project` no longer registers
+a project without a folder -- every project lives in a git repository, and a
+plain folder is offered `git init`. It asks which repository is home for a
+multi-repository project and writes it first, no longer offers the `ledger`
+key, and seeds `DECISIONS.md` / `open.md` through `project-log`, extending an
+existing `DECISIONS.md` rather than replacing it.
+
+Acceptance (run in `../daikenja-s6`):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=$(git merge-base HEAD origin/feat/292-replace-ledger-decisions-md-open) HEAD_SHA=$(git rev-parse HEAD) python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+$ git grep -nE "pathless|paths: \[\]|daikenja/ledgers" -- skills/setup-project templates/README.md templates/project.md tests/fixtures/setup-project-seed.md
+(exit 1, no output)
+```
+
+Hand walks, `tests/fixtures/setup-project-seed.md` (rewritten: six walks):
+
+- **Code repository (Walk A).** `C:/GitHub/quill-gateway` is a repo root, no
+  exact match → "new or another repository?" → new, key `gateway`, just this
+  repo → entry `gateway: paths: [C:/GitHub/quill-gateway]` with
+  `stale_after_days: 30` and `norms_doc`, no `ledger:` key. Card offered at
+  `C:/GitHub/quill-gateway/.daikenja/project.md`. Seed declined, so no ledger
+  file is created (only `project-log` scaffolds). Walk B: exact match → key
+  left alone, straight to Step 4.
+- **Seed (Walk C).** Step 4a finds `docs/adr/` and `docs/open-questions.md`,
+  no `DECISIONS.md` → index-and-depth notice. Decisions tranche to
+  `project-log`: ADR-0001, ADR-0003 (revisit asked), ADR-0004
+  (`Source: ADR-0004`), sam's cutover hold, the standing rule -- ADR-0002 and
+  Q-03 never proposed; `DECISIONS.md` scaffolded in the same approval with
+  `ADRs: docs/adr/`. The user's "put the old TLS one in too" is declined as
+  current-only. Open items tranche answered around → restated; then Q-01
+  (`2026-05-21 -- @sam`) and Q-02 (`2026-06-02 -- @unassigned`) to
+  `.daikenja/open.md`, in-flight item dropped (no date), 30-day stale notice
+  given first. Feature-flag idea not kept; ADR-0003 and the standing rule stay
+  two entries. Confirm: counts, "not committed".
+- **Multi-repository (Walk D).** Run from `C:/GitHub/harbor-api`; new project
+  `harbor`, also `C:/GitHub/harbor-docs`, home harbor-docs → both repo roots →
+  `paths: [C:/GitHub/harbor-docs, C:/GitHub/harbor-api]`, home first though
+  the run started in harbor-api; card at harbor-docs. Variant D2: quill-web
+  appended to `gateway` after quill-gateway, named as staying home, no
+  reorder.
+- **Non-code folder (Walk E).** `C:/Work/vendor-onboarding` has no `.git` →
+  `git init` offered before any write; yes → `git init`, entry with that one
+  path; no → nothing written. "No folder at all" → offer of a new folder with
+  `git init`; never an entry with no paths.
+- **Existing `DECISIONS.md` (Walk F).** `C:/GitHub/lantern` with a
+  plan-staged-rollout `DECISIONS.md` (Release area, tag-only entry). Step 4a
+  names it as adopted. `project-log` (Step 3 adopt, Step 7 "a new area at the
+  end of the file") adds `## API` with `Paths:` and the versioning entry; the
+  restated tag-only rule is a duplicate, not re-added. `open.md` scaffolded
+  from the template in its own tranche with the unowned changelog question.
+  Title, intro, Release area and its entry byte-identical afterwards; nothing
+  overwritten.
+
+Follow-ups (not this stage's):
+
+- **S9:** `docs/guide/install.md` § A project with no folder,
+  `docs/guide/ledger.md` (lines ~59, ~110), `docs/guide/faq.md` (~36, ~57),
+  `docs/guide/your-data.md` (~40, ~87) and `docs/guide/commands.md` (~70)
+  still describe registering a project with no folder; the setup-project guide
+  text should also mention the `git init` offer and the home question.
+- **S8:** see "Needs migration" above.
+
+Actuals: not recorded -- cloud session, `scripts/effortlog.py` (plugin) not available. Session 2026-11-03, ended 2026-11-03T10:45Z.
+Artifacts check: match (by hand, `git diff --name-only` against the plan branch; `scripts/artifacts_check.py` not available in this cloud session)
 
 ### S7 Slack bot reports unreadable project data
 
