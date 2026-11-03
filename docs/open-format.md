@@ -126,7 +126,7 @@ the item correctly.
 
 The prefix is written only where the source says the item is blocked, never
 because two items look related. It is the one marker this format keeps:
-`project-gaps` annotates it, and nothing else reads it.
+`project-gaps` annotates it; other readers show it as text.
 
 When the named item is no longer in the file, it has been closed: a reader
 says the block names an item that is no longer open, and reads on. When
