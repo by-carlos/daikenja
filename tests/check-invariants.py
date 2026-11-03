@@ -29,6 +29,11 @@
     of a fixture naming the doc/skill sections it exercises -- and reuses the
     same `name "Section Title"` pair grammar. A doc with no `Depends-on:` block
     at all is not an error here -- only a malformed one is.
+(j) Every relative link or image in the repository's Markdown (README.md, the
+    other top-level .md files, docs/**/*.md, bot/README.md, templates/README.md
+    and tests/README.md) points at a file or directory that exists. The fragment
+    after `#` is not checked, and fenced code blocks are skipped. A page moved
+    or renamed without its inbound links is the failure this catches.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
@@ -87,6 +92,8 @@ REVERSE_DEPENDS_HEADER_RE = re.compile(
     r"^Depends-on \(reverse index[\s\S]*?\):[ \t]*\n", re.MULTILINE
 )
 REVERSE_DEPENDS_ITEM_RE = re.compile(r"^- § (.+?) -- (.+)$")
+MD_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
+LINK_SCHEME_RE = re.compile(r"^[a-z][a-z0-9+.-]*:", re.IGNORECASE)
 
 failures = []
 
@@ -570,6 +577,37 @@ def check_fixture_inventory():
         )
 
 
+def markdown_link_sources():
+    sources = sorted(REPO_ROOT.glob("*.md"))
+    sources += sorted(DOCS_DIR.rglob("*.md"))
+    # Only templates/README.md: the templates themselves hold placeholder links.
+    sources += [REPO_ROOT / "templates" / "README.md"]
+    sources += [REPO_ROOT / "bot" / "README.md", FIXTURES_README]
+    return [path for path in sources if path.exists()]
+
+
+def check_relative_links():
+    for path in markdown_link_sources():
+        in_fence = False
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for number, line in enumerate(lines, start=1):
+            if line.lstrip().startswith("```"):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                continue
+            for target in MD_LINK_RE.findall(line):
+                if target.startswith("#") or LINK_SCHEME_RE.match(target):
+                    continue
+                file_part = target.split("#", 1)[0]
+                if not (path.parent / file_part).exists():
+                    fail(
+                        "j: relative links",
+                        f"{path.relative_to(REPO_ROOT).as_posix()}:{number}",
+                        f"links to '{target}', which does not exist",
+                    )
+
+
 def main():
     check_plugin_validate()
     check_skill_frontmatter()
@@ -578,6 +616,7 @@ def main():
     check_fixture_inventory()
     check_fixture_dependencies()
     check_reference_dependencies()
+    check_relative_links()
 
     if failures:
         print("Invariant checks failed:", file=sys.stderr)
