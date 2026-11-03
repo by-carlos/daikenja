@@ -8,8 +8,8 @@ and it is built to exercise the classification rules and the transcript mess
 at the same time:
 
 - one real decision, closed out loud (the start date moves to 2026-08-19)
-- one decision the meeting only restates, which is not a new decision (the
-  5 / 25 / 100 ramp shape, already settled in `sample-thread.md`)
+- one decision the meeting only restates, which is not a new `DECISIONS.md`
+  entry (the 5 / 25 / 100 ramp shape, already settled in `sample-thread.md`)
 - one suggestion nobody agreed to (the per-tenant override switch)
 - one action item with a clear owner and a date (souei, customer comms)
 - one action item nobody picked up (the runbook dates)
