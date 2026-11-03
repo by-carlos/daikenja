@@ -1,4 +1,4 @@
-Generated from PLAN.md @ 4245fa5bb659 — do not edit
+Generated from PLAN.md @ d41461f3ebfd — do not edit
 # Replace the ledger with DECISIONS.md, open.md and git history — plan brief
 
 > One page to check this plan against what you expect. Feedback goes in chat
@@ -63,7 +63,7 @@ flowchart LR
 | D-18 | The #293 note is posted only after your yes | Decided | posting is outward-facing |
 | D-19 | Plan review is pragmatic: findings need a concrete consequence | Needs you | answered |
 | D-20 | Migration procedure lives in `docs/ledger-migration.md` | Default for now | revisit at S8 if `setup-project` breaks the size check |
-| D-21 | Leftover `ledger:` is ignored with a notice; `paths: []`, and an old ledger with no `open.md` beside it, are "needs migration" | Default for now | revisit after the first real upgrade |
+| D-21 | Leftover `ledger:` is ignored with a notice; `paths: []`, and an old ledger with no `open.md` beside it, are "needs migration" (the migration's own batch excepted) | Default for now | revisit after the first real upgrade |
 | D-22 | Pathless migration asks for a target folder, default a new folder outside any repo | Default for now | revisit at S8 if users have no registered root |
 
 **Plan review (2026-11-03), lenses:** Simplicity — always; Architect — file format and config schema change across skills, bot and docs; Security — catchup passes a stored SHA to `git`, migration rewrites user files; Operator — the Slack bot runs unattended and its reading changes. No lens called the plan unsound.

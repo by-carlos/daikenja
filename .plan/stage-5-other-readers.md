@@ -25,27 +25,27 @@ mentions), so it is the bulk of the work.
 
 ## Steps
 
-- [ ] `skills/judgement/SKILL.md`: check claims against the current
+- [x] `skills/judgement/SKILL.md`: check claims against the current
   `DECISIONS.md` of every registered repository and against `open.md`; there are
   no IDs to cite, so cite the entry by its words and its repository.
-- [ ] `skills/thread/SKILL.md`, `skills/meeting-review/SKILL.md` (it proposes
+- [x] `skills/thread/SKILL.md`, `skills/meeting-review/SKILL.md` (it proposes
   entries in the new shapes for `project-log` to write: decisions as
   `DECISIONS.md` entries, open items with owner and date, no IDs or markers),
   `skills/preflight/SKILL.md`, `skills/remember-persona/SKILL.md`,
   `skills/self-review/SKILL.md` and `skills/learn-voice/SKILL.md` (one mention).
-- [ ] `docs/response-format.md` and `docs/preflight-reference.md`.
-- [ ] Keep the user-facing word "ledger" (D-7); output section names stay as
+- [x] `docs/response-format.md` and `docs/preflight-reference.md`.
+- [x] Keep the user-facing word "ledger" (D-7); output section names stay as
   they are (D-7), so there is no list of relayed section names to hand to S7.
-- [ ] In the `thread` and `judgement` headless output paths, emit a fixed token
+- [x] In the `thread` and `judgement` headless output paths, emit a fixed token
   for "project data unreadable" when the project needs migration (D-21) or its
   files carry a newer format version (D-4), instead of a normal-looking verdict.
   Record the token's exact text in this stage's ledger notes, because S7
   consumes it.
-- [ ] Update `tests/fixtures/judgement.md`, `sample-thread*.md`,
+- [x] Update `tests/fixtures/judgement.md`, `sample-thread*.md`,
   `sample-transcript.md` and `sample-drafts-preflight.md`. No fixture is added or
   removed, so `tests/README.md` is not edited.
 - No `CHANGELOG.md` entry here: S9 writes it (D-14).
-- [ ] Run `python3 tests/check-invariants.py` and `python3 tests/check-skill-size.py`
+- [x] Run `python3 tests/check-invariants.py` and `python3 tests/check-skill-size.py`
   and fix anything they flag (D-16).
 
 <!-- Checkboxes are the resume mechanism: a session that stops mid-stage marks

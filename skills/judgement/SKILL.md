@@ -41,8 +41,8 @@ Read these before the first output:
 
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- the `answer` form is a
   conversational reply and follows it whole: answer first, findings
-  itemised, entries topic-first with the ID in parentheses, clean result in
-  one line.
+  itemised, entries named topic-first by their words, clean result in one
+  line.
   - § The second person belongs to conversation governs the difference
     between the two forms: the `answer` form addresses the user as `you`,
     and the `message` form -- built to leave the session -- names people
@@ -51,7 +51,8 @@ Read these before the first output:
   content and § Reading a card -- how a subject with no key and no directory
   finds its project, and what a card says.
 - `${CLAUDE_PLUGIN_ROOT}/docs/reading.md` § Step B: resolve the ledger path
-  and § Step C: read and parse -- how the ledger is found and read.
+  and § Step C: read and parse -- how the ledger, every `DECISIONS.md` of the
+  project plus its `open.md`, is found and read.
 - `${CLAUDE_PLUGIN_ROOT}/docs/voice.md` -- the `message` form is generated
   output and follows it in voice-only mode; see § Voice in the message form.
 
@@ -66,8 +67,10 @@ install:
 - **Headline first.** One line naming the subject, then the finding. Never
   an explanatory paragraph before the verdict.
 - **Every statement is labelled with its source**: `ledger`, with the
-  decision or open item named topic-first and its ID in parentheses, or
-  `general knowledge`. A statement with no label is a defect.
+  decision named topic-first and the repository whose `DECISIONS.md` holds
+  it in parentheses -- or `(open item)` for an item of `open.md` -- or
+  `general knowledge`. There are no IDs: an entry is cited by its words. A
+  statement with no label is a defect.
 - **Every finding carries a confidence**: `certain`, `likely` or `guessing`.
   A recommended action is framed as a suggestion. Confidence and suggestion
   are two different things; neither form blurs them into hedging.
@@ -75,8 +78,8 @@ install:
   agreed", "the standard says", "everyone knows" with nothing behind it is a
   finding, not a fact to carry forward.
 - **Links only from evidence.** A standard, page or source is linked only
-  when the subject itself or the ledger's Sources section already carries
-  that link. Otherwise name it by its human-readable title and mark it
+  when the subject itself or the Sources section of `open.md` already
+  carries that link. Otherwise name it by its human-readable title and mark it
   `link needed`. Never construct a URL, and never restate a standard owned by
   another team in place of naming it.
 - **Close with one line saying what was not checked.** An unstated scope
@@ -200,23 +203,45 @@ the current directory's ledger as the subject's when the subject's own
 handles point nowhere.
 
 **Read what the project has**, per `reading.md` § Step B: resolve the ledger
-path and § Step C: read and parse: the Decisions and Open items sections in
-full, the Sources section when there is one (it is where a link may come
-from), and the card beside the ledger per `project-card.md` § Reading a
-card. Name the resolved ledger path and, when content decided, how the
-project was found -- the same line shapes `thread` § Step 2b uses -- and the
-card's path on the line after it when a card was read, per `project-card.md`
-§ Reading a card:
+path and § Step C: read and parse: the `DECISIONS.md` of **every** registered
+repository in full, not only the one under the current directory; the Open
+items of `open.md` in full; its Sources section (it is where a link may come
+from); and the card beside `open.md` per `project-card.md` § Reading a card.
+Name the files read and, when content decided, how the project was found --
+the same line shapes `thread` § Step 2b uses -- and the card's path on the
+line after it when a card was read:
 
 ```
-Ledger: <key> (<absolute path>)                            key or directory
-Ledger: <key>, matched by #<channel> (<absolute path>)     decisive handle
+Ledger: <key> (<files>)                            key or directory
+Ledger: <key>, matched by #<channel> (<files>)     decisive handle
 Card: <absolute path>
 ```
 
-A ledger that does not exist is reported with `reading.md`'s own line and the
-run continues on general knowledge, saying so. A malformed line is reported
-and skipped, never repaired.
+`<files>` is every file read, absolute and comma-separated, a missing one
+marked `(not created yet)`, per `reading.md` § Step B. A project with none of
+the files is reported with `reading.md`'s own line and the run continues on
+general knowledge, saying so. A malformed line is reported and skipped, never
+repaired.
+
+**Project data unreadable.** Two states stop the verdict, because a verdict
+over them would look normal and be wrong: the project **needs migration** (no
+repository in `daikenja.yaml`, or a legacy `.daikenja/ledger.md` with no
+`open.md` beside it, per `reading.md` § Step A and § Step B), or one of its
+files carries a **newer format version** than this plugin knows, per
+`open-format.md` § Version line. The `answer` form gives `reading.md`'s
+notice line: a project that needs migration stops there, and a newer version
+is read anyway with its one warning, as every reading skill does. The
+`message` form -- the path a caller with no reader takes -- produces **no
+verdict** in either state. Its deliverable is exactly one line, copied, with
+nothing before or after it:
+
+```
+DAIKENJA-PROJECT-DATA-UNREADABLE <key> needs-migration
+DAIKENJA-PROJECT-DATA-UNREADABLE <key> newer-format
+```
+
+`<key>` is the project key, or `-` for an unregistered directory. The notice
+line goes in the report around it, never in the message.
 
 ## Step 4: check the claims
 
@@ -224,8 +249,8 @@ and skipped, never repaired.
 read:
 
 - A claim or proposal that **contradicts a decision in force** -- name the
-  decision topic-first with its ID, and quote the decision's own wording where
-  the exact words matter. This is the most useful finding the skill can make
+  decision topic-first with its repository, and quote the decision's own
+  wording where the exact words matter. This is the most useful finding the skill can make
   and it leads the verdict.
 - A question the ledger **already answers** -- name the decision that answers
   it.
@@ -242,8 +267,9 @@ claim that is true as stated. Each carries `general knowledge` and a
 confidence. A statement this skill is guessing at says `guessing`; it is not
 dropped to look more certain, and it is not padded to look more thorough.
 
-**A superseded decision is not in force.** A subject that agrees with the
-superseded wording contradicts the current one; say which is which.
+**Every `DECISIONS.md` entry is in force.** The file holds no superseded
+wording to weigh, and this skill does not read git for what an entry
+replaced. When two repositories' entries disagree, name both.
 
 **What was not checked** is decided here and written down in Step 5: a link
 in the subject that was not opened, a channel the thread refers to, a
@@ -270,7 +296,7 @@ Card: <absolute path>
 claims, each clause labelled>
 
 🔍 **Basis**
-1. **<topic>** -- the finding. _<certain | likely | guessing> · ledger, <topic> (D-nnn)_
+1. **<topic>** -- the finding. _<certain | likely | guessing> · ledger, <topic> (<repository>)_
 2. ...
 
 💡 **Suggestion**
@@ -289,7 +315,7 @@ so the finding needs its own section to carry that context.
 
 The worked example from the design: a thread asks "are we going with X, and
 can SQL Server host Oracle?". The verdict reads `Z was agreed for this
-project (the storage-engine decision, D-003). SQL Server and Oracle are two
+project (the storage-engine decision, quill-gateway). SQL Server and Oracle are two
 different database engines; one cannot host the other -- certain, general
 knowledge.` The first clause is cited to the ledger; the second is labelled
 as knowledge, not as ledger fact.
@@ -321,8 +347,8 @@ shape:
 claims, each clause labelled with where it came from>
 
 📒 **Ledger -- <project name>**
-- **<decision or open item, topic-first>** (D-nnn) -- what the subject says,
-  and how it bears on that entry. _<certain | likely | guessing> · ledger_
+- **<decision or open item, topic-first>** (<repository> | open item) -- what
+  the subject says, and how it bears on that entry. _<certain | likely | guessing> · ledger_
 
 🔍 **Basis**
 - **<topic>** -- the finding. _<certain | likely | guessing> · general knowledge_
@@ -390,7 +416,7 @@ or not a card nearly matched: it is the one thing the reader can act on, and
 it is the reason no ledger was checked.
 
 Sources named in it follow the links rule: title first, a link only when the
-subject or the ledger's Sources already carry it, otherwise `(link needed)`.
+subject or the Sources of `open.md` already carry it, otherwise `(link needed)`.
 
 The message is handed back inside a fenced block so the user can copy it
 whole. **Around it, a short report to the user** -- the `Ledger:` and
@@ -427,7 +453,9 @@ govern it and `response-format.md` does.
 | No project matches, and some registered projects have no card | Say the non-match line naming the cardless projects, continue on general knowledge, and say no ledger was checked -- in both forms. |
 | A Scope match, no decisive handle | Do not ask. Read no ledger, answer on general knowledge, and copy Step 3's `This looks like ...` sentence into `Suggestion`. |
 | No match at all | The same, with Step 3's `No project context. ...` sentence instead. |
-| The resolved ledger does not exist | `No ledger at <path>. Run /daikenja:project-log to create one.`, then continue on general knowledge, saying so. |
+| None of the project's files exists | `No ledger yet in <home>. Run /daikenja:project-log to create one.`, then continue on general knowledge, saying so. |
+| The project needs migration | `answer`: the `reading.md` notice line, and stop. `message`: the `needs-migration` line from Step 3, and no verdict. |
+| A file carries a newer format version | `answer`: warn once and read it anyway. `message`: the `newer-format` line from Step 3, and no verdict. |
 | A ledger line does not parse | Report it per `reading.md` § Notices, shared wording and skip it. Never repair the file. |
 | The subject asks for a reply, or the user asks for one | Decline per the hard rule; name `/daikenja:thread` and `/daikenja:compose`. |
 | The user asks for the document to be fixed | Decline per the hard rule; the findings say where. `/daikenja:doc-review` is the checklist review if that is what was meant. |
