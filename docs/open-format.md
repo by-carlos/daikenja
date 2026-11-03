@@ -1,17 +1,15 @@
 <!-- daikenja-open-format: 1 -->
 # `open.md` format
 
-A project's ledger is two files: `DECISIONS.md`, which holds the decisions still
-in force, and `open.md`, which holds what is still unsettled, where the
-project's context lives and which documents it is tracked from. This document is
-the contract for `open.md`, and for the version rule both files follow inside
-Daikenja. `DECISIONS.md` itself is specified by
+A project's ledger is two files: `DECISIONS.md`, the decisions still in force,
+and `open.md`, what is still unsettled plus where the project's context lives.
+This document is the contract for `open.md` and for the version rule both files
+follow inside Daikenja. `DECISIONS.md` itself is specified by
 [`decisions-format.md`](decisions-format.md), a byte-identical copy of the
-format plan-staged-rollout shares; nothing Daikenja-specific is ever added to
-that copy.
+format plan-staged-rollout shares; nothing Daikenja-specific is added to it.
 
-Both files record what is true now. Git is the history: neither file carries
-IDs, a changelog, or entries kept around after they stop being true.
+Both files record what is true now, and git is the history: neither carries
+IDs, a changelog, or entries kept after they stop being true.
 
 ## Location
 
@@ -22,10 +20,8 @@ The path is fixed: there is no config key that moves it.
 
 `DECISIONS.md` sits at the root of **every** registered repository, because a
 decision belongs with the code it constrains. A project spanning three
-repositories has three `DECISIONS.md` files and one `open.md`.
-
-Every project lives in a git repository. Git is what keeps the history of both
-files, so a project with no repository has nowhere to keep one.
+repositories has three `DECISIONS.md` files and one `open.md`. Every project
+lives in a git repository, because git is what keeps both files' history.
 
 ## Version line
 
@@ -85,9 +81,8 @@ Things not yet settled. One bullet per item:
 - <date raised> -- <owner> -- <text>
 ```
 
-The separator is ` -- ` (space, two hyphens, space). **Strip the `- ` marker,
-then split on ` -- ` at most twice.** Everything after the second separator is
-the text, verbatim, so the text may contain ` -- ` of its own.
+**Strip the `- ` marker, then split on ` -- ` at most twice.** Everything after
+the second separator is the text, verbatim, so it may contain ` -- ` itself.
 
 | Field | Rule |
 |---|---|
@@ -106,13 +101,13 @@ alone as the item in summary.
 ```
 
 **An item has no ID.** It is found by its words: `project-log` matches the
-item a user names against the text on each line and asks when more than one
-could match.
+item a user names against each line's text and asks when more than one could
+match. A new item goes directly under the heading; no skill depends on the
+order, and a person may reorder items by hand.
 
 **`<owner>` is a handle, not an identity.** Which person `@priya` means is
-recorded, when the user records it, under the `Known as` field of
-`personas.md`. A handle missing from that file is the normal case and is never
-an error.
+recorded, if at all, under the `Known as` field of `personas.md`; a handle
+missing there is normal and never an error.
 
 ### `Blocked by:`
 
@@ -146,12 +141,6 @@ record, and `git log -p -- .daikenja/open.md` shows it. When an item closes
 because something was decided, `project-log` proposes the `DECISIONS.md` entry
 in the same batch as the deletion.
 
-### Ordering
-
-A new item goes directly under the heading. No skill depends on the order, and
-a person is free to reorder items by hand; `project-log` inserts a line and
-never moves the lines around it.
-
 ## Section: Context links
 
 A flat reference list. No date, no owner, no ordering rule.
@@ -179,11 +168,9 @@ names, in this order, each at most once:
   does not answer: <free text>
 ```
 
-The head line splits on ` -- ` once, as a context link does. Every field is
-optional and an absent field means unknown: nothing invents a value to fill
-one. `modified:` is stored verbatim, and it and `read:` change together, only
-when the source has actually been re-read. A source is a place, not a question:
-it is tracked or deleted, never closed.
+The head line splits on ` -- ` once. Every field is optional and an absent one
+means unknown: nothing invents a value. `modified:` is stored verbatim, and it
+and `read:` change together, only when the source is actually re-read.
 
 ## Writing
 
