@@ -82,6 +82,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   no longer fires on a trailing aside or on a phrase that heads off a
   misreading. Empty enthusiasm skips praise that is the whole message, and
   stacked hedges skip a claim whose writer says how sure they are.
+- **The domain glossary is described as manual-only.** The blank glossary
+  template, the templates README and `setup-user` said that review and
+  summary skills search `~/.claude/daikenja/glossary.md` and may append
+  terms you defined. No skill ever did either: `setup-user` creates the blank
+  file and nothing touches it afterwards. They now say so, and
+  `docs/config-writers.md` gains the two rows it was missing. Nothing
+  behaves differently. A glossary you already have keeps its old paragraph,
+  since templates only change new copies; its two sentences about skills
+  searching and appending can be deleted.
 
 ## [0.12.0] - 2026-09-30
 

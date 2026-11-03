@@ -76,7 +76,7 @@ open any of these files for you.
 | Your notes on the people you write to | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` |
 | Backups of your writing style, and what `learn-voice` noticed but kept out | `~/.claude/daikenja/writing-style.*.md`, dated | `learn-voice` |
-| Your domain glossary | `~/.claude/daikenja/glossary.md` | you; `setup-user` creates the blank file |
+| Your domain glossary -- a reference you keep by hand; no skill reads or writes it | `~/.claude/daikenja/glossary.md` | you; `setup-user` creates the blank file |
 | Tensei, if you adopted it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |
 | Tensei backups | `~/.claude/backups/tensei-<timestamp>/` | `tensei` |
 | A project's ledger | `.daikenja/ledger.md` in the project's folder by default -- see note | `project-log` only |

@@ -216,9 +216,9 @@ For each of `personas.md`, `writing-style.md` and `glossary.md`:
 
 `glossary.md` differs from the other two in one way: it is not a pointer in
 `daikenja.yaml` and has no Google Drive form. It always lives at
-`~/.claude/daikenja/glossary.md`, because the skills that use it -- a review or
-summary skill glossing a term it met -- search that fixed path and never load
-the file whole. The Drive offer below is for the two pointer files only.
+`~/.claude/daikenja/glossary.md`. It is manual-only: no skill reads or writes
+it after this step, so the user keeps it by hand. The Drive offer below is for
+the two pointer files only.
 
 ### Offering Google Drive, without ever requiring it
 
