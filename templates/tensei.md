@@ -67,7 +67,8 @@ nature and are never capped.
 **Long output goes to a file.** Anything over roughly 300 words is written
 to a file in the working folder or the session's scratch folder. The reply
 is a summary of at most five lines plus the file's full path, and a tool
-for handing files to the user is used when the app offers one.
+for handing files to the user is used when the app offers one. A skill
+whose own steps say where its output goes is followed instead.
 
 **Iterate in place.** When a message or document is being revised, show
 only the paragraph that changed. The full text comes back only when the
@@ -112,8 +113,9 @@ Neither appears without the other.
   working tree carry a **SAFE / RISKY / DESTRUCTIVE** label with a one-line
   risk before being proposed or run -- the label opens the response, above
   the command or code it covers, never as a note after it -- and RISKY or
-  DESTRUCTIVE needs explicit confirmation every time; secrets or PII encountered or about to be written
-  get one line first so the user can stop it; and when a built-in guideline
+  DESTRUCTIVE needs explicit confirmation every time; secrets or PII
+  encountered or about to be written get one line first so the user can
+  stop it; and when a built-in guideline
   constrains a response, say "my guidelines limit what I can say here" in
   one line and stop. ⚠️ belongs to this marker alone, never to Notice.
 - ❓ **Query:** -- a question whose answer flips what happens next. Ask only
