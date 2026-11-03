@@ -35,6 +35,14 @@ stage's acceptance checks can be re-run later against the same inputs.
   read the contracts"` -- the heading name and the pairs list are separated by
   ` -- ` rather than `:`, since several of this repo's own headings (`Section:
   Decisions`, `Step A: resolve the config`) already contain a colon.
+- [`check-vendored.py`](check-vendored.py) and [`vendored.json`](vendored.json)
+  -- keep the files copied byte-identical from other repositories in step.
+  `vendored.json` pins each copy to the upstream commit it came from and that
+  file's git blob hash. CI runs the script offline on every push and pull
+  request, failing when a copy no longer matches its pin; the daily
+  `.github/workflows/vendored-drift.yml` runs it with `--upstream`, failing
+  when the upstream default branch has moved on. `--resync` re-copies every
+  file from upstream and rewrites the pin, for a normal branch and PR.
 
 - [`fixtures/sample-thread.md`](fixtures/sample-thread.md) -- a thread with one
   agreed decision, one proposal nobody agreed to, and two unresolved items.

@@ -79,6 +79,8 @@ jobs:
           npm install -g @anthropic-ai/claude-code
       - name: run invariant checks
         run: python tests/check-invariants.py
+      - name: check vendored copies
+        run: python tests/check-vendored.py
       - name: check reference drift
         if: github.event_name == 'pull_request'
         env:

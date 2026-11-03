@@ -1,0 +1,29 @@
+name: vendored-drift
+
+# Daily check that the files copied byte-identical from other repositories
+# (pinned in tests/vendored.json) still match their upstream default branch.
+# A red run means upstream moved: re-sync with
+# `python tests/check-vendored.py --resync` on a branch and open a PR.
+# It never writes or opens anything itself: a pull request opened with the
+# default token would not trigger ci.yml's required checks.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.x"
+      - name: compare vendored copies with upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tests/check-vendored.py --upstream

@@ -37,7 +37,8 @@ starting points.
   Tensei's *Recommending a design* runs on a durable design, installed by
   `/daikenja:tensei` beside `tensei.md`. A byte-identical copy of
   `skills/staged-rollout/references/plan-review.md` in
-  `by-carlos/plan-staged-rollout`: never edit it here; re-copy it from
-  upstream instead.
+  `by-carlos/plan-staged-rollout`, pinned in
+  [`../tests/vendored.json`](../tests/vendored.json): never edit it here;
+  re-copy it with `python tests/check-vendored.py --resync` instead.
 
 Nothing in this directory may contain personal or organization data.

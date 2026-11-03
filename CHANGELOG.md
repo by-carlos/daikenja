@@ -31,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `templates/plan-review-lenses.md`, a byte-identical copy of
   `by-carlos/plan-staged-rollout`'s `plan-review.md`, and `/daikenja:tensei`
   installs it next to `tensei.md` and removes it on uninstall (#306).
+- **Copies of other repositories' files are checked for drift.**
+  `tests/vendored.json` pins each byte-identical copy to its upstream commit
+  and blob hash. `tests/check-vendored.py` fails CI when a copy no longer
+  matches its pin, and a daily `vendored-drift` workflow fails when the
+  upstream file has moved on; `--resync` re-copies and re-pins (#306).
 - **`/daikenja:setup-user` offers `/daikenja:tensei` once**, at its hand-off,
   and only when Tensei is not installed. No other skill suggests it.
 - **Rewrites no longer change wording that had nothing wrong with it.**
