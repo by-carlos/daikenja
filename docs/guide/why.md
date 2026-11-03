@@ -26,9 +26,10 @@ faster:
   plausible-sounding one.
 - **Challenge before sending.** `preflight` reads a draft the way different
   readers will, and fixes wording without touching what you meant.
-- **Record as you go, in plain text.** The ledger is a text file in the
-  project. No database, no service, no account -- anyone can read it without
-  Daikenja.
+- **Record as you go, in plain text.** The ledger is two text files in the
+  project's git repository: what is decided now, and what is still open. Git
+  keeps the history. No database, no service, no account -- anyone can read it
+  without Daikenja.
 - **You stay the author.** It drafts; you send. Shared files change only on
   your yes. ([The details](your-data.md#when-it-asks-first))
 
@@ -39,8 +40,8 @@ faster:
   The optional Slack bot, which you run yourself, posts its own summaries;
   that is the one exception.
 - **You are not in Claude Code.** It runs only in a local Claude Code session.
-- **Your team needs one shared, access-controlled record.** The ledger is a
-  file in a project; sharing it is sharing the project. The Slack bot answers
+- **Your team needs one shared, access-controlled record.** The ledger lives
+  in a project's repository; sharing it is sharing the repository. The Slack bot answers
   from one person's ledgers, and a shared team bot has not been designed.
 - **A one-line reply.** For a quick "thanks, done", the skills are more
   ceremony than help.
@@ -53,5 +54,5 @@ The full list of current edges is in [Known limitations](../future-work.md).
 |---|---|
 | Asking Claude directly to "write a reply" | it first works out what is being asked and what you have committed to, and checks the draft against readers and the project's decisions |
 | An AI writing tool that rewrites freely | it may change wording, never the ask, the stance or your confidence level |
-| Architecture decision records (ADRs) or a wiki | the ledger is one line per decision, kept current as part of the conversation, with replacements tracked; it can list your ADRs or wiki pages as sources |
+| Architecture decision records (ADRs) or a wiki | the ledger keeps only the decisions in force, a sentence or two each, kept current as part of the conversation, with git holding what they replaced; an entry can link its ADR, and wiki pages can be tracked as sources |
 | Meeting-notes AI | `meeting-review` proposes only what was actually closed out loud, with an owner who accepted it, and a quote for each |

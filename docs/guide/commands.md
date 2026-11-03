@@ -41,7 +41,7 @@ More: [The project ledger](ledger.md).
 
 | To... | Command | Plain words |
 |---|---|---|
-| Turn a transcript into ledger lines | `/daikenja:meeting-review` | "what came out of this call?" |
+| Turn a transcript into ledger entries | `/daikenja:meeting-review` | "what came out of this call?" |
 | Review a document before sharing | `/daikenja:doc-review` | "review this doc" |
 | Check claims against the ledger | `/daikenja:judgement` | "is this right?" |
 | Get coaching on how you handled a thread | `/daikenja:self-review` | -- |
@@ -67,8 +67,9 @@ Some commands take a word after them:
   `/daikenja:project-summary atlas-migration` reads that project from any
   folder. The name is the one the project was registered under with
   `setup-project`; `/daikenja:project-list` shows them all. `project-log`
-  accepts a name only for a project registered with no folder; for any other
-  project, run it from one of that project's folders.
+  does not take a name: run it from one of the project's folders.
+  `setup-project` takes one to migrate a project still on the old ledger --
+  `/daikenja:setup-user` tells you when.
 - **`message`**: `/daikenja:thread message` writes the thread summary for a
   channel, and stops there -- no questions, no draft. `/daikenja:judgement
   message` writes the verdict for a channel or a pull request. Both name people

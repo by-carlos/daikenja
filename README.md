@@ -10,8 +10,8 @@ Daikenja runs in **Claude Code** -- the **Code** tab of the Claude Desktop app,
 or the `claude` command line. It reads the threads, documents and meetings you
 are buried in, asks what you are actually trying to do, and hands back
 something you can act on: a reply you can send, a verdict on a draft, or a
-**ledger** -- a plain text file of what a project decided and what is still
-open.
+**ledger** -- two plain text files in the project's git repository, of what it
+decided and what is still open, with git keeping the history.
 
 It never sends a message or posts anything for you: you copy the result out and
 send it yourself. (The optional [Slack bot](docs/guide/slack-bot.md), which you
@@ -25,18 +25,25 @@ changes something already on your disk says so; see
 
 ## How it works
 
-[![The Daikenja loop in four steps. Read: you paste a thread and Daikenja asks what only you know. Draft: it writes the reply and can challenge it before you send. Record: it proposes ledger lines and waits for your yes. Come back: weeks later you type a command and it tells you what changed.](docs/diagrams/how-it-works.svg)](docs/diagrams/how-it-works.svg)
+[![The Daikenja loop in four steps. Read: you paste a thread and Daikenja asks what only you know. Draft: it writes the reply and can challenge it before you send. Record: it proposes ledger entries and waits for your yes, and writes them to DECISIONS.md and open.md in the project's git repository. Come back: weeks later you type a command and it tells you what changed.](docs/diagrams/how-it-works.svg)](docs/diagrams/how-it-works.svg)
 
 A colleague drops a long thread on you and wants an answer today. Daikenja
 **reads** it and asks where you stand, **drafts** the reply in your words,
 **records** what the thread settled once you say yes, and weeks later tells you
 what **changed** while you were away.
 
-A ledger line looks like this, and any text editor opens the file:
+A decision in the ledger looks like this, in a `DECISIONS.md` file any text
+editor opens:
 
 ```
-- 2026-08-10 -- D-003 -- @diablo -- Freeze schema changes on the events table until the rollout completes.
+- **Freeze schema changes on the events table until the rollout completes.** —
+  two teams have pending migrations. Revisit: if the rollout date moves.
 ```
+
+Every project lives in a git repository; projects without a folder are gone.
+A notes folder works once `git init` has run in it, and nothing has to be
+pushed. Coming from an earlier version? See
+[Moving from the old ledger](docs/guide/ledger.md#moving-from-the-old-ledger).
 
 ## Is it for me?
 
@@ -98,7 +105,7 @@ What a skill reads -- a thread you paste, a document, your own notes -- is
 sent to Claude for processing, as in any Claude Code session. What Daikenja
 writes are plain files: your settings and notes in your home folder (or your
 own Google Drive, if you opt in), and a project's ledger, which everyone who
-can read the project can read. Every file, and what leaves your machine:
+can read the project's repository can read. Every file, and what leaves your machine:
 [Your data](docs/guide/your-data.md).
 
 ## Documentation
