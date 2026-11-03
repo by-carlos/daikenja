@@ -25,7 +25,7 @@ protocol, finish protocol).
 | S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | done | yes | 2026-11-03 | Guide, README, diagrams and changelog describe the new ledger; ledger-format.md, its template and fixture retired |
 | S10 Fix: align the migration batch exemption | done | yes | 2026-11-04 | project-log exempts the migration batch from both refusals; config docs name the migration; no-folder walk writes both files |
-| SF Plan review | todo | no | 2026-11-04 | Pass 1 added fix S10; SF re-runs from the top as a redo once S10 is done |
+| SF Plan review | doing | yes | 2026-11-04 | Redo 1 clean: root DECISIONS.md (14 entries from 22 decisions), pointer line, cold reader no misses; one issue for closeout |
 
 ## Notes
 
@@ -1487,4 +1487,228 @@ row is back to `todo`; once S10 is `done`, SF re-runs from the top as a redo
 (`feat/292-replace-ledger-decisions-md-open-sf-redo-1`, `../daikenja-sf-redo-1`).
 
 Actuals: 2026-11-03T11:29:23.827Z → 2026-11-03T12:20:29.632Z · 51 min · tokens in=156 out=53977 cache_read=11740225 cache_write=422491 · subagents=3
+Artifacts check: match
+
+#### Redo 1 (2026-11-04, `feat/292-replace-ledger-decisions-md-open-sf-redo-1`)
+
+Run unattended (fired by a driver session): plan-flag defaults apply, nothing
+was posted, and the kept-decisions list is applied for approval at the
+plan→main merge.
+
+Preflight: clone clean, synced and not ahead at `c01d95c`; brief stamp current
+(`a99ce0485efb`); no `BLOCKED.md`; S9 (#318) and S10 (#322) merged; no stage
+branch or worktree for SF. Same S3 orphan (worktree entry for the gone
+`../daikenja-s3`, local branch `...-s3`, PR #314 merged): not removed. No root
+`DECISIONS.md` before this run, so no decisions in force to show. Weight: opus
+/ effort `high` (`CLAUDE_EFFORT=high`), matches the index.
+
+**Loose ends, from the top.** Pass 1's items 1-17 re-checked against the tree:
+
+- 1-4 (fix S10) -- **resolved by S10**, checked in the tree:
+  `skills/project-log/SKILL.md` Step 2 head sentence exempts the migration's
+  batch from item 2's no-paths stop and item 4's `paths: []` and
+  unmigrated-ledger refusals, and names `setup-project`'s seed as resolving
+  like every other run; `project-log-reference.md` § A batch handed over by
+  another skill matches; `config-resolution.md:187` reads "the migration in
+  `setup-project`, reached from `setup-user`"; `config-writers.md` card and
+  projects rows name the migration, and its reverse index lists
+  `project-catchup`. `git grep -n "migration in .setup-user" -- docs skills`:
+  no output.
+- 5, 6 -- issues #319 and #320, filed in pass 1. Unchanged.
+- 7-17 -- accepted, won't fix, reasons as in pass 1. Unchanged.
+
+A full re-read of every notes block (S0-S10) found these not in pass 1's
+catalogue; each now has one outcome:
+
+18. **Bot `--check` reads only the root `DECISIONS.md` for its version
+    check**, not a `Moved:` sub-folder file (S7), so it can call a project
+    readable where a skill would warn. -> **issue**, under `closeout will
+    list` below.
+19. **The bot hard-codes format version 1 for both files** (S7). ->
+    **accepted, won't fix**: a version bump is a scoped format change
+    (CLAUDE.md § Ledger format), which updates the bot with the skills.
+20. **A same-turn dictation counts as the batch's approval** (S2's recorded
+    assumption, not a frozen decision). -> **accepted, won't fix**: the
+    entries are the user's own words, shown once, which is the approval #292
+    asks for.
+21. **No version line reads as version 1**, beyond D-4's wording (S0). ->
+    **accepted, won't fix**: the rule is in the shared spec and
+    `open-format.md`, so it is documented where readers look.
+22. **Catchup's SHA commands need `--end-of-options`** (git 2.24 or later;
+    checked on 2.56, S3). -> **accepted, won't fix**: 2.24 shipped in 2019,
+    and an older git fails loudly, not silently.
+23. **`ledger-location.md` and `setup-user-upgrade.md` left as written in S4**.
+    -> **resolved**: the only old-grammar mention
+    (`ledger-location.md:191`) describes the legacy input D-21 detects;
+    invariants pass.
+24. **Stale S2/S6/S1 hand-offs** (`meeting-review`/`setup-project` writer
+    field, setup-project's "does not migrate", the card move). -> **resolved**:
+    no Changelog writer field in either skill; `setup-project` line 451 now
+    reads "does not migrate a project on its own initiative"; S8 moves the
+    card.
+25. **"Ten walks" location** -- S9's note puts it in the fixture's intro;
+    it is `tests/README.md:314` (twelve walks in
+    `tests/fixtures/project-resolution.md`). -> **accepted, won't fix**, as
+    item 9.
+26. **`LocalPathTests` docstring quotes the old `.daikenja/ledger.md` path**
+    from a real run (S7). -> **accepted, won't fix**: a quotation, and Done
+    check 5 does not match it.
+27. **Pathless backup written `<key>` in S8's follow-up, `<stem>` elsewhere**.
+    -> **accepted, won't fix**: covered by item 7; `ledger-migration.md:163`
+    says `<name>.<YYYY-MM-DD>.bak.md`, and the kept entry says the same.
+28. **How `project-log` tells the migration's batch from the seed** (S10). ->
+    **accepted, won't fix**: by origin, stated in both texts -- Step 2 names
+    the seed as resolving, and the reference names the migration's batch by
+    its absolute-path targets.
+29. **S10 re-walked only Input B1** (S10). -> **accepted, won't fix**: the
+    exemption changes only the no-paths stops, which only a `paths: []` entry
+    reaches; Inputs A, B2, C and D carry paths.
+30. **Wording differs between the two exemption sentences** ("it is the run
+    both point at", S10). -> **accepted, won't fix**: an explanatory clause;
+    the rule is the same.
+31. **S10's stale-phrase grep covered `docs/` only**. -> **resolved**: re-run
+    over `docs skills`, no output.
+32. **Typos and blank lines in the ledger notes** (S6 "a no writes nothing",
+    S10's blank line before `Artifacts check:`). -> **accepted, won't fix**:
+    `.plan/` is deleted at closeout.
+
+Every loose end maps to exactly one outcome: fix S10 (1-4, resolved), issue
+(5, 6, 18), accepted, won't fix (7-17, 19-22, 25-30, 32), resolved (23, 24,
+31). No new fix: this is a **clean pass**. Fixes used: 1 of 3.
+
+#### closeout will list
+
+- **Issue: bot `--check` skips `Moved:` decisions files.** `--check`'s format
+  version check (`project_data_states` in `bot/`) reads the root
+  `DECISIONS.md` only; `docs/reading.md` has skills check every file they
+  read, `Moved:` files included. Make `--check` follow `Moved:` lines, with a
+  test. Not dated.
+- **#293 note:** posted in pass 1 after the maintainer's yes (comment
+  6603263432); nothing to post.
+
+#### #292 "When this closes" (redo)
+
+1. Spec replaces `ledger-format.md`, identical copy, under 200 lines --
+   **met**: Done checks 3 and 4.
+2. `project-log` writes both files in one approved batch; readers and the bot
+   read them; catchup from git -- **met**: S2, S3-S5, S7; bot tests pass.
+3. Pathless projects gone; `setup-project` offers `git init` -- **met**: Done
+   check 5 hits only history and D-21 handling; S6.
+4. Home repository chosen at `setup-project`; readers read every
+   `DECISIONS.md` -- **met**: S6, S3/S4 two-repository walks.
+5. Migration, pathless included, approved, dated backup, upgrade note --
+   **met**: S8's four fixture inputs, and S10's no-folder walk through the
+   changed `project-log` text; `upgrading.md` § Your old ledger migrates.
+6. Fixtures and invariant checks updated -- **met**: Done check 1.
+7. Changelog entry under `## [Unreleased]` -- **met**: `CHANGELOG.md`, Added,
+   Changed and Removed, plus S10's Changed bullet.
+
+#### Done checks 1-5 (redo, run in `../daikenja-sf-redo-1` at `c01d95c`)
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ python -m pytest bot/tests -q
+477 passed, 11 subtests passed in 1.54s
+$ cmp docs/decisions-format.md <by-carlos/plan-staged-rollout main: skills/staged-rollout/references/decisions-format.md>
+(identical -- no output, exit 0)
+$ test ! -e docs/ledger-format.md && echo gone; wc -l docs/decisions-format.md docs/open-format.md
+gone
+  161 docs/decisions-format.md
+  199 docs/open-format.md
+$ git grep -nE "pathless|paths: \[\]|daikenja/ledgers" -- . ":!.plan" ":!docs/ledger-migration.md" ":!tests/fixtures/ledger-migration.md" ":!tests/fixtures/setup-user-upgrade.md" | cut -d: -f1 | sort | uniq -c
+      9 CHANGELOG.md
+      1 bot/tests/test_main.py
+      1 docs/config-resolution.md
+      1 docs/project-log-reference.md
+      9 docs/upgrading.md
+      1 skills/project-gaps/SKILL.md
+      2 skills/project-list/SKILL.md
+      2 skills/project-log/SKILL.md
+      1 skills/project-sources/SKILL.md
+      1 skills/project-summary/SKILL.md
+      3 tests/fixtures/ledger-location.md
+      8 tests/fixtures/project-resolution.md
+```
+
+One more hit than pass 1: `skills/project-log/SKILL.md:90`, S10's exemption
+sentence naming the `paths: []` refusal -- D-21 handling. Every hit outside
+`CHANGELOG.md` and `docs/upgrading.md` is a D-21 rule line or a test of one.
+
+#### Kept decisions
+
+- D-1 — drop — plan branch and stage names; only mattered while the plan ran
+- D-2 — entry — `DECISIONS.md` › Ledger files
+- D-3 — entry — `DECISIONS.md` › Projects and configuration
+- D-4 — entry — `DECISIONS.md` › Ledger files
+- D-5 — entry — `DECISIONS.md` › Ledger files
+- D-6 — entry — `DECISIONS.md` › Ledger files
+- D-7 — entry — `DECISIONS.md` › Ledger files
+- D-8 — entry — `DECISIONS.md` › Projects and configuration
+- D-9 — entry — `DECISIONS.md` › Projects and configuration
+- D-10 — entry — `DECISIONS.md` › Ledger files
+- D-11 — entry — `DECISIONS.md` › Migration from the old ledger
+- D-12 — drop — the root `DECISIONS.md` and the `CLAUDE.md` pointer line make it plain
+- D-13 — drop — planning only
+- D-14 — drop — the plan's changelog and write-territory split; `CLAUDE.md` § Releasing owns changelog rules
+- D-15 — entry — `DECISIONS.md` › Projects and configuration (every project lives in a git repository; the release-note wording is dropped)
+- D-16 — drop — CI's `validate` check runs the invariants on every PR
+- D-17 — entry — `DECISIONS.md` › Slack bot
+- D-18 — drop — the #293 note was posted
+- D-19 — drop — planning only
+- D-20 — entry — `DECISIONS.md` › Migration from the old ledger
+- D-21 — entry — `DECISIONS.md` › Projects and configuration
+- D-22 — entry — `DECISIONS.md` › Migration from the old ledger
+
+No ADRs: #292 keeps the reasoning for the format swap. The git strategy,
+worktree strategy and final review stage belong to the method and are left
+out. Applied unattended — merging the plan→main PR approves it.
+
+`CLAUDE.md` § Repo conventions gains the pointer line, worded as the spec's
+*The pointer line*.
+
+#### README and cold reader
+
+The README already describes what the plan built (S9): the ledger as
+`DECISIONS.md` plus `open.md` in the project's repository, projects without a
+folder gone, and the docs table; testing lives in `CONTRIBUTING.md`
+§ Validation, which it links. No README change.
+
+Cold reader (fresh Sonnet subagent, repository only, told never to open
+`.plan/`), first pass:
+
+1. *How do I test this?* -- `python tests/check-invariants.py` and the bot
+   suite; skills have no runner, fixtures are walked by hand (CONTRIBUTING.md
+   § Validation, CLAUDE.md). Correct.
+2. *Where do open items live, and what defines the grammar?* --
+   `<home>/.daikenja/open.md`, home the first entry of `paths`;
+   `docs/open-format.md`. Correct.
+3. *Where is the old-ledger migration, and what runs it?* --
+   `docs/ledger-migration.md`, run by `setup-project` Step 2a, proposed by
+   `setup-user`'s upgrade branch, with a dated backup. Correct.
+4. *Why does `project-log` never commit?* -- the user commits with the work;
+   `project-catchup` lists uncommitted changes as "not committed yet".
+   Correct.
+5. *Why is `last_checkpoint` a SHA per repository?* -- git says what changed
+   per repository; an unresolvable SHA is a first run, said so. Correct.
+6. *Why not edit `docs/decisions-format.md`?* -- byte-identical copy of the
+   shared spec; change upstream, then copy. Correct.
+7. *Why does the bot not read git history?* -- it reads files on disk with a
+   read-only tool allowlist and never calls git. Correct.
+
+No misses, so nothing was fixed and no second pass was needed.
+
+#### Acceptance (redo)
+
+- Every loose end has exactly one outcome: list above (1-32), one issue under
+  `closeout will list`, fixes 1 of 3.
+- #292's seven items recorded met with evidence; Done checks 1-5 pasted.
+- #293 note posted in pass 1 after the maintainer's yes.
+- Clean pass: `#### Kept decisions` gives all 22 frozen decisions an outcome,
+  applied unattended; every entry exists in the root `DECISIONS.md`
+  (`python3 tests/check-invariants.py`: all passed with it in place).
+- README describes the build; pointer line present in `CLAUDE.md`.
+- Cold reader: questions, answers and (no) fixes above; last pass no misses.
+
+Actuals: 2026-11-03T12:33:31.653Z → 2026-11-03T12:39:09.063Z · 6 min · tokens in=112 out=40620 cache_read=6759602 cache_write=288140 · subagents=2
 Artifacts check: match

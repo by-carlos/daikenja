@@ -134,6 +134,7 @@ rule. Do not file without reading it.
 
 ## Repo conventions
 
+- **Decisions in force live in [`DECISIONS.md`](DECISIONS.md).** Read the area covering a path before changing it, and add or edit an entry in the same pull request when a change settles something future work must respect.
 - **Voice.** Anything Daikenja drafts or rewrites follows `docs/voice.md`. That
   document is the source of truth for generated output, and
   `docs/config-resolution.md` § Voice and writing style fixes how a user's own
