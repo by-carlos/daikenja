@@ -1212,4 +1212,168 @@ Artifacts check: outside: docs/future-work.md, templates/README.md (by hand, `gi
 -->
 
 ### SF Plan review
-_(empty)_
+
+Preflight (2026-11-04): clone clean and synced, plan branch not ahead, brief
+stamp current (`d41461f3ebfd`), no `BLOCKED.md`, S9 merged (#318). One
+**orphan**: a `git worktree list` entry for `../daikenja-s3` whose directory is
+gone, and the local branch `feat/292-replace-ledger-decisions-md-open-s3`
+(PR #314 merged). Not removed; closeout sweeps it.
+
+#### Loose ends
+
+Every loose end from the notes blocks, the Out of scope line and the
+`Artifacts check:` lines, each with one outcome. Items the notes record as
+settled by a later stage were re-checked in the tree and are listed as
+resolved.
+
+1. **Migration batch exemption disagrees** (S8, S9 follow-up).
+   `docs/ledger-migration.md` § The proposal exempts the migration's batch
+   from both the unmigrated-ledger refusal and the `paths: []` stop;
+   `skills/project-log/SKILL.md` Step 2 item 4 and
+   `project-log-reference.md` § A batch handed over by another skill exempt it
+   from the first only. The config edit runs *after* `project-log` writes
+   (§ Writing, in order, step 4 after step 3), so a pathless project's entry
+   still reads `paths: []` when `project-log` resolves it: followed as
+   written, the skill stops, and a no-folder migration ends after `git init`
+   and the backup copy. Repairs #292 item 5 and Done check 6. -> **proposed
+   fix**, pending the maintainer.
+2. **`config-resolution.md` § Legacy keys says "the migration in
+   `setup-user`"** (line 187); it runs in `setup-project`, reached from
+   `setup-user` (S8, S9). -> with 1, proposed fix.
+3. **`config-writers.md` card and projects rows** omit the migration: the card
+   row says an existing card is never touched by any skill, and the
+   `daikenja.yaml` projects row does not mention the migration's edit or the
+   backup rename (S8, S9). -> with 1, proposed fix.
+4. **`config-writers.md` reverse index** does not list `project-catchup`,
+   which cites § Who writes what (S3, S9). -> with 1, proposed fix.
+5. **`response-format.md` heading "Entries are named topic-first, ID in
+   parentheses"** -- the body is right (entries carry no IDs; the parentheses
+   hold the repository or `open item`), only the heading's name is stale, with
+   its citations in eight skills' `Depends-on` lines, `docs/README.md:59` and
+   `skills/compose/SKILL.md:191` (S5, S9). Touches skill files and size
+   baselines. -> **issue**, pending yes.
+6. **`project-log <key>` from outside the project** could now be allowed,
+   since files sit at fixed paths (S2). A feature, changes
+   `project-resolution.md` walk 3d. -> **issue**, pending yes.
+7. **Pathless backup name** is `<stem>.<YYYY-MM-DD>.bak.md`
+   (`q4-planning.<date>.bak.md` for `ledgers/q4-planning.md`), not D-11's
+   `ledger.<date>.bak.md` (S8). -> **accepted, won't fix**: the stem form
+   generalises D-11 so two no-folder projects in one folder never collide;
+   the kept decision states the stem form.
+8. **`tests/fixtures/judgement.md` Walks 1-3** show an older answer shape
+   (`Verdict:` lines) than the skill's markers (S5). -> **accepted, won't
+   fix** in this plan: predates it and touches nothing it changed.
+9. **`tests/README.md:314` says "ten walks"** for `project-resolution.md`,
+   which has twelve (S9). -> **accepted, won't fix**: predates the plan,
+   cosmetic.
+10. **`project-resolution.md` walk headings say "a pathless project"** (S9).
+    -> **accepted, won't fix**: they name the legacy D-21 input the walks
+    test, which Done check 5 allows.
+11. **`sources-ledger.md`'s `project-catchup` and `project-log` lines are
+    minimal** (S4). -> **accepted, won't fix**: correct, and the invariants
+    pass; sharpening is optional.
+12. **`docs/open-format.md` is at 199 lines** against the 200-line target
+    (S0). -> **accepted, won't fix**: any later addition needs a matching cut;
+    #292's target, not a defect.
+13. **`Artifacts check: outside:` S1** -- `docs/ledger-format.md`,
+    `skills/project-list`, `project-log`, `setup-project` `SKILL.md`. ->
+    **accepted, won't fix**: one-phrase citation repoints of a renamed
+    heading, forced by S1's acceptance grep; routine.
+14. **`Artifacts check: outside:` S9** -- `docs/future-work.md`,
+    `templates/README.md`. -> **accepted, won't fix**: de-links forced by the
+    `ledger-format.md` deletion's link check; routine, and within the
+    retirement S9 was for.
+15. **No `Actuals:` for S6, S8, S9, and their artifacts checks done by hand**
+    (cloud sessions without the plugin's scripts). -> **accepted, won't
+    fix**: closeout's estimate sums cover S0-S5 and S7 only, and says so.
+16. **D-21 "revisit after the first real upgrade"** (Default for now). ->
+    **accepted, won't fix** as a loose end: an event, not a date, so it
+    travels as the revisit clause of D-21's kept entry.
+17. **Orphan worktree entry and branch for S3** (preflight). -> **accepted,
+    won't fix** here: closeout sweeps merged worktrees and branches.
+
+Resolved before this stage, re-checked in the tree: `docs/README.md` lists the
+new specs (S0, S1); `templates/README.md` wording (S0); `future-work.md` body
+markers (S1); `tests/README.md` stale descriptions (S2, S4);
+`sample-thread*.md` and `malformed-ledger.md` hold no old-grammar IDs or
+Changelog lines (S2, S3); `ledger-relationships.md` aligned (S2, S4);
+`ledger-backfill.md` and `ledger-format.md` reverse-index notes gone with the
+files (S3, S5); guide pages for no-folder projects, migration and the bot line
+(S6, S7, S8). Out of scope records **no dated follow-ups**. D-20 and D-22
+revisits ran at S8 and both held.
+
+#### #292 "When this closes"
+
+1. Spec replaces `ledger-format.md`, identical upstream copy, under 200 lines
+   -- **met**: Done checks 3 and 4 below.
+2. `project-log` writes both files in one batch; readers and the bot read
+   them; catchup works from git -- **met**: S2, S3-S5, S7 rows; bot 477 tests
+   pass.
+3. Pathless projects gone; `setup-project` offers `git init` -- **met**: Done
+   check 5 below hits only history and D-21 handling; `setup-project`
+   frontmatter and Step 2 carry the `git init` offer (S6).
+4. Home repository chosen at `setup-project`; readers read every
+   `DECISIONS.md` -- **met**: S6 (home asked and written first), S3/S4
+   two-repository walks.
+5. Migration, pathless included, approved, dated backup, upgrade note --
+   **met as walked** (S8, four fixture inputs; `upgrading.md` § Your old
+   ledger migrates), **with loose end 1**: the skills' own text would stop a
+   pathless migration at `project-log`.
+6. Fixtures and invariant checks updated -- **met**: Done check 1 below.
+7. Changelog entry under `## [Unreleased]` -- **met**: `CHANGELOG.md:8`, with
+   Added, Changed and Removed sections (S1, S8, S9).
+
+#### Done checks 1-5 (run in `../daikenja-sf` at `9309e61`)
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ python -m pytest bot/tests -q
+477 passed, 11 subtests passed in 1.54s
+$ cmp docs/decisions-format.md <by-carlos/plan-staged-rollout main: skills/staged-rollout/references/decisions-format.md>
+(identical -- no output, exit 0)
+$ test ! -e docs/ledger-format.md && echo gone; wc -l docs/decisions-format.md docs/open-format.md
+gone
+  161 docs/decisions-format.md
+  199 docs/open-format.md
+$ git grep -nE "pathless|paths: \[\]|daikenja/ledgers" -- . ":!.plan" ":!docs/ledger-migration.md" ":!tests/fixtures/ledger-migration.md" ":!tests/fixtures/setup-user-upgrade.md" | cut -d: -f1 | sort | uniq -c
+      9 CHANGELOG.md
+      1 bot/tests/test_main.py
+      1 docs/config-resolution.md
+      1 docs/project-log-reference.md
+      9 docs/upgrading.md
+      1 skills/project-gaps/SKILL.md
+      2 skills/project-list/SKILL.md
+      1 skills/project-log/SKILL.md
+      1 skills/project-sources/SKILL.md
+      1 skills/project-summary/SKILL.md
+      3 tests/fixtures/ledger-location.md
+      8 tests/fixtures/project-resolution.md
+```
+
+Same files and counts as S9's run. Every hit outside `CHANGELOG.md` and
+`docs/upgrading.md` is a D-21 rule line (`paths: []` -> needs migration) or a
+test/fixture exercising it.
+
+#### #293 note (draft, not posted)
+
+> Since #292 landed, the ledger is `DECISIONS.md` plus `.daikenja/open.md`,
+> and this issue's references to `docs/ledger-format.md` (lines 487-574) point
+> at a deleted file. What changed for Sources:
+>
+> - **Where it lives:** `## Sources` in `<home>/.daikenja/open.md`, the home
+>   repository being the first entry of `paths`. The grammar is
+>   `docs/open-format.md` § Section: Sources; read that in place of the
+>   `ledger-format.md` Sources section in the prompt's read-first list.
+> - **Shape:** unchanged except for the ID. A head line `- <label> -- <url or
+>   path>` (no `S-001 --`), then the same optional two-space-indented fields,
+>   in order: `modified:`, `read:`, `covers:`, `does not answer:`. Contents are
+>   still never fetched.
+> - **History and versioning:** no IDs, no Changelog; the record of what
+>   changed is `git log` on the file. `open.md` starts with
+>   `<!-- daikenja-open-format: 1 -->`, so a change to the Sources grammar is a
+>   version bump: reading skills warn on a newer version, `project-log` refuses
+>   to write. `open-format.md` is at 199 lines against a 200-line target, so
+>   an addition needs a matching cut.
+> - **Every project now lives in a git repository**; projects without a folder
+>   are gone, which matters for where a glossary file "beside the ledger" goes.
