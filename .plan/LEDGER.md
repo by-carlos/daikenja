@@ -17,7 +17,7 @@ protocol, finish protocol).
 | S0 Format specs and file templates | done | yes | 2026-11-03 | Shared spec copied byte-identical; open-format.md (199 lines) and both templates landed |
 | S1 Config, resolution and reading contracts | done | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
 | S2 project-log writes both files | done | yes | 2026-11-03 | project-log writes DECISIONS.md and open.md in one batch; D-4/D-21 refusals; skill 28% smaller |
-| S3 Catchup and decisions read git history | todo | — | — | — |
+| S3 Catchup and decisions read git history | doing | yes | 2026-11-03 | Catchup diffs git per repository from a validated SHA; decisions reads every DECISIONS.md with git history |
 | S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | done | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | todo | — | — | — |
@@ -294,7 +294,124 @@ Actuals: 2026-11-03T07:32:41.930Z → 2026-11-03T07:44:44.380Z · 12 min · toke
 Artifacts check: match
 
 ### S3 Catchup and decisions read git history
-_(empty)_
+
+As built -- what later stages cite:
+
+- **`project-catchup`** headings: Step 2 is now **"read and check each
+  checkpoint"** (validation, the four first-run cases and their exact lines);
+  Step 3 **"compute the delta"**, Step 4 **"report the delta"** and Step 5
+  **"propose and write the checkpoint"** keep their names, so `ledger-backfill.md`,
+  `sources-ledger.md` and `response-format.md` citations still resolve.
+- **SHA safety:** `^[0-9a-fA-F]{7,40}$` first; only a passing value reaches
+  git, as `--end-of-options "<sha>^{commit}"` (rev-parse) or
+  `--end-of-options "<sha>..HEAD"` (log/diff). Checked on git 2.56: both forms
+  work. A scalar `last_checkpoint` is never validated or passed to git.
+- **Writes the full 40-character SHA** from `rev-parse HEAD`; an unchanged
+  repository is left out of the proposal; a scalar is replaced by the map.
+- **Uncommitted edits** come from `git status --porcelain` plus `git diff HEAD`,
+  reported under "Not committed yet" and not covered by the checkpoint (D-6).
+- **`project-decisions`**: Step 4 is now **"follow the history in git"**
+  (`git log -p` on a fixed file path; the entry's words never go into a
+  command); Step 5 **"surface relationships and origin"** and Step 6 **"show
+  the result"** keep their names. Imposed is read from the why clause (D-2);
+  open items that question an entry replace `Contradicts`. An ADR `Source:` is
+  read locally; issue/PR links are shown, never fetched.
+- **Fixtures:** `broken-supersession.md` retired (supersession markers no
+  longer exist). `sample-ledger.md` and `malformed-ledger.md` are now a
+  `DECISIONS.md` plus `open.md` pair in fenced blocks. Former IDs, for the
+  fixtures that still cite them: beacon D-004 = "Roll the beacon service out
+  region by region" (Rollout); D-003 = the events-table schema freeze (Data);
+  D-001 = "Beacon replaces the old telemetry pipeline" (Rollout); D-002 is gone
+  (replaced); O-005..O-002 kept as open items with their owners; O-001
+  (resolved, `@benimaru`) is deleted per D-10. Harbor's old D-002 owner defect
+  is now an open item missing its owner.
+
+Acceptance (run in `../daikenja-s3`, re-run after merging S2's, S4's and S5's
+landed PRs into the stage branch; the ledger status table was the one conflict,
+resolved by keeping both rows. S5's new `response-format.md` wording -- the
+parentheses say where an entry lives -- was matched in both skills' Step 4/6
+prose. The walk output below was identical before and after the re-sync):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=<plan tip> HEAD_SHA=<stage tip> python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+```
+
+Hand walk of `tests/fixtures/catchup-git-history.md`: both repositories built
+in the scratchpad from the fixture's commits (script `walk.sh`, author dates
+fixed, `core.autocrlf false`), then the skill's Step 2/3/5 commands run as
+written. Output, trimmed to the decisive lines:
+
+```
+C1=f0c24f5… C3=8e4759e… I1=e359226…
+== Walk 1: checkpoint map {app: C1, infra: I1}
+  lumen-app: f0c24f5… resolves
+  -- log lumen-app f0c24f5..HEAD
+     8e4759e 2026-09-12 Noor Keep an origin fallback for launch month
+     8ad5632 2026-09-10 Tomas Log the launch date
+  -- diff
+     +- 2026-09-10 -- @unassigned -- Decide who announces the launch on the status page.
+     -- 2026-09-03 -- @unassigned -- Pick the launch date.
+     -- **Static assets are served from one CDN, with no origin fallback.** — a
+     +- **Static assets are served from one CDN, with the origin as a fallback for
+     +## Launch
+     +- **Launch on Tuesday 2026-10-06, not the Monday before.** — the support rota
+  lumen-infra: e359226… resolves
+  -- log lumen-infra e359226..HEAD          (empty: no changes)
+  -- status (not committed yet) lumen-app
+      M .daikenja/open.md
+     +- 2026-09-15 -- @tomas -- Book the launch-day war room.
+== Walk 2: {app: 0123abcd0123abcd}, infra no entry
+  lumen-app: 0123abcd0123abcd does NOT resolve -> first run
+  lumen-infra: no entry -> first run
+  -- status (not committed yet) lumen-app
+      M .daikenja/open.md
+== Walk 3: scalar 2026-09-01T09:00Z
+  scalar (not a map) -> predates the new ledger; first run for both; never validated or passed to git
+== Walk 4: metacharacters
+  lumen-app: REJECTED by validation -- not passed to git     ("c0ffee1; rm -rf ~")
+  lumen-infra: REJECTED by validation -- not passed to git   ("--output=/tmp/x")
+== Step 5 proposal values
+  lumen-app HEAD=8e4759e… passes validation
+  lumen-infra HEAD=e359226… passes validation
+```
+
+The three Done-check-7 paths hold: (1) changes since a SHA -- Walk 1 reports
+four changes in `lumen-app` by current wording (new launch decision, edited CDN
+decision, closed launch-date item, new unowned status-page item) and none in
+`lumen-infra`; (2) unresolvable SHA -- Walk 2 says "The checkpoint for lumen-app
+(0123abcd0123abcd) is not in its history any more, so this is a first run
+there." and shows the whole current content; (3) uncommitted -- the war-room
+item is listed under "Not committed yet" in all four walks. Scalar timestamp --
+Walk 3 says the checkpoint predates the new ledger and proposes `{lumen-app:
+<C3>, lumen-infra: <I1>}`. Metacharacter SHAs -- Walk 4 rejects both values at
+the regex; no git command receives them. The walk found one gap, fixed in the
+skill: Step 5 did not say an unchanged repository is left out of the proposal.
+
+**Outside Artifacts:** none. `project-catchup/SKILL.md` grew from 9.7 KB to
+12.6 KB (1.3x the last release, under the 2x trigger); `project-decisions`
+from 9.0 KB to 9.8 KB.
+
+Follow-ups (not this stage's):
+
+- (Resolved on re-sync: S2 made `owner-handles.md` and
+  `dictated-log-requests.md` self-contained, and S5 reworded
+  `sample-drafts-preflight.md` to "the events-table schema freeze (beacon)",
+  which the new `sample-ledger.md` still holds.)
+- `tests/fixtures/ledger-backfill.md` Walk 3 still expands Changelog ranges
+  through `project-catchup` "Step 3: compute the delta" (heading kept, content
+  gone), and `check-invariants.py` checks that fixture against
+  `ledger-format.md` -- S9 retires both with `ledger-format.md`.
+- `docs/ledger-format.md`'s reverse index still lists `project-catchup` and
+  `project-decisions` "Step 0: read the contracts" -- harmless (the heading
+  exists), gone when S9 deletes the file.
+- `docs/config-writers.md`'s reverse index has never listed `project-catchup`,
+  which cites § Who writes what -- S9's docs pass, if it wants it complete.
+
+Actuals: 2026-11-03T07:32:46.766Z → 2026-11-03T07:44:55.858Z · 12 min · tokens in=94 out=44396 cache_read=7645355 cache_write=160326 · subagents=0
+Artifacts check: match
 
 ### S4 Gaps, summary, list and sources skills
 
