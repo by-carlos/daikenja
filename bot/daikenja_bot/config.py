@@ -14,6 +14,7 @@ module reads a secret from before the headless session starts.
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -27,7 +28,8 @@ DEFAULT_APP_TOKEN_ENV = "SLACK_APP_TOKEN"
 DEFAULT_CONFLUENCE_TOKEN_ENV = "CONFLUENCE_API_TOKEN"
 
 # Read-only by construction. The headless session has to reach the user's
-# `daikenja.yaml`, the project cards and the ledgers, and nothing else. A
+# `daikenja.yaml`, the project cards and each project's ledger -- its
+# `DECISIONS.md` files and `.daikenja/open.md` -- and nothing else. A
 # tool outside this list is denied rather than queued for a prompt nobody is
 # there to answer -- see `runner.build_argv`.
 DEFAULT_ALLOWED_TOOLS = ("Read", "Glob", "Grep")
@@ -352,6 +354,80 @@ def resolve_secret(
         f"{label}: not set. Export {env_name} before starting the bot, or point "
         f"the matching *_token_file key at a file holding it."
     )
+
+
+# The user's Daikenja configuration, which the skills read and the bot only
+# looks at for `--check`. It is always at this one path, for the account the
+# bot runs as -- docs/config-resolution.md § Location.
+DAIKENJA_CONFIG_PATH = Path.home() / ".claude" / "daikenja" / "daikenja.yaml"
+
+# The format versions this bot knows, per docs/open-format.md § Version line.
+# A file above these is one the skills will report as newer-format.
+KNOWN_FORMAT_VERSIONS = {"decisions-format": 1, "daikenja-open-format": 1}
+_VERSION_LINE_RE = re.compile(r"^\s*<!--\s*([a-z-]+):\s*(\d+)\s*-->")
+
+READY = "ready"
+NEEDS_MIGRATION = "needs-migration"
+NEWER_FORMAT = "newer-format"
+
+
+def project_data_states(
+    path: Path | str | None = None,
+) -> list[tuple[str, str]]:
+    """Each registered project's key and whether its ledger can be read.
+
+    The same two states the skills report through `prompts.UNREADABLE_TOKEN`,
+    worked out from the files as they are now: the bot reads them and never
+    asks git (D-17). A project is `needs-migration` when it has no repository
+    or its home repository still holds `.daikenja/ledger.md` with no
+    `.daikenja/open.md` beside it; `newer-format` when a root `DECISIONS.md`
+    or the home `open.md` opens with a version above `KNOWN_FORMAT_VERSIONS`.
+    A path that does not exist is skipped, as the skills skip it.
+    """
+    config_path = Path(path).expanduser() if path else DAIKENJA_CONFIG_PATH
+    if not config_path.is_file():
+        raise ConfigError(f"no daikenja.yaml at {config_path}")
+    try:
+        raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError) as exc:
+        raise ConfigError(f"{config_path} could not be read: {exc}") from exc
+    projects = raw.get("projects") if isinstance(raw, dict) else None
+    if not isinstance(projects, dict):
+        return []
+
+    out: list[tuple[str, str]] = []
+    for key, entry in projects.items():
+        entry = entry if isinstance(entry, dict) else {}
+        paths = entry.get("paths")
+        if paths is None and entry.get("path"):
+            paths = [entry["path"]]
+        roots = [Path(str(p)).expanduser() for p in (paths or []) if p]
+        out.append((str(key), _project_state(roots)))
+    return out
+
+
+def _project_state(roots: list[Path]) -> str:
+    if not roots:
+        return NEEDS_MIGRATION
+    home = roots[0] / ".daikenja"
+    if (home / "ledger.md").is_file() and not (home / "open.md").is_file():
+        return NEEDS_MIGRATION
+    files = [root / "DECISIONS.md" for root in roots] + [home / "open.md"]
+    if any(_is_newer_format(f) for f in files):
+        return NEWER_FORMAT
+    return READY
+
+
+def _is_newer_format(file: Path) -> bool:
+    try:
+        with file.open(encoding="utf-8") as handle:
+            first = handle.readline()
+    except OSError:
+        return False
+    match = _VERSION_LINE_RE.match(first)
+    if not match or match.group(1) not in KNOWN_FORMAT_VERSIONS:
+        return False
+    return int(match.group(2)) > KNOWN_FORMAT_VERSIONS[match.group(1)]
 
 
 def secret_env_names(config: BotConfig) -> tuple[str, ...]:

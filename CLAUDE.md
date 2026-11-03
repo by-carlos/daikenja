@@ -134,13 +134,17 @@ rule. Do not file without reading it.
 
 ## Repo conventions
 
+- **Decisions in force live in [`DECISIONS.md`](DECISIONS.md).** Read the area covering a path before changing it, and add or edit an entry in the same pull request when a change settles something future work must respect.
 - **Voice.** Anything Daikenja drafts or rewrites follows `docs/voice.md`. That
   document is the source of truth for generated output, and
   `docs/config-resolution.md` § Voice and writing style fixes how a user's own
   `writing-style.md` layers on top of it. Read both before changing either.
-- **Ledger format.** `docs/ledger-format.md` defines a parsing contract that
-  existing ledger files depend on. Treat the field separator and the split bound
-  as frozen unless an issue explicitly scopes a format change.
+- **Ledger format.** `docs/decisions-format.md` and `docs/open-format.md`
+  define the parsing contract that existing ledger files depend on. Treat each
+  file's version line and the `open.md` item line -- its ` -- ` separator and
+  two-split bound -- as frozen unless an issue explicitly scopes a format
+  change. `decisions-format.md` is a byte-identical copy of plan-staged-rollout's
+  spec: change it upstream, then copy it.
 - **Templates.** Files under `templates/` are copied to a user's machine. Most
   are starting points the plugin never edits afterwards, so changes there
   affect only new copies. Two are maintained content that `/daikenja:tensei`

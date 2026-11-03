@@ -3,7 +3,7 @@ name: setup-user
 description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona, writing-style and glossary files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
-  version: 7
+  version: 8
   writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), ~/.claude/daikenja/glossary.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
@@ -142,6 +142,23 @@ Four cases and no others:
 It never edits a ledger: `project-log` is the single writer of ledger content
 and that rule does not bend for a migration. An upgrade step that touches a
 project's ledger is reported for the user to carry out, never performed here.
+
+**Old ledgers hand off to `setup-project`.** When a selected note moves the
+ledger, list every `projects:` entry that needs migration, per
+`${CLAUDE_PLUGIN_ROOT}/docs/ledger-migration.md` § Which projects need
+migration, one line each with the command that migrates it --
+`/daikenja:setup-project <key>`. That skill runs the migration per project, on
+its own approval; the config keys the note removes go in that same approval,
+never here, so this skill proposes no edit for them. The rest of the upgrade,
+and the version stamp, proceed as usual: a project still waiting is reported
+as needing migration by every skill that reaches it, until it is migrated.
+
+```
+Two projects still keep the old single-file ledger. Migrate each when you are
+ready -- it shows everything before writing:
+- atlas -- /daikenja:setup-project atlas
+- q4-planning (no folder yet) -- /daikenja:setup-project q4-planning
+```
 
 **On approval.** Make the edits with the Edit tool, one key at a time, and stamp
 `daikenja_version` to the installed version in the same write. If the key is not

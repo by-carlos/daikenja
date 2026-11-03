@@ -4,11 +4,11 @@
 
 > **In short:** Daikenja has no server of its own. It keeps plain files: your
 > personal ones in your home folder (or your own Google Drive, if you opt in),
-> and a project's ledger in the project, shared with whoever can read the
-> project. What a skill reads is processed by Claude, as in any Claude Code
+> and a project's ledger in the project's git repository, shared with whoever
+> can read it. What a skill reads is processed by Claude, as in any Claude Code
 > session. It never sends a message or posts anything for you.
 
-[![Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project. Anything a skill reads is also processed by Claude.](../diagrams/where-data-lives.svg)](../diagrams/where-data-lives.svg)
+[![Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project's git repository: the ledger, DECISIONS.md at the root and .daikenja/open.md, plus the optional project card, shared with everyone who can read the repository, with git keeping the history. Anything a skill reads is also processed by Claude.](../diagrams/where-data-lives.svg)](../diagrams/where-data-lives.svg)
 
 ## What leaves your machine
 
@@ -36,23 +36,24 @@ posts as its own Slack app.
 | File | Who can read it |
 |---|---|
 | Your settings, persona notes, writing style, glossary | **You**, on your machine -- or in your own Google Drive, if you moved persona notes or writing style there, with whoever you share that folder with |
-| A project's ledger and project card, in the project's folder | **Everyone who can read the project.** In a git repository, everyone with access to it -- the whole world, if the repository is public |
-| The ledger of a project with no folder, in your own Daikenja folder | **You**, unless you chose a shared location |
+| A project's ledger (`DECISIONS.md` and `.daikenja/open.md`) and project card, in the project's repository | **Everyone who can read the repository** -- the whole world, if it is public. A local repository you never push stays on your machine |
 
 **Persona notes are about real colleagues.** Keep them factual, write them as
 you would want them read, and check whether your organization treats notes
 about colleagues as personal data.
 
-**Before you log something, remember a project's ledger is shared.** Write a
-line the way you would write a commit message, for the whole team. Replaced
-lines are marked, not deleted, and in a git repository every line stays in the
-history -- moving the ledger later does not remove what was already committed.
+**Before you log something, remember a project's ledger is shared.** Write an
+entry the way you would write a commit message, for the whole team. A replaced
+decision or a closed item disappears from the file but stays in the git history
+once committed -- rewriting or moving the ledger later does not remove what was
+already committed. `project-log` never commits: you decide when an edit
+enters the history.
 
 ## When it asks first
 
 - **The ledger, the project card and your settings change only on your yes.**
-  Every ledger line goes through `project-log`, which shows the exact lines
-  first; `meeting-review`, `setup-project` and `project-sources` only propose.
+  Every ledger change goes through `project-log`, which shows the exact lines
+  first and never commits them; `meeting-review`, `setup-project` and `project-sources` only propose.
   `project-catchup` asks before moving your checkpoint.
 - **Two personal files are the exception:**
   - `remember-persona` adds a note for someone new as soon as you describe
@@ -72,21 +73,25 @@ open any of these files for you.
 
 | What | Where | Written by |
 |---|---|---|
-| Your settings: who you are, registered projects, checkpoints | `~/.claude/daikenja/daikenja.yaml` (a plain-text settings file) | `setup-user`, `setup-project`; `project-catchup` for the checkpoint only |
+| Your settings: who you are, registered projects, checkpoints (one commit per repository) | `~/.claude/daikenja/daikenja.yaml` (a plain-text settings file) | `setup-user`, `setup-project`; `project-catchup` for the checkpoint only |
 | Your notes on the people you write to | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` |
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` |
 | Backups of your writing style, and what `learn-voice` noticed but kept out | `~/.claude/daikenja/writing-style.*.md`, dated | `learn-voice` |
 | Your domain glossary -- a reference you keep by hand; no skill reads or writes it | `~/.claude/daikenja/glossary.md` | you; `setup-user` creates the blank file |
 | Tensei, if you adopted it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |
 | Tensei backups | `~/.claude/backups/tensei-<timestamp>/` | `tensei` |
-| A project's ledger | `.daikenja/ledger.md` in the project's folder by default -- see note | `project-log` only |
-| A project's card | `project.md` beside the ledger (`<name>.project.md` beside a ledger with another file name) | `setup-project`, when you accept it |
+| A project's decisions in force | `DECISIONS.md` at the root of each of the project's repositories -- see note | `project-log` only; never committed for you |
+| A project's open items, context links and sources | `.daikenja/open.md` in the project's home repository | `project-log` only; never committed for you |
+| A project's card | `.daikenja/project.md` in the home repository | `setup-project`, when you accept it |
+| The backup of a ledger in the old format | `ledger.<date>.bak.md` beside where the old ledger was | `setup-project`, when it migrates the project |
 | The Slack bot's settings and log, if you run it | `~/.claude/daikenja/bot.yaml`, plus a log file wherever you point `--log-file` | you write `bot.yaml`; the bot writes the log |
 
-**Ledger location note.** A project registered with `setup-project` can keep
-its ledger elsewhere, including outside the project; a project with no folder
-keeps it in `~/.claude/daikenja/ledgers/` by default. For a project spanning
-several folders, the ledger is in the first folder registered.
+**Ledger location note.** The two files sit at fixed places; there is no
+setting to move them. For a project spanning several repositories, each has its
+own `DECISIONS.md`, and `open.md` is in the home repository, the first one
+registered. Every project lives in a git repository: projects without a folder
+are gone, and an old one is migrated into a folder you choose -- see
+[Moving from the old ledger](ledger.md#moving-from-the-old-ledger).
 
 Backups are kept until you delete them. Nothing personal is stored in the
 plugin's own folder, which is replaced on every update. The plugin ships blank

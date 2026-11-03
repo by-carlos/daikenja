@@ -7,7 +7,7 @@ headings by tests/check-invariants.py):
 
 The full `daikenja.yaml` shape, key by key, and two worked examples. Companion
 to [`config-resolution.md`](config-resolution.md), which holds where the file
-lives and how a project, a ledger and a pointer resolve -- this document only
+lives and how a project, its ledger files and a pointer resolve -- this document only
 fixes what each key means and what it defaults to.
 
 ## Schema
@@ -29,12 +29,12 @@ profile:
 
 projects:
   <project-key>:
-    paths:                            # optional, a list of absolute paths
+    paths:                            # required (or path), a list of absolute paths
+      - <absolute path>               # the first is the home repository
       - <absolute path>
-      - <absolute path>
-    path: <absolute path>             # optional, the single-value form of paths
-    ledger: .daikenja/ledger.md        # optional, pointer -- relative (default) or absolute
-    last_checkpoint: 2026-08-14T09:12Z  # optional, written by project-catchup
+    path: <absolute path>             # the single-value form of paths
+    last_checkpoint:                  # optional, written by project-catchup
+      <absolute path>: <commit SHA>   # one per registered repository
     stale_after_days: <int>           # optional, overrides the profile value
     norms_doc: <path or url>          # optional, overrides the profile value
 ```
@@ -91,14 +91,22 @@ usually stale the moment it is written**, and `project-gaps` reports it on the
 very first run after a seed. That is the threshold working as specified rather
 than a fault in the entries, and `setup-project` warns about it before seeding.
 
-**`last_checkpoint`** is `YYYY-MM-DDThh:mmZ`, UTC, minute precision -- the same
-timestamp format the ledger's Changelog uses. It marks how far `project-catchup` has
-already reported.
+**`last_checkpoint`** is a map from each registered repository path to the
+commit SHA `project-catchup` last reported up to in that repository. The next
+run reports `git log <sha>..HEAD -- DECISIONS.md .daikenja/open.md` per
+repository, so git, not a timestamp, says what changed. Each path is written
+exactly as it appears in `paths`. A repository with no entry in the map, or
+whose SHA no longer resolves (a rewritten history, a fresh clone), is a first
+run for that repository, and the report says so. A scalar value -- the UTC
+timestamp written before this layout -- is read the same way: a first run, with
+the reason stated. `project-catchup` replaces it with the map on its next
+write.
 
-**`paths` is the list of directories that resolve to this project**, and `path`
-is its single-value form. A project may have several roots -- a programme
-spanning three repositories is one project, not three -- and it may have none.
-The three legal shapes are:
+**`paths` is the list of repositories that make up this project**, and `path`
+is its single-value form. Every project lives in at least one git repository,
+because git is what keeps its ledger's history. A project may have several --
+a programme spanning three repositories is one project, not three. The two
+legal shapes are:
 
 ```yaml
 projects:
@@ -110,10 +118,6 @@ projects:
       - C:/GitHub/platform-api
       - C:/GitHub/platform-web
       - C:/GitHub/platform-infra
-
-  q4-planning:                 # no root at all, reachable only by key
-    paths: []
-    ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md
 ```
 
 **`path` and `paths` mean the same thing and are read as one list.** A `path`
@@ -124,44 +128,32 @@ nothing has to be rewritten. Writing both keys on one entry is a
 union of the two and the run says so, because guessing which one the user meant
 is worse than naming the contradiction.
 
-**The first path is the project root**, which is what a relative `ledger:`
-resolves against, per
-[Finding the ledger](config-resolution.md#finding-the-ledger). It is the root
-whichever of the project's directories the run started in, so one project keeps
-one ledger. Order the list deliberately, and do not reorder it afterwards.
+**The first path is the home repository**, which is where the project's one
+`.daikenja/open.md` lives, per
+[Finding `DECISIONS.md` and `open.md`](config-resolution.md#finding-decisionsmd-and-openmd).
+Every path, home included, has its own `DECISIONS.md` at its root. Home is the
+first path whichever of the project's directories the run started in, so one
+project keeps one `open.md`. `setup-project` asks which repository is home and
+writes it first; do not reorder the list afterwards.
 
-**A project with no roots is legal, not malformed.** `paths: []`, an empty
-`paths:`, or neither key present all mean the same thing: this project is
-reachable only by name. That is what a programme with no directory of its own
-needs -- a body of work that lives across a wiki, a tracker and a chat space
-has no folder to be, and before this it had to be recorded against whichever
-folder happened to be open. Directory resolution skips such an entry silently;
-it is not a match failure and never a warning. Give it an **absolute**
-`ledger:`, since with no root there is nothing for a relative one to resolve
-against; the convention is in
-[Resolving `ledger`](config-resolution.md#resolving-ledger).
+**An entry with no paths, and a leftover ledger pointer, are legacy.** Both
+come from before every project lived in a repository. A reader reports the
+first as needing migration and ignores the second, each in one line pointing at
+`setup-user`, per
+[Legacy keys and unmigrated ledgers](config-resolution.md#legacy-keys-and-unmigrated-ledgers).
+Neither is written any more.
 
 **The `<project-key>` is the project's name, and naming it resolves it.** Call
 it whatever reads well -- it is still never matched against a directory. What
 changed is that a skill accepts it as an argument, so a project can be read
-from anywhere on disk rather than only from inside it. `project-log` accepts
-one too, but only when the named entry has no paths -- the one case a key
-alone is enough to say where a *write* belongs; naming a key that has paths is
-refused rather than falling back to the directory you are standing in. See
+from anywhere on disk rather than only from inside it. See
 [Finding the project](config-resolution.md#finding-the-project).
-
-**`ledger`** is a **pointer**, not a fixed path. A pointer is a relative path or
-an absolute path -- the same two forms `writing_style` and `personas` accept,
-minus the `drive:` form. The full rule, including the recommended location for
-a project with no repository of its own, is
-[Resolving `ledger`](config-resolution.md#resolving-ledger).
 
 ## Worked example
 
-A filled `daikenja.yaml` with four projects: one single-root, one that
-overrides the global staleness threshold and points its ledger somewhere other
-than the default, one spanning three repositories, and one with no repository
-at all.
+A filled `daikenja.yaml` with three projects: one single-repository, one that
+overrides the global staleness threshold, and one spanning three
+repositories.
 
 ```yaml
 daikenja_version: 0.5.1
@@ -180,12 +172,11 @@ profile:
 projects:
   atlas-migration:
     path: C:/GitHub/atlas
-    last_checkpoint: 2026-08-14T09:12Z
+    last_checkpoint:
+      C:/GitHub/atlas: 4f9c2e1
 
   billing-api:
     path: C:/GitHub/billing-api
-    ledger: .daikenja/ledger.md
-    last_checkpoint: 2026-08-13T17:40Z
     stale_after_days: 30
     norms_doc: https://example.com/platform/ways-of-working
 
@@ -194,10 +185,9 @@ projects:
       - C:/GitHub/platform-api
       - C:/GitHub/platform-web
       - C:/GitHub/platform-infra
-
-  q4-planning:
-    paths: []
-    ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md
+    last_checkpoint:
+      C:/GitHub/platform-api: 9a1b7d3
+      C:/GitHub/platform-web: e02c5f8
 ```
 
 Resolving from `C:\GitHub\atlas\services\ingest`:
@@ -205,7 +195,8 @@ Resolving from `C:\GitHub\atlas\services\ingest`:
 1. Normalized: `c:/github/atlas/services/ingest`.
 2. `c:/github/atlas` is a prefix; no other path of any entry is.
 3. Longest match is `atlas-migration`.
-4. It has no `ledger:` key, so the ledger is `C:/GitHub/atlas/.daikenja/ledger.md`.
+4. Its ledger is `C:/GitHub/atlas/DECISIONS.md` and
+   `C:/GitHub/atlas/.daikenja/open.md`.
 5. It has no `stale_after_days`, so `project-gaps` uses the profile's 21 days
    and says so.
 6. It has no `norms_doc` and neither does the profile, so `self-review` skips
@@ -216,19 +207,15 @@ Resolving from `C:\GitHub\platform-web\src`:
 1. Normalized: `c:/github/platform-web/src`.
 2. `c:/github/platform-web` is a prefix, and it is the second path of
    `platform-programme`.
-3. The project is `platform-programme`. Its root is the **first** path,
-   `C:/GitHub/platform-api`, so the ledger is
-   `C:/GitHub/platform-api/.daikenja/ledger.md` -- the same file a run from
-   `platform-infra` reads, which is the point of one project having one ledger.
-
-Resolving `q4-planning` by name, from anywhere:
-
-1. The key matches, so directory resolution never runs.
-2. The entry has no paths, so nothing relative could resolve; its absolute
-   `ledger:` is what gives it a location, and that is the file read.
-3. `project-log q4-planning` writes there the same way: the entry has no
-   paths, so the key is unambiguous, and the same absolute `ledger:` is what
-   the entry lands in.
+3. The project is `platform-programme`. A read skill reads all three
+   `DECISIONS.md` files, one per path. Home is the **first** path,
+   `C:/GitHub/platform-api`, so open items are
+   `C:/GitHub/platform-api/.daikenja/open.md` -- the same file a run from
+   `platform-infra` reads, which is the point of one project having one
+   `open.md`.
+4. `last_checkpoint` has no entry for `C:/GitHub/platform-infra`, so
+   `project-catchup` treats that repository as a first run and says so, while
+   reporting the other two from their SHAs.
 
 ### Minimal valid file
 
@@ -240,7 +227,8 @@ profile:
 ```
 
 With that file alone, `compose` works with the default voice, `project-log`
-scaffolds and writes `.daikenja/ledger.md` in whatever project it runs in and
+scaffolds and writes `DECISIONS.md` and `.daikenja/open.md` in whatever
+repository it runs in and
 names `setup-project` as the way to register it, `project-gaps` uses the 21-day
 default, and `self-review` runs without ROLE CHECK.
 

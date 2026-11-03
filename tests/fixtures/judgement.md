@@ -4,9 +4,10 @@ Synthetic. Invented project, invented people, `example.com` links. Nothing
 here comes from real work. Used by the acceptance checks for `judgement`: the
 `answer` form on a thread, the `message` form on a document, the no-match
 case, the bare invocation with nothing to work on, the `message` form's own
-no-match case (its `📒 Ledger` section must be absent, not apologetic), and a
+no-match case (its `📒 Ledger` section must be absent, not apologetic), a
 subject that quotes a fenced config snippet, which the message form must
-never carry a fence out into.
+never carry a fence out into, and the two unreadable-data states, where the
+`message` form gives a fixed token and no verdict.
 
 The project is `ember`, a reporting warehouse for a booking platform. Its
 ledger records the storage engine and the load window; the thread and the
@@ -34,8 +35,7 @@ projects:
     path: C:/GitHub/billing-api
 ```
 
-`billing-api` has a ledger at `C:/GitHub/billing-api/.daikenja/ledger.md`
-but no card. `writing-style.md` exists and asks for a "Hi all," greeting and
+`billing-api` has a `C:/GitHub/billing-api/DECISIONS.md` but no card. `writing-style.md` exists and asks for a "Hi all," greeting and
 US spelling -- it is here so the `message` walk can show it being ignored.
 
 ## The card
@@ -68,20 +68,36 @@ dashboards built on top of the warehouse.
 
 ## The ledger
 
-`C:/GitHub/ember/.daikenja/ledger.md`:
+`C:/GitHub/ember/DECISIONS.md`:
 
 ```markdown
-# ember ledger
+<!-- decisions-format: 1 -->
+# Decisions
 
-## Decisions
+Decisions in force. Read the area that covers a path before changing it; add
+or edit an entry in the same pull request when a change settles something
+future work must respect.
 
-- 2026-09-01 -- D-002 -- @hakurou -- Run the nightly load between 02:00 and 04:00 UTC, agreed with the platform on-call rota. [thread](https://example.com/slack/ember-warehouse/p2)
-- 2026-08-20 -- D-001 -- @gabiru -- The warehouse store is PostgreSQL 16. SQL Server was evaluated and not chosen, because the analytics team's tooling targets PostgreSQL. [design](https://example.com/ember/design)
+## Warehouse
+
+Paths: `.`
+
+- **The warehouse store is PostgreSQL 16, not SQL Server.** — the analytics
+  team's tooling targets PostgreSQL. Revisit: never. Source: [design](https://example.com/ember/design)
+- **The nightly load runs between 02:00 and 04:00 UTC.** — agreed with the
+  platform on-call rota. Revisit: if the rota changes. Source: [thread](https://example.com/slack/ember-warehouse/p2)
+```
+
+`C:/GitHub/ember/.daikenja/open.md`:
+
+```markdown
+<!-- daikenja-open-format: 1 -->
+# ember open items
 
 ## Open items
 
-- [ ] 2026-09-03 -- O-002 -- @unassigned -- Name an owner for the historical backfill of the 2025 bookings.
-- [ ] 2026-08-20 -- O-001 -- @shion -- Decide the retention period for loaded data: 90 days is proposed, nothing agreed.
+- 2026-09-03 -- @unassigned -- Name an owner for the historical backfill of the 2025 bookings.
+- 2026-08-20 -- @shion -- Decide the retention period for loaded data: 90 days is proposed, nothing agreed.
 
 ## Context links
 
@@ -89,14 +105,8 @@ dashboards built on top of the warehouse.
 
 ## Sources
 
-- S-001 -- Ember design page -- https://example.com/ember/design
+- Ember design page -- https://example.com/ember/design
   read: 2026-08-20
-
-## Changelog
-
-- 2026-09-03T09:00Z -- project-log -- +O-002
-- 2026-09-01T09:00Z -- project-log -- +D-002
-- 2026-08-20T09:00Z -- project-log -- +D-001, +O-001, +S-001
 ```
 
 ## Subject A: the thread
@@ -158,8 +168,8 @@ recent pasted block in the session. No form named, so `answer`.
 
 - No key was named and the directory resolves nothing. Content resolution
   runs: `#ember-warehouse` is owned by exactly one card, `ember`. Decisive.
-- The ledger and the card are read. Both decisions are in force; neither is
-  superseded.
+- Ember's `DECISIONS.md`, its `open.md` and the card are read. Every
+  `DECISIONS.md` entry is in force; there are no IDs to cite.
 - The ledger check runs first: gabiru's question is answered by the
   storage-engine decision, and shion's "settled" claim is an open item.
 
@@ -172,26 +182,26 @@ reporting schema can be hosted inside it, before briefing the dashboard team
 today.
 Open: whether anyone objects before end of day; nothing else is put to the
 group.
-Ledger: ember, matched by #ember-warehouse (C:/GitHub/ember/.daikenja/ledger.md)
+Ledger: ember, matched by #ember-warehouse (C:/GitHub/ember/DECISIONS.md, C:/GitHub/ember/.daikenja/open.md)
 Card: C:/GitHub/ember/.daikenja/project.md
 
 Verdict: The warehouse is PostgreSQL 16, not SQL Server -- the storage-engine
-decision (D-001) records SQL Server as evaluated and not chosen. SQL Server
+decision (ember) records PostgreSQL 16, not SQL Server. SQL Server
 and Oracle are two different database engines; one cannot host the other's
 schema as it stands -- certain, general knowledge. The 90-day retention is not
-settled: the retention question (O-001) is still open with 90 days proposed.
+settled: the retention question (open item) is still open with 90 days proposed.
 
 1. gabiru's and hakurou's assumption that SQL Server is the plan contradicts
-   the storage-engine decision (D-001) -- certain. Source: ledger.
+   the storage-engine decision (ember) -- certain. Source: ledger.
 2. Hosting an Oracle schema inside SQL Server is not possible as asked;
    moving it means a migration of the schema and its objects, which is the
    rewrite gabiru hoped to skip -- certain. Source: general knowledge.
 3. shion presents the 90-day retention as settled; the ledger has it as
-   proposed and undecided (O-001) -- certain. Source: ledger.
+   proposed and undecided (open item) -- certain. Source: ledger.
 
 Suggested: brief the dashboard team on PostgreSQL 16 and say retention is
 still open, rather than 90 days.
-Not checked: whether a later thread changed D-001; the dashboard team's own
+Not checked: whether a later thread changed the storage-engine decision; the dashboard team's own
 requirements; the ember design page was not re-read.
 ```
 
@@ -212,11 +222,11 @@ most recent pasted block.
   § Voice in the message form. The message carries no "Hi all," and uses the
   shipped Commonwealth spelling, whatever `writing-style.md` asks for. No
   notice about `writing-style.md` appears anywhere in the reply.
-- The ledger check: the load window contradicts D-002; the retention claim is
-  presented as settled and is O-001, open; the backfill owner claim is O-002,
-  unassigned.
+- The ledger check: the load window contradicts the nightly load window
+  decision; the retention claim is presented as settled and is an open item;
+  the backfill owner claim is an open item, unassigned.
 - The "company data-retention standard" is named by the page but not linked
-  by it, and the ledger's Sources carries no such link. It is named and marked
+  by it, and the Sources of `open.md` carry no such link. It is named and marked
   `link needed`, never given a URL.
 
 Expected reply: two report lines, then the message in its own fenced block.
@@ -226,7 +236,7 @@ installed; the fenced block carries none.
 Report lines:
 
 ```
-Ledger: ember (C:/GitHub/ember/.daikenja/ledger.md)
+Ledger: ember (C:/GitHub/ember/DECISIONS.md, C:/GitHub/ember/.daikenja/open.md)
 Card: C:/GitHub/ember/.daikenja/project.md
 For your judgement: the page names a company data-retention standard that
 neither it nor the ledger links. Add the link before sharing if you know it.
@@ -238,12 +248,12 @@ The message, exactly as handed back, about 150 words:
 AI review summary
 Subject: Ember load schedule (wiki page, pasted 2026-09-16)
 - Ledger: the page's load window, 01:00 to 03:00 UTC, contradicts the
-  nightly load window decision (D-002): 02:00 to 04:00 UTC, agreed with the
+  nightly load window decision (ember): 02:00 to 04:00 UTC, agreed with the
   platform on-call rota. Certain.
 - Ledger: the page states a 90-day retention as settled. The retention
-  question (O-001) is still open, with 90 days proposed. Certain.
+  question (open item) is still open, with 90 days proposed. Certain.
 - The page names the analytics team as backfill owner. The backfill owner
-  item (O-002) is unassigned. Likely a claim ahead of a decision. Source:
+  item (open item) is unassigned. Likely a claim ahead of a decision. Source:
   ledger.
 - The page cites a company data-retention standard with no link (link
   needed). Not verified.
@@ -376,7 +386,7 @@ most recent pasted block.
 
 - The directory resolves `ember`. The ledger check runs as in Walk 2: the
   page's cron entry runs the load at 01:00 UTC, which contradicts the load
-  window decision (D-002: 02:00 to 04:00 UTC).
+  window decision (ember: 02:00 to 04:00 UTC).
 - The page itself quotes the cron line inside a fenced block. The message
   form never nests a fence inside the deliverable it hands back -- it quotes
   the cron entry as inline code, on one line, with single backticks.
@@ -386,7 +396,7 @@ Expected reply: the report lines, then the message in its own fenced block.
 Report lines:
 
 ```
-Ledger: ember (C:/GitHub/ember/.daikenja/ledger.md)
+Ledger: ember (C:/GitHub/ember/DECISIONS.md, C:/GitHub/ember/.daikenja/open.md)
 Card: C:/GitHub/ember/.daikenja/project.md
 ```
 
@@ -395,13 +405,13 @@ The message, exactly as handed back:
 ```
 ⚖️ **Verdict**
 The page's cron entry runs the nightly load at 01:00 UTC, which contradicts
-the load window decision (D-002): 02:00 to 04:00 UTC, agreed with the
+the load window decision (ember): 02:00 to 04:00 UTC, agreed with the
 platform on-call rota. Certain.
 
 🔍 **Basis**
 - **Load window** -- the cron entry `0 1 * * * /opt/ember/run-load.sh` starts
   the job an hour before the agreed window opens. _certain · ledger,
-  nightly load window (D-002)_
+  nightly load window (ember)_
 - **Retry configuration** -- `max_attempts: 3` with exponential backoff is a
   reasonable retry policy for a scheduled load and is not covered by any
   decision. _likely · general knowledge_
@@ -423,3 +433,57 @@ block, per `judgement` § the `message` form's no-fence rule.
 snippet verbatim into the deliverable, or wrapping its own quoted line in a
 fresh triple-backtick block, either of which breaks out of the fence the
 message is itself handed back inside.
+
+## Walk 7: the `message` form on a project that needs migration
+
+`/daikenja:judgement message project ember` with Subject B, after ember's
+files are replaced by the old single-file ledger:
+`C:/GitHub/ember/.daikenja/ledger.md` exists and
+`C:/GitHub/ember/.daikenja/open.md` does not.
+
+- The key resolves `ember`. The legacy check of `reading.md` § Step B runs
+  first: an old ledger at home with no `open.md` beside it needs migration.
+  Nothing is read -- not the old ledger, not a `DECISIONS.md`.
+- This is the `message` form, so there is no verdict. The deliverable is the
+  fixed token line alone.
+
+Report line:
+
+```
+The ledger at C:/GitHub/ember/.daikenja/ledger.md needs migration -- run /daikenja:setup-user.
+```
+
+The message, exactly as handed back:
+
+```
+DAIKENJA-PROJECT-DATA-UNREADABLE ember needs-migration
+```
+
+The same project in the `answer` form gives the report line and stops.
+
+## Walk 8: the `message` form on a newer format version
+
+`/daikenja:judgement message` from `C:/GitHub/ember`, with Subject B, after
+the first line of ember's `DECISIONS.md` reads `<!-- decisions-format: 2 -->`.
+
+- The directory resolves `ember`, and the version line is newer than this
+  plugin knows, per `open-format.md` § Version line.
+- The `message` form gives no verdict over data it may misread.
+
+Report line:
+
+```
+C:/GitHub/ember/DECISIONS.md was written by a newer format (version 2); update the Daikenja plugin.
+```
+
+The message, exactly as handed back:
+
+```
+DAIKENJA-PROJECT-DATA-UNREADABLE ember newer-format
+```
+
+The same subject in the `answer` form warns once and gives the Walk 2 verdict.
+
+**The failures these catch:** a normal-looking verdict posted into a channel
+for a project whose ledger was never read or could be misread, and a token
+written with words around it, which a caller matching the line misses.

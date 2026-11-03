@@ -13,8 +13,15 @@ run reaches only on some branches, kept out of line so a run that never reaches
 one never pays to read it. Each is its own skill's instructions and binds
 exactly as if it sat in that `SKILL.md`; no other skill reads them.
 
-- [`ledger-format.md`](ledger-format.md) -- the ledger file layout, the entry
-  line shape, and how skills read it.
+- [`decisions-format.md`](decisions-format.md) -- the `DECISIONS.md` format:
+  decisions in force, grouped by area. A byte-identical copy of the spec
+  plan-staged-rollout shares; never edited here.
+- [`open-format.md`](open-format.md) -- the `.daikenja/open.md` format (open
+  items, context links, sources), the reading rules, and the format-version
+  rule for both ledger files.
+- [`ledger-migration.md`](ledger-migration.md) -- how `setup-project` moves an
+  old single-file ledger into `DECISIONS.md` and `open.md`, with a dated
+  backup. Self-contained: it carries the old grammar it reads.
 - [`project-log-reference.md`](project-log-reference.md) -- `project-log`'s own
   branch-only sections: scaffolding a missing ledger, an imposed decision, a
   relationship marker, a source, a backfill, a meeting date handed over by
@@ -35,8 +42,8 @@ exactly as if it sat in that `SKILL.md`; no other skill reads them.
   something already on their disk. One section per version that needs action,
   newest first, written by the change and promoted by the release. Written for
   the user as well as for `setup-user`'s upgrade branch.
-- [`project-card.md`](project-card.md) -- the per-project card beside the
-  ledger: what a project is about, which channels, repositories and trackers
+- [`project-card.md`](project-card.md) -- the per-project card beside
+  `open.md`: what a project is about, which channels, repositories and trackers
   it owns, who is on it; where the file sits, how it is read, and the third
   project-resolution route -- by content, across every registered card.
 - [`reading.md`](reading.md) -- the shared read mechanism for `project-catchup`,

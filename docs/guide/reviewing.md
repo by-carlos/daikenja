@@ -3,7 +3,7 @@
 [Home](../../README.md) · [Install](install.md) · [Commands](commands.md) · [Writing](writing.md) · [Ledger](ledger.md) · **Reviewing** · [Tensei](tensei.md) · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
 
 > **In short:** four skills that read something and report on it, without
-> rewriting it. A meeting transcript becomes proposed ledger lines; a
+> rewriting it. A meeting transcript becomes proposed ledger entries; a
 > document gets a checklist review; a thread or page is checked against what
 > the project already decided; and a thread you took part in gets private
 > coaching on your own moves.
@@ -19,9 +19,11 @@
 
 Paste a transcript, or ask what came out of a call. `meeting-review` sorts what
 was said into decisions, action items with owners and dates, and questions left
-open. Decisions become ledger decisions; action items and open questions both
-become open items. It then asks whether to log them, and on your yes
-`project-log` shows the exact lines and waits for a second yes.
+open. Decisions become `DECISIONS.md` entries -- the rule and why, while who
+closed it stays in the report; action items and open questions both become
+open items in `open.md`, with their owner. It then asks whether to log them,
+and on your yes `project-log` shows the exact lines and waits for a second
+yes.
 
 It is strict about what counts:
 
@@ -47,7 +49,10 @@ padded one.
 
 `/daikenja:judgement`, or "is this right?", takes a thread or a document and
 tells you three things: which parts a recorded decision already settles, which
-are plain fact, and which are presented as settled but not established.
+are plain fact, and which are presented as settled but not established. It
+reads every `DECISIONS.md` of the project, across all its repositories, and
+names a decision by its topic and repository, such as "the cutover-day
+decision (harbor)".
 
 By default it answers you in the conversation. Add the word `message` --
 `/daikenja:judgement message` -- to get a shareable "AI review summary" to paste

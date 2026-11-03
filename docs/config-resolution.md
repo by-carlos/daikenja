@@ -4,15 +4,15 @@ Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
 - § Resolution order -- preflight "Step 0: read the shared docs"
 - § Finding the project -- project-list "Step 0: read the contracts", setup-project "Step 1: read what already exists"
-- § Finding the ledger -- project-list "Step 0: read the contracts"
-- § Resolving `ledger` -- project-list "Step 0: read the contracts", setup-project "Step 2: register the project"
+- § Finding `DECISIONS.md` and `open.md` -- project-list "Step 0: read the contracts"
+- § Legacy keys and unmigrated ledgers -- project-list "Step 0: read the contracts", setup-project "Step 2: register the project"
 - § Resolving `writing_style` and `personas` -- preflight "Step 0: read the shared docs", setup-user "Offering Google Drive, without ever requiring it"
 - § Failure behavior -- preflight "Step 0: read the shared docs", self-review "Step 0: read the shared docs"
 - § Voice and writing style -- judgement "Voice in the message form"
 
 Daikenja reads user configuration from **one YAML file** outside the plugin
 directory. This document is the resolution core: where that file lives, how a
-skill finds the current project and its ledger, how the `writing_style` and
+skill finds the current project and its ledger files, how the `writing_style` and
 `personas` pointers resolve, precedence between project and profile settings,
 and what a skill does when something is missing or broken.
 
@@ -87,13 +87,12 @@ these two.
 
 The skills that accept a key argument freely are the five read skills, per
 [`reading.md`](reading.md) section Step A0, and `project-list`, whose whole job
-is to report them. `project-log` accepts one too, but narrowly: only when the
-named entry has no paths, the one case a key alone is enough to say where the
-write belongs. Any other key -- naming an entry that has paths -- is refused,
-with the same rationale: a name alone does not say which root the write
-belongs in. See `project-log`'s own `SKILL.md` § Step 2 for the exact rule.
-`setup-project` still resolves by directory only; it registers a *new* entry's
-own root, and a name alone cannot say what that root should be.
+is to report them. Whether `project-log` accepts one, and how it then picks
+which repository's `DECISIONS.md` a decision lands in, is its own `SKILL.md`
+§ Step 2: a key names the project and its home, but not which of several
+repositories a decision belongs to. `setup-project` still resolves by directory
+only; it registers a *new* entry's own root, and a name alone cannot say what
+that root should be.
 
 #### By content, when neither applies
 
@@ -113,108 +112,94 @@ why it lives with the card's own contract.
    arrive in both slash styles; normalizing first avoids both traps.)
 2. Compare against **every path of every `projects:` entry**, normalized the
    same way. An entry's paths are its `paths` list, or its `path` scalar read
-   as a one-element list. An entry with no paths is skipped -- it is reachable
-   only by key, and that is a legal state, not a match failure.
+   as a one-element list. An entry with no paths is skipped and reported as
+   needing migration, per
+   [Legacy keys and unmigrated ledgers](#legacy-keys-and-unmigrated-ledgers).
 3. Take the **longest matching prefix**, across all paths of all entries. The
    entry owning that path is the match. Nested projects therefore resolve to
    the innermost one, whichever entry it belongs to, and two paths of the same
    project cannot compete with each other -- they resolve to the same project
    either way.
 4. No match means the project is unregistered. Every skill says so in one line
-   and then continues -- an unregistered project still has a ledger to read if
-   one exists on disk, and a ledger on disk wins over the config (see
-   [Finding the ledger](#finding-the-ledger)). `project-log` additionally names
+   and then continues -- an unregistered project still has ledger files to
+   read if they exist on disk, and files on disk win over the config (see
+   [Finding `DECISIONS.md` and `open.md`](#finding-decisionsmd-and-openmd)).
+   `project-log` additionally names
    `setup-project` as the way to register it. The branch a read skill follows is
    in
    [`reading.md`](reading.md) § Step A.
 
-### Finding the ledger
+### Finding `DECISIONS.md` and `open.md`
 
-1. **The matched project has a `ledger:` key.** Resolve it per its pointer
-   form -- see [Resolving `ledger`](#resolving-ledger) -- and use that path.
-   The default filename below is not consulted; an explicit key is
-   authoritative, not a hint to check alongside it.
-2. **The matched project has no `ledger:` key**, or no project matched at all.
-   Use `.daikenja/ledger.md` under the project root (or under the current
-   directory, when nothing matched).
-3. If the resolved file does not exist, `project-log` scaffolds it from
-   [`../templates/ledger.md`](../templates/ledger.md) after the user approves.
-   Read skills do not scaffold; they report that no ledger exists and name the
-   skill that creates one.
+A project's ledger is two files at fixed paths. No config key moves either one.
 
-**The project root is the first path in the entry**, not the path that matched.
-A project has one ledger, so its root cannot depend on which of its directories
-the user happened to be standing in -- resolving relative to the matched path
-would give a three-repository project three ledgers and no way to tell which
-one holds the decision. The first path is therefore the root from every
-direction: from any of the project's own directories, and from the key route,
-which has no matched path at all. Order the list deliberately; the first entry
-is where a relative `ledger:` lands.
+1. **`DECISIONS.md` at the root of every path in the entry**, in `paths` order:
+   `<path>/DECISIONS.md` for each. A decision belongs with the code it
+   constrains, so a project spanning three repositories has three of them.
+   Where a root file's area carries a `Moved: <folder>/DECISIONS.md` line, that
+   file is read too, per [`decisions-format.md`](decisions-format.md) §
+   Splitting.
+2. **`.daikenja/open.md` in the home repository only.** The home repository is
+   the **first** path in the entry, so a project keeps one `open.md` whichever
+   of its directories the run started in. Its grammar is
+   [`open-format.md`](open-format.md).
+3. **No project matched:** the current directory stands in as the one root, so
+   the files are `DECISIONS.md` and `.daikenja/open.md` under it.
+4. **Read both files' version lines first**, per
+   [`open-format.md`](open-format.md) § Version line: a newer version is still
+   read, with one warning per run.
+5. **A file that does not exist** is scaffolded by `project-log`, from
+   [`../templates/DECISIONS.md`](../templates/DECISIONS.md) or
+   [`../templates/open.md`](../templates/open.md), after the user approves. Read
+   skills do not scaffold. A registered repository with no `DECISIONS.md` has no
+   decisions recorded yet, which is not a notice. When the project has neither
+   any `DECISIONS.md` nor its `open.md`, a read skill says in one line that no
+   ledger exists yet and names `project-log` as the skill that creates one --
+   unless the legacy check below finds an old ledger first.
 
-**A project with no paths has no root, so nothing relative resolves against
-it.** An **absolute** `ledger:` key resolves normally and is exactly how such a
-project keeps a ledger -- see [Resolving `ledger`](#resolving-ledger). Without
-one there is no location at all: a skill that needs a ledger says so in one
-line and stops, per [Failure behavior](#failure-behavior). This governs a
-*write* the same way it governs a read -- `project-log`, reaching a pathless
-entry by key per [Finding the project](#finding-the-project), resolves its
-ledger by this same rule and stops the same way when no absolute `ledger:` is
-there to resolve.
+**Home is the first path, not the path that matched.** The order of `paths` is
+therefore part of the contract: `setup-project` asks which repository is home
+and writes it first. Do not reorder the list afterwards -- moving another path
+to the front moves where `open.md` is looked for.
 
-**A ledger found on disk wins over the config.** This is a rule about an
-**unmatched project**, not about overriding an explicit `ledger:` key. If
-`.daikenja/ledger.md` exists under the current directory but no `projects:`
-entry matches it, that file is used and `project-log` names `setup-project` as
-the way to add the missing entry. The file on disk is the fact; the config is
-the index. Once a project *is* matched and carries a `ledger:` key -- relative
-or absolute -- that key's resolved path is the ledger, full stop; there is no
-second, on-disk probe to fall back to if it happens to be missing.
+**Files found on disk win over the config.** This is a rule about an
+**unmatched project**. If `DECISIONS.md` or `.daikenja/open.md` exists under the
+current directory but no `projects:` entry matches it, those files are used and
+`project-log` names `setup-project` as the way to add the missing entry. The
+files on disk are the fact; the config is the index.
 
-### Resolving `ledger`
+### Reading several repositories
 
-`ledger` is a pointer, reusing the grammar defined in
-[Resolving `writing_style` and `personas`](#resolving-writing_style-and-personas)
-minus its Drive form. Two forms are legal:
+A read skill reads **every** `DECISIONS.md` of the matched project, not only the
+one in the directory it started in: a decision recorded in `platform-infra`
+binds a question asked from `platform-web`. When it reports an entry, it names
+the repository the entry came from (the last segment of that path is enough),
+so the reader knows which file to open. Entries are never merged across files:
+two repositories recording the same decision is two entries, reported as found.
 
-| Form | Example | Resolves to |
-|---|---|---|
-| Relative path | `.daikenja/ledger.md` | That path, relative to the **project root** -- the first path in the entry, per [Finding the ledger](#finding-the-ledger). This is the default. An entry with no paths has no root, so a relative pointer cannot resolve on one; use the absolute form. |
-| Absolute path | `C:/Users/you/daikenja-ledgers/harbor.md` | That path, verbatim -- it may be anywhere, including outside the project directory entirely. |
+A path in `paths` that does not exist on disk is skipped silently, as directory
+resolution already does; `project-list` is the skill that reports it. A
+repository that is not reachable is never the reason a run stops.
 
-**`ledger` deliberately does not accept the `drive:` form.** Two reasons, both
-from this document's own Drive rules above. First, write frequency: a ledger
-is written on every `project-log` run, while `personas.md` is appended rarely
--- the replacement sequence's brief two-file window between create and trash
-is a rare risk for personas and a routine one for a ledger. Second, "a ledger
-found on disk wins over the config" has no meaning for a file that is not on
-disk, and that interaction needs its own design rather than an assumption. If
-Drive support for the ledger is wanted later, it is its own change.
+### Legacy keys and unmigrated ledgers
 
-**A project with no repository of its own** -- work tracked across a wiki, a
-chat space, a ticket system, with no folder that is naturally "the project" --
-has nowhere for a relative `ledger:` to be relative *to*. Give it no paths and
-an absolute pointer into Daikenja's own configuration directory:
+Configuration and files written before this layout are recognised, never acted
+on: the migration in `setup-project`, reached from `setup-user`, is the one
+place they change.
 
-```yaml
-projects:
-  vendor-onboarding-programme:
-    paths: []
-    ledger: C:/Users/you/.claude/daikenja/ledgers/vendor-onboarding-programme.md
-```
-
-**The two keys do different halves of the same job, and both are needed.**
-`paths: []` is what stops the project needing a directory to be resolved from
--- it is reached by name instead, from anywhere. The absolute `ledger:` is what
-gives the record a location once there is no root to be relative to. Either one
-alone leaves a gap: a pathless project without an absolute `ledger:` has
-nowhere to keep its record, and an absolute `ledger:` on an entry that still
-carries a scratch-folder `path` means the user has to stand in that folder to
-be answered.
-
-The convention is `~/.claude/daikenja/ledgers/<project-key>.md`, alongside every
-other file Daikenja manages for the user rather than for a repository. Nothing
-about the ledger's own format changes -- it is read and written exactly as
-[`ledger-format.md`](ledger-format.md) specifies, regardless of where it lives.
+- **A leftover `ledger:` key** is ignored. The run says so in one line naming
+  the key and `/daikenja:setup-user`, then continues with the fixed paths above.
+- **A `paths: []` entry**, or one with neither `path` nor `paths`, is
+  reported as "needs migration" in one line naming the key and
+  `/daikenja:setup-user`, and skipped. Directory resolution never matches it; a
+  run that names its key says the same line and stops for that project.
+- **An unmigrated ledger at the legacy location.** When the home repository
+  (or, with no match, the current directory) has `.daikenja/ledger.md` and no
+  `.daikenja/open.md` beside it, the project's ledger has not been migrated,
+  whether or not a `DECISIONS.md` exists. A read skill says in one line that the
+  project needs migration and names `/daikenja:setup-user`; it does not parse
+  the old file. `project-log` refuses to scaffold or write either file over it,
+  with the same line.
 
 ### Resolving `writing_style` and `personas`
 
@@ -309,7 +294,7 @@ One rule covers the common cases:
 
 | Situation | Behavior |
 |---|---|
-| `daikenja.yaml` absent | Ledger-only skills still work using the defaults (`.daikenja/ledger.md`, 21 days). Skills that need the profile say "Daikenja is not configured -- run `/daikenja:setup-user`" and stop. |
+| `daikenja.yaml` absent | Ledger-only skills still work using the defaults (`DECISIONS.md` and `.daikenja/open.md` under the current directory, 21 days). Skills that need the profile say "Daikenja is not configured -- run `/daikenja:setup-user`" and stop. |
 | Malformed YAML | **Stop.** Report the first line that does not parse. Never guess the intent, and never rewrite the file -- repair would clobber hand-written content. |
 | Valid YAML, missing optional key | Treat as absent, degrade for that key alone with one notice, and continue. One missing optional key never fails a run. |
 | Valid YAML, missing `profile.name` | Treat the configuration as incomplete. Say so and point at `setup-user`. `setup-project` stops here rather than continuing, because it has no profile to register a project against. |
@@ -317,7 +302,10 @@ One rule covers the common cases:
 | The installed version cannot be read (`plugin.json` missing or unparsing) | No notice, continue silently. The marker is a diagnostic, and a diagnostic that cannot run is not a failure of the task. |
 | `projects:` absent or empty | The project is unregistered. See the resolution order above. `setup-project` is what registers one. |
 | A named project key matches no entry | **Stop.** Name the key, list the registered keys, and write nothing. Never fall back to the current directory -- an answer about the wrong project reads exactly like a correct one. |
-| A project entry has neither `path` nor `paths`, or an empty `paths` | Not an error. The project is reachable only by key and is skipped by directory resolution. With no root, only an absolute `ledger:` can resolve; without one a skill that needs a ledger stops with one line naming the key. |
+| A project entry has neither `path` nor `paths`, or an empty `paths` | A project kept before every project lived in a repository. One line, "needs migration", naming the key and `/daikenja:setup-user`; skipped by directory resolution, and a run that named its key stops for it. See [Legacy keys and unmigrated ledgers](#legacy-keys-and-unmigrated-ledgers). |
+| A project entry still has a `ledger:` key | Ignored. One line naming the key and `/daikenja:setup-user`, then continue with the fixed paths. |
+| `.daikenja/ledger.md` at the home repository with no `.daikenja/open.md` beside it | Needs migration. One line naming `/daikenja:setup-user`; read skills do not parse the old file, and `project-log` writes nothing. |
+| `DECISIONS.md` or `open.md` carries a newer format version than the plugin knows | Read skills read it and warn once per run; `project-log` refuses the whole batch and asks for a plugin update. See [`open-format.md`](open-format.md) § Version line. |
 | A project entry has both `path` and `paths` | Read the entry as the union of the two, and say so in one line naming the key. Do not guess which was meant, and do not rewrite the file to remove one -- `setup-project` is where the user fixes it. |
 | A path in `paths` does not exist on disk | Not an error for resolution: a path that matches nothing simply never matches. `project-list` reports it; every other skill stays silent, because a detached network drive is not a configuration mistake. |
 | `writing_style` or `personas` is not configured at all | Absent key. One notice, then continue with reduced behavior -- the default voice, or no personas. For a writer skill with an entry to write (`remember-persona`), reduced behavior means the default path itself: if `personas.md` does not exist there yet, it scaffolds the file from the template (per [Who writes what](config-writers.md#who-writes-what)) before writing the entry, rather than treating the absent key as a reason to stop. |

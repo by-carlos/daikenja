@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" role="img" aria-labelledby="title desc" aria-label="Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project. Anything a skill reads is also processed by Claude.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" role="img" aria-labelledby="title desc" aria-label="Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project's git repository: the ledger, DECISIONS.md at the root and .daikenja/open.md, plus the optional project card, shared with everyone who can read the repository, with git keeping the history. Anything a skill reads is also processed by Claude.">
   <title id="title">Where Daikenja keeps your data</title>
-  <desc id="desc">Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project. Anything a skill reads is also processed by Claude.</desc>
+  <desc id="desc">Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project's git repository: the ledger, DECISIONS.md at the root and .daikenja/open.md, plus the optional project card, shared with everyone who can read the repository, with git keeping the history. Anything a skill reads is also processed by Claude.</desc>
   <style>
     text { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1F2937; }
     .head { font-size: 22px; font-weight: 700; }
@@ -40,17 +40,17 @@
 
   <!-- Project -->
   <rect x="810" y="30" width="360" height="330" rx="14" fill="#E2F2E7" stroke="#86C49A" stroke-width="1.5"/>
-  <text class="head" x="834" y="70">The project</text>
+  <text class="head" x="834" y="70">The project's repository</text>
   <text class="who" x="834" y="96" fill="#15803D">SHARED WITH THE PROJECT</text>
-  <text class="code" x="834" y="136">.daikenja/</text><text class="body" x="940" y="136">(by default)</text>
-  <text class="body" x="850" y="168">ledger.md -- decisions and</text>
-  <text class="body" x="850" y="190">open items</text>
-  <text class="body" x="850" y="218">project.md -- the optional</text>
-  <text class="body" x="850" y="240">project card</text>
-  <text class="body" x="834" y="272">Versioned by git beside</text>
-  <text class="body" x="834" y="294">the code. Everyone who can</text>
-  <text class="body" x="834" y="316">read the repository can</text>
-  <text class="body" x="834" y="338">read it.</text>
+  <text class="code" x="834" y="136">DECISIONS.md</text>
+  <text class="body" x="850" y="160">decisions in force</text>
+  <text class="code" x="834" y="192">.daikenja/</text>
+  <text class="body" x="850" y="216">open.md -- open items,</text>
+  <text class="body" x="850" y="238">links and sources</text>
+  <text class="body" x="850" y="262">project.md -- optional card</text>
+  <text class="body" x="834" y="294">Git keeps the history; you</text>
+  <text class="body" x="834" y="316">commit. Everyone who can read</text>
+  <text class="body" x="834" y="338">the repository can read it.</text>
 
-  <text class="note" x="600" y="400" text-anchor="middle">Persona notes never go into a project. A ledger can live elsewhere only if you point it there.</text><text class="note" x="600" y="430" text-anchor="middle">Wherever a file lives, what a skill reads from it is processed by Claude, as in any Claude Code session.</text>
+  <text class="note" x="600" y="400" text-anchor="middle">Persona notes never go into a project. Every project's ledger lives in a git repository.</text><text class="note" x="600" y="430" text-anchor="middle">Wherever a file lives, what a skill reads from it is processed by Claude, as in any Claude Code session.</text>
 </svg>

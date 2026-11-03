@@ -146,31 +146,41 @@ atlas-migration, not to harbor`), and the summary goes on with the project
 the user is in. The user may be answering a neighbouring project's thread on
 purpose; the line makes sure it is on purpose.
 
-**Read what the project has**, per `reading.md` § Step B and § Step C: resolve
-the ledger path, read the Decisions and Open items sections, and read the
-card beside the ledger if there is one. Then write the `Ledger:` line:
+**Read what the project has**, per `reading.md` § Step B and § Step C: the
+`DECISIONS.md` of every registered repository, the Open items of `open.md`,
+and the card beside `open.md` if there is one. Then write the `Ledger:` line:
 
-- **Decisions the thread touches** -- topic first, ID in parentheses, per
-  `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md`.
+- **Decisions the thread touches** -- topic first, cited by their words and
+  the repository whose `DECISIONS.md` holds them, per
+  `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md`. There are no IDs.
 - **Decisions the thread contradicts**, named as such: "contradicts the
-  Saturday cutover decision (D-005)". A proposal in the thread that runs
+  Saturday cutover decision (harbor)". A proposal in the thread that runs
   against a decision in force is the most useful thing this line can say.
 - **Open items the thread bears on**, and whether the thread appears to
   resolve one -- reported as "appears to resolve", never as resolved, since
   only `project-log` can do that and only on the user's say-so.
 
 ```
-📒 **Ledger** -- harbor (C:/GitHub/harbor/.daikenja/ledger.md): touches the ramp
-cutover decision (D-001); the proposed Friday start contradicts its Monday
-2026-08-17 date; appears to resolve the rollback-trigger question (O-001).
+📒 **Ledger** -- harbor (C:/GitHub/harbor/DECISIONS.md, C:/GitHub/harbor/.daikenja/open.md):
+touches the ramp cutover decision (harbor); the proposed Friday start
+contradicts its Monday 2026-08-17 date; appears to resolve the open
+rollback-trigger question.
 ```
 
-Keep it to one or two lines. Naming the project and the ledger path is what
+Keep it to one or two lines. Naming the project and the files read is what
 makes the rest checkable, so both stay even when nothing matched:
-`📒 **Ledger** -- harbor (C:/GitHub/harbor/.daikenja/ledger.md): nothing on this
-subject.` is a complete, useful line.
+`📒 **Ledger** -- harbor (<files>): nothing on this subject.` is a complete,
+useful line. `<files>` follows `reading.md` § Step B: every file read,
+absolute, a missing one marked `(not created yet)`.
 
-**When no project resolved**, or the project has no ledger, leave the
+**Project data unreadable.** A project that **needs migration**, per
+`reading.md` § Step A and § Step B, gets that notice line in place of the
+`Ledger` line, and nothing is read. A file with a **newer format version**,
+per `${CLAUDE_PLUGIN_ROOT}/docs/open-format.md` § Version line, is read
+anyway with its one warning. The `message` form below handles both
+differently.
+
+**When no project resolved**, or the project has none of the files, leave the
 `Ledger` line out and say nothing about it. A thread that is not project
 work is the ordinary case, and `daikenja.yaml` being absent is not a reason
 to narrate configuration in the middle of a thread summary. The only notices
@@ -201,9 +211,22 @@ differ, and nothing else does:
   did -- "the person who raised it" -- and never falls back to `you`.
 - **`Tone` is omitted**, empty or not, per Step 2.
 - **The `Ledger` line names the project, not the path.** Step 2b's line
-  carries an absolute path, which carries the machine's own username; a
-  reader in a channel cannot open it and should not be shown it.
-  `📒 **Ledger** -- harbor: touches the ramp cutover decision (D-001).`
+  carries absolute paths, which carry the machine's own username; a reader
+  in a channel cannot open them and should not be shown them.
+  `📒 **Ledger** -- harbor: touches the ramp cutover decision (harbor).`
+
+**Project data unreadable produces no summary.** When the project needs
+migration or a file carries a newer format version, the deliverable is
+exactly one line, copied, with nothing before or after it -- the same token
+`judgement` uses:
+
+```
+DAIKENJA-PROJECT-DATA-UNREADABLE <key> needs-migration
+DAIKENJA-PROJECT-DATA-UNREADABLE <key> newer-format
+```
+
+`<key>` is the project key, or `-` for an unregistered directory. Step 2b's
+notice line goes in the report around it, never in the deliverable.
 
 The block is the whole deliverable. Steps 3 to 5 do not run: there is nobody
 in the session to ask for a position, so there is nothing to hand off and
@@ -261,7 +284,7 @@ If `Position` or `Ask` is `not stated`, ask for it before drafting.
 
 A decision Step 2b found the thread contradicts, and the user did not
 address, goes under `Risks` -- "the reply runs against the Saturday cutover
-decision (D-005)" -- so `compose` carries it into the draft's caveats rather
+decision (harbor)" -- so `compose` carries it into the draft's caveats rather
 than losing it at the handoff.
 
 ## What this skill does not do

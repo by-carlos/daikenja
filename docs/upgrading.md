@@ -43,6 +43,98 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### Your ledger's config moves to `DECISIONS.md`, `open.md` and commit SHAs
+
+Affects you if `daikenja.yaml` has a project with a `ledger:` key, a project
+with `paths: []` or no paths at all, or a `last_checkpoint` value.
+
+- **What changed on disk:** nothing yet. Daikenja now reads a project's ledger
+  as `DECISIONS.md` at the root of each registered repository and
+  `.daikenja/open.md` in the home repository, the first entry of `paths`. Three
+  things in `daikenja.yaml` stop meaning what they did: the `ledger:` key is no
+  longer read, a project with no paths is no longer supported, and
+  `last_checkpoint` becomes a map from each repository path to a commit SHA
+  instead of a UTC timestamp.
+- **If you do nothing:** a leftover `ledger:` key is ignored, with one notice
+  line. A project with no paths, and a project whose old ledger still sits at
+  `.daikenja/ledger.md` with no `open.md` beside it, are reported as needing
+  migration and not read. A timestamp `last_checkpoint` makes the next catchup
+  a first run, and it says so.
+- **The edit:**
+
+  ```
+  before:  projects:
+             atlas:
+               path: C:/GitHub/atlas
+               ledger: .daikenja/ledger.md
+               last_checkpoint: 2026-08-14T09:12Z
+  after:   projects:
+             atlas:
+               path: C:/GitHub/atlas
+               last_checkpoint:
+                 C:/GitHub/atlas: <commit SHA>
+  ```
+
+  A project registered with `paths: []` gains a `path:` to the git repository
+  its ledger moves into.
+- **Can `setup-user` make it for you?** Yes, through `/daikenja:setup-project`,
+  which it hands each project to, and not as a standalone edit. The
+  three config removals -- the `ledger:` key, `paths: []`, and a timestamp
+  `last_checkpoint` -- happen inside the ledger migration, in the same approval
+  as moving the old ledger's content into `DECISIONS.md` and `open.md`, so the
+  config never points at files that do not exist yet. Removing them by hand
+  before migrating leaves the old ledger unread.
+- **Reversible?** Yes. The config edit is shown before it is
+  written, and the old ledger is kept as a dated backup beside it.
+
+### Your old ledger migrates to `DECISIONS.md` and `open.md`
+
+The ledger-migration part of the section above. Affects you if any project
+keeps its ledger in the old single file -- `.daikenja/ledger.md`, or wherever
+its `ledger:` key points -- or has no folder (`paths: []`).
+
+- **What changed on disk:** nothing until you approve. `/daikenja:setup-project`
+  migrates one project at a time: decisions still in force become entries in
+  `DECISIONS.md` at the repository root, open items, context links and sources
+  move to `.daikenja/open.md`, and superseded decisions, resolved items and the
+  Changelog are dropped. The old ledger is renamed to
+  `ledger.<YYYY-MM-DD>.bak.md` beside itself, and a card kept beside it moves
+  to `.daikenja/project.md`. A project with no folder needs a git repository:
+  you choose the folder, and by default it is a new one with `git init`.
+  The procedure is [`ledger-migration.md`](ledger-migration.md).
+- **If you do nothing:** every skill reports the project as needing migration
+  and does not read its ledger. The Slack bot posts its one
+  project-data-unreadable line for it instead of a verdict.
+- **The edit:**
+
+  ```
+  before:  C:/GitHub/atlas/.daikenja/ledger.md
+           C:/GitHub/atlas/.daikenja/project.md
+  after:   C:/GitHub/atlas/DECISIONS.md
+           C:/GitHub/atlas/.daikenja/open.md
+           C:/GitHub/atlas/.daikenja/project.md
+           C:/GitHub/atlas/.daikenja/ledger.2026-11-03.bak.md
+  ```
+
+  plus the `daikenja.yaml` edit in the section above, in the same approval.
+- **Can `setup-user` make it for you?** It hands off. Its upgrade branch lists
+  each project that needs migration with the command for it,
+  `/daikenja:setup-project <key>`; that skill shows the whole migration and
+  writes nothing until you approve it. Nothing is committed: commit the new
+  files and the rename yourself.
+- **Reversible?** Yes. The backup is the old ledger byte for byte; restore it
+  under its old name, delete the two new files and put the config entry back.
+
+**If you run the Slack bot**, update in this order, so it never reads a layout
+it does not know:
+
+1. Update the plugin.
+2. Run `/daikenja:setup-user`, then migrate each project it lists.
+3. Pull the bot's checkout.
+4. Restart the bot.
+5. Run `python -m daikenja_bot --check` from `bot/`; it names any project still
+   unreadable.
+
 ### Tensei gained a design review and a second installed file
 
 Only affects you if you installed Tensei with `/daikenja:tensei`.
@@ -633,7 +725,7 @@ commands, not of data. Five skills gained a `project-` prefix:
 
 Ledger Changelog lines written before 0.3.0 name their writer `log` rather than
 `project-log`. Those lines are correct as they stand and are read correctly:
-[`ledger-format.md`](ledger-format.md) § Section: Changelog documents `log` as a
+`docs/ledger-format.md` § Section: Changelog documents `log` as a
 recognised writer name for exactly this reason.
 
 **What happens if you do nothing.** The five old command names stop resolving --

@@ -23,8 +23,16 @@ up, a custom emoji reaction on a message runs both at once.
 
 It runs on your machine, uses your ledgers and never anyone else's, and by
 default only you can trigger it. It never drafts a reply and never writes your
-ledger. `judgement` may quote your ledger lines in its reply, which everyone in
-the thread then sees.
+ledger. It reads the ledger files as they are on disk -- never git history --
+so an edit you have not committed yet is already in its answers. `judgement`
+may quote your decisions in its reply, which everyone in the thread then sees.
+
+**When it cannot read a project's ledger** -- an old-format ledger that still
+needs migration, or a file written by a newer format than its copy of the
+plugin knows -- it does not answer. It posts one fixed line instead: *"I could
+not read this project's ledger, so I have not answered. Its project data needs
+attention from whoever runs me."* The fix is yours to run, not the channel's;
+`--check` names the projects it applies to.
 
 ## What it reads, and where it goes
 
@@ -64,8 +72,9 @@ reading files. Only the bot program posts.
 model to read a file it can reach and put its contents into the reply. Narrow
 that:
 
-- set `claude.working_dir` to a folder holding only your ledgers, not your
-  whole home folder (the default);
+- set `claude.working_dir` to a folder that holds your project repositories
+  but is not itself one of them, rather than your whole home folder (the
+  default);
 - keep other secrets out of the environment the bot runs in;
 - keep its tokens in environment variables or token files outside that
   folder -- a token written into `bot.yaml` sits where the model can read it
@@ -78,3 +87,16 @@ Installing the plugin downloads the bot's code and does not run it.
 [`bot/README.md`](../../bot/README.md) has the Slack app manifest and scopes,
 the configuration, running it in the background on Windows, Linux or macOS,
 and the tests.
+
+## After a Daikenja update
+
+The plugin and the bot update separately: the skills change as soon as the
+plugin updates, but the bot's own program is loaded when it starts. Update in
+this order, so the bot never reads a layout it does not know:
+
+1. Update the plugin ([Updating](install.md#updating)).
+2. Run `/daikenja:setup-user`, and migrate each project it lists.
+3. Pull the bot's checkout.
+4. Restart the bot.
+5. Run `python -m daikenja_bot --check` from `bot/`. Its `projects:` line names
+   any project whose ledger is still unreadable, and why.

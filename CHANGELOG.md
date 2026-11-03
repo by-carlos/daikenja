@@ -52,6 +52,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   correlation. A fix that shifts one is reworded to keep the source's claim,
   or dropped. Step 7 checks its own edits against the same three. The idea is
   adapted from `devswha/patina` (MIT), restated in Daikenja's own words.
+- **Two format specs for the new ledger.** `docs/decisions-format.md` is a
+  byte-identical copy of the `DECISIONS.md` format plan-staged-rollout uses,
+  so both plugins read and write the same file. `docs/open-format.md` defines
+  `.daikenja/open.md` -- open items, context links and sources -- and the
+  format-version rule for both files. `templates/DECISIONS.md` and
+  `templates/open.md` are the starting copies `project-log` scaffolds from.
+- **The Slack bot says when it cannot read a project's ledger.** When a
+  project still needs migration, or one of its files was written by a newer
+  format, `judgement` and `thread` return a fixed marker instead of a verdict.
+  The bot logs it and posts one fixed line -- that it could not read the
+  project's ledger and has not answered -- rather than an answer built on
+  nothing. `python -m daikenja_bot --check` gains a `projects:` line naming
+  each project whose ledger is unreadable, and why. The bot still reads the
+  files only, never git history, and gains no dependency.
 
 ### Changed
 
@@ -107,6 +121,108 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   behaves differently. A glossary you already have keeps its old paragraph,
   since templates only change new copies; its two sentences about skills
   searching and appending can be deleted.
+- **`daikenja.yaml` now describes a ledger kept as `DECISIONS.md` and
+  `.daikenja/open.md`.** The config contracts in `docs/` say where the two
+  files are found: `DECISIONS.md` at the root of every repository a project
+  registers, `open.md` in its home repository, which is the first path listed.
+  Reading skills read every repository's `DECISIONS.md`, not just the one you
+  are standing in. `last_checkpoint` becomes one commit SHA per repository
+  instead of a timestamp, so catchup can ask git what changed. A leftover
+  `ledger:` key, a project with no paths, or an old ledger at
+  `.daikenja/ledger.md` with no `open.md` beside it is reported as needing
+  migration, pointing at `/daikenja:setup-user`. See `docs/upgrading.md`.
+- **An old ledger migrates to `DECISIONS.md` and `open.md` on your
+  approval.** `/daikenja:setup-project` migrates one project at a time:
+  decisions still in force become `DECISIONS.md` entries, with an imposed
+  decision saying who imposed it; open items, context links and sources move
+  to `.daikenja/open.md`; superseded decisions, resolved items and the
+  Changelog are left out. Nothing is written until you approve the whole
+  migration, which also edits the project's `daikenja.yaml` entry and moves a
+  project card kept beside the old ledger. The old ledger is kept, renamed to
+  `ledger.<YYYY-MM-DD>.bak.md` beside itself. An existing `DECISIONS.md` is
+  added to, never replaced. A project with no folder moves into a git
+  repository you choose, a new folder with `git init` by default, and you are
+  told the content leaves a private folder. `/daikenja:setup-user` lists the
+  projects that need it, with the command for each. See `docs/upgrading.md`,
+  including the update order for a Slack bot install.
+- **A project with no folder now migrates all the way through.** `project-log`
+  no longer stops the migration's own write for an entry with no paths yet.
+- **`project-log` writes `DECISIONS.md` and `open.md` in one approved
+  batch.** The proposal shows every line it would add, change or delete,
+  grouped under the absolute path of the file it lands in. A decision is the
+  rule, why, and what would reopen it, filed under the area whose paths it
+  constrains -- in a multi-repository project, in the repository whose code it
+  constrains, with project-wide ones going home; an unclear placement is a
+  question. It asks for the why and the revisit condition when they are
+  missing. There are no IDs, no Changelog and no markers except a
+  `Blocked by:` prefix on an open item; closing an item deletes its line. An
+  existing `DECISIONS.md`, whoever wrote it, is adopted and added to, never
+  replaced. It refuses the whole batch when a file it would write carries a
+  newer format version, and refuses to write over an old ledger that still
+  needs migration. **It never commits:** commit the files yourself.
+- **`project-catchup` reads what changed from git.** For each repository it
+  diffs `DECISIONS.md` and `.daikenja/open.md` from the commit in your
+  checkpoint to now, and reports the change by current wording. A checkpoint
+  commit that is no longer in the history, a repository with no checkpoint,
+  or an old timestamp checkpoint makes that repository a first run, and the
+  report says why. Edits to the two files that are not committed yet are
+  listed as "not committed yet". A checkpoint value is checked to be a commit
+  hash before it reaches git. Moving the checkpoint writes the current commit
+  of each repository that changed, after your yes.
+- **`project-decisions` follows a topic through git history.** It shows the
+  entry in force now and the earlier wording it replaced, read from
+  `git log`. An imposed decision is recognised from its why clause, and an
+  open item that questions an entry is shown beside it. An ADR named as an
+  entry's source is read locally; issue and pull request links are shown,
+  never fetched.
+- **`project-gaps`, `project-summary`, `project-list` and `project-sources`
+  read the new files.** Gaps reads `open.md` and matches a `Blocked by:`
+  prefix against the other items by their words, saying when the blocker is
+  no longer open. Summary lists every repository's `DECISIONS.md`, grouped by
+  repository and then area. List reports, per repository, whether each file
+  exists, and which projects need migration. Sources reads the Sources
+  section of `open.md` and names each source by its label.
+- **`judgement`, `thread`, `meeting-review` and `preflight` read the new
+  files.** `judgement` reads every registered repository's `DECISIONS.md`;
+  every entry is in force, and two repositories that disagree are both named.
+  A decision is cited by its topic with its repository in parentheses -- "the
+  cutover-day decision (harbor)" -- and an open item as "(open item)", with no
+  IDs. `meeting-review` hands `project-log` decisions as rule and why, and
+  open items with their owner and date. `preflight`'s already-answered check
+  reads both files.
+- **`setup-project` registers git repositories only.** Projects without a
+  folder can no longer be registered: every path it writes is a git
+  repository, a plain folder is offered `git init` first, and "no folder at
+  all" is offered a new folder named after the project. For a project
+  spanning several repositories it asks which one is home and writes it
+  first. It no longer offers the `ledger` key. The project card is
+  `.daikenja/project.md` in the home repository. Seeding from ADRs, a
+  decision log or a channel proposes `DECISIONS.md` entries and `open.md`
+  items through `project-log`, one entry per decision still in force, and
+  extends an existing `DECISIONS.md` rather than replacing it. Nothing is
+  committed for you.
+- **The user guide and README describe the ledger as two files plus git
+  history.** The ledger page, your data, install, FAQ, commands, why,
+  reviewing, writing and Slack bot pages, and both diagrams, now describe
+  `DECISIONS.md` and `open.md`, where they live, that `project-log` never
+  commits, how catchup uses git, the migration and the newer-format warning.
+  The Slack bot page gains the update order after a Daikenja upgrade. The
+  word "ledger" still names the pair.
+
+### Removed
+
+- **Pathless projects are gone.** A project registered with `paths: []` and
+  an absolute `ledger:` pointer, reachable only by name, is no longer
+  supported: every project now lives in a git repository, because git holds
+  the ledger's history. The `ledger:` key goes with it; both files sit at
+  fixed paths. An existing pathless project is reported as needing migration
+  until it is moved into a repository.
+- **`docs/ledger-format.md` and `templates/ledger.md` are gone.** The
+  single-file ledger format, with its IDs, supersession chains, Changelog and
+  checkpoints, is replaced by `docs/decisions-format.md` and
+  `docs/open-format.md`. The migration procedure,
+  `docs/ledger-migration.md`, carries the little of the old grammar it needs
+  to read an old ledger.
 
 ## [0.12.0] - 2026-09-30
 

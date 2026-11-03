@@ -3,11 +3,12 @@
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
 - § Step 3: scaffold the ledger when it is missing -- project-log "Step 3: scaffold the ledger when it is missing"
-- § Mark a decision that was imposed -- project-log "Step 5: build the proposal"
-- § Record a relationship only where the source says so -- project-log "Step 5: build the proposal"
-- § Record a source -- project-log "Step 5: build the proposal"
-- § Backfilling an existing project -- project-log "Step 5: build the proposal"
-- § A meeting date handed over by `meeting-review` -- project-log "Step 5: build the proposal"
+- § Mark a decision that was imposed -- project-log "Classify before you write"
+- § Record a relationship only where the source says so -- project-log "Classify before you write"
+- § Record a source -- project-log "Classify before you write"
+- § A batch handed over by another skill -- project-log "Hard rules"
+- § Backfilling an existing project -- project-log "Check for duplicates first"
+- § A meeting date handed over by `meeting-review` -- project-log "Check for duplicates first"
 - § Failure cases -- project-log "Failure cases"
 - § What this skill does not do -- project-log "What this skill does not do"
 
@@ -17,230 +18,207 @@ nothing else reads this file.
 
 **This is not a contract two skills agree on**, which is what the rest of
 `docs/` holds. It is one skill's instructions, kept here rather than inline so
-a run that never reaches a branch never pays to read it. `SKILL.md` names the
-section to read at the point each branch opens, and a run that opens none of
-them reads none of this file.
+a run that never reaches a branch never pays to read it.
 
 **The hard rules in `SKILL.md` still govern everything here.** Nothing on this
 page licenses a write the user has not stated or approved, an invented entry,
-a repair made on this skill's own initiative, or a ledger write from another
+a repair made on this skill's own initiative, a commit, or a write from another
 skill.
+
+The two files are specified by [`decisions-format.md`](decisions-format.md) and
+[`open-format.md`](open-format.md). This page cites them and never restates
+their grammar.
 
 ## Step 3: scaffold the ledger when it is missing
 
-If the ledger file does not exist, check first whether its location is
-plausibly a project. Nothing about a missing ledger says it is -- the
-directory could just as easily be the user's home directory or a scratch
-folder they happened to be in.
+A file is scaffolded only when the batch writes to it and it does not exist:
+`DECISIONS.md` at the root of the repository the decision was placed in, or
+`.daikenja/open.md` in the home repository. A batch of open items alone never
+creates a `DECISIONS.md`, and a batch of decisions alone never creates an
+`open.md`.
 
-**The checks below run against the directory the ledger would be created in.**
-That is the project root when a `projects:` entry matched by directory, which
-for a multi-path project is the first path in the entry and need not be the
-directory you are standing in. **For an entry matched by key** (Step 2's one
-exception, a pathless project) **there is no root at all** -- the directory
-these checks run against is the parent of the resolved absolute `ledger:`
-path instead. Name that directory in every question and every refusal, so
-nobody approves a write to a folder they did not have in mind. A match does
-not excuse a check: `daikenja.yaml` is hand-editable and matching takes the
-longest prefix, so a matched project is not evidence that the directory is
-one.
+**Never over an unmigrated ledger.** `SKILL.md` Step 2 has already refused a
+home repository holding `.daikenja/ledger.md` with no `open.md` beside it. A
+`DECISIONS.md` existing there does not lift the refusal, and nothing here
+scaffolds around it. The one exception is § A batch handed over by another
+skill, for the migration.
 
-**Refuse outright** when that directory is the user's home directory (the
-real OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop. Do not
-scaffold, and do not fold this into the Step 5 proposal -- there is nothing to
-propose:
+**Never over an existing `DECISIONS.md`.** One that exists is adopted, whoever
+wrote it: entries go into it, in its own areas, and it is never replaced by the
+template. If the repository plainly keeps its current decisions in a document
+by another name, say so and ask before creating a parallel `DECISIONS.md`, per
+`decisions-format.md` § Where it lives -- and say that Daikenja reads only
+`DECISIONS.md`.
+
+**The checks run against the directory the file would be created in**, which
+for `open.md` is the home repository, not necessarily the directory you are
+standing in. Name that directory in every question and every refusal, so
+nobody approves a write to a folder they did not have in mind.
+
+**Refuse outright** when that directory is the user's home directory (the real
+OS home, e.g. `~`) or `~/.claude`. Say so in one line and stop -- there is
+nothing to propose. This is unconditional: matching takes the longest prefix
+and `daikenja.yaml` is hand-editable, so a matched project is not evidence that
+the directory is one.
 
 ```
 Won't create a ledger in <path> -- that's your home directory, not a project.
 Run this from the project you mean to log.
 ```
 
-**This refusal is unconditional**, and it applies the same way to a
-key-resolved pathless entry: a `ledger:` pointer that resolves straight into
-`~` or `~/.claude` refuses exactly like a directory match would, even though
-no directory was ever compared. A `projects:` entry matching the home
-directory does not license scaffolding there either way. Matching takes the
-longest prefix, so an entry with a path that is the home directory's parent
-makes the home directory itself resolve to a project, and `daikenja.yaml` is
-hand-editable -- so a matched project is not evidence that this directory is
-one. `setup-project` refuses to register either path for the same reason.
-
-**Otherwise, if the directory is neither a VCS root** (no `.git`) **nor
-already holds a `.daikenja/`**, it still is not obviously a project -- unless
-it is **already registered in `daikenja.yaml`**, in which case skip this check
-and go straight to the "otherwise" branch below. Registration is a deliberate
-act that settles the question these two markers only guess at, and a project
-with no repository of its own has neither marker: no `.git`, and no
-`.daikenja/` until its first log. **A pathless entry reached by key is always
-in this registered case** -- Step 2 only ever resolves one by matching it in
-`daikenja.yaml`, so this check never has to guess for it. Without this
-exemption such a project is asked to confirm itself on every first log.
-
-For an unregistered directory carrying neither marker, ask, naming the exact
-absolute path, before doing anything else -- this confirmation is separate
-from the Step 5 write approval, because it settles whether a ledger belongs
-here at all, not what goes in it:
+**Otherwise, if the directory is not a git repository** (no `.git`) **and is
+not registered in `daikenja.yaml`**, ask before anything else, naming the exact
+absolute path. This confirmation is separate from the Step 5 approval, because
+it settles whether a ledger belongs here at all:
 
 ```
-<path> doesn't look like a project (no .git, no .daikenja/). Create a ledger
-there anyway?
+<path> isn't a git repository and isn't registered. Daikenja keeps a ledger's
+history in git. Create the ledger there anyway?
 ```
 
-Wait for a yes before continuing. A no ends the run here; say nothing was
-written.
+A no ends the run; say nothing was written. A registered directory skips the
+question: registration already settled it.
 
-**Otherwise** (a VCS root, a directory that already has `.daikenja/`, or a
-registered project), say so plainly before doing anything else:
+**Otherwise** say so plainly, and fold the scaffold into the Step 5 proposal --
+one approval covers creating the file and writing the first entries:
 
 ```
-No ledger at <path>. I will create one from the Daikenja template.
+No ledger at <path>. I will create <file> from the Daikenja template.
 ```
 
-Create the parent directory, copy `${CLAUDE_PLUGIN_ROOT}/templates/ledger.md`,
-and replace `{{PROJECT}}` with the project's name: the `projects:` key if the
-project is registered, otherwise the project directory's name. Change nothing
-else in the template. The commented examples stay -- they are the format hint
-for whoever opens the file next.
+- `open.md`: copy `${CLAUDE_PLUGIN_ROOT}/templates/open.md` and replace
+  `{{PROJECT}}` with the `projects:` key, or the directory's name when
+  unregistered.
+- `DECISIONS.md`: copy `${CLAUDE_PLUGIN_ROOT}/templates/DECISIONS.md` as it
+  stands. When the repository has an ADR folder, add the `ADRs:` line under
+  the title, per `decisions-format.md` § Where it lives.
 
-Scaffolding is a write, so it needs approval like any other. Fold it into the
-Step 5 proposal: one approval covers creating the file and writing the first
-entries.
-
-A scaffolded ledger gets no Changelog line of its own. The first real write
-supplies it.
+Change nothing else in either template. After creating a `DECISIONS.md`, offer
+once to add the pointer line to the repository's agent instructions file, per
+`decisions-format.md` § The pointer line. That file is outside this skill's
+write scope, so it changes only on the user's yes, as its own change.
 
 ## Mark a decision that was imposed
 
-A decision made **outside the group keeping this ledger and binding on it** --
-a platform team's published standard, a security policy, a contract term --
-opens its body with the literal `Imposed.` followed by who imposed it, per
-`ledger-format.md` § A decision imposed from outside. Anything the group
-decided itself carries no marker; that is the ordinary case and there is
-nothing to write for it.
+A decision made **outside the group and binding on it** -- a platform team's
+published standard, a security policy, a contract term -- says so in its why
+clause: `— imposed by the programme's architecture board.` There is no marker,
+per `open-format.md` § Writing.
 
-The test is not who is named in the material, it is **whether this group could
-reopen it**. A decision the user argued for and won inside a programme is
-theirs, even though the programme published it. A standard handed down that the
-user can only comply with, seek an exemption from, or escalate is imposed. When
-the material does not settle which, ask in the proposal -- never guess, and
-never mark a decision imposed because it arrived from another team's document.
-
-`@unassigned` is the usual owner for an imposed decision, and it is not a gap.
-Do not attribute an imposed decision to whoever forwarded it.
+The test is **whether this group could reopen it**. A decision the user argued
+for and won inside a programme is theirs, even though the programme published
+it. A standard handed down that the user can only comply with, seek an
+exemption from, or escalate is imposed. When the material does not settle
+which, ask -- never conclude it from which team's document the material came
+out of.
 
 **Offer the open item, never write it.** An imposed decision creates work on
 this side -- comply, seek an exemption, escalate -- and that work is what
-`/daikenja:project-gaps` can actually audit, because it audits Open items and
-never decisions. When the material does not already name that work, offer to
-raise it in one line, saying that nobody on this side is on the hook yet and
-asking who is. On the propose-then-wait path that line goes in "Questions
-before I write". On the same-turn dictated path it goes alongside the written
-lines as an offer, exactly like Step 8's follow-up offers: the dictated
-decision still lands in that turn, and the open item is a separate write
-needing its own yes. Writing the item unasked would be inventing an entry,
-which the hard rules forbid -- and asking about it is not a reason to hold back
-the entry the user dictated.
+`/daikenja:project-gaps` audits. When the material does not already name it,
+offer in one line to raise it, saying that nobody on this side is on the hook
+yet and asking who is. On the propose-then-wait path the offer goes in
+"Questions before I write"; on the same-turn path it goes beside the written
+lines, and the dictated decision still lands. Writing the item unasked would be
+inventing an entry.
 
 ## Record a relationship only where the source says so
 
-Two relationships beyond supersession are recorded, as body markers on the
-**constrained** entry only: `Blocked by <id>.` and `Contradicts <id>.`, per
-`ledger-format.md` § Relationships between entries. The entry they name gains
-nothing -- do not edit it to mark the other side, and do not raise a second
-Changelog verb for it.
+The one relationship recorded is a block between open items: the blocked item's
+text opens with `Blocked by: <the other item, in words>.`, per `open-format.md`
+§ `Blocked by:`. The item it names gains nothing.
 
 **Write one only when the material states it.** "We can't start this until the
-exemption criteria are published" is a block. Two entries that merely look
-related to you are not, however obvious the graph seems -- inferring one
-produces a relationship nobody agreed to, and the no-invention rule outranks a
-richer record. When the material hints at a relationship without stating it,
-that is a line in "Questions before I write".
+exemption criteria are published" is a block. Two items that merely look
+related to you are not, however obvious it seems. When the material hints at a
+block without stating it, that is a line in "Questions before I write".
 
-Three more rules fall out of that:
+- **The named item must be in `open.md`.** Name it in words the reader can
+  match to one line. When none matches, or several could, ask which was meant;
+  do not write the prefix until it is settled.
+- **Adding a prefix to an item already written is an ordinary edit.**
+- **Closing the named item never rewrites the blocked one on its own.** The
+  proposal offers to drop the prefix in the same batch; the user decides.
 
-- **The ID must resolve.** A marker naming an entry this ledger does not have
-  is a broken reference the moment it is written. Name the ID in the proposal
-  if you cannot resolve it, and do not write the marker until it is settled.
-- **Adding a marker to an entry already written is an ordinary edit**, with its
-  own `~D-nnn` or `~O-nnn` Changelog verb. There is no separate verb for a
-  relationship, because there is no separate operation -- the body changed.
-- **Settling one end never rewrites the other.** Resolving `O-007` does not
-  strip `Blocked by O-007.` from `O-008`. Removing a marker is an edit the user
-  asks for, like any other.
+Nothing else is recorded as a relationship. A conflict between two decisions is
+settled before writing (`SKILL.md` § Check for duplicates first). An open item
+that questions a decision in force says so in its own words, and the decision
+stays as it is.
 
 ## Record a source
 
-A source -- a document this project is tracked from -- goes in the
-`## Sources` section as a head line plus indented field lines, per
-`ledger-format.md` § Section: Sources. Everything general is unchanged: the
-next `S-nnn` comes from the highest ever used in that section plus the
-Changelog, the write needs a dictation or an approval, and the Changelog line
-names it (`+S-nnn`, `~S-nnn`, `-S-nnn` -- never `resolved` or `superseded`).
+A source -- a document this project is tracked from -- goes in `open.md`'s
+`## Sources` section as a head line plus optional field lines, per
+`open-format.md` § Section: Sources. It needs a dictation or an approval like
+any other entry.
 
 - **Write only the fields the material supplies.** An absent field means
   unknown and stays absent. Never fetch the target to fill `modified:` in --
-  reading what a source's system reports is `/daikenja:project-sources`'s job,
-  and a refresh comes back through this skill with the values already
-  established.
-- **`modified:` and `read:` move together**, per the contract: they record
-  what the system reported when the source was last read, and when that was.
-  Neither is updated unless the source was actually read -- by the user, or
-  shown to them in a `project-sources` run -- and neither is ever today's date
-  by default.
-- **When the ledger has no `## Sources` heading**, add it directly above
-  `## Changelog` as part of the same write, and say so in the proposal (or,
-  on the same-turn path, in the confirmation). The heading is never added on
-  its own.
-- **A dictated source takes the same-turn path** under the same four
-  conditions as any entry: the fields are the user's own statement, nothing is
-  fetched, and the operation is byte-determined.
-- **The duplicate check covers sources too**, in `SKILL.md` § Check for
-  duplicates first. The same target already recorded as a source is an edit to
-  that `S-nnn`, not a second source. A context link with the same target is
-  *not* a duplicate -- the two sections record different things, and nothing
-  migrates a link into a source unless the user asks for the pair of writes.
+  that is `/daikenja:project-sources`'s job, and a refresh comes back through
+  this skill with the values already established.
+- **`modified:` and `read:` move together**, only when the source was actually
+  read -- by the user, or shown to them in a `project-sources` run. Neither is
+  ever today's date by default.
+- **A dictated source takes the same-turn path** under the same four conditions
+  as any entry.
+- **The same target already recorded as a source is an edit**, not a second
+  source. A context link with the same target is not a duplicate; nothing
+  turns a link into a source unless the user asks.
+
+## A batch handed over by another skill
+
+`setup-project`'s seed and the migration in `docs/ledger-migration.md` produce
+entries and hand them here; `meeting-review` does the same with what a
+transcript settled. Each is a `project-log via <skill>` run:
+
+- **Entries arrive classified**, with the repository each decision belongs to
+  when the handing skill knows it. Where it does not, Step 5's repository
+  question is asked like any other.
+- **Every check still runs**: the version refusal, the duplicate check against
+  what the files already hold, the keep rule, the owner check, and one approval
+  for the whole batch. A large batch may be shown and approved in tranches;
+  each tranche is its own approval.
+- **An existing `DECISIONS.md` is extended, never overwritten**, exactly as in
+  § Step 3.
+- **The migration's own batch names its targets by absolute path**, so this
+  skill does not resolve that project from the config, which is part of what
+  the migration changes. The refusals for an unmigrated ledger and for an
+  entry with no paths do not apply to this batch -- it is the run both point
+  at -- and every other check does. Both refusals apply to every other run,
+  `setup-project`'s seed included.
 
 ## Backfilling an existing project
 
-A backfill is a run whose entries are mostly older than what the ledger already
-holds -- recording a project that has history, usually reached through
-`/daikenja:setup-project`. Classification, attribution, the duplicate check and
-the approval gate are all unchanged. Three things are specific to it.
+A backfill is a run whose open items are mostly older than today -- recording a
+project that has history, usually reached through `/daikenja:setup-project`.
+Decisions carry no date, so for them a backfill changes nothing but the keep
+rule's weight: an old decision still in force is kept, one the code already
+makes plain is not.
 
-**Date each entry when its subject was decided or raised, not today.** That is
-what the date field means, and a backfill is the one situation where the two
-differ for every entry.
+**Date each open item when it was raised, not today.** That is what the field
+means, per `open-format.md` § Section: Open items.
 
 **A date the source never recorded is asked for, never invented.** If the user
-can only place it approximately, take their approximation, normalize it to the
-first day of the coarsest unit they gave ("March 2026" becomes `2026-03-01`),
-and open that entry's body with the literal `Approximate date.` followed by
-where the approximation came from. The proposal says which entries this applies
-to and what each date was derived from, so the user approves the derivation and
-not just the line. If the user cannot approximate it either, the entry is not
-written: name the ones dropped and why.
+can only place it approximately, normalize their approximation to the first day
+of the coarsest unit they gave ("March 2026" becomes `2026-03-01`), and say in
+the proposal which items this applies to and what each date was derived from,
+so the user approves the derivation and not just the line. If the user cannot
+approximate it either, the item is not written: name the ones dropped and why.
 
-**Say what the dates do to the audit before the write.** Entries dated to their
+**Say what the dates do to the audit before the write.** Items dated to their
 origin are older than `stale_after_days` the moment they land, so
-`/daikenja:project-gaps` reports the open ones on its next run. That surprises
-people and it is the audit working.
+`/daikenja:project-gaps` reports them on its next run. That surprises people
+and it is the audit working.
 
 ## A meeting date handed over by `meeting-review`
 
-A run entered via `project-log via meeting-review` carries the meeting's own
-date in the handoff, or states that the transcript never gave one. Treat a
-handed-over meeting date exactly like a date the user supplied directly: it is
-the entry's date field for everything this run writes, not today's date
-pulled from the environment. This is not the backfill path above -- the
-writer stays `project-log via meeting-review`, and nothing else about
-backfilling applies -- but the reason is the same one: the date field means
-when the thing happened, and a meeting reviewed after the fact is exactly the
-case where that differs from today.
+A `project-log via meeting-review` run carries the meeting's own date, or
+states that the transcript never gave one. A handed-over date is the date of
+every open item the run writes, exactly as if the user had supplied it.
+Decisions carry no date and are unaffected.
 
-**No meeting date was handed over** is treated as an entry whose date cannot
-be established, per the failure case below: ask for it, and an approximation
-is a real answer, written with the `Approximate date.` marker. Never invent
-one and never fall back to today.
+**No meeting date** is an item whose date cannot be established: ask for it. An
+approximation is a real answer, handled as in § Backfilling an existing
+project. Never invent one and never fall back to today.
 
 ## Failure cases
 
@@ -249,48 +227,54 @@ missing thing is the task itself.
 
 | Situation | What to do |
 |---|---|
-| `daikenja.yaml` absent | One notice, then continue on the defaults (`.daikenja/ledger.md`, owner `@unassigned` unless the user names one). Do not stop. |
-| `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
-| A named project key matches no entry | **Stop.** Name the key, list the registered keys, and write nothing. Never fall back to directory matching. |
-| A named project key matches an entry that has paths | **Refuse.** Name the key and say logging against it means running from one of its own directories. Never fall back to directory matching -- the named key is decisive. |
-| A named project key matches a pathless entry whose `ledger:` is relative or absent | **Stop.** Name the key and say it has no path and no absolute ledger, so it has no location. Never invent one. |
-| Ledger missing and the directory it would be created in is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Name the path and say why. Unconditional -- a matching `projects:` entry does not license it, and neither does a key-resolved pathless entry whose `ledger:` lands there. |
-| Ledger missing and the directory it would be created in is neither a VCS root nor already has `.daikenja/` | One question, naming the absolute path, before scaffolding. Wait for yes before continuing. Skipped when the project is already registered -- which a key-resolved pathless entry always is. |
-| Project unregistered | One line naming `/daikenja:setup-project`, per Step 2, then carry on with the ledger. |
-| Ledger path unreadable or not writable | **Stop.** Name the path and the error. Do not fall back to another location and do not write the entries somewhere else. |
-| Ledger missing one of the four original H2 sections | **Stop.** Name the missing section. Offer to add the empty heading as its own approved write. Do not write entries into a file whose shape you had to guess. Report any other defect already seen while reading the whole ledger alongside the stop -- the run still writes nothing. |
-| Ledger has no `## Sources` heading and the run records a source | Not a missing section -- the heading is optional until the first source. Add it directly above `## Changelog` as part of the same write, and say so. |
-| A line inside a section does not match the grammar | Report it -- name the line and what is wrong -- then continue with the rest. A line indented two or more spaces with no list marker is a continuation, not an error. |
-| A Changelog ID resolves to no entry | One line saying so, then continue. Somebody deleted an entry by hand. Do not rewrite the Changelog. |
-| Supersession marked on only one of the two entries | Report the mismatch, naming both IDs. The tail is authoritative. Do not repair it as a side effect of another write. |
-| A relationship the material implies but never states | One line in "Questions before I write" naming both entries. Never write the marker on your own reading of the material. |
-| A `Blocked by` or `Contradicts` the user asks for, naming an ID this ledger does not have | Do not write it. Name the ID in the proposal and ask which entry was meant. A marker written against a missing ID is a broken reference from the moment it lands. |
-| An existing entry already carries a marker naming a missing ID | Report it -- which entry, which ID -- then continue with the write, per `ledger-format.md` § Reading rules, rule 6. Repairing it is a separate write with its own approval. |
-| The material does not settle whether a decision was imposed or made here | Ask, in one line in the proposal. Never infer it from which team's document the material came out of. |
-| An entry's date cannot be established | Ask for it. An approximation is a real answer and is written with the `Approximate date.` marker. Never invent one, and never fall back to today. If the user cannot approximate it, drop that entry and say so. |
-| An owner handle appears neither in this ledger nor in `personas.md` | One line in the proposal naming the handle, and the near miss if there is one. Never a block, never a rewrite of the handle. |
-| `personas` is not configured, or its local file is missing | Check the ledger alone, with one notice saying the comparison was narrower for it. Not an error -- the file is optional prose, not a roster. |
-| `personas` is a `drive:` pointer that does not resolve, or reads back empty | **Stop** before writing, per `config-resolution.md` § Failure behavior. Show the lines that would have been written so the user keeps them, say nothing was written, and never fall back to a local file. Reached only when a run has a handle this ledger does not already know. |
-| Nothing in the material is worth logging | Say so and write nothing. An empty ledger is better than a padded one. |
+| `daikenja.yaml` absent | One notice, then continue on the defaults: the current directory is the one root, owner `@unassigned` unless the user names one. |
+| `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never rewrite the file. |
+| A named project key matches no entry | **Stop.** Name the key, list the registered keys, write nothing. Never fall back to directory matching. |
+| A named project key matches an entry | **Refuse.** Name the key and say logging against it means running from one of its own directories. |
+| The project's entry is `paths: []` or has no path | **Stop** with the "needs migration" line from `reading.md` § Notices, shared wording. |
+| The entry still has a `ledger:` key | One line naming the key and `/daikenja:setup-user`, then continue with the fixed paths. |
+| `.daikenja/ledger.md` at home with no `open.md` beside it | **Refuse** with the "needs migration" line. Scaffold nothing and write nothing, whether or not a `DECISIONS.md` exists. Not applied to the migration's own batch. |
+| Either file carries a newer format version | **Refuse the whole batch.** Name the file and version, ask for a plugin update, cite `${CLAUDE_PLUGIN_ROOT}/docs/open-format.md`. Nothing is written to either file. |
+| A file has no version line | Read it as version 1; the proposal adds the line. |
+| A version line does not parse | Report it, read the file as version 1, and the proposal replaces the line with the correct one. |
+| A file to write is missing and its directory is the home directory or `~/.claude` | **Stop.** Refuse to scaffold. Unconditional. |
+| A file to write is missing and its directory is neither a git repository nor registered | One question naming the absolute path. Wait for yes. |
+| A repository has a current-decisions document under another name | Ask before creating a parallel `DECISIONS.md`. |
+| A file is unreadable or not writable | **Stop.** Name the path and the error. Never write the entries somewhere else. |
+| `open.md` is missing one of its three H2 sections | **Stop.** Name it. Offer to add the empty heading as its own approved write. Report any other defect seen while reading, and write nothing. |
+| A `DECISIONS.md` area has no `Paths:` line | Report it. Still add to that area when the user places an entry there; never add the line unasked. |
+| A line does not match its file's grammar | Report it -- which line, what is wrong -- then continue. An indented continuation line is not an error. |
+| A decision's repository cannot be told from its paths | Ask which repository's `DECISIONS.md`, in "Questions before I write". Never write it to two. |
+| A decision's why or revisit condition is not in the material | Ask. Never fill it in. |
+| A decision conflicts with one in force | Ask which holds. Write the answer, never the conflict. |
+| A `Blocked by:` the material implies but never states | One line in "Questions before I write". |
+| A `Blocked by:` naming no item in `open.md`, or several | Do not write it. Ask which item was meant. |
+| An existing item's `Blocked by:` names an item no longer there | Report it as a block on an item that is no longer open, then continue. Dropping it is a separate approved write. |
+| The material does not settle whether a decision was imposed | Ask, in one line. |
+| An open item's date cannot be established | Ask. An approximation is a real answer. Never invent one, never fall back to today; if the user cannot approximate it, drop the item and say so. |
+| An owner handle appears neither in `open.md` nor in `personas.md` | One line in the proposal naming it and any near miss. Never a block, never a rewrite. |
+| `personas` is not configured, or its local file is missing | Check `open.md` alone, with one notice that the comparison was narrower. |
+| `personas` is a `drive:` pointer that does not resolve | **Stop** before writing, per `config-resolution.md` § Failure behavior. Show the lines that would have been written, say nothing was written, never fall back to a local file. Reached only when a handle is not in `open.md`. |
+| Nothing in the material is worth logging | Say so and write nothing. |
 
 ## What this skill does not do
 
+- It does not commit, stage or push. The files change in the working tree and
+  the user commits them; `/daikenja:project-catchup` lists them as not
+  committed yet.
 - It does not summarize a thread for reading. That is `/daikenja:thread`.
 - It does not report what changed since last time. That is
-  `/daikenja:project-catchup`.
+  `/daikenja:project-catchup`, from git history.
 - It does not check whether a source moved, and it never fetches a source's
-  target. That is `/daikenja:project-sources`, which reads and reports --
-  and, when the user records a refresh, writes it through this skill.
+  target. That is `/daikenja:project-sources`.
+- It does not write an ADR, or the pointer line in an agent instructions file.
+  It may offer either; the user does it, or says yes to it as its own change.
 - It does not write `daikenja.yaml`. `/daikenja:setup-user` owns the `profile:`
-  block, `/daikenja:setup-project` owns a project's `projects:` entry, and
+  block, `/daikenja:setup-project` owns a project's entry, and
   `last_checkpoint` belongs to `project-catchup`.
-- It does not archive, prune or trim anything on a schedule. Old resolved items
-  stay until a human asks for them to go.
-- It does not write `personas.md`. It reads that file to check a handle and may
-  offer `/daikenja:remember-persona`, which owns every content write to it.
-- It does not validate an owner handle. There is no list of legal owners, no
-  rejection and no correction -- only the notice in Step 5.
-- It does not build a relationship graph. It writes the markers the material
-  states, on one entry each, and never sweeps the ledger looking for entries
-  that ought to be linked or for markers that ought to be retired now that
-  what they name is settled.
+- It does not migrate an old ledger. `/daikenja:setup-user` starts that, and
+  the migration hands its batch here.
+- It does not write `personas.md` or validate an owner handle. It reads that
+  file to check a handle and may offer `/daikenja:remember-persona`.
+- It does not sweep either file for entries to link, merge, retire or reorder.
+  It writes what the batch says and nothing else.

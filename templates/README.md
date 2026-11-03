@@ -2,19 +2,22 @@
 
 Files Daikenja copies into a user's own directories. Nothing here is read at
 runtime from this location -- `setup-user` copies a template out to
-`~/.claude/daikenja/`, `project-log` scaffolds the ledger into a project's
-`.daikenja/` directory, and `setup-project` scaffolds the project card beside
-it. The copies are the live files; these are only the
-starting points.
+`~/.claude/daikenja/`, `project-log` scaffolds the ledger -- `DECISIONS.md` at a
+repository's root and `.daikenja/open.md` in the home repository -- and
+`setup-project` scaffolds the project card beside `open.md`. The copies are the
+live files; these are only the starting points.
 
 - [`daikenja.yaml`](daikenja.yaml) -- the config template `setup-user` copies to
   `~/.claude/daikenja/`. Schema: [`../docs/config-schema.md`](../docs/config-schema.md).
-- [`ledger.md`](ledger.md) -- the empty ledger `project-log` scaffolds into a
-  project's `.daikenja/`, with `{{PROJECT}}` replaced by the project name. Format:
-  [`../docs/ledger-format.md`](../docs/ledger-format.md).
+- [`DECISIONS.md`](DECISIONS.md) -- the empty decisions file `project-log`
+  scaffolds at a repository's root, copied as it stands. Format:
+  [`../docs/decisions-format.md`](../docs/decisions-format.md).
+- [`open.md`](open.md) -- the empty open-items file `project-log` scaffolds
+  into the home repository's `.daikenja/`, with `{{PROJECT}}` replaced by the
+  project name. Format: [`../docs/open-format.md`](../docs/open-format.md).
 - [`project.md`](project.md) -- the empty project card `setup-project`
-  scaffolds beside a project's ledger, with `{{PROJECT}}` replaced by the
-  project name. Format: [`../docs/project-card.md`](../docs/project-card.md).
+  scaffolds at `.daikenja/project.md` in the home repository, beside `open.md`,
+  with `{{PROJECT}}` replaced by the project name. Format: [`../docs/project-card.md`](../docs/project-card.md).
 - [`personas.md`](personas.md) and [`writing-style.md`](writing-style.md) -- the
   prose templates a user fills in and points at from `daikenja.yaml`. The
   pointer may name a local file or a Google Drive file; `setup-user` writes the
