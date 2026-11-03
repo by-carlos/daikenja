@@ -7,7 +7,7 @@ For each `Depends-on (reverse index ...):` heading whose own body text changed,
 where the reverse index names a skill whose SKILL.md was NOT also touched in
 the same PR, this posts one warning line into a single batched PR comment:
 
-    docs/ledger-format.md § Body markers changed but project-catchup/SKILL.md
+    docs/open-format.md § Section: Open items changed but project-gaps/SKILL.md
     (which cites it) wasn't touched in this PR -- check the citation still
     holds.
 

@@ -694,7 +694,7 @@ commands, not of data. Five skills gained a `project-` prefix:
 
 Ledger Changelog lines written before 0.3.0 name their writer `log` rather than
 `project-log`. Those lines are correct as they stand and are read correctly:
-[`ledger-format.md`](ledger-format.md) § Section: Changelog documents `log` as a
+`docs/ledger-format.md` § Section: Changelog documents `log` as a
 recognised writer name for exactly this reason.
 
 **What happens if you do nothing.** The five old command names stop resolving --

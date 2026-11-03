@@ -38,9 +38,12 @@ mode. They are also in `CLAUDE.md`; that copy is authoritative.
 - **`templates/` files are copied to a user's machine and never edited by the
   plugin afterwards.** A change there affects only new copies, never existing
   installs.
-- **`docs/ledger-format.md` defines a parsing contract that existing ledger
-  files depend on.** Treat the field separator and the split bound as **frozen**
-  unless an issue explicitly scopes a format change.
+- **`docs/decisions-format.md` and `docs/open-format.md` define the parsing
+  contract that existing ledger files depend on.** Treat each file's version
+  line and the `open.md` item line -- its ` -- ` separator and two-split bound
+  -- as **frozen** unless an issue explicitly scopes a format change.
+  `decisions-format.md` is a byte-identical copy of plan-staged-rollout's spec:
+  never edit it here.
 - **Test fixtures must stay synthetic.** `tests/fixtures/` uses invented
   projects, invented people, and `example.com` links. **Never** put real work
   content, personal data, or organization data there. There is no test runner

@@ -63,9 +63,13 @@ maintainer's Code Owner approval.
   and [`docs/config-resolution.md`](docs/config-resolution.md) § Voice and
   writing style fixes how a user's own `writing-style.md` layers on top of it.
   Read both before changing either.
-- **Ledger format.** [`docs/ledger-format.md`](docs/ledger-format.md) is a
-  parsing contract that existing ledger files depend on. The field separator and
-  the split bound are frozen unless an issue explicitly scopes a format change.
+- **Ledger format.** [`docs/decisions-format.md`](docs/decisions-format.md)
+  and [`docs/open-format.md`](docs/open-format.md) are the parsing contract that
+  existing ledger files depend on. Each file's version line and the `open.md`
+  item line -- its ` -- ` separator and two-split bound -- are frozen unless an
+  issue explicitly scopes a format change. `decisions-format.md` is a
+  byte-identical copy of plan-staged-rollout's spec: change it upstream, then
+  copy it.
 - **Templates.** Files under `templates/` are copied to a user's machine and
   never edited by the plugin afterwards, so a change there affects only new
   copies.
@@ -85,9 +89,9 @@ maintainer's Code Owner approval.
   lines, the change should include a split review: does it divide along
   read/write or per-skill lines with zero duplicated sentences, the way the
   #130 split of the config docs did? The outcome is allowed to be "no split" --
-  this is a prompt to look, not a size cap. `docs/ledger-format.md` growing 328
-  to 773 lines in two days while seven skills read it in full (measured on
-  #117) is the case that motivated this.
+  this is a prompt to look, not a size cap. The old single-file ledger spec
+  growing 328 to 773 lines in two days while seven skills read it in full
+  (measured on #117) is the case that motivated this.
 - **`SKILL.md` size.** CI's `validate` job runs `tests/check-skill-size.py` on
   every pull request: if a `skills/*/SKILL.md` you touch reaches 2x its size at
   the last release tag, it posts a comment on the PR naming the file, the

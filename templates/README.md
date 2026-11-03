@@ -9,9 +9,6 @@ live files; these are only the starting points.
 
 - [`daikenja.yaml`](daikenja.yaml) -- the config template `setup-user` copies to
   `~/.claude/daikenja/`. Schema: [`../docs/config-schema.md`](../docs/config-schema.md).
-- [`ledger.md`](ledger.md) -- the old single-file ledger, no longer scaffolded
-  by any skill. Kept until its format document is retired. Format:
-  [`../docs/ledger-format.md`](../docs/ledger-format.md).
 - [`DECISIONS.md`](DECISIONS.md) -- the empty decisions file `project-log`
   scaffolds at a repository's root, copied as it stands. Format:
   [`../docs/decisions-format.md`](../docs/decisions-format.md).
