@@ -5,46 +5,80 @@
 > **In short:** optional. Tensei is the Daikenja way of working, for every
 > Claude Code session on your computer -- not only Daikenja's. Answers lead
 > with the finding, push back on a wrong premise and say how sure they are;
-> design advice lists every option, ranked; and nothing others can see goes
-> out without your yes. `/daikenja:tensei` shows what will change and asks
+> design advice lists every option, ranked, and a lasting design is reviewed
+> before you see it; advice respects what your project's ledger already
+> decided; and nothing others can see goes out without your yes. `/daikenja:tensei` shows what will change and asks
 > once.
 
 ## The difference, side by side
 
 The same request, made twice. Both answers are illustrations written for this
-page, not captured sessions; the first is a deliberately familiar shape:
-long, confident, one plan -- and it keeps growing.
+page, not captured sessions. The first is a familiar shape: nothing in it is
+wrong, and the right check is even in there -- buried mid-paragraph, under
+everything else the model knows, with the risk mentioned after the commands
+that cause it.
 
 > *Our website has got slow. Let's move it to a bigger server.*
 
 <details>
-<summary><b>Without Tensei</b> -- long, certain, escalating, no questions (click to expand)</summary>
+<summary><b>Without Tensei</b> -- everything at once, the key check buried, the risk last (click to expand)</summary>
 
-> Great idea! Moving to a bigger server is a solid way to speed up your site
-> and prepare for growth. Here's a step-by-step plan:
+> Great question, and a very reasonable instinct! Upsizing can definitely
+> help, and it's usually the quickest lever to pull, but whether it actually
+> fixes things depends a lot on where the slowness is coming from. Websites typically get slow for a handful of reasons: the
+> server itself is out of CPU or memory (in which case a bigger instance helps
+> directly), the database is struggling with unindexed queries or too many
+> connections, large unoptimized images and JavaScript bundles are making
+> pages heavy, there's no caching layer so every request is rendered from
+> scratch, or a third-party script is blocking the page. It could also be
+> network latency if most of your users are far from where the server is
+> hosted. A quick way to get a sense of it is to check load on the box:
 >
-> 1. **Choose a larger machine** -- for example, go from 2 CPUs and 4 GB of
->    memory to 8 CPUs and 32 GB.
-> 2. **Snapshot the current server** so you can roll back.
-> 3. **Create the new server** from the snapshot and test it.
-> 4. **Point your domain at the new server** and wait for DNS to update.
-> 5. **Shut down the old one** once traffic has moved.
->
-> For future scale, you should also put a **load balancer** in front of two
-> or more servers, so traffic is shared and one failure does not take the
-> site down. And as you grow, consider moving to **Kubernetes**, so the site
-> scales up and down automatically:
->
-> ```yaml
-> apiVersion: autoscaling/v2
-> kind: HorizontalPodAutoscaler
-> spec:
->   minReplicas: 2
->   maxReplicas: 10
+> ```bash
+> uptime
+> free -h
+> top -o %CPU
 > ```
 >
-> With this in place, your website will be much faster and ready for any
-> amount of traffic. Want me to start the migration?
+> If the load average is consistently above the number of cores, the server
+> is likely the bottleneck. If not, it's probably something else, though it's
+> also worth turning on the slow query log if you're on MySQL:
+>
+> ```sql
+> SET GLOBAL slow_query_log = 'ON';
+> SET GLOBAL long_query_time = 1;
+> ```
+>
+> In terms of alternatives, there are a few directions depending on your
+> setup and budget. You could scale vertically, which is what you're
+> suggesting -- simple, but it has a ceiling. You could scale horizontally
+> behind a load balancer, which gives you redundancy too but needs the app to
+> be stateless (sessions in Redis rather than on disk, for example). A CDN
+> like Cloudflare or CloudFront would offload static assets and could make a
+> big difference for far-away users, and Varnish or a Redis object cache
+> would help if pages are expensive to generate. If you're on WordPress, a
+> caching plugin is often the single biggest win. Longer term, containerizing
+> and moving to a managed platform with autoscaling (ECS, Kubernetes, or
+> something like Render or Fly.io) would let you absorb spikes without
+> overprovisioning, though that's a bigger lift.
+>
+> Given all that, I'd say the best approach is probably a combination: go
+> ahead with the bigger server now since it's low-risk and buys you headroom,
+> put a CDN in front for the static assets, and then profile the application
+> to find any slow queries or endpoints. Here's what the resize would look
+> like on AWS:
+>
+> ```bash
+> aws ec2 stop-instances --instance-ids i-0abc123
+> aws ec2 modify-instance-attribute --instance-id i-0abc123 \
+>   --instance-type '{"Value": "m5.2xlarge"}'
+> aws ec2 start-instances --instance-ids i-0abc123
+> ```
+>
+> Keep in mind that stopping the instance takes the site offline for a few
+> minutes, and if you're not using an Elastic IP the public IP will change,
+> so you'd need to update DNS. Let me know if you'd like me to go ahead with
+> the resize, set up the CDN, or dig into the database first!
 
 </details>
 
@@ -71,17 +105,23 @@ long, confident, one plan -- and it keeps growing.
 > Constraints: the budget is a setting you control; that the site is one
 > server you can resize is assumed.
 >
+> Reviewed for simplicity, architecture and operations -- no change.
+>
 > ❓ **Query:** slow all the time, or only at busy hours? Busy hours points at
 > the server.
 
 </details>
 
-What changed: the risk is labelled before anything else; the request was
-checked before it was followed; each option says whether it is checked or
-assumed, and the constraints are named; the move you asked for is still on
-the list, ranked against cheaper fixes; and the one question that separates a
-page problem from a server problem comes last. (In a real session that
-question comes as buttons.) Nothing escalated to Kubernetes.
+What changed: no opening praise; the downtime risk opens the answer instead of trailing the
+commands that cause it, and nothing calls the move "low-risk" first; the
+check that was buried mid-paragraph is now the first thing to do; nothing
+assumes AWS, MySQL or WordPress you never mentioned; each option says whether
+it is checked or assumed, and the constraints are named; the move you asked
+for is still on the list, ranked against cheaper fixes instead of bundled
+with them; because hosting is a lasting decision, the ranking was reviewed
+before you saw it; and the closing menu of three things to do is replaced by
+the one question that separates a page problem from a server problem. (In a
+real session that question comes as buttons.)
 
 ## What it changes
 
@@ -119,6 +159,12 @@ without the earlier conversation.
 
   An action against live systems or data outside your project folder opens
   with a **SAFE / RISKY / DESTRUCTIVE** label, above the command.
+- **One question, with its context.** It asks only when the answer changes
+  what happens next, says what is being decided and what each choice
+  changes, and offers short answers as buttons.
+- **Suggestions lead with the idea and are made once.** The first clause
+  carries the whole suggestion so you can drop it while skimming; a no
+  closes it for the session.
 
 **Design advice**
 
@@ -135,6 +181,18 @@ without the earlier conversation.
   changes the advice, and a warning when the design cannot work. Routine
   choices get no review.
 
+**Your project's record**
+
+- **Advice starts from what is already decided** -- the project's ledger,
+  what you said earlier in the session -- and names a recorded decision it
+  goes against ("the ledger says schema changes are frozen until the
+  rollout completes") instead of quietly overriding it. Nothing the ledger already answers is asked again.
+- **Work conversations go to the matching Daikenja skill** -- a pasted
+  thread, a meeting transcript, a document up for review -- rather than an
+  improvised version of its job, and a decision worth keeping gets one offer
+  to log it. In coding, only lasting decisions get that offer.
+- Plain questions get none of this, and without a ledger it stays silent.
+
 **Working practice**
 
 - **Anything others can see needs your explicit yes, every time** --
@@ -145,6 +203,8 @@ without the earlier conversation.
   short digest.
 - **A fix you would have to repeat next week is treated as a symptom**, and
   it keeps looking for what actually broke.
+- **The smallest change that works.** A plan in one to three lines before a
+  non-trivial edit, then the edit -- no unasked renaming or cleanup.
 
 Your own `CLAUDE.md` still wins wherever the two differ. The full text is
 [`templates/tensei.md`](../../templates/tensei.md).

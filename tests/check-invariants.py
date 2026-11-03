@@ -57,6 +57,7 @@ and printing all failures found.
 """
 
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -104,8 +105,15 @@ def fail(invariant, location, detail):
 
 
 def check_plugin_validate():
+    # shutil.which honours PATHEXT, so on Windows it finds claude.cmd, which
+    # subprocess cannot launch from the bare name "claude".
+    claude = shutil.which("claude")
+    if claude is None:
+        fail("a: claude plugin validate", str(REPO_ROOT), "claude is not on PATH")
+        return
     result = subprocess.run(
-        ["claude", "plugin", "validate", "."],
+        [claude, "plugin", "validate", "."],
+        check=False,
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
