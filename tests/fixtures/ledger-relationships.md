@@ -116,10 +116,11 @@ User message:
 > What's still open on lattice?
 
 Expected, with today 2026-09-15 and a 21-day threshold, in `project-gaps`'
-report shape:
+report shape (its Step 4), the closed blocker in `reading.md` § Notices,
+shared wording:
 
 ```
-Gaps in lattice (stale_after_days: 21, using the profile default)
+Gaps in lattice (stale_after_days: 21, using the profile default) -- ownership and staleness, not severity
 
 Unowned (2)
 - Decide whether the gateway can use long-lived client certificates -- 2026-06-02 (105 days, also stale)
@@ -129,9 +130,11 @@ Stale (6, older than 21 days)
 - Decide whether the gateway can use long-lived client certificates -- 2026-06-02 (105 days, also unowned)
 - Decide the rate-limit thresholds per tenant -- 2026-08-02 (44 days)
 - Get the architecture board's exemption criteria in writing -- 2026-08-17 (29 days, also unowned)
-- Size the audit-log volume the reporting API will add -- 2026-08-19 (27 days) -- blocked by getting the exemption criteria in writing, still open
+- Size the audit-log volume the reporting API will add -- 2026-08-19 (27 days)
+  -- blocked by the exemption criteria in writing (still open, since 2026-08-17)
 - Decide whether health-check traffic can stay out of the shared audit log -- 2026-08-21 (25 days)
-- Publish the exemption request to the architecture board -- 2026-08-22 (24 days) -- blocked by confirming which forum publishes the standards, which is no longer open
+- Publish the exemption request to the architecture board -- 2026-08-22 (24 days)
+  -- "Publish the exemption request to the architecture board" is blocked by "which programme forum publishes the standards", which names an item no longer open.
 ```
 
 Four things this walk fixes:
