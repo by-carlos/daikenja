@@ -141,8 +141,13 @@ rule. Do not file without reading it.
 - **Ledger format.** `docs/ledger-format.md` defines a parsing contract that
   existing ledger files depend on. Treat the field separator and the split bound
   as frozen unless an issue explicitly scopes a format change.
-- **Templates.** Files under `templates/` are copied to a user's machine and
-  never edited by the plugin afterwards. Changes there affect only new copies.
+- **Templates.** Files under `templates/` are copied to a user's machine. Most
+  are starting points the plugin never edits afterwards, so changes there
+  affect only new copies. Two are maintained content that `/daikenja:tensei`
+  can update in place: `tensei.md`, when the installed copy has no hand
+  edits, and `plan-review-lenses.md`. The second is also a byte-identical copy
+  of a `by-carlos/plan-staged-rollout` file, pinned in `tests/vendored.json`:
+  never edit it here; re-sync it with `python tests/check-vendored.py --resync`.
 - **User docs move with the change.** The README is a landing page; the
   detail lives in `docs/guide/`. A change to anything a user sees -- a
   skill's name, what it writes or asks before writing, whether it runs from
