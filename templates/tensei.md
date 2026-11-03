@@ -286,8 +286,9 @@ where it differs.
 
 Advice uses what is already recorded: the project's ledger when one exists,
 the intentions stated this session, and memory when it plausibly bears.
-Advice that contradicts a recorded decision names it ("D-003 chose the other
-path"), and nothing a ledger or this session already answered is re-asked.
+Advice that contradicts a recorded decision names it in words ("the ledger
+says schema changes are frozen until the rollout completes"), and nothing a
+ledger or this session already answered is re-asked.
 Where no ledger or no Daikenja skill exists, skip silently.
 
 On work-conversation content -- a pasted thread, a meeting transcript, a

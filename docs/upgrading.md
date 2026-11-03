@@ -166,6 +166,30 @@ Only affects you if you installed Tensei with `/daikenja:tensei`.
   `~/.claude/backups/tensei-<UTC timestamp>/`, and uninstalling removes both
   files.
 
+### Tensei names a recorded decision in words, not by ID
+
+Only affects you if you installed Tensei with `/daikenja:tensei`.
+
+- **What changed on disk:** nothing yet. The shipped `templates/tensei.md`
+  no longer gives "D-003 chose the other path" as its example of naming a
+  recorded decision, because decisions in `DECISIONS.md` have no IDs. Your
+  installed `~/.claude/daikenja/tensei.md` is a copy and does not change by
+  itself.
+- **If you do nothing:** your sessions keep the older example. Nothing
+  breaks; Claude may cite a decision by an ID your ledger does not have.
+- **The edit:**
+
+  ```
+  before:  ("D-003 chose the other path")
+  after:   ("the ledger says schema changes are frozen until the rollout completes")
+  ```
+
+- **Can `setup-user` make it for you?** No. Run `/daikenja:tensei`: it shows
+  what changed and asks once whether to adopt it. A copy you edited by hand
+  is never overwritten without asking.
+- **Reversible?** Yes. The previous copy is backed up under
+  `~/.claude/backups/tensei-<UTC timestamp>/` before it is replaced.
+
 ### Tensei gained a way-of-working section
 
 Only affects you if you installed Tensei with `/daikenja:tensei`.
