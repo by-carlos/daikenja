@@ -1,17 +1,18 @@
 ---
 name: tensei
-description: 'Installs, updates, or removes the Tensei conversational persona (~/.claude/daikenja/tensei.md) and its CLAUDE.md import line, diffing an existing copy and backing up anything it would overwrite.'
+description: 'Installs, updates, or removes Tensei, the Daikenja way of working (~/.claude/daikenja/tensei.md): how answers are shaped, how designs are recommended, and how the work behind them is done. Shows what changes, asks once to adopt it, adds the CLAUDE.md import line, and backs up anything it would overwrite.'
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
   writes: ~/.claude/daikenja/tensei.md, an import line appended to ~/.claude/CLAUDE.md, ~/.claude/daikenja/.tensei-manifest.json, backups under ~/.claude/backups/tensei-<UTC timestamp>/
 disable-model-invocation: true
 ---
 
 # Tensei
 
-Install or reconcile the Tensei persona -- the answer-shaping, markers and
-register document at `~/.claude/daikenja/tensei.md`, imported by a
+Install or reconcile Tensei -- the way-of-working document at
+`~/.claude/daikenja/tensei.md` (answer shape, markers and register, how a
+design is recommended, and working practice), imported by a
 `@~/.claude/daikenja/tensei.md` line at the end of `~/.claude/CLAUDE.md` -- on
 the machine this session is running on.
 
@@ -23,7 +24,8 @@ governs every session on the machine. Nothing about "set up my persona" or
 enforces that.
 
 **Not part of `daikenja.yaml`, and no dependency on `setup-user`.** Tensei
-governs conversation, not deliverables -- it is a different contract from
+governs conversation and how the session works, not deliverables -- it is a
+different contract from
 `voice.md` and unrelated to the `profile:` block, `personas.md`, or
 `writing_style`. A user can run this skill with no Daikenja configuration on
 disk at all, so it carries its own environment gate (Step 0) rather than
@@ -90,14 +92,25 @@ One report before asking anything:
 
 | State | Say |
 |---|---|
-| `new` | Not installed here -- propose installing it. |
+| `new` | Not installed here -- show the adoption summary below, then propose adopting it. |
 | `unchanged` | Nothing to do for the file. |
-| `update` | Installed copy is untouched since last install and the payload moved -- propose a clean update, and show the diff (`diff <installed> <shipped>` or equivalent). |
+| `update` | Installed copy is untouched since last install and the payload moved -- show the adoption summary for what changed, then propose a clean update; the full diff (`diff <installed> <shipped>` or equivalent) on request. |
 | `local-edit` | The user edited the installed copy by hand and the payload did not move -- propose leaving it, report it once. Never install over it silently. |
 | `conflict` | Both moved, or there is no manifest to tell the two apart -- show the diff, offer to overwrite or leave it, never install silently. |
 
 A `local-edit` or `conflict` an install would discard is named plainly -- the
 backup in Step 4 is the only place the discarded version survives.
+
+**The adoption summary.** Adopting Tensei changes how every session on the
+machine behaves, so the user sees what they are agreeing to before the
+gate. Read the shipped `templates/tensei.md` and write five to eight plain
+lines, one per section, each saying what the agent will do differently --
+"leads with the finding and stops, pushing back first when the premise is
+wrong", not "applies the discipline section". For an `update`, summarize
+only the sections whose text changed. Build it from the shipped file every
+time, never from memory or a stored copy, so the summary cannot drift from
+what is installed. Close with one line: the user's own `CLAUDE.md` still
+wins wherever the two differ.
 
 Report the import line's presence in the same pass: missing -- propose adding
 it alongside a file install. A bare import line with no file behind it is
@@ -115,22 +128,27 @@ line. Declining is fine and leaves everything as it was.
 
 ## Step 3: the gate
 
-One closed question. The question text carries the state and whether the
-import line will be added -- Step 2 already delivered the detail in its own
-turn.
+One closed question, and installing is the acknowledgement: there is no
+separate consent step. The question is "Adopt this way of working?" for a
+`new` install and "Adopt the updated way of working?" for an `update`; it
+also says whether the import line will be added. Step 2 already delivered
+the summary in its own turn.
 
-Options, at minimum:
+Options -- on a clean `new` or `update` only the first and last appear:
 
-- **Install (Recommended)** -- writes the file (`new`/`update`) and the
+- **Adopt (Recommended)** -- writes the file (`new`/`update`) and the
   import line if missing. Never touches a `local-edit` or `conflict` file.
-- **Install and overwrite my local edit** -- offered only when the state is
+- **Adopt and overwrite my local edit** -- offered only when the state is
   `local-edit` or `conflict`; say plainly that the local version is backed
   up, not discarded outright.
 - **Record the manifest only** -- offered only in the adoption case above;
   writes `.tensei-manifest.json` and nothing else.
-- **Nothing** -- stop, write nothing.
+- **Not now** -- stop, write nothing.
 
-**Never write without an explicit yes.**
+**Never write without an explicit yes.** The manifest Step 4 writes --
+which version was installed (`installed_hash`) and when (`installed_at`) --
+is the record of what the user adopted. It stays on this machine; nothing
+is reported anywhere else.
 
 ## Step 4: apply
 
