@@ -43,6 +43,49 @@ Everything here is written to be done by hand if you would rather.
 
 ## [Unreleased]
 
+### Your ledger's config moves to `DECISIONS.md`, `open.md` and commit SHAs
+
+Affects you if `daikenja.yaml` has a project with a `ledger:` key, a project
+with `paths: []` or no paths at all, or a `last_checkpoint` value.
+
+- **What changed on disk:** nothing yet. Daikenja now reads a project's ledger
+  as `DECISIONS.md` at the root of each registered repository and
+  `.daikenja/open.md` in the home repository, the first entry of `paths`. Three
+  things in `daikenja.yaml` stop meaning what they did: the `ledger:` key is no
+  longer read, a project with no paths is no longer supported, and
+  `last_checkpoint` becomes a map from each repository path to a commit SHA
+  instead of a UTC timestamp.
+- **If you do nothing:** a leftover `ledger:` key is ignored, with one notice
+  line. A project with no paths, and a project whose old ledger still sits at
+  `.daikenja/ledger.md` with no `open.md` beside it, are reported as needing
+  migration and not read. A timestamp `last_checkpoint` makes the next catchup
+  a first run, and it says so.
+- **The edit:**
+
+  ```
+  before:  projects:
+             atlas:
+               path: C:/GitHub/atlas
+               ledger: .daikenja/ledger.md
+               last_checkpoint: 2026-08-14T09:12Z
+  after:   projects:
+             atlas:
+               path: C:/GitHub/atlas
+               last_checkpoint:
+                 C:/GitHub/atlas: <commit SHA>
+  ```
+
+  A project registered with `paths: []` gains a `path:` to the git repository
+  its ledger moves into.
+- **Can `setup-user` make it for you?** Yes, but not as a standalone edit. The
+  three config removals -- the `ledger:` key, `paths: []`, and a timestamp
+  `last_checkpoint` -- happen inside the ledger migration, in the same approval
+  as moving the old ledger's content into `DECISIONS.md` and `open.md`, so the
+  config never points at files that do not exist yet. Removing them by hand
+  before migrating leaves the old ledger unread.
+- **Reversible?** Yes. The config edit is shown before it is
+  written, and the old ledger is kept as a dated backup beside it.
+
 ### Tensei gained a way-of-working section
 
 Only affects you if you installed Tensei with `/daikenja:tensei`.

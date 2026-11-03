@@ -91,6 +91,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   behaves differently. A glossary you already have keeps its old paragraph,
   since templates only change new copies; its two sentences about skills
   searching and appending can be deleted.
+- **`daikenja.yaml` now describes a ledger kept as `DECISIONS.md` and
+  `.daikenja/open.md`.** The config contracts in `docs/` say where the two
+  files are found: `DECISIONS.md` at the root of every repository a project
+  registers, `open.md` in its home repository, which is the first path listed.
+  Reading skills read every repository's `DECISIONS.md`, not just the one you
+  are standing in. `last_checkpoint` becomes one commit SHA per repository
+  instead of a timestamp, so catchup can ask git what changed. A leftover
+  `ledger:` key, a project with no paths, or an old ledger at
+  `.daikenja/ledger.md` with no `open.md` beside it is reported as needing
+  migration, pointing at `/daikenja:setup-user`. See `docs/upgrading.md`.
+
+### Removed
+
+- **Pathless projects are gone.** A project registered with `paths: []` and
+  an absolute `ledger:` pointer, reachable only by name, is no longer
+  supported: every project now lives in a git repository, because git holds
+  the ledger's history. The `ledger:` key goes with it; both files sit at
+  fixed paths. An existing pathless project is reported as needing migration
+  until it is moved into a repository.
 
 ## [0.12.0] - 2026-09-30
 
