@@ -39,6 +39,33 @@ END_SENTINEL = "<<<END-DAIKENJA-OUTPUT>>>"
 # would have posted into a public thread as the verdict.
 UNAVAILABLE_TOKEN = "DAIKENJA-SKILL-UNAVAILABLE"
 
+# What `judgement` and `thread` write, as the whole of their `message` form,
+# when the project's ledger cannot be read: `<token> <key> <reason>`, the key
+# `-` for an unregistered directory. The reasons are the two the skills fix --
+# the project has not been migrated to `DECISIONS.md` and `open.md`, or one of
+# those files was written by a newer format than the installed plugin knows.
+#
+# The report around the message names the fix (`/daikenja:setup-user`, a
+# plugin update), and nobody in the channel can run either. So the line is
+# matched anywhere in the output, ahead of everything that would drop the
+# report, the project and the reason go to the bot's log for whoever runs it,
+# and the thread gets `PROJECT_DATA_UNREADABLE`.
+UNREADABLE_TOKEN = "DAIKENJA-PROJECT-DATA-UNREADABLE"
+UNREADABLE_REASONS = ("needs-migration", "newer-format")
+_UNREADABLE_RE = re.compile(
+    r"^[\s`>*]*"
+    + re.escape(UNREADABLE_TOKEN)
+    + r"\s+(\S+)\s+("
+    + "|".join(UNREADABLE_REASONS)
+    + r")[\s`*.]*$",
+    re.MULTILINE,
+)
+
+PROJECT_DATA_UNREADABLE = (
+    "I could not read this project's ledger, so I have not answered. "
+    "Its project data needs attention from whoever runs me."
+)
+
 # The headless session is not a private one. It reads the user's own
 # CLAUDE.md like any other session, so a personal conversational register --
 # labelled response parts, emoji markers, an announcement of which skill is
@@ -445,6 +472,20 @@ def is_unavailable(answer: str) -> bool:
     return UNAVAILABLE_TOKEN in text and len(text) <= len(UNAVAILABLE_TOKEN) + 40
 
 
+def unreadable_project(text: str) -> tuple[str, str] | None:
+    """The project key and reason, if the session reported unreadable data.
+
+    The token has to be the whole of its line, so a verdict that merely
+    quotes it is not mistaken for one. The last such line wins, as the last
+    pair of sentinels does.
+    """
+    matches = _UNREADABLE_RE.findall(text or "")
+    if not matches:
+        return None
+    key, reason = matches[-1]
+    return key, reason
+
+
 def build_input(subject: Subject) -> str:
     """The standard input: the subject, then each attachment, each fenced."""
     out = f"{SUBJECT_BEGIN}\n{subject.body.strip()}\n{SUBJECT_END}\n"
@@ -465,7 +506,12 @@ def build_input(subject: Subject) -> str:
 def extract_output(raw: str, command_name: str | None = None) -> str:
     """Pull the deliverable out of the session's stdout.
 
-    Five passes, in order of how much the session cooperated:
+    First, **the project data could not be read.** A line carrying
+    `UNREADABLE_TOKEN` is logged with its project and reason, and
+    `PROJECT_DATA_UNREADABLE` goes out instead of anything else -- before
+    the passes below, which would keep only the token and drop the rest.
+
+    Then five passes, in order of how much the session cooperated:
 
     1. **The sentinels are there.** Take what is between them, and unwrap a
        fence if the whole of it is one.
@@ -490,6 +536,12 @@ def extract_output(raw: str, command_name: str | None = None) -> str:
     text = (raw or "").strip()
     if not text:
         return ""
+
+    unreadable = unreadable_project(text)
+    if unreadable:
+        key, reason = unreadable
+        log.warning("project data unreadable: project %s, %s", key, reason)
+        return PROJECT_DATA_UNREADABLE
 
     start = text.rfind(START_SENTINEL)
     if start != -1:

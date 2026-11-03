@@ -7,7 +7,13 @@ from pathlib import Path
 
 from daikenja_bot.commands import JUDGEMENT, SUMMARY
 from daikenja_bot.config import ClaudeConfig, parse_config
-from daikenja_bot.prompts import END_SENTINEL, START_SENTINEL, UNAVAILABLE_TOKEN
+from daikenja_bot.prompts import (
+    END_SENTINEL,
+    PROJECT_DATA_UNREADABLE,
+    START_SENTINEL,
+    UNAVAILABLE_TOKEN,
+    UNREADABLE_TOKEN,
+)
 from daikenja_bot.runner import (
     RunnerError,
     build_argv,
@@ -168,6 +174,22 @@ class RunCommandTests(unittest.TestCase):
             make_config(), SUMMARY, SUBJECT, environ={"PATH": "/bin"}, runner=runner
         )
         self.assertEqual(answer, "Thread: four messages")
+
+    def test_unreadable_project_data_comes_back_as_the_fixed_line(self):
+        for command, reason in ((JUDGEMENT, "needs-migration"), (SUMMARY, "newer-format")):
+            with self.subTest(reason=reason):
+                runner = FakeRunner(
+                    text=(
+                        "C:/GitHub/ember/DECISIONS.md was written by a newer format.\n"
+                        f"{START_SENTINEL}\n{UNREADABLE_TOKEN} ember {reason}\n{END_SENTINEL}"
+                    )
+                )
+                with self.assertLogs("daikenja_bot.prompts", level="WARNING") as logs:
+                    answer = run_command(
+                        make_config(), command, SUBJECT, environ={"PATH": "/bin"}, runner=runner
+                    )
+                self.assertEqual(answer, PROJECT_DATA_UNREADABLE)
+                self.assertIn(f"project ember, {reason}", "\n".join(logs.output))
 
     def test_a_named_project_reaches_the_instruction(self):
         runner = FakeRunner(text=f"{START_SENTINEL}\nok\n{END_SENTINEL}")

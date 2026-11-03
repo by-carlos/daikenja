@@ -6,10 +6,12 @@ from daikenja_bot.prompts import (
     END_SENTINEL,
     JUDGEMENT_SECTION_RE,
     NO_ANSWER,
+    PROJECT_DATA_UNREADABLE,
     START_SENTINEL,
     SUBJECT_BEGIN,
     SUBJECT_END,
     UNAVAILABLE_TOKEN,
+    UNREADABLE_TOKEN,
     build_input,
     build_instruction,
     extract_output,
@@ -200,6 +202,78 @@ class QuestionGuardTests(unittest.TestCase):
         self.assertNotEqual(answer, NO_ANSWER)
 
 
+class UnreadableProjectDataTests(unittest.TestCase):
+    """The skills' fixed token for a ledger they cannot read.
+
+    `judgement` and `thread` write `DAIKENJA-PROJECT-DATA-UNREADABLE <key>
+    <reason>` as the whole of their `message` form when the project has not
+    been migrated or one of its files is a newer format. The report around it
+    names a fix nobody in the channel can run, so the thread gets one fixed
+    line and the project and reason go to the log.
+    """
+
+    REPORT = (
+        "The ledger at C:/GitHub/ember/.daikenja/ledger.md needs migration "
+        "-- run /daikenja:setup-user.\n"
+        "\n"
+        f"{START_SENTINEL}\n"
+        "{token_line}\n"
+        f"{END_SENTINEL}\n"
+    )
+
+    def _run(self, reason, command=JUDGEMENT):
+        raw = self.REPORT.replace(
+            "{token_line}", f"{UNREADABLE_TOKEN} ember {reason}"
+        )
+        with self.assertLogs("daikenja_bot.prompts", level="WARNING") as logs:
+            answer = extract_output(raw, command)
+        return answer, "\n".join(logs.output)
+
+    def test_needs_migration_posts_the_fixed_line_and_logs_why(self):
+        answer, logged = self._run("needs-migration")
+        self.assertEqual(answer, PROJECT_DATA_UNREADABLE)
+        self.assertIn("project ember", logged)
+        self.assertIn("needs-migration", logged)
+
+    def test_newer_format_posts_the_fixed_line_and_logs_why(self):
+        answer, logged = self._run("newer-format", command=SUMMARY)
+        self.assertEqual(answer, PROJECT_DATA_UNREADABLE)
+        self.assertIn("project ember", logged)
+        self.assertIn("newer-format", logged)
+
+    def test_the_fixed_line_names_nothing_the_channel_cannot_run(self):
+        self.assertNotIn("setup-user", PROJECT_DATA_UNREADABLE)
+        self.assertNotIn("/daikenja", PROJECT_DATA_UNREADABLE)
+        answer, _ = self._run("needs-migration")
+        self.assertNotIn(UNREADABLE_TOKEN, answer)
+        self.assertNotIn("ember", answer)
+
+    def test_an_unregistered_directory_is_logged_as_a_dash(self):
+        raw = f"{UNREADABLE_TOKEN} - needs-migration"
+        with self.assertLogs("daikenja_bot.prompts", level="WARNING") as logs:
+            self.assertEqual(extract_output(raw, JUDGEMENT), PROJECT_DATA_UNREADABLE)
+        self.assertIn("project -", "\n".join(logs.output))
+
+    def test_a_fenced_token_outside_the_sentinels_is_still_recognised(self):
+        raw = f"Here it is:\n\n```\n{UNREADABLE_TOKEN} ember newer-format\n```\n"
+        with self.assertLogs("daikenja_bot.prompts", level="WARNING"):
+            self.assertEqual(extract_output(raw, SUMMARY), PROJECT_DATA_UNREADABLE)
+
+    def test_a_verdict_that_quotes_the_token_is_still_a_verdict(self):
+        raw = (
+            f"{START_SENTINEL}\n"
+            "\u2696\uFE0F **Verdict**\n"
+            f"The thread pastes {UNREADABLE_TOKEN} ember needs-migration as "
+            "if it were an error from the build.\n"
+            f"{END_SENTINEL}"
+        )
+        self.assertNotEqual(extract_output(raw, JUDGEMENT), PROJECT_DATA_UNREADABLE)
+
+    def test_an_unknown_reason_is_not_the_token(self):
+        raw = f"{START_SENTINEL}\n{UNREADABLE_TOKEN} ember on-fire\n{END_SENTINEL}"
+        self.assertNotEqual(extract_output(raw, JUDGEMENT), PROJECT_DATA_UNREADABLE)
+
+
 class LocalPathTests(unittest.TestCase):
     """No absolute path ever reaches a public thread.
 
@@ -213,7 +287,7 @@ class LocalPathTests(unittest.TestCase):
     def test_a_windows_path_does_not_survive(self):
         raw = (
             f"{START_SENTINEL}\nLedger at "
-            "`C:/Users/somebody/GitHub/harbor/.daikenja/ledger.md`.\n"
+            "`C:/Users/somebody/GitHub/harbor/.daikenja/open.md`.\n"
             f"{END_SENTINEL}"
         )
         answer = extract_output(raw)
@@ -222,13 +296,13 @@ class LocalPathTests(unittest.TestCase):
         self.assertIn("a local path", answer)
 
     def test_a_backslash_path_does_not_survive(self):
-        raw = f"{START_SENTINEL}\nRead C:\\Users\\somebody\\ledger.md today.\n{END_SENTINEL}"
+        raw = f"{START_SENTINEL}\nRead C:\\Users\\somebody\\DECISIONS.md today.\n{END_SENTINEL}"
         answer = extract_output(raw)
         self.assertNotIn("somebody", answer)
         self.assertIn("today", answer)
 
     def test_a_posix_home_path_does_not_survive(self):
-        for path in ("/home/somebody/harbor/ledger.md", "/Users/somebody/ledger.md"):
+        for path in ("/home/somebody/harbor/DECISIONS.md", "/Users/somebody/open.md"):
             with self.subTest(path=path):
                 answer = extract_output(f"{START_SENTINEL}\nRead {path}\n{END_SENTINEL}")
                 self.assertNotIn("somebody", answer)
@@ -500,7 +574,8 @@ class ExtractBlockTests(unittest.TestCase):
     MARKED_JUDGEMENT = (
         "Using daikenja:judgement to check this thread against the ledger.\n"
         "\n"
-        "Ledger: harbor (C:/GitHub/harbor/.daikenja/ledger.md)\n"
+        "Ledger: harbor (C:/GitHub/harbor/DECISIONS.md, "
+        "C:/GitHub/harbor/.daikenja/open.md)\n"
         "\n"
         "\u2696\uFE0F **Verdict**\n"
         "Backups and high availability solve different problems; the thread "
