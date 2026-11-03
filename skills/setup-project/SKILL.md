@@ -3,8 +3,8 @@ name: setup-project
 description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has.
 metadata:
   owner: Carlos
-  version: 3
-  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one; the project card at <home>/.daikenja/project.md, only when none exists; and a new git repository, only when the user accepts the git init offer for a plain folder
+  version: 4
+  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one; the project card at <home>/.daikenja/project.md, only when none exists or when a migration moves it there; a new git repository, only when the user accepts the git init offer for a plain folder or a migration target; and, in a migration, the old ledger renamed to its dated backup beside it
 disable-model-invocation: true
 ---
 
@@ -50,14 +50,20 @@ Read `~/.claude/daikenja/daikenja.yaml`. Three outcomes and no others:
 
 On a file that exists and parses, also check the version marker and emit the
 one-line notice if it applies, per `docs/config-versioning.md` § Version marker
-and upgrades. It never blocks registration. **This skill does not migrate and
-does not write `daikenja_version`**, even though it writes to the same file --
-the upgrade branch lives in `setup-user` and stays there.
+and upgrades. It never blocks registration. **This skill does not run the version
+upgrade and does not write `daikenja_version`**, even though it writes to the
+same file -- the upgrade branch lives in `setup-user` and stays there. The one
+migration here, Step 2a, is per project, and `setup-user` hands off to it.
 
 This skill never captures profile data. If the user offers a name, role or tone
 here, record nothing and point at `/daikenja:setup-user`.
 
 ## Step 1: read what already exists
+
+**A project key given as the argument** (`/daikenja:setup-project atlas`)
+names the entry to migrate, for a project no directory can match -- one with
+no paths. It goes straight to Step 2a; a key that needs no migration is
+treated as if run from its home repository.
 
 Before proposing anything:
 
@@ -91,11 +97,9 @@ for one, is adopted the same way, never replaced.
   to Step 3 -- an already-registered project can still want its keys set or its
   ledger seeded.
 
-  **A matched entry that needs migration** -- an old `.daikenja/ledger.md` in
-  its home repository with no `open.md` beside it, per `config-resolution.md`
-  § Legacy keys and unmigrated ledgers -- gets that section's one line naming
-  `/daikenja:setup-user`. Steps 3 and 3b still run; Step 4 does not, because
-  `project-log` refuses to write beside an unmigrated ledger.
+  **A matched entry that needs migration**, per
+  `${CLAUDE_PLUGIN_ROOT}/docs/ledger-migration.md` § Which projects need
+  migration, goes to Step 2a before anything else.
 
 - **No match.** Ask one question before proposing anything, because there are
   two answers and only the user knows which one is meant:
@@ -166,6 +170,24 @@ Add the entry with the Edit tool, under `projects:`. **Never write a `ledger:`
 key** -- the files sit at fixed paths. **Never rewrite the file.** Hand-added
 keys, other projects and the template's comments all survive an edit and none
 of them survive a regeneration.
+
+## Step 2a: migrate an old ledger
+
+Read `${CLAUDE_PLUGIN_ROOT}/docs/ledger-migration.md` in full and follow it for
+this one project: it is the procedure, and nothing here restates it. In short,
+the old ledger's in-force decisions and open items become one batch handed to
+`/daikenja:project-log`, shown with the config edit, the card move and the
+dated backup, and **nothing is written until the user approves it whole**.
+
+What this skill writes itself, after that yes and in the order the procedure
+sets: `git init` in a new target folder, the backup copy, the config edit to
+this entry, the card move, and the removal of the old ledger. The entries are
+`project-log`'s.
+
+A declined migration writes nothing and leaves the old ledger exactly where it
+was; say the project stays unread until it is migrated. After a completed one,
+carry on to Step 3 -- Step 4 is reachable again, because the ledger is now
+`DECISIONS.md` and `open.md`.
 
 ## Step 3: offer the per-project keys
 
@@ -399,7 +421,8 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
 | `profile.name` unset or empty | **Stop.** The configuration is incomplete. Point at `/daikenja:setup-user`. |
 | An exact path match already exists | Say which key, leave it alone, and carry on to Steps 3 and 4. Registration is idempotent. |
-| The matched project needs migration | The one line from `config-resolution.md` § Legacy keys and unmigrated ledgers, naming `/daikenja:setup-user`. Steps 3 and 3b run; Step 4 does not. |
+| The matched or named project needs migration | Step 2a. Declined: nothing written, and the old ledger stays where it was. |
+| A migration step fails after the approval | Stop there and say which steps ran. The old ledger is removed last, so the run can be repeated. |
 | An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval, keeping the first path first; never rewrite it silently. |
 | The user names an existing project to add this directory to, and the key does not exist | Ask again, listing the registered keys. Never create a new entry under a key the user only half-remembered. |
 | Not a git repository, or no directory at all | Offer `git init` in it, or in a new folder. A no writes nothing; never an entry with no paths. |
@@ -425,4 +448,5 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 - It does not edit an existing project card or write `last_checkpoint`.
 - It does not edit the project's own documents -- a decision record, a wiki page
   or a README that a seed run read stays exactly as it was found.
-- It does not migrate or convert anything from a previous Daikenja layout.
+- It does not migrate a project on its own initiative: Step 2a runs for the
+  project matched or named, after `setup-user` reports it, and only on approval.
