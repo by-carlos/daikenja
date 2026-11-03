@@ -85,7 +85,11 @@ at the content of something you could not read.
 
 ## Step 2: resolve the config, the project and the files
 
-Follow `config-resolution.md` § Resolution order exactly. In short:
+Follow `config-resolution.md` § Resolution order exactly. **The migration's own
+batch skips this resolution**: it names its targets by absolute path, so item
+2's no-paths stop and item 4's `paths: []` and unmigrated-ledger refusals do
+not apply to it (`project-log-reference.md` § A batch handed over by another
+skill). Every other run, `setup-project`'s seed included, resolves in short:
 
 1. Read `~/.claude/daikenja/daikenja.yaml`. Absent is not fatal -- this skill
    works on defaults. Malformed YAML **is** fatal: report the first line that
@@ -106,8 +110,7 @@ Follow `config-resolution.md` § Resolution order exactly. In short:
    `paths: []` entry is "needs migration": its line, and stop. **An old ledger
    at `<home>/.daikenja/ledger.md` with no `open.md` beside it** is refused --
    whether or not a `DECISIONS.md` exists. Write that line, write nothing, and
-   scaffold nothing -- unless the batch is the migration's own, per
-   `project-log-reference.md` § A batch handed over by another skill:
+   scaffold nothing:
 
    ```
    The ledger at <home>/.daikenja/ledger.md needs migration -- run /daikenja:setup-user.

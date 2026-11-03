@@ -179,9 +179,12 @@ transcript settled. Each is a `project-log via <skill>` run:
   each tranche is its own approval.
 - **An existing `DECISIONS.md` is extended, never overwritten**, exactly as in
   § Step 3.
-- **The unmigrated-ledger refusal does not apply to the migration's own
-  batch** -- that batch is what the refusal points at. It applies to every
-  other run, `setup-project`'s seed included.
+- **The migration's own batch names its targets by absolute path**, so this
+  skill does not resolve that project from the config, which is part of what
+  the migration changes. The refusals for an unmigrated ledger and for an
+  entry with no paths do not apply to this batch -- it is the run both point
+  at -- and every other check does. Both refusals apply to every other run,
+  `setup-project`'s seed included.
 
 ## Backfilling an existing project
 

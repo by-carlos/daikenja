@@ -24,7 +24,7 @@ protocol, finish protocol).
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | done | yes | 2026-11-03 | Guide, README, diagrams and changelog describe the new ledger; ledger-format.md, its template and fixture retired |
-| S10 Fix: align the migration batch exemption | todo | — | — | — |
+| S10 Fix: align the migration batch exemption | doing | yes | 2026-11-04 | project-log exempts the migration batch from both refusals; config docs name the migration; no-folder walk writes both files |
 | SF Plan review | todo | no | 2026-11-04 | Pass 1 added fix S10; SF re-runs from the top as a redo once S10 is done |
 
 ## Notes
@@ -1215,6 +1215,95 @@ Artifacts check: outside: docs/future-work.md, templates/README.md (by hand, `gi
 ### S10 Fix: align the migration batch exemption
 
 Added by SF — `project-log`'s text stops a no-folder migration that `docs/ledger-migration.md` exempts, so a pathless ledger cannot migrate as written (#292 item 5, Done check 6) — referee: grows
+
+Preflight (2026-11-04): clone clean and synced on the plan branch, not ahead,
+brief stamp current (`a99ce0485efb`), no `BLOCKED.md`, S9 merged (#318). No
+root `DECISIONS.md` yet (D-12 lands it at close), so no decisions in force to
+show. Same S3 orphan SF reported (worktree entry for the gone
+`../daikenja-s3` and local branch `...-s3`, PR #314 merged): not removed.
+Weight: opus / effort `medium` (`CLAUDE_EFFORT=medium`), matches the index.
+
+**Changes.**
+- `skills/project-log/SKILL.md` Step 2: one sentence at the step's head says
+  the migration's batch skips config resolution, so item 2's no-paths stop and
+  item 4's `paths: []` and unmigrated-ledger refusals do not apply to it; the
+  per-item "unless the batch is the migration's own" clause in item 4 is gone,
+  so it is said once. Every other run is unchanged.
+- `docs/project-log-reference.md` § A batch handed over by another skill: the
+  bullet now exempts the batch from both refusals, in
+  `ledger-migration.md`'s words.
+- `docs/config-resolution.md` § Legacy keys: "the migration in
+  `setup-project`, reached from `setup-user`".
+- `docs/config-writers.md`: card row names the migration's card move as the
+  one exception; projects row names the migration's entry edit (drop
+  `ledger:`, remove a timestamp `last_checkpoint`, set `paths` for a no-folder
+  project) and the backup rename; reverse index lists `project-catchup` "Step
+  0: read the contracts" and "Step 5: propose and write the checkpoint".
+- `CHANGELOG.md` `## [Unreleased]` › Changed: one bullet. No
+  `docs/upgrading.md` entry -- nothing on disk changes.
+- `tests/fixtures/ledger-migration.md` unchanged: the expected output does not
+  change.
+
+**The three sentences.**
+- `skills/project-log/SKILL.md` Step 2: "**The migration's own batch skips
+  this resolution**: it names its targets by absolute path, so item 2's
+  no-paths stop and item 4's `paths: []` and unmigrated-ledger refusals do not
+  apply to it (`project-log-reference.md` § A batch handed over by another
+  skill)."
+- `docs/project-log-reference.md` § A batch handed over by another skill:
+  "The refusals for an unmigrated ledger and for an entry with no paths do not
+  apply to this batch -- it is the run both point at -- and every other check
+  does."
+- `docs/ledger-migration.md` § The proposal (unchanged): "the refusals for an
+  unmigrated ledger and for an entry with no paths do not apply to this batch,
+  and every other check does."
+
+**No-folder walk** (`tests/fixtures/ledger-migration.md` Input B, Walk B1,
+`/daikenja:setup-project q4-planning`, entry `paths: []`), through the changed
+text:
+1. `ledger-migration.md` § Writing, in order: after the one yes, step 1 runs
+   `git init` in `C:/GitHub/q4-planning`; step 2 copies the old ledger to
+   `q4-planning.2026-11-03.bak.md`.
+2. Step 3 hands the batch to `project-log` as `project-log via setup-project`,
+   targets named by absolute path (`C:/GitHub/q4-planning/DECISIONS.md`,
+   `C:/GitHub/q4-planning/.daikenja/open.md`). The config entry still reads
+   `paths: []` (the config edit is step 4).
+3. `project-log` Step 2: the head sentence applies -- the batch is the
+   migration's own, so resolution is skipped. Item 2 (named key with no
+   paths: stop) does not fire; item 4's `paths: []` stop does not fire; the
+   unmigrated-ledger refusal does not fire (and would not match anyway: no
+   `ledger.md` in the new home). Item 5's version notice is n/a.
+4. `project-log` Step 3: neither file exists. Target directory
+   `C:/GitHub/q4-planning` is not the OS home or `~/.claude`; it now has
+   `.git` (writing step 1), so the not-a-repository question is skipped; the
+   scaffold folds into the approval: `DECISIONS.md` from the template as it
+   stands, `open.md` with `{{PROJECT}}` -> `q4-planning`.
+5. Steps 4-8 run as for any batch (version refusal n/a on fresh templates,
+   duplicate check against empty files, one approval -- the migration's whole
+   yes), and `project-log` writes both files, matching the fixture's expected
+   `DECISIONS.md` and `open.md`. Migration steps 4-6 then set `paths`, move
+   the card and remove the old ledger. Result: matches; fixture unchanged.
+
+Before this stage the walk stopped at step 3: item 2 (and item 4's
+`paths: []` line) fired, ending the migration after `git init` and the backup
+copy.
+
+**Acceptance.**
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=origin/feat/292-replace-ledger-decisions-md-open HEAD_SHA=HEAD python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+$ git grep -n "migration in .setup-user" -- docs
+(no output, exit 1)
+```
+
+`skills/project-log/SKILL.md` 19676 -> 19880 bytes.
+
+Actuals: 2026-11-03T12:23:11.098Z → 2026-11-03T12:26:14.237Z · 3 min · tokens in=60 out=10573 cache_read=3489879 cache_write=94580 · subagents=0
+
+Artifacts check: match
 
 ### SF Plan review
 
