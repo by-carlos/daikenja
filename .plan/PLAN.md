@@ -192,10 +192,13 @@ same commit; feedback on the brief is applied here, never to the brief.
 - **D-21 — Legacy config keys** *(Default for now — revisit after the first real
   upgrade)*. Readers ignore a leftover `ledger:` with a one-line notice pointing
   at `setup-user`; a `paths: []` project is reported as "needs migration" and
-  skipped. No `DECISIONS.md` plus an old-format ledger at the legacy location
-  (`.daikenja/ledger.md`, no `ledger:` key needed) also means "needs
-  migration": readers say so in one line pointing at `setup-user`, and
-  `project-log` refuses to scaffold a new `DECISIONS.md` over it.
+  skipped. An old-format ledger at the legacy location (`.daikenja/ledger.md`
+  in the home repository, no `ledger:` key needed) with no `.daikenja/open.md`
+  beside it also means "needs migration", whether or not a `DECISIONS.md`
+  exists: readers say so in one line pointing at `setup-user`, and
+  `project-log` refuses to scaffold or write either file over it. *(Amended in
+  S1: keyed on the missing `open.md` rather than a missing `DECISIONS.md`, so a
+  `DECISIONS.md` another tool wrote does not hide an unmigrated ledger.)*
 - **D-22 — Pathless migration target folder** *(Default for now — revisit at S8
   if users have no registered root)*. `setup-project` asks for the folder and
   suggests a sibling of an already-registered root, named after the project key.

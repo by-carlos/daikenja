@@ -24,8 +24,9 @@ projects:
     path: C:/GitHub/atlas
 
   q4-planning:
-    paths: []
-    ledger: C:/Users/rimuru/.claude/daikenja/ledgers/q4-planning.md
+    paths:
+      - C:/GitHub/q4-planning
+      - C:/GitHub/q4-budget-models
 
   billing-api:
     path: C:/GitHub/billing-api
@@ -33,16 +34,16 @@ projects:
 
 Card locations that follow from it, per `project-card.md` § Location:
 
-| Project | Ledger | Card |
+| Project | Home | Card |
 |---|---|---|
-| harbor | `C:/GitHub/harbor/.daikenja/ledger.md` | `C:/GitHub/harbor/.daikenja/project.md` |
-| atlas-migration | `C:/GitHub/atlas/.daikenja/ledger.md` | `C:/GitHub/atlas/.daikenja/project.md` |
-| q4-planning | `C:/Users/rimuru/.claude/daikenja/ledgers/q4-planning.md` | `C:/Users/rimuru/.claude/daikenja/ledgers/q4-planning.project.md` |
-| billing-api | `C:/GitHub/billing-api/.daikenja/ledger.md` | `C:/GitHub/billing-api/.daikenja/project.md` -- **does not exist** |
+| harbor | `C:/GitHub/harbor` | `C:/GitHub/harbor/.daikenja/project.md` |
+| atlas-migration | `C:/GitHub/atlas` | `C:/GitHub/atlas/.daikenja/project.md` |
+| q4-planning | `C:/GitHub/q4-planning` | `C:/GitHub/q4-planning/.daikenja/project.md` |
+| billing-api | `C:/GitHub/billing-api` | `C:/GitHub/billing-api/.daikenja/project.md` -- **does not exist** |
 
-`billing-api` has a ledger but no card. `q4-planning`'s card is the
-`<name>.project.md` form: a `project.md` in the shared `ledgers/` directory
-would belong to no project in particular.
+`billing-api` has a ledger but no card. `q4-planning` spans two repositories
+and has one card, in its home -- the first path -- beside its `open.md`;
+`C:/GitHub/q4-budget-models` holds no card of its own.
 
 ## The cards
 
@@ -94,7 +95,7 @@ the reporting warehouse, which stays on the legacy store.
 - @sam -- finance liaison
 ```
 
-`C:/Users/rimuru/.claude/daikenja/ledgers/q4-planning.project.md`:
+`C:/GitHub/q4-planning/.daikenja/project.md`:
 
 ```markdown
 # q4-planning card

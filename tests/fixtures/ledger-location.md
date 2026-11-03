@@ -1,7 +1,7 @@
-# `ledger:` resolution -- configuration fixtures
+# Ledger location -- configuration fixtures
 
 <!--
-Fixture: five synthetic `daikenja.yaml` project entries plus the walks each is
+Fixture: six synthetic `daikenja.yaml` project entries plus the walks each is
 for. Everything here is invented -- invented projects, invented people,
 `example.com` links. Nothing is read at runtime.
 
@@ -12,11 +12,11 @@ directory named in each walk, and compare against the expected result stated
 under it.
 -->
 
-Depends on: config-resolution.md "Resolving `ledger`"
+Depends on: config-resolution.md "Finding `DECISIONS.md` and `open.md`", config-resolution.md "Legacy keys and unmigrated ledgers"
 
-## Config A -- no `ledger:` key
+## Config A -- one repository, nothing on disk yet
 
-The common case, and unchanged by this fixture's subject.
+The common case.
 
 ```yaml
 profile:
@@ -27,22 +27,23 @@ projects:
     path: C:/GitHub/tempest-guild
 ```
 
-**Expected walk**, run from `C:/GitHub/tempest-guild`.
+**Expected walk**, run from `C:/GitHub/tempest-guild`, with neither file on
+disk and no `.daikenja/ledger.md`.
 
-1. `docs/config-resolution.md` § Finding the ledger, step 2 applies: no
-   `ledger:` key, so the ledger is `C:/GitHub/tempest-guild/.daikenja/ledger.md`.
-2. `Ledger: C:/GitHub/tempest-guild/.daikenja/ledger.md` -- the fully resolved
-   absolute path, per `docs/reading.md` § Step B.
-3. If no file exists there, a read skill reports "No ledger at
-   C:/GitHub/tempest-guild/.daikenja/ledger.md. Run /daikenja:project-log to
-   create one." and stops. `project-log` instead offers to scaffold it, per
-   its Step 3.
+1. `docs/config-resolution.md` § Finding `DECISIONS.md` and `open.md` applies:
+   the files are `C:/GitHub/tempest-guild/DECISIONS.md` and, the only path
+   being home, `C:/GitHub/tempest-guild/.daikenja/open.md`.
+2. The legacy check finds no `.daikenja/ledger.md`, so nothing needs
+   migration.
+3. A read skill reports "No ledger yet in C:/GitHub/tempest-guild. Run
+   /daikenja:project-log to create one." and stops, per `docs/reading.md`
+   § Step B. `project-log` instead offers to scaffold both files from
+   `templates/DECISIONS.md` and `templates/open.md`.
 
-**The failure this catches:** treating the default path as anything other than
-what step 2 already meant before this change -- this config must resolve
-identically to how it always has.
+**The failure this catches:** looking for the ledger anywhere but the two fixed
+paths, or scaffolding from a read skill.
 
-## Config B -- relative `ledger:` key
+## Config B -- three repositories, run from the second
 
 ```yaml
 profile:
@@ -50,60 +51,31 @@ profile:
 
 projects:
   quill-gateway:
-    path: C:/GitHub/quill-gateway
-    ledger: records/decisions.md
+    paths:
+      - C:/GitHub/quill-gateway
+      - C:/GitHub/quill-web
+      - C:/GitHub/quill-infra
 ```
 
-**Expected walk**, run from `C:/GitHub/quill-gateway/services/auth`.
+**Expected walk**, run from `C:/GitHub/quill-web/src/auth`, with a
+`DECISIONS.md` in `quill-gateway` and `quill-web`, none in `quill-infra`, and
+`open.md` in `quill-gateway`.
 
-1. Longest-prefix match is `quill-gateway` (`C:/GitHub/quill-gateway`).
-2. Step 1 of Finding the ledger applies: the project has a `ledger:` key, so
-   it is resolved relative to `path` --
-   `C:/GitHub/quill-gateway/records/decisions.md`. The default
-   `.daikenja/ledger.md` is **not** also checked.
-3. `Ledger: C:/GitHub/quill-gateway/records/decisions.md`.
+1. Longest-prefix match is `quill-web`, the second path of `quill-gateway`.
+2. Home is the **first** path, so open items are
+   `C:/GitHub/quill-gateway/.daikenja/open.md`, not anything under
+   `quill-web`.
+3. A read skill reads both existing `DECISIONS.md` files, per §
+   Reading several repositories; `quill-infra` has none, which is not a notice.
+4. `Ledger: C:/GitHub/quill-gateway/DECISIONS.md, C:/GitHub/quill-web/DECISIONS.md, C:/GitHub/quill-infra/DECISIONS.md (not created yet), C:/GitHub/quill-gateway/.daikenja/open.md`.
+5. An entry reported from `quill-gateway`'s file names `quill-gateway`, so the
+   reader knows it binds a question asked from `quill-web`.
 
-**The failure this catches:** resolving a relative `ledger:` against the
-current directory instead of the project's `path` -- the two differ here
-because the skill is running from a subdirectory.
+**The failure this catches:** reading only the `DECISIONS.md` of the repository
+the run started in, or looking for `open.md` under the matched path instead of
+home.
 
-## Config C -- absolute `ledger:` key, outside the project root
-
-The repository-less convention this issue adds.
-
-```yaml
-profile:
-  name: rimuru
-
-projects:
-  vendor-onboarding-programme:
-    path: C:/Users/rimuru/daikenja-projects/vendor-onboarding-programme
-    ledger: C:/Users/rimuru/.claude/daikenja/ledgers/vendor-onboarding-programme.md
-```
-
-**Expected walk**, run from
-`C:/Users/rimuru/daikenja-projects/vendor-onboarding-programme`.
-
-1. Exact match on `vendor-onboarding-programme`.
-2. The project has a `ledger:` key and it is an absolute path, so it resolves
-   to itself, verbatim:
-   `C:/Users/rimuru/.claude/daikenja/ledgers/vendor-onboarding-programme.md`.
-   This is outside `path` entirely, which is legal -- the pointer form does
-   not require the resolved path to sit under the project.
-3. `Ledger: C:/Users/rimuru/.claude/daikenja/ledgers/vendor-onboarding-programme.md`.
-4. `project-log` scaffolds this file from `templates/ledger.md` on the same
-   Step 3 approval it always needs -- but the "doesn't look like a project"
-   question does **not** fire here, because `vendor-onboarding-programme` is
-   already registered in `daikenja.yaml`. Registration is itself the
-   confirmation, per Step 3's registered-project branch; the project's own
-   directory need not hold `.git` or `.daikenja/` for that to hold, which is
-   exactly the case for a project with no repository of its own.
-
-**The failure this catches:** a skill that assumes the ledger always sits
-under the matched project's `path` and either refuses an outside path or
-silently rewrites it to something under `path`.
-
-## Config D -- absolute `ledger:` key that does not exist
+## Config C -- a leftover relative `ledger:` key
 
 ```yaml
 profile:
@@ -112,54 +84,56 @@ profile:
 projects:
   harbor-rollout:
     path: C:/GitHub/harbor
-    ledger: D:/Backups/old-machine/harbor-ledger.md
+    ledger: records/decisions.md
 ```
 
-**Expected walk**, run from `C:/GitHub/harbor`, where `D:/Backups/old-machine/`
-does not exist on this machine (a stale pointer carried over from another
-machine's configuration, for instance).
+**Expected walk**, run from `C:/GitHub/harbor`, where
+`C:/GitHub/harbor/DECISIONS.md` and `.daikenja/open.md` already exist (the
+project was migrated, but the key was hand-restored from an old backup).
 
-1. The project has a `ledger:` key, absolute, resolving to
-   `D:/Backups/old-machine/harbor-ledger.md`. This is still the resolved
-   ledger path -- the key is authoritative, so the default
-   `C:/GitHub/harbor/.daikenja/ledger.md` is not consulted as a fallback, even
-   though a file might happen to exist there too.
-2. `Ledger: D:/Backups/old-machine/harbor-ledger.md`.
-3. A read skill reports "No ledger at D:/Backups/old-machine/harbor-ledger.md.
-   Run /daikenja:project-log to create one." and stops, per
-   `docs/reading.md` § Step B -- the same notice an unconfigured project with
-   a missing default file would get. There is nothing distinct about a broken
-   absolute pointer; a missing local path is a fact you can establish just as
-   plainly as a missing relative one.
-4. `project-log` reaches Step 3 with a missing ledger. `harbor-rollout` is a
-   registered project, so the "doesn't look like a project" question does not
-   fire -- that check is about the current directory, not about the resolved
-   ledger path. What happens next depends on whether the resolved path is
-   writable, and **the two outcomes must not be conflated**:
-   - **`D:` exists and is writable.** Scaffolding proceeds: create the missing
-     `D:/Backups/old-machine/` parent directory and write the template there,
-     folded into the same Step 5 approval as the rest of the write.
-   - **`D:` does not exist on this machine**, which is the case this config is
-     written for. Creating the parent fails, so the failure-table row "Ledger
-     path unreadable or not writable" governs: **stop**, name the path and the
-     error, and write nothing. Do **not** fall back to
-     `C:/GitHub/harbor/.daikenja/ledger.md`, and do not write the entries
-     anywhere else.
+1. The `ledger:` key is ignored, per § Legacy keys and unmigrated ledgers. One
+   line: "harbor-rollout still has a ledger: key, which is no longer read --
+   run /daikenja:setup-user."
+2. The read continues with the fixed paths:
+   `C:/GitHub/harbor/DECISIONS.md` and `C:/GitHub/harbor/.daikenja/open.md`.
+   `records/decisions.md` is never opened.
 
-**The failure this catches:** silently falling back to
-`C:/GitHub/harbor/.daikenja/ledger.md` when the configured absolute path did
-not resolve or could not be written -- per `docs/config-resolution.md`
-§ Finding the ledger, an explicit `ledger:` key is authoritative and never
-degrades to the default. That degrade would also violate "a ledger found on
-disk wins over the config", which is scoped to an *unmatched* project, not to
-second-guessing a matched one's explicit key. A stale pointer must be visible
-as a stop, because the alternative is a user logging happily into a second
-ledger while believing they are appending to the one they configured.
+**The failure this catches:** honouring the old pointer, or stopping on it.
+The key is noise once the files are at their fixed paths; it gets one line and
+nothing else.
+
+## Config D -- a project with no paths
+
+```yaml
+profile:
+  name: rimuru
+
+projects:
+  vendor-onboarding-programme:
+    paths: []
+    ledger: C:/Users/rimuru/.claude/daikenja/ledgers/vendor-onboarding-programme.md
+```
+
+**Expected walk**, `/daikenja:project-summary vendor-onboarding-programme` run
+from anywhere.
+
+1. The key matches. The entry has no paths, so there is no home and no
+   repository to read: one line, "vendor-onboarding-programme has no
+   repository in daikenja.yaml and needs migration -- run
+   /daikenja:setup-user.", and the read stops for that project.
+2. The absolute `ledger:` file is not opened, and neither notice is about the
+   `ledger:` key: the no-paths line already says what to do.
+3. Run without the key, from any directory, directory resolution skips the
+   entry; it never matches by accident.
+
+**The failure this catches:** reading the old absolute ledger as if pathless
+projects were still supported, or reporting the entry as malformed rather
+than as needing migration.
 
 ## Config E -- a registered project that resolves to the home directory
 
-Beyond the four the issue asked for. It guards the boundary between Step 3's
-two checks, which are easy to collapse into one "is this a project?" test.
+It guards the boundary between `project-log`'s two Step 3 checks, which are
+easy to collapse into one "is this a project?" test.
 
 ```yaml
 profile:
@@ -173,9 +147,9 @@ projects:
 **Expected walk of `project-log`**, run from `C:/Users/rimuru` -- the user's
 actual home directory -- with no ledger on disk.
 
-1. The entry matches exactly, so this is a **registered** project. It has no
-   `ledger:` key, so the resolved path is
-   `C:/Users/rimuru/.daikenja/ledger.md`.
+1. The entry matches exactly, so this is a **registered** project. The files
+   would be `C:/Users/rimuru/DECISIONS.md` and
+   `C:/Users/rimuru/.daikenja/open.md`.
 2. Step 3's **refuse-outright** check fires anyway and the run **stops**:
 
    ```
@@ -197,3 +171,44 @@ the home-directory refusal for exactly the configurations most likely to have
 a too-broad `path`. `setup-project` refuses to register `~` or `~/.claude`, so
 the only way such an entry exists is a hand edit -- which is precisely the
 case a guard should not trust.
+
+## Config F -- an old ledger at the default location
+
+The default-location case: no key points at the old ledger, it simply sits
+where every ledger used to.
+
+```yaml
+profile:
+  name: rimuru
+
+projects:
+  shion-kitchen:
+    path: C:/GitHub/shion-kitchen
+```
+
+**Expected walk**, run from `C:/GitHub/shion-kitchen`, where
+`C:/GitHub/shion-kitchen/.daikenja/ledger.md` holds an old-format ledger
+(`D-001`-style IDs, a Changelog) and neither `DECISIONS.md` nor
+`.daikenja/open.md` exists.
+
+1. § Finding `DECISIONS.md` and `open.md` resolves the two fixed paths; neither
+   exists.
+2. The legacy check runs before the "no ledger yet" notice: home has
+   `.daikenja/ledger.md` and no `open.md` beside it, so the ledger was never
+   migrated.
+3. A read skill prints one line and stops, reading nothing from the old file:
+
+   ```
+   The ledger at C:/GitHub/shion-kitchen/.daikenja/ledger.md needs migration -- run /daikenja:setup-user.
+   ```
+
+4. `project-log` refuses to scaffold `DECISIONS.md` or `open.md` over it, with
+   the same line, and writes nothing.
+5. **Variant:** the repository also has a `DECISIONS.md` that
+   plan-staged-rollout wrote. The walk is the same -- the check keys on the old
+   ledger with no `open.md` beside it, so an adopted `DECISIONS.md` does not
+   hide an unmigrated ledger's open items.
+
+**The failure this catches:** reporting "No ledger yet" and offering to
+scaffold a fresh pair beside an old ledger, which would fork the project's
+record into two files nobody reconciles.
