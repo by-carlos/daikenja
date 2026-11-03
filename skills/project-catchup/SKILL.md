@@ -160,9 +160,9 @@ No changes to the ledger since the last checkpoint.
 ## Step 4: report the delta
 
 Group by repository (the last segment of its path), then by file and section.
-One line per entry, current state, topic first with the change in parentheses,
-per `response-format.md` -- there are no IDs to cite, so the parenthesis
-carries the change alone. Give the commit range first, and the first-run reason
+One line per entry, current state, topic first, per `response-format.md`. The
+repository and section headings already say where each entry lives, so the
+parentheses carry the change -- and, for a decision, its area. Give the commit range first, and the first-run reason
 from Step 2 where one applies:
 
 ```

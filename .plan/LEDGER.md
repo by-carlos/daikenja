@@ -326,8 +326,11 @@ As built -- what later stages cite:
   (resolved, `@benimaru`) is deleted per D-10. Harbor's old D-002 owner defect
   is now an open item missing its owner.
 
-Acceptance (run in `../daikenja-s3`, after merging S4's landed PR into the
-stage branch):
+Acceptance (run in `../daikenja-s3`, re-run after merging S2's, S4's and S5's
+landed PRs into the stage branch; the ledger status table was the one conflict,
+resolved by keeping both rows. S5's new `response-format.md` wording -- the
+parentheses say where an entry lives -- was matched in both skills' Step 4/6
+prose. The walk output below was identical before and after the re-sync):
 
 ```
 $ python3 tests/check-invariants.py
@@ -393,13 +396,10 @@ from 9.0 KB to 9.8 KB.
 
 Follow-ups (not this stage's):
 
-- `tests/fixtures/owner-handles.md` and `dictated-log-requests.md` cite beacon
-  IDs (`D-003`, `D-004`, `O-001`, `O-005`) and `@benimaru` via the resolved
-  O-001, which no longer exists -- S2 (project-log fixtures), using the ID map
-  above. `DECISIONS.md` entries carry no owner, so `@diablo` survives only on
-  open items.
-- `tests/fixtures/sample-drafts-preflight.md` names "the events-table schema
-  freeze (D-003)" -- S5 (preflight reader): drop the ID, cite it as (beacon, Data).
+- (Resolved on re-sync: S2 made `owner-handles.md` and
+  `dictated-log-requests.md` self-contained, and S5 reworded
+  `sample-drafts-preflight.md` to "the events-table schema freeze (beacon)",
+  which the new `sample-ledger.md` still holds.)
 - `tests/fixtures/ledger-backfill.md` Walk 3 still expands Changelog ranges
   through `project-catchup` "Step 3: compute the delta" (heading kept, content
   gone), and `check-invariants.py` checks that fixture against

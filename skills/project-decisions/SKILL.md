@@ -144,8 +144,8 @@ walk:
 
 ## Step 6: show the result
 
-Topic first, then the repository and area in parentheses, per
-`response-format.md` -- there are no IDs to cite. Then the why, the revisit
+Topic first, then where it lives in parentheses, per `response-format.md` --
+the repository whose `DECISIONS.md` holds it, and its area. Then the why, the revisit
 condition, the source and the history:
 
 ```
