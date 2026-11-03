@@ -24,8 +24,8 @@ starting points.
 - [`glossary.md`](glossary.md) -- the empty domain glossary `setup-user` copies
   to `~/.claude/daikenja/glossary.md` if absent: one line per term, ten words
   of gloss at most, with project, date and source. Always local, never a
-  pointer or a Drive file. Skills that gloss a term search it for that term
-  and never load it whole; a review skill may append a line the user defined.
+  pointer or a Drive file. Manual-only: no skill reads or writes it after
+  `setup-user` creates it, so the user keeps it by hand.
 - [`tensei.md`](tensei.md) -- the way of working (answer shape, design
   recommendations, working practice) that `/daikenja:tensei` installs to
   `~/.claude/daikenja/tensei.md`, imported from `~/.claude/CLAUDE.md`.
