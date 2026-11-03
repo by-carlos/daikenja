@@ -7,26 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **The README is now a landing page, and the detail moved into a user
-  guide.** The README says what Daikenja is, who it is for, how to install
-  and try it, and where to read next. The detail lives in
-  [`docs/guide/`](docs/guide/), one page per task: install, commands,
-  writing, the ledger, reviewing, Tensei, your data, the Slack bot, an FAQ
-  and why. The Tensei page opens with the same question answered without
-  and with Tensei. Two diagrams show the read, draft, record loop and where
-  files live. The data page now says plainly that what a skill reads is
-  processed by Claude, and which writes do not wait for your yes
-  (`remember-persona` for a new person, and `learn-voice`). The ledger
-  skills are documented as working without `setup-project`, as they always
-  have. The contracts in `docs/` did not move. CI now fails on a relative
-  Markdown link that does not resolve.
-
-## [0.13.0] - 2026-11-03
-
-**Codename:** wow!
-
 ### Added
 
 - **Tensei now carries a way of working, not only a conversational
@@ -42,9 +22,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   treated as a symptom.
 - **`/daikenja:setup-user` offers `/daikenja:tensei` once**, at its hand-off,
   and only when Tensei is not installed. No other skill suggests it.
+- **Rewrites no longer change wording that had nothing wrong with it.**
+  `rewrite-rules.md` has a new rule: every span a rewrite changes needs a
+  flagged problem behind it, and a span changed without one goes back to the
+  source wording. `compose` keeps its deliberate clarity, tone, structure and
+  voice edits. `preflight` changes only the spans its accepted wording findings
+  point at. The idea is adapted from `devswha/patina` (MIT), restated in
+  Daikenja's own words.
+- **`preflight` now checks that a wording fix keeps the draft's claim.** A fix
+  can use only words already in the draft and still say something different.
+  Step 6 now names three shifts to check for, in either direction: a hedged
+  claim made firm, a number that loses precision, and a cause turned into a
+  correlation. A fix that shifts one is reworded to keep the source's claim,
+  or dropped. Step 7 checks its own edits against the same three. The idea is
+  adapted from `devswha/patina` (MIT), restated in Daikenja's own words.
 
 ### Changed
 
+- **The README is now a landing page, and the detail moved into a user
+  guide.** The README says what Daikenja is, who it is for, how to install
+  and try it, and where to read next. The detail lives in
+  [`docs/guide/`](docs/guide/), one page per task: install, commands,
+  writing, the ledger, reviewing, Tensei, your data, the Slack bot, an FAQ
+  and why. The Tensei page opens with the same question answered without
+  and with Tensei. Two diagrams show the read, draft, record loop and where
+  files live. The data page now says plainly that what a skill reads is
+  processed by Claude, and which writes do not wait for your yes
+  (`remember-persona` for a new person, and `learn-voice`). The ledger
+  skills are documented as working without `setup-project`, as they always
+  have. The contracts in `docs/` did not move. CI now fails on a relative
+  Markdown link that does not resolve.
 - **Installing Tensei is now a single acknowledgement.** `/daikenja:tensei`
   shows five to eight plain lines on what the agent will do differently,
   built from the shipped file, then asks "Adopt this way of working?". The
@@ -57,7 +64,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tensei no longer points at a file only its author has.** Its dialog
   recap rule cited a personal `git-workflow.md`; the shape is now written
   out in place.
-
 - **The AI-tell check now says when each tell fires and when it does not.**
   It was a one-paragraph list of tell names. It is now a table of eight
   tells, each with a condition for firing and one for not firing, plus a list of
@@ -76,23 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   no longer fires on a trailing aside or on a phrase that heads off a
   misreading. Empty enthusiasm skips praise that is the whole message, and
   stacked hedges skip a claim whose writer says how sure they are.
-
-### Added
-
-- **Rewrites no longer change wording that had nothing wrong with it.**
-  `rewrite-rules.md` has a new rule: every span a rewrite changes needs a
-  flagged problem behind it, and a span changed without one goes back to the
-  source wording. `compose` keeps its deliberate clarity, tone, structure and
-  voice edits. `preflight` changes only the spans its accepted wording findings
-  point at. The idea is adapted from `devswha/patina` (MIT), restated in
-  Daikenja's own words.
-- **`preflight` now checks that a wording fix keeps the draft's claim.** A fix
-  can use only words already in the draft and still say something different.
-  Step 6 now names three shifts to check for, in either direction: a hedged
-  claim made firm, a number that loses precision, and a cause turned into a
-  correlation. A fix that shifts one is reworded to keep the source's claim,
-  or dropped. Step 7 checks its own edits against the same three. The idea is
-  adapted from `devswha/patina` (MIT), restated in Daikenja's own words.
 
 ## [0.12.0] - 2026-09-30
 
@@ -2097,8 +2086,7 @@ Initial public release.
   `personas.md`, `writing-style.md`) copied out to a user's machine on setup.
 - `tests/fixtures/` synthetic inputs the skills are exercised against by hand.
 
-[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.13.0...HEAD
-[0.13.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.13.0
+[Unreleased]: https://github.com/by-carlos/daikenja/compare/v0.12.0...HEAD
 [0.12.0]: https://github.com/by-carlos/daikenja/releases/tag/v0.12.0
 [0.11.2]: https://github.com/by-carlos/daikenja/releases/tag/v0.11.2
 [0.11.1]: https://github.com/by-carlos/daikenja/releases/tag/v0.11.1
