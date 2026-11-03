@@ -13,8 +13,8 @@ spellings of one person, `@unassigned`, two configuration states -- no
 personas file and a broken `drive:` pointer -- and a decision, which writes no
 handle at all.
 
-Every message in walks 1-8 is a fact the user dictated, so the same-turn path is
-the baseline across all eight and none of them waits for approval: an
+Every message in walks 1-7 is a fact the user dictated, so the same-turn path is
+the baseline across all seven and none of them waits for approval: an
 unfamiliar handle produces a notice, not a question, so it never demotes a
 dictated run to propose-then-wait. Walk 7 is the only stop, and it comes from
 the config failure rather than from the handle.
@@ -236,10 +236,12 @@ User message:
 > wrote the runbook. Revisit never.
 
 Expected: a decision, so it goes to `C:/GitHub/beacon/DECISIONS.md` and the
-entry has no owner field. The name stays in the rule's own words. The check
-runs over owners the batch writes, and this batch writes none, so there is **no
-notice** and `personas.md` is never read -- even though `@gobta` is in neither
-place. All four same-turn conditions hold, so it is written in the same turn.
+entry has no owner field. The name stays in the rule's own words. This fixture
+has no `DECISIONS.md` yet, so the run scaffolds it and proposes a new area --
+which never takes the same-turn path -- and waits for approval. The check runs
+over owners the batch writes, and this batch writes none, so the proposal has
+**no "New owner handles" block** and `personas.md` is never read, even though
+`@gobta` is in neither place.
 
 Must not happen: a notice for `@gobta`, an owner added to the entry, or an open
 item written alongside it.

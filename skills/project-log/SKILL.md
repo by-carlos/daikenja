@@ -91,7 +91,8 @@ Follow `config-resolution.md` § Resolution order exactly. In short:
    works on defaults. Malformed YAML **is** fatal: report the first line that
    does not parse and stop.
 2. **A project key was named.** Match it per `config-resolution.md` § By key.
-   No match: say so, list the registered keys, stop. A match: refuse in one
+   No match: say so, list the registered keys, stop. A match with no paths:
+   item 4's "needs migration" line, and stop. Any other match: refuse in one
    line, naming the key and saying that logging against it means running from
    one of its own directories. Never fall back to directory matching -- a
    named key is decisive. **No key was named:** match the current directory
