@@ -1,12 +1,43 @@
 # Install and update
 
+[Home](../../README.md) · **Install** · [Writing](writing.md) · [Ledger](ledger.md) · [Reviewing](reviewing.md) · [Tensei](tensei.md) · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
+
+> **In short:** install from the Claude Desktop app's **Plugins** pane or with
+> two CLI commands, then run `/daikenja:setup-user` once and
+> `/daikenja:setup-project` once per project. It runs only in Claude Code: the
+> CLI or the Desktop app's **Code** tab.
+
+```mermaid
+flowchart LR
+    A[Install the plugin] --> B["/daikenja:setup-user<br/>once per person"]
+    B --> C["/daikenja:setup-project<br/>once per project"]
+    B --> D[Writing skills use<br/>your profile and style]
+    C --> E[Ledger skills work<br/>for that project]
+```
+
+The writing skills (`thread`, `compose`, `preflight`) do not need a
+registered project; `setup-user` gives them your profile and writing style.
+The ledger skills need the project registered with `setup-project`.
+
+## Where it runs
+
+| Where | Runs Daikenja? |
+|---|---|
+| Claude Code CLI, local or over SSH | Yes |
+| Claude Desktop app, **Code** tab, local session | Yes |
+| Claude Desktop app, **Code** tab, **cloud** session | Not a local install -- a cloud session loads plugins from your claude.ai account, not from your machine |
+| Claude Desktop app, **Chat** or **Cowork** tab | No |
+| claude.ai in a browser | No |
+
+Daikenja is a Claude Code plugin, not a claude.ai skill, so it shows up only
+where Claude Code runs.
+
 ## Install
 
 Daikenja is listed on the shared
 [`by-carlos/claude-plugins`](https://github.com/by-carlos/claude-plugins)
 marketplace, and this repo is also a marketplace in its own right -- so you can
-install it on its own, without adding anything else first. Pick whichever of
-these matches how you use Claude Code.
+install it on its own, without adding anything else first.
 
 ### Claude Desktop app
 
@@ -40,100 +71,37 @@ claude plugin marketplace add by-carlos/daikenja
 claude plugin install daikenja@daikenja
 ```
 
-### After installing
+## After installing
 
-However you installed it, run `/daikenja:setup-user` once. It checks the
-environment and writes your configuration into `~/.claude/daikenja/`.
+**`/daikenja:setup-user`**, once per person. It checks the environment, writes
+your configuration into `~/.claude/daikenja/`, and captures your profile. It
+does not register a project. You can re-run it any time.
 
-Then run `/daikenja:setup-project` in each project you want Daikenja to track.
-It registers the directory, sets that project's own settings, and can seed its
+**`/daikenja:setup-project`**, once per project, from inside it. It registers
+the directory you are in, offers that project's own settings, and can seed its
 ledger from a decision log, a wiki space or a Slack channel you already have.
-`setup-user` is once per person; `setup-project` is once per project.
+Seeding proposes entries and hands them to `/daikenja:project-log` for your
+approval; it never writes the ledger itself.
 
-**A project does not have to be one directory.** A programme spanning three
-repositories is registered once and every one of its directories resolves to
-it; a body of work with no repository at all is registered with no directory,
-reached by name, and keeps its ledger wherever its `ledger:` key points.
-`/daikenja:project-list` shows the whole index back to you.
-
-## Where it runs
-
-**Daikenja is a Claude Code plugin.** It runs everywhere Claude Code does: the
-**Claude Code CLI**, and the **Code** tab of the **Claude Desktop app**. You can
-install it from either one -- the Desktop app has its own plugin menu, so you
-never have to open a terminal. Local and SSH sessions both work.
-
-It is not a claude.ai skill. The Claude Desktop app has three tabs, and only
-**Code** runs Claude Code plugins -- **Chat** and **Cowork** (for Dispatch and
-longer agentic work) do not, and neither does claude.ai itself, so Daikenja will
-not show up in any of them. One more case worth knowing: a desktop **cloud**
-session loads plugins from your claude.ai account rather than from your own
-machine, so a Daikenja you installed locally will not be there either.
-
-Settings come from `~/.claude/daikenja/`, or the `daikenja` folder in your
-Google Drive if you opt into that -- see below.
-
-**Typing `/daikenja:<skill>` always works, on every model.** Claude Code can
-also start a skill just from plain language ("help me answer this thread"
-triggering `/daikenja:thread`), but only if it has room to read that skill's
-description -- and on a smaller-context model, a full Daikenja install plus a
-couple of other plugins can be more than Claude Code has room for, so it falls
-back to skill *names* only and plain-language triggering stops working for
-Daikenja's skills. If that happens to you, use the slash form, or raise
-`skillListingBudgetFraction` in your Claude Code settings to give skill
-descriptions more room. Since the ledger, setup, drafting and self-review
-skills moved to slash-only, Daikenja's five auto-invocable descriptions run
-about 3,600 characters, under Claude Code's 8,000-character default budget, so
-the setting is only needed when other plugins fill the rest. (Measured 24 Aug 2026
-on Claude Code 2.1.240,
-[by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199), on
-a 200K-context model: the thirteen auto-invocable descriptions of that time
-ran about 8,600 characters, and `skillListingBudgetFraction: 0.03` covered it.
-On a 1M-context model nothing is cut.)
-
-## Setup skills
-
-- `/daikenja:setup-user` -- one-time, re-runnable personal setup. Checks the
-  environment, writes your `daikenja.yaml` and captures your profile. It does
-  not register a project.
-- `/daikenja:setup-project` -- once per project. Registers the directory you are
-  in, offers that project's own settings, and can optionally seed its ledger
-  from sources the project already has. Seeding proposes entries and hands them
-  to `/daikenja:project-log` for your approval; it never writes the ledger
-  itself.
+A project does not have to be one directory -- see
+[The project ledger](ledger.md#one-project-many-places).
 
 ## Updating
 
-New versions ship on the `release` branch.
+New versions ship on the `release` branch. A new version does not load into a
+session that is already running: restart Claude Code, or run
+`/reload-plugins`.
 
-### Claude Desktop app
-
-Open the **Plugins** pane and select Daikenja. Its page shows the version you
-have, how many skills it ships, and an **Update** button.
-
-**Do not count on the desktop app noticing a new release.** Its updating has
-been inconsistent in testing: a plugin sat on an old version across a release,
-with the **Update** button inactive and **Check for updates** reporting nothing
-available, days after the new version was out.
-
-So if that page shows a version behind the one you expect, do not wait for it.
-Remove Daikenja and install it again -- a reinstall always lands on the current
-version. If you have a terminal, the CLI commands below are the dependable
-route.
-
-### Claude Code CLI
+### Claude Code CLI -- the dependable route
 
 Run `/plugin` and open the **Marketplaces** tab. Selecting the Daikenja
 marketplace gives you **Update marketplace** for a one-off, and **Enable
 auto-update**, which has Claude Code refresh the marketplace and its installed
-plugins in the background shortly after each session starts. That tab also tells
-you which state you are currently in.
+plugins in the background shortly after each session starts. That tab also
+tells you which state you are in.
 
-Auto-update is worth turning on, and worth checking rather than assuming:
-Claude Code enables it by default for Anthropic's own marketplaces, not
-necessarily for others. The toggle lives here in the CLI, and the desktop app
-has no equivalent -- which, with the caveat above, makes the CLI the reliable
-way to keep Daikenja current.
+Turn auto-update on, and check rather than assume: Claude Code enables it by
+default for Anthropic's own marketplaces, not necessarily for others.
 
 The same two actions from your shell:
 
@@ -142,24 +110,50 @@ claude plugin marketplace update
 claude plugin update daikenja
 ```
 
-However you update, a new version does not load into a session that is already
-running: restart Claude Code, or run `/reload-plugins`.
+### Claude Desktop app
+
+Open the **Plugins** pane and select Daikenja. Its page shows the version you
+have, how many skills it ships, and an **Update** button.
+
+**Do not count on the Desktop app noticing a new release.** In testing, a
+plugin sat on an old version across a release, with **Update** inactive and
+**Check for updates** reporting nothing available, days after the new version
+was out. The Desktop app has no auto-update toggle either.
+
+If the page shows a version behind the one you expect, remove Daikenja and
+install it again -- a reinstall always lands on the current version.
 
 ### Do I have to re-run setup?
 
-Usually not. Most releases change nothing that is already on your disk, and
-Daikenja tells you when one does -- every skill that reads your configuration
-compares the version that wrote it against the version installed, and prints a
-single line when there is something to do:
+Usually not. Most releases change nothing already on your disk, and Daikenja
+tells you when one does: every skill that reads your configuration compares the
+version that wrote it against the version installed, and prints a single line
+when there is something to do:
 
 ```
 daikenja.yaml was written by Daikenja 0.6.0; 0.7.0 is installed -- run /daikenja:setup-user.
 ```
 
-That line is the signal. Run `/daikenja:setup-user` when you see it and it
-proposes the exact edits and waits for your approval; ignore updating otherwise.
-The notice deliberately stays quiet for releases that need nothing, so it does
-not become something you learn to skip.
+When you see that line, run `/daikenja:setup-user`: it proposes the exact edits
+and waits for your approval. Otherwise ignore updating. The notice stays quiet
+for releases that need nothing, so it does not become something you learn to
+skip. [Upgrading](../upgrading.md) is the same information written out to apply
+by hand, newest version first.
 
-[`docs/upgrading.md`](../upgrading.md) is the same information written out to
-apply by hand, newest version first.
+## When plain language does not start a skill
+
+**Typing `/daikenja:<skill>` always works, on every model.** Claude Code can
+also start a skill from plain language ("help me answer this" starting
+`/daikenja:thread`), but only for the six skills that allow it, and only if it
+has room to read their descriptions.
+
+On a smaller-context model, a full Daikenja install plus a few other plugins
+can be more than Claude Code has room for. It then falls back to skill *names*
+only, and plain-language triggering stops working. Use the slash form, or raise
+`skillListingBudgetFraction` in your Claude Code settings to give skill
+descriptions more room.
+
+Daikenja's own six descriptions come to about 2,000 characters (measured
+3 Nov 2026), well under Claude Code's 8,000-character default budget, so the
+setting matters only when other plugins fill the rest. Background:
+[by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199).

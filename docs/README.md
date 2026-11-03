@@ -1,5 +1,8 @@
 # docs/
 
+**Looking for how to use Daikenja?** Start at the [README](../README.md) or the
+[user guide](guide/). Everything else in this folder is written for the skills.
+
 Specifications the skills agree on. A skill implements a contract; it never
 redefines one. When a contract changes, it changes here and the skills follow.
 
@@ -30,8 +33,8 @@ exactly as if it sat in that `SKILL.md`; no other skill reads them.
   marker and what `upgrading.md` is for.
 - [`upgrading.md`](upgrading.md) -- what a user has to do when a release changes
   something already on their disk. One section per version that needs action,
-  newest first, written by the change and promoted by the release. The only
-  document here written for the user rather than for a skill.
+  newest first, written by the change and promoted by the release. Written for
+  the user as well as for `setup-user`'s upgrade branch.
 - [`project-card.md`](project-card.md) -- the per-project card beside the
   ledger: what a project is about, which channels, repositories and trackers
   it owns, who is on it; where the file sits, how it is read, and the third

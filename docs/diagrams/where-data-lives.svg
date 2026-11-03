@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="1200" height="440" role="img" aria-labelledby="title desc" aria-label="Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary and Tensei, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project.">
+  <title id="title">Where Daikenja keeps your data</title>
+  <desc id="desc">Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary and Tensei, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project.</desc>
+  <style>
+    text { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1F2937; }
+    .head { font-size: 22px; font-weight: 700; }
+    .who { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; }
+    .body { font-size: 15px; }
+    .code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 14px; font-weight: 600; }
+    .note { font-size: 15px; font-style: italic; fill: #374151; }
+  </style>
+
+  <rect x="0" y="0" width="1200" height="440" rx="18" fill="#FAFAF7" stroke="#D1D5DB" stroke-width="2"/>
+
+  <!-- Your machine -->
+  <rect x="30" y="30" width="360" height="330" rx="14" fill="#E3EDFB" stroke="#93B4E8" stroke-width="1.5"/>
+  <text class="head" x="54" y="70">Your machine</text>
+  <text class="who" x="54" y="96" fill="#1D4ED8">PRIVATE TO YOU · DEFAULT</text>
+  <text class="code" x="54" y="136">~/.claude/daikenja/</text>
+  <text class="body" x="70" y="168">daikenja.yaml -- settings</text>
+  <text class="body" x="70" y="196">personas.md -- your notes</text>
+  <text class="body" x="70" y="218">on people you write to</text>
+  <text class="body" x="70" y="246">writing-style.md -- how</text>
+  <text class="body" x="70" y="268">you write</text>
+  <text class="body" x="70" y="296">glossary.md -- your terms</text>
+  <text class="body" x="70" y="324">tensei.md -- if installed</text>
+
+  <!-- Drive -->
+  <rect x="420" y="30" width="360" height="330" rx="14" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text class="head" x="444" y="70">Your Google Drive</text>
+  <text class="who" x="444" y="96" fill="#4B5563">ONLY IF YOU OPT IN</text>
+  <text class="code" x="444" y="136">daikenja/</text>
+  <text class="body" x="460" y="168">personas.md, or</text>
+  <text class="body" x="460" y="196">writing-style.md, or both --</text>
+  <text class="body" x="460" y="218">each one your own choice.</text>
+  <text class="body" x="444" y="268">Reached through Google's</text>
+  <text class="body" x="444" y="290">connector, under your own</text>
+  <text class="body" x="444" y="312">account. Nothing passes</text>
+  <text class="body" x="444" y="334">through the plugin author.</text>
+
+  <!-- Project -->
+  <rect x="810" y="30" width="360" height="330" rx="14" fill="#E2F2E7" stroke="#86C49A" stroke-width="1.5"/>
+  <text class="head" x="834" y="70">The project</text>
+  <text class="who" x="834" y="96" fill="#15803D">SHARED WITH THE PROJECT</text>
+  <text class="code" x="834" y="136">.daikenja/</text><text class="body" x="940" y="136">(by default)</text>
+  <text class="body" x="850" y="168">ledger.md -- decisions and</text>
+  <text class="body" x="850" y="190">open items</text>
+  <text class="body" x="850" y="218">project.md -- the optional</text>
+  <text class="body" x="850" y="240">project card</text>
+  <text class="body" x="834" y="272">Versioned by git beside</text>
+  <text class="body" x="834" y="294">the code. Everyone who can</text>
+  <text class="body" x="834" y="316">read the repository can</text>
+  <text class="body" x="834" y="338">read it.</text>
+
+  <text class="note" x="600" y="402" text-anchor="middle">Persona notes never go into a project. A ledger can live elsewhere only if you point it there.</text>
+</svg>
