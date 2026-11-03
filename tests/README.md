@@ -275,7 +275,7 @@ your own norms document in place of the fixture's.
 
 ### `setup-user`
 
-- [`fixtures/setup-user-upgrade.md`](fixtures/setup-user-upgrade.md) -- five
+- [`fixtures/setup-user-upgrade.md`](fixtures/setup-user-upgrade.md) -- six
   `daikenja.yaml` files for the upgrade branch, each with the walk it is for: no
   version key (the state every pre-0.6.0 install is in, which must produce a
   proposal and never a stop), an older version, the current version (a silent
@@ -284,9 +284,23 @@ your own norms document in place of the fixture's.
   the first line), and a version *ahead* of the installed one, which must never
   be stamped backwards. The older-version file carries a second and third walk,
   over one read skill and over `project-log`, confirming each emits the one-line
-  notice and then continues without migrating or stamping anything.
+  notice and then continues without migrating or stamping anything. The sixth
+  holds projects with old ledgers: the run lists each with the
+  `/daikenja:setup-project <key>` that migrates it and leaves `projects:`
+  untouched.
 
 ### `setup-project`
+
+- [`fixtures/ledger-migration.md`](fixtures/ledger-migration.md) -- four old
+  single-file ledgers and the config entries pointing at them, each with the
+  files Step 2a must leave after following `docs/ledger-migration.md`: one at
+  the default location with a supersession chain, an imposed decision, a
+  malformed tail, a block on a resolved item, a contradiction and a line that
+  does not parse; one with no folder, walked into a new repository by default
+  and stopped before writing when the suggested folder is inside an existing
+  repository; one whose `ledger:` key and card sit at a non-default location;
+  and one in a repository that already has a `DECISIONS.md`, which must be
+  added to and never replaced.
 
 - [`fixtures/setup-project-seed.md`](fixtures/setup-project-seed.md) -- a
   `daikenja.yaml` with one unrelated project registered, an invented
