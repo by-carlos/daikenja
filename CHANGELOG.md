@@ -69,6 +69,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The Tensei guide page now describes all of Tensei.** The "without"
+  example is a realistic long prose answer, with the right check buried in
+  the middle and the downtime risk after the commands, instead of a tidy
+  numbered plan. The "with" example shows the review a lasting design gets.
+  The page adds what was missing: advice that starts from the project's
+  ledger and routes work conversations to the matching skill, one question
+  with its context, suggestions made once, and the smallest change that
+  works. The README lists Tensei in "Is it for me?", and the install section
+  now points to `/daikenja:setup-user` and the optional `/daikenja:tensei`.
+
 - **The README is now a landing page, and the detail moved into a user
   guide.** The README says what Daikenja is, who it is for, how to install
   and try it, and where to read next. The detail lives in
@@ -223,6 +233,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/open-format.md`. The migration procedure,
   `docs/ledger-migration.md`, carries the little of the old grammar it needs
   to read an old ledger.
+
+### Fixed
+
+- **`tests/check-invariants.py` runs on Windows.** It now finds `claude`
+  through the `PATH` lookup, so it no longer fails to launch `claude.cmd`.
 
 ## [0.12.0] - 2026-09-30
 

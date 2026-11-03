@@ -55,6 +55,7 @@ pushed. Coming from an earlier version? See
 | Catch up on a project after time away | `project-catchup` | [Ledger](docs/guide/ledger.md) |
 | Turn a meeting transcript into decisions and action items | `meeting-review` | [Reviewing](docs/guide/reviewing.md) |
 | Check a document or thread against what was already decided | `judgement` | [Reviewing](docs/guide/reviewing.md) |
+| Get straighter answers from Claude in every session -- the finding first, how sure it is, risks up front, options ranked | `tensei` (optional) | [Tensei](docs/guide/tensei.md) -- see the side-by-side |
 | Get a thread summarised or checked without leaving Slack | the optional Slack bot | [Slack bot](docs/guide/slack-bot.md) |
 | Have something send, post or schedule on your behalf | **Not this.** It drafts and records; you send. | [Why](docs/guide/why.md) |
 
@@ -82,6 +83,11 @@ inside a Claude Code session:
 
 Screenshots, updating, and what to do when it does not show up:
 [Install and update](docs/guide/install.md).
+
+**Then, once per person:** `/daikenja:setup-user` -- a few questions, writes
+your settings. **Optional:** `/daikenja:tensei` -- changes how Claude answers
+in every session ([see the difference](docs/guide/tensei.md)). Next:
+[Try it in five minutes](#try-it-in-five-minutes).
 
 ## Try it in five minutes
 
