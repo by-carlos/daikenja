@@ -135,8 +135,8 @@ holds a Slack token and has no way to send anything:
   beginning `SLACK`. Without this, "the model cannot post" would hold only
   until it read `os.environ` and called the Web API itself.
 - The headless session runs with `--allowedTools Read,Glob,Grep` and
-  `--permission-prompts none`, so it can find a ledger and read nothing
-  else. No shell, no writes, no network fetches.
+  `--permission-prompts none`, so it can find a project's ledger -- its
+  `DECISIONS.md` files and `.daikenja/open.md` -- and read nothing else. No shell, no writes, no network fetches.
 - `slack_io.py` is the only file that holds the token, and the only one
   that calls the Slack API.
 
@@ -230,6 +230,12 @@ cd bot && python -m daikenja_bot
 `--check` reads the config and the credentials, works out which commands can
 run, and prints what it found without connecting to Slack or spending a
 token. Run it after every edit to `bot.yaml`.
+
+Its `projects:` line names every project in your `daikenja.yaml` whose ledger
+the skills cannot read yet -- `needs-migration` for one still on the old
+`.daikenja/ledger.md` or with no repository listed, `newer-format` for a
+`DECISIONS.md` or `open.md` written by a newer plugin than the one installed.
+It reads those files as they are now and never calls git.
 
 The bot answers one command at a time. A headless session takes tens of
 seconds, so the reaction goes on immediately and the answer arrives when it
@@ -326,6 +332,17 @@ and the raw output goes to the log. The rules above tell the session not to
 ask, and a real run asked anyway; nobody in a thread can answer a question
 the bot is not waiting on, so the thread would simply stop there. Anything
 else unrecognised is still posted as it came.
+
+**Unreadable project data is never posted as an answer.** When a project's
+ledger cannot be read -- it has not been migrated to `DECISIONS.md` and
+`open.md`, or one of those files is a newer format than the installed plugin
+knows -- both skills write `DAIKENJA-PROJECT-DATA-UNREADABLE <key> <reason>`
+as their whole message. The bot recognises that line before anything else,
+writes the project and the reason (`needs-migration` or `newer-format`) to its
+log, and posts one fixed line instead: *"I could not read this project's
+ledger, so I have not answered. Its project data needs attention from
+whoever runs me."* The fix -- `/daikenja:setup-user`, or a plugin update -- is
+yours to run, not the channel's; `--check` lists the projects it applies to.
 
 Whatever comes out is then cleaned: stray code fences are dropped, and every
 absolute path is replaced with `a local path`. Both skills already say a

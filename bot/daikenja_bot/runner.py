@@ -7,8 +7,10 @@ environment the child process inherits -- otherwise "the model cannot post"
 would be true only until it read `os.environ` and called the API itself.
 
 The tool allowlist is the second half of the same idea. A session that can
-only read files can still find a ledger; it cannot run a command, write a
-file or fetch a URL on the say-so of something it read in a thread.
+only read files can still find a project's ledger -- its `DECISIONS.md`
+files and `.daikenja/open.md`; it cannot run a command, write a file or fetch
+a URL on the say-so of something it read in a thread. That includes git: the
+ledger's history is not something the bot reads.
 """
 
 from __future__ import annotations
