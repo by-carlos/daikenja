@@ -8,15 +8,12 @@
 > what changed, the full picture, one decision's history, what nobody owns.
 
 ```mermaid
-flowchart LR
-    subgraph In[What feeds it]
-        Y[You: 'log this']
-        M["/daikenja:meeting-review"]
-        S["/daikenja:setup-project<br/>seeding"]
-    end
-    In -->|proposed lines| L["/daikenja:project-log"]
-    L -->|after your yes| F[(.daikenja/ledger.md)]
-    F --> R[catchup · summary · decisions<br/>gaps · sources · list]
+flowchart TB
+    Y["You: 'log this'"] --> L
+    M["/daikenja:meeting-review"] -->|proposed lines| L
+    S["/daikenja:setup-project<br/>seeding"] -->|proposed lines| L
+    L["/daikenja:project-log"] -->|after your yes| F[(.daikenja/ledger.md)]
+    F --> R["catchup · summary · decisions<br/>gaps · sources · list"]
     F --> J["/daikenja:judgement"]
 ```
 
