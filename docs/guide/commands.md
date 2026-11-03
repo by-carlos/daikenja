@@ -54,7 +54,7 @@ More: [Reviewing things](reviewing.md).
 |---|---|---|
 | Set yourself up, once | `/daikenja:setup-user` | -- |
 | Register a project, once per project | `/daikenja:setup-project` | -- |
-| Install, update or remove the Tensei persona | `/daikenja:tensei` | -- |
+| Adopt, update or remove Tensei, the Daikenja way of working | `/daikenja:tensei` | -- |
 
 More: [Install and update](install.md#after-installing), [Tensei](tensei.md).
 

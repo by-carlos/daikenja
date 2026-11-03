@@ -110,7 +110,7 @@ can read the project can read. Every file, and what leaves your machine:
 | [Writing a reply](docs/guide/writing.md) | you have a message to answer, draft or check |
 | [The project ledger](docs/guide/ledger.md) | you want decisions kept, or need to know what was decided |
 | [Reviewing things](docs/guide/reviewing.md) | you have a transcript, a document or a thread to check |
-| [Tensei](docs/guide/tensei.md) | you want Claude's everyday answers shorter and headline-first |
+| [Tensei](docs/guide/tensei.md) | you want Claude to answer headline-first, say how sure it is, and rank its options -- see the side-by-side example |
 | [Your data](docs/guide/your-data.md) | you want to know what is stored, where, and what leaves your machine |
 | [The Slack bot](docs/guide/slack-bot.md) | you want summaries and checks inside Slack |
 | [FAQ](docs/guide/faq.md) | something did not behave the way you expected |

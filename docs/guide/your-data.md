@@ -61,7 +61,7 @@ history -- moving the ledger later does not remove what was already committed.
     your yes.
   - `learn-voice` rewrites your writing style in one go, after saving a dated
     backup of the old one.
-- **`tensei`** asks before writing its file or changing your `CLAUDE.md`.
+- **`tensei`** asks once, "Adopt this way of working?", before writing its file or changing your `CLAUDE.md`.
 
 ## Every file, and who writes it
 
@@ -76,7 +76,7 @@ open any of these files for you.
 | How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` |
 | Backups of your writing style, and what `learn-voice` noticed but kept out | `~/.claude/daikenja/writing-style.*.md`, dated | `learn-voice` |
 | Your domain glossary | `~/.claude/daikenja/glossary.md` | you; `setup-user` creates the blank file |
-| The Tensei persona, if you installed it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |
+| Tensei, if you adopted it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |
 | Tensei backups | `~/.claude/backups/tensei-<timestamp>/` | `tensei` |
 | A project's ledger | `.daikenja/ledger.md` in the project's folder by default -- see note | `project-log` only |
 | A project's card | `project.md` beside the ledger (`<name>.project.md` beside a ledger with another file name) | `setup-project`, when you accept it |
