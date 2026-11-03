@@ -207,8 +207,9 @@ Advance the checkpoint for <project>?
 ```
 
 On a scalar checkpoint the proposal says it replaces the timestamp with this
-map. A repository with no commits yet, or not a git repository, gets no entry
-and is named as skipped. Wait for approval. Silence is not approval.
+map. A repository whose stored SHA already is its current commit is left out.
+A repository with no commits yet, or not a git repository, gets no entry and
+is named as skipped. Wait for approval. Silence is not approval.
 
 - **Approved.** Edit `~/.claude/daikenja/daikenja.yaml`, the matched project's
   `last_checkpoint` key only, surgically -- not a rewrite. Each repository's
