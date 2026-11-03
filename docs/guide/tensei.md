@@ -126,6 +126,14 @@ without the earlier conversation.
   ranked best-first, so "go with 2" works.
 - **Each reason is marked *verified* or *assumed***, and the constraints are
   named as fixed facts or as settings someone could change.
+- **A big design is reviewed before you see it.** When the advice is a
+  lasting decision -- architecture, an interface, a contract, a process --
+  helper models check it first from the angles a plan gets checked from:
+  simplicity always, plus architecture, security or operations when the
+  design touches them. You see one line when nothing changes
+  ("Reviewed for simplicity and architecture -- no change"), a finding only when it
+  changes the advice, and a warning when the design cannot work. Routine
+  choices get no review.
 
 **Working practice**
 
@@ -152,7 +160,8 @@ recorded only on your computer, as the time you adopted it and a fingerprint
 of the version.
 
 **What it changes on your computer.** It saves Tensei as `tensei.md` in your
-Daikenja folder (`~/.claude/daikenja/`), and adds one line to the end of your
+Daikenja folder (`~/.claude/daikenja/`), with `plan-review-lenses.md` beside
+it (the review angles the design check reads), and adds one line to the end of your
 personal Claude instructions file, `~/.claude/CLAUDE.md` (skipped if it is
 already there), so every session from the next one loads it.
 
@@ -165,7 +174,8 @@ way of working?"*:
 - anything replaced is backed up first, under `~/.claude/backups/`.
 
 **Removing it.** Run `/daikenja:tensei` and ask to remove it. It backs up
-Tensei and your `CLAUDE.md`, offers to delete Tensei, and takes out the line
+Tensei and your `CLAUDE.md`, offers to delete Tensei and its lens file, and
+takes out the line
 it added -- a line you wrote by hand is left alone.
 
 It runs only when you type the command: a skill that edits the instructions

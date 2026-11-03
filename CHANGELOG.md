@@ -20,6 +20,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   discipline also gains three rules: long output goes to a file, revisions
   show only the changed paragraph, and a fix that has to be repeated is
   treated as a symptom.
+- **Tensei reviews a durable design before recommending it.** When a design
+  recommendation in plain conversation is a durable decision (architecture, a
+  contract, an interface, a process), the planning plugin's plan-review
+  lenses run on it first, without asking: Simplicity always, plus Architect,
+  Security or Operator when their triggers fire. Each runs in a subagent
+  that writes to a file, and one merged digest comes back. A clean pass is
+  one line, a finding shows only when it changes the recommendation, and an
+  unsound design gets a warning. The lens spec ships as
+  `templates/plan-review-lenses.md`, a byte-identical copy of
+  `by-carlos/plan-staged-rollout`'s `plan-review.md`, and `/daikenja:tensei`
+  installs it next to `tensei.md` and removes it on uninstall (#306).
+- **Copies of other repositories' files are checked for drift.**
+  `tests/vendored.json` pins each byte-identical copy to its upstream commit
+  and blob hash. `tests/check-vendored.py` fails CI when a copy no longer
+  matches its pin, and a daily `vendored-drift` workflow fails when the
+  upstream file has moved on; `--resync` re-copies and re-pins (#306).
 - **`/daikenja:setup-user` offers `/daikenja:tensei` once**, at its hand-off,
   and only when Tensei is not installed. No other skill suggests it.
 - **Rewrites no longer change wording that had nothing wrong with it.**

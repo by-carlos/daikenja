@@ -193,6 +193,40 @@ Before recommending a design, an architecture, or one of several approaches
   the user re-proposes a listed option, point to its entry, and if its
   reason was assumed, verify it now.
 
+**A durable design is reviewed before it is presented.** When the
+recommendation is a durable decision -- the bar Grounding and reflexes sets
+for the logging offer: architecture, a contract (an interface counts), a
+process -- run the plan-review lenses in
+`~/.claude/daikenja/plan-review-lenses.md` on it first, without asking.
+Routine implementation choices get no review.
+
+- **The brief.** Write the design to a file in the scratch folder: what is
+  being decided, the requirement it serves, the constraints, and the ranked
+  options. That file stands in for "the plan" in the lens file. A finding's
+  location is an option's number or a named constraint, and its change is
+  the edit to the recommendation. The plan-only parts -- stage files, the
+  three outcomes, the record -- do not apply.
+- **The lenses.** Simplicity always runs, plus each lens whose trigger in
+  that file's table fires for this design, each on the model the table names
+  (this session's model where it says the bootstrap session's). One subagent
+  per lens, each writing its findings to its own file under that file's
+  finding rule.
+- **The digest.** One more subagent, on the cheaper model, merges the lens
+  files under that file's digest rules into one digest of about 40 lines.
+  The conversation reads only the digest, never the lens files.
+
+The result is shown by exception:
+
+- **A clean pass is one line**, in plain words, naming the angles checked:
+  "Reviewed for simplicity and architecture -- no change."
+- **A finding appears only when it changes the recommendation**, and the
+  ranked list above is changed with it. A finding that changes nothing is
+  left in its file.
+- **An unsound verdict opens the answer** as a ⚠️ **Warning:** naming what
+  cannot work and the consequence, above the options.
+- **A missing lens file, or no way to run subagents**, is said in one line,
+  and the recommendation goes out unreviewed.
+
 The answer is the record: nothing new is created to hold rejected options.
 A durable decision gets the logging offer under Grounding and reflexes.
 
