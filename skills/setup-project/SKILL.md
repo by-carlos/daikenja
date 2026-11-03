@@ -3,8 +3,8 @@ name: setup-project
 description: Registers the project you are in with Daikenja, sets its per-project settings, and optionally seeds its ledger from sources the project already has.
 metadata:
   owner: Carlos
-  version: 2
-  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one; and the project card beside the ledger, only when none exists
+  version: 3
+  writes: ~/.claude/daikenja/daikenja.yaml -- one projects entry, either the one matching the current directory, the one the user names it should join, or a new one; the project card at <home>/.daikenja/project.md, only when none exists; and a new git repository, only when the user accepts the git init offer for a plain folder
 disable-model-invocation: true
 ---
 
@@ -20,10 +20,15 @@ propose dozens of ledger entries. Nothing about "set this up" should make that
 fire on its own -- the user runs `/daikenja:setup-project` when they mean to.
 `disable-model-invocation: true` is set for that reason.
 
-**This skill never writes ledger content.** Seeding derives candidate entries
-and hands them to `/daikenja:project-log`, which shows the exact lines and waits
-for approval. `project-log` remains the only writer of a ledger, per
-`docs/config-writers.md` § Who writes what.
+**This skill never writes ledger content.** The ledger is `DECISIONS.md` at
+each registered repository's root and `.daikenja/open.md` in the home
+repository. Seeding derives candidate entries and hands them to
+`/daikenja:project-log`, which shows the exact lines, waits for approval and
+scaffolds either file from its template. `project-log` remains the only writer
+of both, per `docs/config-writers.md` § Who writes what.
+
+**Every project lives in a git repository**, because git is where the ledger
+keeps its history. A project with no folder cannot be registered.
 
 ## Step 0: the preconditions
 
@@ -62,19 +67,27 @@ Before proposing anything:
 - The current directory's **normalized path** -- forward slashes, no trailing
   slash, compared case-insensitively, per `docs/config-resolution.md` § Finding
   the project.
+- **Whether it is a git repository**: `git -C <dir> rev-parse --show-toplevel`.
+  Read-only; it decides whether Step 2 offers `git init`.
 - **Every path of every `projects:` entry** -- its `paths` list, or its `path`
   scalar read as a one-element list -- normalized the same way, and whether any
   is an **exact match** for this directory.
-- Whether a ledger already exists on disk at the resolved path -- the matched
-  project's `ledger:` key, otherwise `.daikenja/ledger.md` under the project
-  root, which is the **first** path in the entry. This decides whether Step 4
-  is a first seed or a top-up, and it is read-only here.
+- For a matched entry, which ledger files exist, per `config-resolution.md`
+  § Finding `DECISIONS.md` and `open.md`: `DECISIONS.md` at the root of each
+  path, and `.daikenja/open.md` in the home repository, the **first** path.
+  This decides whether Step 4 is a first seed or a top-up, and it is read-only
+  here.
 
-**A ledger on disk with no matching `projects:` entry is a normal state**, not
-an error. The file on disk is the fact and the config is the index. Register the
-project and leave the ledger exactly as it is.
+**Ledger files on disk with no matching `projects:` entry are a normal state**,
+not an error. The files on disk are the fact and the config is the index.
+Register the project and leave the files exactly as they are. A `DECISIONS.md`
+another tool wrote, plan-staged-rollout for one, is the same case: it is
+adopted as this repository's decisions file, never replaced.
 
 ## Step 2: register the project
+
+**Refuse outright** when the current directory is the user's home directory or
+`~/.claude`. Neither is a project. Say so and write nothing.
 
 - **An exact path match already exists**, on any path of any entry. Say which
   key it is registered under and leave the entry alone. Registration is
@@ -82,58 +95,71 @@ project and leave the ledger exactly as it is.
   to Step 3 -- an already-registered project can still want its keys set or its
   ledger seeded.
 
+  **A matched entry that needs migration** -- an old `.daikenja/ledger.md` in
+  its home repository with no `open.md` beside it, per `config-resolution.md`
+  § Legacy keys and unmigrated ledgers -- gets that section's one line naming
+  `/daikenja:setup-user`. Steps 3 and 3b still run; Step 4 does not, because
+  `project-log` refuses to write beside an unmigrated ledger.
+
 - **No match.** Ask one question before proposing anything, because there are
-  now two answers and only the user knows which one is meant:
+  two answers and only the user knows which one is meant:
 
   ```
-  Is this a new project, or another directory of one you already track?
+  Is this a new project, or another repository of one you already track?
   Registered: <key>, <key>, <key>.
   ```
 
   - **A new project.** Propose a new entry, key defaulting to the directory's
-    own name, and ask if the user wants a different label. The key is a human
-    label and is never matched against a directory, so it may be anything that
-    reads well -- but it is what a read skill accepts as an argument, so short
-    and typeable beats decorative:
+    own name, and ask in the same round whether the project spans other
+    repositories and, if so, **which one is home** -- where `open.md` and the
+    project card live. The key is a human label and is never matched against a
+    directory, so it may be anything that reads well -- but it is what a read
+    skill accepts as an argument, so short and typeable beats decorative. Home
+    goes **first** in `paths`, per `config-resolution.md` § Finding
+    `DECISIONS.md` and `open.md`; with one repository, it is home:
 
     ```yaml
     <dir-name>:
       paths:
-        - <normalized absolute path>
+        - <home repository>
+        - <other repository>
     ```
 
-  - **Another directory of an existing project.** Append this path to that
+  - **Another repository of an existing project.** Append this path to that
     entry's `paths`, and change nothing else. **Appending never reorders the
-    list**: the first path is the project root and therefore where the ledger
-    lives, so moving it would silently repoint the ledger at a different file.
-    Say which directory stays the root.
+    list**: the first path is home, and moving it would silently repoint
+    `open.md` and the card at a different folder. Say which repository stays
+    home.
 
     An entry written in the single-value `path:` form is converted to a
     two-element `paths:` list, with the existing value first. Say so in the
     proposal -- it is the same project resolving the same way, but the file
     now looks different from how the user left it.
 
-**Registering a project with no directory at all is a legal, and asked-for,
-outcome.** A programme that spans a wiki, a tracker and a chat space has no
-folder to register. Write the entry with `paths: []` when the user says the
-project has no directory, and never invent a path to fill the gap.
+**Every path written is a git repository.** For each one, Step 1's check
+decides:
 
-**Such an entry needs an absolute `ledger:` in the same write, and it is not
-optional here.** With no root there is nothing for a relative pointer to
-resolve against, so a pathless entry without one resolves as a project and then
-fails the moment anything asks for its ledger. Propose the convention from
-`docs/config-resolution.md` § Legacy keys and unmigrated ledgers --
-`~/.claude/daikenja/ledgers/<project-key>.md` -- as part of the same entry:
+- **The repository root.** Register it as it stands.
+- **Inside a repository, not at its root.** Propose the root
+  `rev-parse --show-toplevel` printed, since `DECISIONS.md` sits at a
+  repository's root. Register the sub-folder itself only when the user asks
+  for it.
+- **Not a git repository** -- a plain folder for non-code work: notes, a
+  programme, a bid. Offer `git init` in one line, and take no for an answer:
 
-```yaml
-<key>:
-  paths: []
-  ledger: <home>/.claude/daikenja/ledgers/<key>.md
-```
+  ```
+  <path> is not a git repository. Daikenja keeps the ledger's history in git,
+  so a project has to live in one. Run git init there? Nothing is registered
+  otherwise.
+  ```
 
-Say what the pair buys: reachable by name from anywhere, with its record kept
-outside any repository. Step 3's `ledger` question is then already answered and
-is not asked again.
+  On a yes, run `git init` in that folder and continue. On a no, write nothing
+  and say so. Never register a folder that is not a repository.
+
+**A project with no folder** -- a programme spread across a wiki, a tracker and
+a chat space -- is not registered as one. Say so, and offer the plain-folder
+path above: a new folder for the project, named after its key, with `git init`.
+Never write an entry with no paths, and never invent a path to fill the gap.
 
 **A prefix match that is not exact is a nested project.** The current directory
 sits inside a registered one. Say which project it resolves to today and ask
@@ -143,9 +169,10 @@ subtree. That is sometimes exactly what the user wants and is never something
 to assume. Adding this directory to the outer project instead is the other
 answer, and it is often the one meant.
 
-Add the entry with the Edit tool, under `projects:`. **Never rewrite the file.**
-Hand-added keys, other projects and the template's comments all survive an edit
-and none of them survive a regeneration.
+Add the entry with the Edit tool, under `projects:`. **Never write a `ledger:`
+key** -- the files sit at fixed paths. **Never rewrite the file.** Hand-added
+keys, other projects and the template's comments all survive an edit and none
+of them survive a regeneration.
 
 ## Step 3: offer the per-project keys
 
@@ -154,22 +181,18 @@ skill does, so it offers them once rather than leaving them to be discovered.
 Ask in one short round, and take silence as "leave them all unset":
 
 ```
-Registered. Three optional settings for this project -- skip any or all:
+Registered. Two optional settings for this project -- skip either or both:
 
-1. ledger -- where the ledger file lives: a path relative to the project root,
-   or an absolute path (useful for a project with no repository of its own --
-   the convention is ~/.claude/daikenja/ledgers/<project-key>.md). Default
-   .daikenja/ledger.md.
-2. stale_after_days -- how long an open item may sit before project-gaps calls
+1. stale_after_days -- how long an open item may sit before project-gaps calls
    it stale. Inherits <the profile value> if you skip it.
-3. norms_doc -- your team's ways-of-working document, as a path or a URL.
+2. norms_doc -- your team's ways-of-working document, as a path or a URL.
    Setting it turns on self-review's ROLE CHECK, which is off by default.
 ```
 
-Every one of these is optional and every one has a defined default in
-`docs/config-schema.md` § Field notes. **Write only the keys the user
-answers.** A key written at its own default value is noise that reads like a
-deliberate override to the next person who opens the file.
+Both are optional and both have a defined default in `docs/config-schema.md`
+§ Field notes. **Write only the keys the user answers.** A key written at its
+own default value is noise that reads like a deliberate override to the next
+person who opens the file.
 
 **Never write `last_checkpoint` here.** It belongs to `project-catchup`, which
 sets it after it has actually reported a delta. Writing it at registration would
@@ -188,11 +211,8 @@ checked against this project from anywhere, per
 `${CLAUDE_PLUGIN_ROOT}/docs/project-card.md`. Read that document's § Location
 and § Format before proposing one.
 
-Resolve the card's path from the entry's ledger path -- the one Step 1
-resolved for an existing entry, or `.daikenja/ledger.md` under the root of an
-entry Step 2 just wrote, unless Step 3 set a `ledger:` for it -- per
-`project-card.md` § Location -- `project.md` beside a `ledger.md`, or
-`<name>.project.md` beside any other ledger name. Then:
+The card is `<home>/.daikenja/project.md`, home being the entry's first path,
+per `project-card.md` § Location. Then:
 
 - **A card already exists there.** Say so and leave it alone. This skill
   never inspects or rewrites an existing card; the user edits it by hand.
@@ -212,10 +232,8 @@ entry Step 2 just wrote, unless Step 3 set a `ledger:` for it -- per
   to say yet gets the blank template, comments and all -- an empty card is a
   place to write, and better than none.
 
-An entry with no ledger location -- no paths and no absolute `ledger:` -- has
-no card location either; say so in one line and skip this step. `project-log`
-does not scaffold the card when it scaffolds the ledger, and no read skill
-does: this step is the only place a card is created.
+`project-log` does not scaffold the card when it scaffolds `open.md`, and no
+read skill does: this step is the only place a card is created.
 
 ## Step 4: offer to seed the ledger
 
@@ -232,44 +250,45 @@ nothing without your approval. Otherwise we are done.
 ### Step 4a: look for a register the project already keeps
 
 **Do this before asking for sources, not after.** Many projects already keep
-architecture decision records, RFCs, a decision log or a numbered question
-register, and finding that out on the fifth exchange means several rounds of
-entries have already been proposed against a source that turns out to be
-superseded.
+architecture decision records, RFCs, a decision log, a numbered question
+register or a `DECISIONS.md`, and finding that out on the fifth exchange means
+several rounds of entries have already been proposed against a source that
+turns out to be superseded.
 
-Look for the usual homes -- `docs/adr/`, `docs/decisions/`, `docs/rfc/`,
-`adr/`, `decisions/`, or a file whose name says the same thing. This is a scan
-of file names in the project, not a read of the repository for material.
+Look for the usual homes -- `DECISIONS.md` at each registered repository's
+root, `docs/adr/`, `doc/adr/`, `docs/decisions/`, `docs/rfc/`, `adr/`,
+`decisions/`, or a file whose name says the same thing. This is a scan of file
+names in each registered repository, not a read of it for material.
 `project-log`'s rule against reading the repository to guess what happened is
 about inventing material for an ordinary log entry; here the user has asked for
 exactly this and the results are shown before anything is proposed.
 
-**When the project already keeps one, the ledger is the index and those
-documents are the depth.** Say so plainly, because the honest first read of such
-a project is "you may not need Daikenja here":
+- **A `DECISIONS.md` already exists.** Say so: it is adopted as it stands, its
+  entries are already the ledger's decisions, and seeding adds only what it
+  lacks -- `project-log`'s duplicate check enforces that. It is never
+  overwritten or reformatted.
+- **An ADR folder or a decision register.** Say plainly that the ledger is the
+  index and those documents are the depth, because the honest first read of
+  such a project is "you may not need Daikenja here":
 
-```
-This project already keeps 11 decision records in docs/adr/ and a numbered
-question register. Daikenja does not replace those. What it adds is one place
-that answers "what is settled, what is open, who owns it" across all of them.
-Each entry would be one line pointing at the record that holds the detail.
-```
+  ```
+  This project already keeps 4 decision records in docs/adr/ and a numbered
+  question register. Daikenja does not replace those. What it adds is one place
+  that answers "what is settled, what is open, who owns it" across all of them.
+  Each decision would be one entry naming the record that holds the detail.
+  ```
 
 Three rules follow, and all three have to be settled before the first write:
 
-- **Entry bodies are one line pointing at the source.** No narrative, no
-  history, no summary of the record's reasoning. That is the same rule
-  `project-log` already applies to every entry body -- nothing about the format
-  changes to support this.
-- **Carry the source identifier across.** People cite `ADR-0007` and `Q-04` in
-  chat and in standups, and a migration that drops those references breaks every
-  one of them. Propose entries in ascending source-identifier order so that
-  `project-log`'s sequential allocation lands `ADR-0007` on `D-007` where the
-  source numbering allows it. Where it cannot -- gaps in the source sequence,
-  two sources feeding one section, or a ledger that already holds entries --
-  the body opens with the source identifier instead. **Decide which before the
-  first write.** A written entry is never renumbered, so this cannot be
-  corrected afterwards.
+- **One entry per decision still in force, naming its record.** The entry
+  states the rule and its `Source:` names the record (`Source: ADR-0004`), the
+  newest on the subject only. A record another one replaced is history and is
+  not proposed: `DECISIONS.md` is current-only, per
+  `${CLAUDE_PLUGIN_ROOT}/docs/decisions-format.md` § Current only. When
+  `project-log` creates the `DECISIONS.md`, it adds the `ADRs:` line for an ADR
+  folder.
+- **A question the register records as answered is not an open item.** The
+  decision that answered it is the entry; the question is not proposed.
 - **Do not edit the source documents.** Keeping a status index in two places
   means they drift, and stripping the duplicate from the source is usually the
   right follow-up -- but it is the user's call and it is outside this skill.
@@ -294,16 +313,19 @@ No Slack connector in this session, so I cannot read #harbor-rollout. Paste the
 messages you want covered, or skip it and we carry on with the rest.
 ```
 
-Sources also become **Context links**, which are ledger content and therefore go
-through `project-log` like everything else. A source the user pasted rather than
-linked has no URL and is not a context link.
+Sources also become **Context links** in `open.md`, which are ledger content and
+therefore go through `project-log` like everything else. A source the user
+pasted rather than linked has no URL and is not a context link.
 
 ### Step 4c: propose in tranches, through `project-log`
 
 A seed run has more material than an ordinary log run, and that changes how the
 proposal is shaped -- it does not change who approves it. **Seeding adds no
-second approval gate.** `project-log`'s contract is the gate: it shows the exact
-lines, waits, and accepts partial approval.
+second approval gate.** `project-log`'s contract is the gate, per
+`${CLAUDE_PLUGIN_ROOT}/docs/project-log-reference.md` § A batch handed over by
+another skill: it shows the exact lines grouped by file, scaffolds a missing
+file inside the same approval, extends an existing `DECISIONS.md` and never
+overwrites it, and accepts partial approval.
 
 What seeding adds is a bound on how much is put in front of the user at once.
 Forty-one entries in one message makes "just the first two" unusable, and a
@@ -311,48 +333,41 @@ tranche the user answers around is a tranche nobody approved.
 
 - **One tranche at a time, in this order** -- decisions, then open items, then
   context links. Hand each to `project-log`, which proposes it and waits.
+- **Name the repository for each decision** in a multi-repository project: the
+  one whose code it constrains, or home for a project-wide one. Where the
+  material does not say, `project-log` asks.
 - **Restate any outstanding proposal before opening a new one.** If the previous
   tranche was not answered, or was answered about something else, say what is
   still unwritten before showing anything further. Silence is not approval, and
   neither is the user replying about something else.
-- **Split a long tranche by source**, not by count. "The eleven decision records"
-  and "the four decisions from the rollout channel" are two proposals a person
-  can hold in their head. "Entries 1 to 15 of 34" is not.
+- **Split a long tranche by source**, not by count. "The four decision records"
+  and "the decision from the rollout channel" are two proposals a person can
+  hold in their head. "Entries 1 to 15 of 34" is not.
 - **Nothing carries forward.** An approval of one tranche approves that tranche.
 
-The classification rules, the attribution rules, the duplicate check and the
-insert rule are all `project-log`'s and are not restated here. Four things are
-worth saying because a seed run hits them and a normal log run does not:
+The classification rules, the keep rule, the attribution rules and the
+duplicate check are all `project-log`'s and are not restated here. Three things
+are worth saying because a seed run hits them and a normal log run does not:
 
-- **Date each entry with the date it was actually decided or raised**, not with
-  today. That is what the date field means, and a backfill is the one situation
-  where the two differ for every entry.
-- **An entry whose date cannot be established is not proposed.** Ask the user
-  for it. An approximation is a real answer: take it, and `project-log` writes
-  the entry with the `Approximate date.` marker and the derivation in the body,
-  per `ledger-format.md` § Approximate dates. Only when the user cannot supply
-  even an approximation is the entry left out, and then say which ones were
-  dropped and why. The date field is required and absolute, and no part of this
-  skill licenses inventing one.
+- **Date each open item with the date it was actually raised**, not with today,
+  per `project-log-reference.md` § Backfilling an existing project. An item
+  whose date cannot be established is asked about; an approximation is taken
+  and normalized there; an item the user cannot date even roughly is left out,
+  and the report names it. No part of this skill licenses inventing a date.
+  Decisions carry no date.
+- **A decision needs its why and its revisit condition.** Where the source does
+  not give them, they are questions in the proposal, never filled in.
 - **Anything implied but not stated goes in the proposal as a question**, not as
   an entry. A design document describing a preference is not a decision, and a
-  register's open question is an open item rather than a decision about it. A
-  question the register records as **answered** is a resolved open item naming
-  the decision that answered it, not a decision in its own right.
-- **A partial approval can break a supersession pair.** Approving a decision
-  that supersedes another while dropping the one it supersedes leaves a body
-  claiming `Supersedes` with nothing to point at, and the ledger's rule is that
-  the marking lives on both entries. Say so before the write and let the user
-  choose -- keep both, or write the surviving decision without the `Supersedes`
-  clause. Never write half a pair and never repair it afterwards.
+  register's open question is an open item rather than a decision about it.
 
-**Say what a backfill does to the audit before the user runs it.** Entries dated
-to their true origin are older than `stale_after_days` the moment they land, so
-`project-gaps` reports them immediately. That is correct and it still surprises
-people:
+**Say what a backfill does to the audit before the user runs it.** Open items
+dated to their true origin are older than `stale_after_days` the moment they
+land, so `project-gaps` reports them immediately. That is correct and it still
+surprises people:
 
 ```
-These are dated when they were raised, so anything older than 21 days will show
+These are dated when they were raised, so anything older than 30 days will show
 up as stale in /daikenja:project-gaps straight away. That is the audit working,
 not a fault in the entries.
 ```
@@ -361,14 +376,16 @@ not a fault in the entries.
 
 Two or three lines: what was written, where, and what was deliberately left
 alone, per `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- the result
-leads, and seeded entries are counted as ranges, not listed one by one.
+leads, and seeded entries are counted, not listed one by one. Say the ledger
+files are not committed: `project-log` never commits, and the user commits
+them with the work they belong to.
 
 ```
 Registered this project as `harbor` at C:/GitHub/harbor, with
 stale_after_days: 30. Wrote the project card at
-C:/GitHub/harbor/.daikenja/project.md. Seeded 11 decisions and 6 open items
-through project-log -- D-001 to D-011, O-001 to O-006. Left `ledger` and
-`norms_doc` unset, so they use the defaults.
+C:/GitHub/harbor/.daikenja/project.md. Seeded 4 decisions into DECISIONS.md
+and 6 open items into .daikenja/open.md through project-log -- not committed.
+Left norms_doc unset, so it uses the default.
 ```
 
 If seeding was declined or produced nothing, say that plainly and name
@@ -377,10 +394,11 @@ If seeding was declined or produced nothing, say that plainly and name
 ## Re-running this skill
 
 Safe at any time, and expected. An exact path match -- against any path of any
-entry -- leaves the entry and its key untouched, Step 3 shows what is already set before asking, and seeding a project
-that already has a ledger proposes only what is not already recorded --
-`project-log`'s duplicate check is what enforces that, and an entry it matches
-comes back as a proposed edit rather than a near copy.
+entry -- leaves the entry and its key untouched, Step 3 shows what is already
+set before asking, and seeding a project that already has a ledger proposes
+only what is not already recorded -- `project-log`'s duplicate check is what
+enforces that, and an entry it matches comes back as a proposed edit rather
+than a near copy.
 
 Running it purely to seed an already-registered project is a normal use, not a
 workaround.
@@ -396,28 +414,32 @@ missing thing is the task itself -- same rule every Daikenja skill follows.
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse. Never guess the intent and never rewrite the file. |
 | `profile.name` unset or empty | **Stop.** The configuration is incomplete. Point at `/daikenja:setup-user`. |
 | An exact path match already exists | Say which key, leave it alone, and carry on to Steps 3 and 4. Registration is idempotent. |
-| An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval; never rewrite it silently. |
+| The matched project needs migration | The one line from `config-resolution.md` § Legacy keys and unmigrated ledgers, naming `/daikenja:setup-user`. Steps 3 and 3b run; Step 4 does not. |
+| An entry carries both `path` and `paths` | Read it as the union of the two and say so, naming the key. Offer to fold it into one `paths` list on approval, keeping the first path first; never rewrite it silently. |
 | The user names an existing project to add this directory to, and the key does not exist | Ask again, listing the registered keys. Never create a new entry under a key the user only half-remembered. |
-| A project card already exists at the derived path | Say so and leave it alone. Never inspect or rewrite it -- the user edits the card by hand. |
-| The card's directory does not exist yet (no ledger has been scaffolded) | Create the directory as part of the approved card write. The ledger is still `project-log`'s to scaffold; an empty `.daikenja/` beside a card is a normal state. |
-| The user says the project has no directory | Not a failure. Write `paths: []` **and** an absolute `ledger:` in the same entry, per Step 2 -- a pathless entry without one has nowhere to keep its record. |
+| The directory is not a git repository | Offer `git init` there. A no writes nothing. Never register it as it is. |
+| The user says the project has no directory | Offer a new folder for it with `git init`. Never write an entry with no paths. |
+| A `DECISIONS.md` already exists in a registered repository | Not a failure. It is adopted; seeding adds entries through `project-log` and never overwrites it. |
+| A project card already exists at `<home>/.daikenja/project.md` | Say so and leave it alone. Never inspect or rewrite it -- the user edits the card by hand. |
+| `<home>/.daikenja/` does not exist yet | Create the directory as part of the approved card write. `open.md` is still `project-log`'s to scaffold; a `.daikenja/` holding only a card is a normal state. |
 | The current directory is inside an already-registered project | Say which project it resolves to and ask before adding a second entry. Never assume a nested registration is wanted. |
 | The current directory is the user's home directory or `~/.claude` | **Stop.** Neither is a project. Say so and write nothing. |
 | `daikenja.yaml` is not writable | **Stop.** Name the path and the error. Do not write the entry anywhere else. |
 | A named source is unreachable this session | One notice naming the source and what is missing, then continue with the rest. Never stop, and never make the skill conditional on a connector. |
 | A source is reachable but empty, or the fetch fails halfway | One notice, then continue. Never guess at the content of something you could not read. |
 | The project already keeps its own decision records | Not a failure. Say what was found, offer the index-and-depth shape from Step 4a, and let the user decide whether Daikenja adds anything here. |
-| A seed entry has no recoverable date | Ask. If the user cannot supply one, drop that entry and name it in the report. Never date it today and never invent one. |
+| A seed open item has no recoverable date | Ask. If the user cannot supply one, drop that item and name it in the report. Never date it today and never invent one. |
 | A tranche goes unanswered | Restate what is still unwritten before proposing anything further. Silence is not approval. |
-| The ledger is missing a required H2 section, or a line does not parse | `project-log`'s failure table governs. Hand the material over and let it stop; do not repair a ledger from here. |
+| `project-log` refuses or stops -- a newer format version, a missing `open.md` section, a line that does not parse | Its failure cases govern. Hand the material over and let it stop; do not repair a ledger file from here. |
 
 ## What this skill does not do
 
 - It does not capture profile data, copy `personas.md` or `writing-style.md`, or
   create anything in Google Drive. That is `/daikenja:setup-user`, and it stays
   there.
-- It does not write ledger content. `/daikenja:project-log` does, on its own
-  approval, and it is the only skill that does.
+- It does not write ledger content or commit anything. `/daikenja:project-log`
+  writes `DECISIONS.md` and `open.md`, on its own approval, and it is the only
+  skill that does; the user commits them.
 - It does not edit an existing project card. It creates one on approval when
   none exists; after that the card is the user's, per
   `docs/config-writers.md` § Who writes what.
