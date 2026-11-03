@@ -21,7 +21,13 @@ from pathlib import Path
 from . import __version__, preflight
 from .app import resolve_tokens, run
 from .commands import SUBJECT_COMMANDS
-from .config import DEFAULT_CONFIG_PATH, ConfigError, load_config
+from .config import (
+    DEFAULT_CONFIG_PATH,
+    READY,
+    ConfigError,
+    load_config,
+    project_data_states,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -70,6 +76,24 @@ def configure_logging(level_name: str, log_file: str | None) -> None:
         format="%(asctime)s %(levelname)-7s %(name)s: %(message)s",
         handlers=handlers,
     )
+
+
+def project_data_line(path: Path | str | None = None) -> str:
+    """`--check`'s line for the projects whose ledger the skills cannot read.
+
+    Those are the projects a mention would get `PROJECT_DATA_UNREADABLE`
+    for, so they are named here, where whoever runs the bot can fix them.
+    """
+    try:
+        states = project_data_states(path)
+    except ConfigError as exc:
+        return f"unknown -- {exc}"
+    if not states:
+        return "none registered"
+    pending = [f"{key} ({state})" for key, state in states if state != READY]
+    if not pending:
+        return f"{len(states)}, all readable"
+    return "needs attention: " + ", ".join(pending)
 
 
 def _fail(message: str, *, also_log: bool) -> int:
@@ -139,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
             for command in sorted(SUBJECT_COMMANDS):
                 state = "unavailable" if command in unavailable else "ready"
                 print(f"  {command + ':':12}{state}")
+        print(f"  projects:   {project_data_line()}")
         for command in sorted(unavailable):
             print(f"\n{unavailable[command]}", file=sys.stderr)
         return 0
