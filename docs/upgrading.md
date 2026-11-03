@@ -41,6 +41,30 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### Tensei gained a way-of-working section
+
+Only affects you if you installed Tensei with `/daikenja:tensei`.
+
+- **What changed on disk:** nothing yet. The shipped `templates/tensei.md`
+  gained two sections -- *Recommending a design* and *Working practice* --
+  and three rules in *The discipline*. Your installed
+  `~/.claude/daikenja/tensei.md` is a copy and does not change by itself.
+- **If you do nothing:** your sessions keep the older text. Nothing breaks.
+- **The edit:**
+
+  ```
+  before:  ~/.claude/daikenja/tensei.md without "## Recommending a design"
+  after:   ~/.claude/daikenja/tensei.md matching the shipped template
+  ```
+
+- **Can `setup-user` make it for you?** No. Run `/daikenja:tensei`: it shows
+  what changed and asks once whether to adopt it. A copy you edited by hand
+  is never overwritten without asking.
+- **Reversible?** Yes. The previous copy is backed up under
+  `~/.claude/backups/tensei-<UTC timestamp>/` before it is replaced.
+
 ## [0.11.2] - 2026-09-25
 
 ### The digest moved out of Daikenja

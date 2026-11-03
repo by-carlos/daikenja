@@ -3,7 +3,7 @@ name: setup-user
 description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona, writing-style and glossary files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
-  version: 6
+  version: 7
   writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), ~/.claude/daikenja/glossary.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
@@ -344,8 +344,22 @@ ledger from a decision log, a wiki space or a Slack channel you already have.
 You will not need to run /daikenja:setup-user again.
 ```
 
-That is an offer, not a chained skill. This skill ends here whether or not the
-user takes it.
+**Then, only if `~/.claude/daikenja/tensei.md` does not exist, offer
+`/daikenja:tensei`** in the same message. This is the one place Daikenja
+suggests it -- no other skill does -- so a new user hears about it once, at
+setup, and never again unprompted:
+
+```
+Optionally, run /daikenja:tensei to adopt the Daikenja way of working: how
+answers are shaped, when the agent pushes back, how it lays out options, and
+a few working rules. It shows what will change before asking.
+```
+
+If the file exists, say nothing about it: the user already decided, and
+updates reach them through Step 2's upgrade notes.
+
+Both are offers, not chained skills. This skill ends here whether or not the
+user takes them.
 
 ## Re-running this skill
 

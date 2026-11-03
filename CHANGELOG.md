@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Tensei now carries a way of working, not only a conversational
+  register.** Two new sections join it. *Recommending a design* lists every
+  option weighed, ranked best-first, with each reason marked verified or
+  assumed and the constraints named as fixed facts or settings. *Working
+  practice* asks for an explicit yes before anything others can see, reads
+  another repository's `CLAUDE.md` first, creates no worktree unasked, keeps
+  repository facts out of memory, caps how much is read into the
+  conversation, and hands reading and contract-filling to subagents. The
+  discipline also gains three rules: long output goes to a file, revisions
+  show only the changed paragraph, and a fix that has to be repeated is
+  treated as a symptom.
+- **`/daikenja:setup-user` offers `/daikenja:tensei` once**, at its hand-off,
+  and only when Tensei is not installed. No other skill suggests it.
+
 ### Changed
 
 - **The README is now a landing page, and the detail moved into a user
@@ -21,6 +37,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   working without `setup-project`, as they always have. The contracts in
   `docs/` did not move. CI now fails on a relative Markdown link that does
   not resolve.
+- **Installing Tensei is now a single acknowledgement.** `/daikenja:tensei`
+  shows five to eight plain lines on what the agent will do differently,
+  built from the shipped file, then asks "Adopt this way of working?". The
+  manifest it already wrote is the record of what was adopted and when, and
+  it never leaves the machine.
+- **A risk label now opens the response.** Tensei always asked for a SAFE /
+  RISKY / DESTRUCTIVE label before an action was proposed. In testing, the
+  longer text pushed that label below the command it covered, so the rule
+  now says the label comes first, above the command.
+- **Tensei no longer points at a file only its author has.** Its dialog
+  recap rule cited a personal `git-workflow.md`; the shape is now written
+  out in place.
 - **The AI-tell check now says when each tell fires and when it does not.**
   It was a one-paragraph list of tell names. It is now a table of eight
   tells, each with a condition for firing and one for not firing, plus a list of

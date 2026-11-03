@@ -26,8 +26,9 @@ starting points.
   of gloss at most, with project, date and source. Always local, never a
   pointer or a Drive file. Skills that gloss a term search it for that term
   and never load it whole; a review skill may append a line the user defined.
-- [`tensei.md`](tensei.md) -- the conversational persona `/daikenja:tensei`
-  installs to `~/.claude/daikenja/tensei.md`, imported from `~/.claude/CLAUDE.md`.
+- [`tensei.md`](tensei.md) -- the way of working (answer shape, design
+  recommendations, working practice) that `/daikenja:tensei` installs to
+  `~/.claude/daikenja/tensei.md`, imported from `~/.claude/CLAUDE.md`.
   Unlike `personas.md`, `writing-style.md` and `glossary.md`, this one is
   not a blank starting point the user fills in: it is maintained content, and
   the skill can update an installed copy the user has not edited by hand. See
