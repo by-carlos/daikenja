@@ -238,6 +238,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`tests/check-invariants.py` runs on Windows.** It now finds `claude`
   through the `PATH` lookup, so it no longer fails to launch `claude.cmd`.
+- **Tensei names a recorded decision in words, not by ID.** Its example
+  still read "D-003 chose the other path", but decisions in `DECISIONS.md`
+  have no IDs. An installed copy updates through `/daikenja:tensei`; see
+  `docs/upgrading.md`.
 
 ## [0.12.0] - 2026-09-30
 
