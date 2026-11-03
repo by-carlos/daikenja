@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tensei no longer points at a file only its author has.** Its dialog
   recap rule cited a personal `git-workflow.md`; the shape is now written
   out in place.
+
 - **The AI-tell check now says when each tell fires and when it does not.**
   It was a one-paragraph list of tell names. It is now a table of eight
   tells, each with a condition for firing and one for not firing, plus a list of
