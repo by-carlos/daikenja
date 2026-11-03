@@ -141,8 +141,9 @@ overwritten, re-scaffolded or reformatted.
 Read every file the batch could touch before proposing anything.
 
 **The version lines first**, per `open-format.md` § Version line. **A newer
-version than this plugin knows, in either file, refuses the whole batch** --
-nothing is written to either file, not even the entries for the other one.
+version than this plugin knows, in any file the batch would write, refuses the
+whole batch** -- nothing is written to any file, not even the entries for the
+others.
 Name the file and the version, ask for a plugin update, and stop:
 
 ```
@@ -184,10 +185,10 @@ the run follows propose-then-wait below.
 3. **Every field resolves without a question.** For an open item: the date is
    today or an exact date the user gave, the owner is who the user named, the
    user for their own call, else `@unassigned`. For a decision: the rule, the
-   why and the revisit condition are all in the user's words, the repository
-   and area follow without judgement (below), and the source is given or is
-   the conversation's own link. **An approximate date drops the run.** So does
-   a decision with no stated why -- asking for it is a question.
+   why and the revisit condition are all in the user's words, and the
+   repository and area follow without judgement (below). **An approximate date
+   drops the run.** So does a decision with no stated why or revisit
+   condition -- asking for it is a question.
 4. **The operation is byte-determined.** New entries, and changes the user
    names exactly ("close the item about the alert thresholds"). The duplicate
    check still runs first: a hit the user did not name drops the run. At most
@@ -250,7 +251,9 @@ line, per `decisions-format.md` § Shape. When two could, ask.
 **The entry** is the shared shape, with its em dash: `**<rule now in force>** —
 <why>. Revisit: <condition, or "never">. Source: <link, issue, pull request or
 thread>.` State the rule, not its history. A why or revisit condition the
-material does not give is a question, never filled in.
+material does not give is a question, never filled in. `Source:` names the
+link, issue or thread the material came from, and is left out when it has
+none -- never invented.
 
 ### Attribute correctly
 

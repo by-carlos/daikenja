@@ -3,19 +3,21 @@
 Synthetic. Invented people, `example.com` links only. Nothing here comes from
 real work content, and no path below exists on any machine.
 
-Exercises the two halves of handle drift, against
-[`sample-ledger.md`](sample-ledger.md), the beacon project.
+Exercises the two halves of handle drift, against the beacon project's
+`open.md` below. Only open items carry an owner: `DECISIONS.md` entries have
+none, so the check never looks there.
 
-Walks 1-8 cover `project-log` § Say when a handle is new: a handle the ledger
+Walks 1-8 cover `project-log` § Say when a handle is new: a handle `open.md`
 already knows, a handle only `personas.md` knows, a handle neither knows, two
-spellings of one person, `@unassigned`, and two configuration states -- no
-personas file and a broken `drive:` pointer.
+spellings of one person, `@unassigned`, two configuration states -- no
+personas file and a broken `drive:` pointer -- and a decision, which writes no
+handle at all.
 
 Every message in walks 1-8 is a fact the user dictated, so the same-turn path is
-the baseline across all eight and none of them waits for approval. Walk 8 is
-where that is spelled out: an unfamiliar handle produces a notice, not a
-question, so it never demotes a dictated run to propose-then-wait. Walk 7 is the
-only stop, and it comes from the config failure rather than from the handle.
+the baseline across all eight and none of them waits for approval: an
+unfamiliar handle produces a notice, not a question, so it never demotes a
+dictated run to propose-then-wait. Walk 7 is the only stop, and it comes from
+the config failure rather than from the handle.
 Walks 9-11 are not dictated -- they enter `project-log` from another skill,
 which per that skill's § The same-turn path for dictated facts never takes this
 path at all.
@@ -32,12 +34,32 @@ Depends on: project-log "Say when a handle is new", project-log "The same-turn p
 
 ---
 
+## The open items these walks assume
+
+`C:/GitHub/beacon/.daikenja/open.md`, with today 2026-09-15:
+
+~~~markdown
+<!-- daikenja-open-format: 1 -->
+# beacon open items
+
+## Open items
+
+- 2026-09-02 -- @diablo -- Confirm the events table can take the canary's write load.
+- 2026-08-28 -- @rimuru -- Publish the rollout calendar to the support team.
+- 2026-08-20 -- @benimaru -- Agree the row-count tolerance with the data team.
+- 2026-08-11 -- @unassigned -- Decide who answers customer questions during the canary.
+
+## Context links
+
+## Sources
+~~~
+
 ## The personas file these walks assume
 
 Whatever `profile.personas` resolves to. Walks 1-5 and 8 assume this content;
 walks 6 and 7 replace it; walks 9-11 assume it plus the three extra sections
-below. It deliberately does **not** cover everyone in the beacon ledger -- it is
-the user's own prose, not a roster, and a person missing from it is the normal
+below. It deliberately does **not** cover everyone in `open.md` -- it is the
+user's own prose, not a roster, and a person missing from it is the normal
 case.
 
 ~~~markdown
@@ -61,22 +83,22 @@ case.
 delete this freely.*
 ~~~
 
-The beacon ledger's owners are `@rimuru`, `@diablo`, `@benimaru` and
+The owners in `open.md` are `@diablo`, `@rimuru`, `@benimaru` and
 `@unassigned`. So `@diablo` is in both places, `@shion` is in the personas file
-only, `@rimuru` and `@benimaru` are in the ledger only, and neither place has
+only, `@rimuru` and `@benimaru` are in `open.md` only, and neither place has
 heard of anybody else.
 
 ---
 
-## Walk 1: a handle the ledger already uses
+## Walk 1: a handle `open.md` already uses
 
 User message:
 
-> Log the decision that Diablo signs off the canary region before it starts.
+> Add an open item: Diablo signs off the canary region before it starts.
 > Owner @diablo.
 
-Expected: step 1 of the check finds `@diablo` as the owner of `D-003` and
-`O-005` already. Known. **No notice, and `personas.md` is never read** -- the
+Expected: step 1 of the check finds `@diablo` already owning the events-table
+item. Known. **No notice, and `personas.md` is never read** -- the
 run resolves nothing, downloads nothing, and would behave identically if the
 pointer were broken.
 
@@ -90,14 +112,14 @@ User message:
 > Add an open item: @shion confirms the events table retention before the
 > canary.
 
-Expected: step 1 finds no `@shion` in the beacon ledger, so step 2 resolves
+Expected: step 1 finds no `@shion` in `open.md`, so step 2 resolves
 `profile.personas` and finds the `## Shion` section, whose `Known as` names
 `@shion`. Known. No notice.
 
 The read happening here and not in Walk 1 is the whole cost model: the file is
-touched only when a run carries a handle the ledger cannot account for.
+touched only when a run carries a handle `open.md` cannot account for.
 
-Must not happen: reporting `@shion` as new because this ledger has never used
+Must not happen: reporting `@shion` as new because `open.md` has never used
 it. The file is exactly what that case is for.
 
 ## Walk 3: a handle neither place knows
@@ -107,13 +129,13 @@ User message:
 > Add an open item: @gobta writes the canary abort criteria.
 
 Expected: neither place has `@gobta`. The four same-turn conditions all hold and
-the notice is a notice, not a question, so it fails none of them. The entry is
-written in the same turn and the notice is shown beside the written lines and
-the Changelog line, exactly as the run would have gone without the check:
+the notice is a notice, not a question, so it fails none of them. The item is
+written in the same turn and the notice is shown beside the written line,
+exactly as the run would have gone without the check:
 
 ~~~
 New owner handles:
-- @gobta -- not in this ledger and not in personas.md.
+- @gobta -- not in open.md and not in personas.md.
 ~~~
 
 Offering `/daikenja:remember-persona` alongside it is fine. Running it is not.
@@ -127,24 +149,25 @@ to `personas.md`.
 
 User message:
 
-> Log the decision that @benimaru.k owns the data-team sign-off for the row
+> Add an open item: @benimaru.k gets the data team's sign-off on the row
 > counts.
 
-Expected: `@benimaru.k` is in neither place, **and** the ledger already uses
-`@benimaru` on `O-001`. The notice names the near miss and asks in a form the
-user answers in one word:
+Expected: `@benimaru.k` is in neither place, **and** `open.md` already uses
+`@benimaru` on the row-count tolerance item. The notice names the near miss and
+asks in a form the user answers in one word:
 
 ~~~
 New owner handles:
-- @benimaru.k -- not in this ledger and not in personas.md. The ledger already
-  uses @benimaru. Same person?
+- @benimaru.k -- not in open.md and not in personas.md. open.md already uses
+  @benimaru. Same person?
 ~~~
 
 This is the case the whole check exists for. Both spellings landing silently is
 the failure being prevented, and it is invisible once written.
 
 Must not happen: choosing `@benimaru` on the user's behalf, merging the new
-entry into `O-001`, or writing both spellings without a word.
+item into the row-count tolerance item, or writing both spellings without a
+word.
 
 ## Walk 5: no owner at all
 
@@ -164,16 +187,16 @@ should own it. Both are failures the same-turn path already exists to avoid.
 Same message as Walk 3, with `profile.personas` unset -- or set to a local path
 with no file at it.
 
-Expected: not an error. The check falls back to the ledger alone and says so in
+Expected: not an error. The check falls back to `open.md` alone and says so in
 the same line, so the user knows the comparison was the narrower one:
 
 ~~~
 New owner handles:
-- @gobta -- not in this ledger. No personas.md configured, so that is the whole
+- @gobta -- not in open.md. No personas.md configured, so that is the whole
   comparison.
 ~~~
 
-The entry is still written in the same turn. An unset key is an absent key, and
+The item is still written in the same turn. An unset key is an absent key, and
 an absent key fails no same-turn condition -- the narrower comparison changes
 what the notice says, not which path the run takes.
 
@@ -201,26 +224,25 @@ Must not happen: falling back to the local default path, treating it as an
 unconfigured key, or writing the entry and reporting the failure afterwards.
 
 Note what makes this reachable at all: Walk 1's message with the same broken
-pointer writes normally, because the handle never leaves the ledger check. The
-stop bites only on a run that both has an unfamiliar handle and cannot read the
-file that would settle it.
+pointer writes normally, because the handle never leaves the `open.md` check.
+The stop bites only on a run that both has an unfamiliar handle and cannot read
+the file that would settle it.
 
-## Walk 8: why the notice does not demote a dictated run
+## Walk 8: a decision writes no handle
 
 User message:
 
-> Log the decision that @gobta owns the abort criteria for the canary.
+> Log the decision that @gobta owns the canary abort criteria, because they
+> wrote the runbook. Revisit never.
 
-Expected: all four same-turn conditions still hold. The notice is a **notice**,
-not a question, so condition 3 is not failed and the run does not drop to
-propose-then-wait. The entry is written in the same turn, and the notice is
-shown next to the written lines and the Changelog line.
+Expected: a decision, so it goes to `C:/GitHub/beacon/DECISIONS.md` and the
+entry has no owner field. The name stays in the rule's own words. The check
+runs over owners the batch writes, and this batch writes none, so there is **no
+notice** and `personas.md` is never read -- even though `@gobta` is in neither
+place. All four same-turn conditions hold, so it is written in the same turn.
 
-The check still runs **before** the write. A handle reported after the write is
-a handle already in the file.
-
-Must not happen: converting a dictated write into a proposal because the handle
-was unfamiliar, or writing first and checking second.
+Must not happen: a notice for `@gobta`, an owner added to the entry, or an open
+item written alongside it.
 
 ---
 
@@ -283,8 +305,8 @@ the common case and it is not an error -- `personas.md` is not a roster.
 
 No `Notes` line is owed for it, beyond the existing one-line note at the end of
 the report when the transcript names people the config does not cover.
-`project-log`'s check then finds `@benimaru` already owns `O-001` in the beacon
-ledger and reports nothing.
+`project-log`'s check then finds `@benimaru` already owning the row-count
+tolerance item in `open.md` and reports nothing.
 
 Must not happen: an error, a stop, a question the run waits on, or a handle
 invented for them from anything other than their own label.
@@ -306,7 +328,7 @@ Notes
   the transcript's label, @gabiru. Tell me which and I will fix it.
 ~~~
 
-`project-log`'s check then reports `@gabiru` as a handle neither the ledger nor
+`project-log`'s check then reports `@gabiru` as a handle neither `open.md` nor
 `personas.md` accounts for, naming a near miss. Both mechanisms firing on one
 entry is correct, not duplication: the note says the run could not tell, the
 check says the handle it settled on is new.
@@ -328,13 +350,13 @@ will mention the handle anyway.
   `meeting-review`. Not created, not appended to, not corrected.
   `remember-persona` owns every content write to it.
 - **Nothing is ever rejected.** There is no list of legal owners. The check
-  reports and the ledger stays free text.
+  reports and the owner field stays free text.
 - **`@unassigned` is never reported.**
 - **The check never adds a question the run waits on.** "Same person?" invites
   a correction and does not block anything. The proposal's "Questions before I
   write" block is for what genuinely blocks a write, and an unfamiliar handle is
   never one.
-- **The check is not an audit of the file.** A ledger already holding both
+- **The check is not an audit of the file.** An `open.md` already holding both
   `@benimaru` and `@benimaru.k`, on a run that writes neither, reports nothing.
   Walk 4 catches the second spelling as it arrives, which is the only moment
   this check exists for.
