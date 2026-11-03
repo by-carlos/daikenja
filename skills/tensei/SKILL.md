@@ -132,8 +132,10 @@ never useful, so never propose it alone.
 Hash the lens file against `${CLAUDE_PLUGIN_ROOT}/templates/plan-review-lenses.md`
 the same way and report it in the same pass. A `missing` one is proposed
 alongside whatever else the run writes, or on its own when nothing else
-moved -- a clean Adopt that writes only the lens file. A hand edit to it is
-named, since writing replaces it (backed up first).
+moved -- a clean Adopt that writes only the lens file. One that is present
+but differs is reported as differing from the shipped copy, not as a hand
+edit -- after a plugin update that is the usual cause -- and the report says
+writing replaces it (backed up first).
 
 A `plan` reporting `unchanged` with the import line already present and the
 lens file `current` is one line: "Already installed and current -- nothing
@@ -201,6 +203,13 @@ is reported anywhere else.
      "import_line_added_by_skill": true
    }
    ```
+
+   Write it only when this run wrote `tensei.md`, added the import line, or
+   took the manifest-only option -- a run that writes only the lens file
+   leaves the manifest as it was. `installed_hash` is always the hash of
+   `tensei.md`, never of the lens file, and it changes only when this run
+   wrote `tensei.md` or recorded the manifest; otherwise carry it forward,
+   so a hand-edited copy is never recorded as installed.
 
    Set `import_line_added_by_skill` only if this run is the one that added
    it; otherwise carry forward whatever the existing manifest already had for

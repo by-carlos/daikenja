@@ -66,7 +66,10 @@ Only affects you if you installed Tensei with `/daikenja:tensei`.
 
 - **Can `setup-user` make it for you?** No. Run `/daikenja:tensei`: it shows
   what changed, asks once, and writes both files. A `tensei.md` you edited by
-  hand is never overwritten without asking; the lens file is still added.
+  hand is never overwritten without asking; the lens file is still added,
+  but it does nothing until your copy has the new paragraph in *Recommending
+  a design*: copy it in from the shipped template, or take the overwrite
+  option.
 - **Reversible?** Yes. Replaced copies are backed up under
   `~/.claude/backups/tensei-<UTC timestamp>/`, and uninstalling removes both
   files.

@@ -5,7 +5,9 @@ name: vendored-drift
 # A red run means upstream moved: re-sync with
 # `python tests/check-vendored.py --resync` on a branch and open a PR.
 # It never writes or opens anything itself: a pull request opened with the
-# default token would not trigger ci.yml's required checks.
+# default token would not trigger ci.yml's required checks. GitHub disables
+# a public repo's scheduled workflows after 60 days without repository
+# activity; the per-PR check in ci.yml still catches an edited copy.
 
 on:
   schedule:

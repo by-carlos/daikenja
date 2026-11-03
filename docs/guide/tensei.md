@@ -131,7 +131,7 @@ without the earlier conversation.
   helper models check it first from the angles a plan gets checked from:
   simplicity always, plus architecture, security or operations when the
   design touches them. You see one line when nothing changes
-  (`Lenses: Simplicity, Architect -- no change`), a finding only when it
+  ("Reviewed for simplicity and architecture -- no change"), a finding only when it
   changes the advice, and a warning when the design cannot work. Routine
   choices get no review.
 

@@ -9,8 +9,8 @@ the local copy is never edited here.
 Three modes:
 
 - default (every push and pull request, offline): the local file's git blob
-  hash must equal the pinned `blob`. A hand edit, a CRLF conversion or a
-  partial re-copy fails the build.
+  hash must equal the pinned `blob`. A hand edit or a partial re-copy fails
+  the build.
 - `--upstream` (the daily drift workflow): the pinned `blob` must be the file
   at the pinned `commit`, and the file on the upstream default branch must
   still have that blob. Upstream moving fails the run, naming the command
@@ -19,7 +19,8 @@ Three modes:
   and rewrites the pin. Review the diff and commit it like any other change.
 
 Upstream reads go through the GitHub REST API, authenticated with GH_TOKEN or
-GITHUB_TOKEN when either is set. Standard library only.
+GITHUB_TOKEN when either is set. A failed read exits 2 with one line naming
+the URL, never a traceback. Standard library only.
 """
 
 import argparse
@@ -27,6 +28,7 @@ import hashlib
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -44,24 +46,41 @@ def api_get(url, raw=False):
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as resp:
-        body = resp.read()
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as resp:
+            body = resp.read()
+    except (urllib.error.URLError, TimeoutError) as exc:
+        raise UpstreamError(f"could not read {url}: {exc}") from exc
     return body if raw else json.loads(body)
+
+
+class UpstreamError(Exception):
+    pass
+
+
+def local_path(entry):
+    path = (REPO_ROOT / entry["path"]).resolve()
+    if REPO_ROOT not in path.parents:
+        raise UpstreamError(f"{entry['path']}: pinned path is outside the repository")
+    return path
 
 
 def upstream_blob(repo, path, ref):
     return api_get(f"{API}/repos/{repo}/contents/{path}?ref={ref}")["sha"]
 
 
-def default_branch_head(repo):
+def default_branch_head(repo, cache={}):
+    if repo in cache:
+        return cache[repo]
     branch = api_get(f"{API}/repos/{repo}")["default_branch"]
-    return api_get(f"{API}/repos/{repo}/commits/{branch}")["sha"]
+    cache[repo] = api_get(f"{API}/repos/{repo}/commits/{branch}")["sha"]
+    return cache[repo]
 
 
 def check_local(entries):
     failures = []
     for e in entries:
-        local = REPO_ROOT / e["path"]
+        local = local_path(e)
         if not local.is_file():
             failures.append(f"{e['path']}: missing")
             continue
@@ -78,7 +97,6 @@ def check_local(entries):
 
 def check_upstream(entries):
     failures = []
-    heads = {}
     for e in entries:
         repo = e["upstream_repo"]
         pinned = upstream_blob(repo, e["upstream_path"], e["commit"])
@@ -88,7 +106,7 @@ def check_upstream(entries):
                 f"{e['upstream_path']} at {e['commit'][:7]} ({pinned})."
             )
             continue
-        head = heads.setdefault(repo, default_branch_head(repo))
+        head = default_branch_head(repo)
         current = upstream_blob(repo, e["upstream_path"], head)
         if current != e["blob"]:
             failures.append(
@@ -102,15 +120,19 @@ def check_upstream(entries):
 
 
 def resync(pins):
-    heads = {}
+    # Fetch everything before writing anything, so a failed read leaves the
+    # copies and the pin as they were.
+    fetched = []
     for e in pins["files"]:
         repo = e["upstream_repo"]
-        head = heads.setdefault(repo, default_branch_head(repo))
+        head = default_branch_head(repo)
         data = api_get(f"{API}/repos/{repo}/contents/{e['upstream_path']}?ref={head}", raw=True)
-        (REPO_ROOT / e["path"]).write_bytes(data)
+        fetched.append((e, local_path(e), head, data))
+    for e, local, head, data in fetched:
+        local.write_bytes(data)
         changed = blob_sha(data) != e["blob"]
         e["commit"], e["blob"] = head, blob_sha(data)
-        print(f"{e['path']}: {'updated' if changed else 'unchanged'} at {repo}@{head[:7]}")
+        print(f"{e['path']}: {'updated' if changed else 'unchanged'} at {e['upstream_repo']}@{head[:7]}")
     PIN_FILE.write_text(json.dumps(pins, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
@@ -122,13 +144,16 @@ def main():
     args = parser.parse_args()
 
     pins = json.loads(PIN_FILE.read_text(encoding="utf-8"))
-    if args.resync:
-        resync(pins)
-        return 0
-
-    failures = check_local(pins["files"])
-    if args.upstream and not failures:
-        failures = check_upstream(pins["files"])
+    try:
+        if args.resync:
+            resync(pins)
+            return 0
+        failures = check_local(pins["files"])
+        if args.upstream and not failures:
+            failures = check_upstream(pins["files"])
+    except UpstreamError as exc:
+        print(f"check-vendored: {exc}", file=sys.stderr)
+        return 2
     for f in failures:
         print(f"check-vendored: {f}", file=sys.stderr)
     if not failures:
