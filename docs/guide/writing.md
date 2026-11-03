@@ -1,32 +1,32 @@
 # Writing a reply
 
-[Home](../../README.md) · [Install](install.md) · **Writing** · [Ledger](ledger.md) · [Reviewing](reviewing.md) · [Tensei](tensei.md) · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
+[Home](../../README.md) · [Install](install.md) · [Commands](commands.md) · **Writing** · [Ledger](ledger.md) · [Reviewing](reviewing.md) · [Tensei](tensei.md) · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
 
 > **In short:** `thread` works out what a thread is asking and what you need to
 > decide, `compose` writes the message, and `preflight` challenges a draft you
 > cannot afford to get wrong. None of them sends anything. Two more skills
 > teach Daikenja how you write and how the people you write to read.
 
-```mermaid
-flowchart LR
-    T["/daikenja:thread<br/>what is being asked?"] --> Y{{You answer<br/>its questions}}
-    Y --> C["/daikenja:compose<br/>the draft"]
-    C --> P["/daikenja:preflight<br/>optional: challenge it"]
-    C --> S[You copy it out<br/>and send it]
-    P --> S
-```
+| You have... | Run |
+|---|---|
+| A thread you owe an answer to | `/daikenja:thread`, then `/daikenja:compose` |
+| Your own rough draft to tidy | `/daikenja:compose` |
+| A draft that cannot go wrong | `/daikenja:preflight` |
 
 ## Understand the thread first: `thread`
 
-`/daikenja:thread` reads a Slack or email thread -- a link or pasted text --
-and tells you what is being asked and by whom, and who is waiting on what. Then
-it asks you what only you know: what you have already promised, what you will
-not commit to.
+`/daikenja:thread` reads a Slack or email thread and tells you what is being
+asked, by whom, and who is waiting on what. Then it asks you what only you
+know: what you have already promised, what you will not commit to.
+
+**Paste the thread text** -- that always works. A link works only if your
+Claude Code session is connected to Slack or your email; if fetching it fails,
+it says so and asks for a paste.
 
 **It does not draft.** That is the point: a reply drafted before you have said
-where you stand is a reply in someone else's words.
-`/daikenja:thread message` produces the same summary written for a channel
-rather than for you, with people named instead of "you".
+where you stand is a reply in someone else's words. Add the word `message` --
+`/daikenja:thread message` -- to get the summary written for a channel instead,
+with people named rather than "you".
 
 ## Draft or rewrite: `compose`
 
@@ -36,24 +36,25 @@ changing the ask, the stance or your confidence level**. Afterwards you can ask
 for a firmer or a softer version; the ask, the owner and the timing stay the
 same either way.
 
-For a request, it first runs the same six substance checks as `preflight`
-(below), so a message that asks the wrong person, or asks something already
-settled, is flagged before it is polished.
+For a request, it also runs the six
+[substance checks](#challenge-a-draft-before-it-goes-out-preflight) and names
+any that fail beside the draft. It never holds the draft back.
 
 ## Challenge a draft before it goes out: `preflight`
 
-`/daikenja:preflight` is for the message you cannot afford to get wrong. It
-runs in three passes:
+`/daikenja:preflight` is for the message you cannot afford to get wrong:
 
 1. **Substance checks.** Six questions every request has to pass: enough
    context to act on, what you already tried, the options framed, one
    specific question, the right person, and not already answered elsewhere.
 2. **Reviewers.** It puts the draft in front of several readers, each looking
    for a different failure: the busy reader, the fact-checker, the risk reader,
-   the executive, the tone-sensitive reader, and others. Any colleague you
-   have described to Daikenja joins them.
-3. **Rewrite.** It fixes the wording problems they raise and hands back a
-   revised draft, plus the facts only you can supply.
+   the executive, the tone-sensitive reader, and others. Up to two of the
+   people the draft is addressed to join them, using what you have told
+   Daikenja about them.
+3. **Rewrite.** It fixes the wording problems they raise.
+4. **Re-check.** The reviewers look once more at what changed, then you get
+   the revised draft plus the facts only you can supply.
 
 **It changes wording, never content.** If a fix would need a fact the draft
 does not have, it asks you instead of inventing one. The reviewers and their
@@ -70,7 +71,7 @@ supply.
 - It reads only samples you say you wrote yourself.
 - It records style, never facts about people or projects.
 - It backs up your current `writing-style.md` to a dated copy, then writes the
-  whole file.
+  whole file **without a preview** -- the backup is your undo.
 - What it noticed but kept out of the file comes back as a separate "what to
   watch" report, saved so the next run can show what moved.
 
@@ -83,5 +84,8 @@ challenges every technical claim", "the director reads only the first line".
 Say it while drafting, or run `/daikenja:remember-persona`, and later drafts
 and `preflight` reviews are written for that reader.
 
-It is the only skill that writes persona notes. They stay in your own files --
-see [Where your data lives](your-data.md) for where, and who can see them.
+It is the only skill that writes persona notes. When you simply describe someone new, their note
+is added straight away and reported after (if you described them alongside
+something you pasted, it asks first); a change to anything you wrote
+yourself is shown first and waits for your yes. The notes stay in your own
+files and are never written into a project -- see [Your data](your-data.md).

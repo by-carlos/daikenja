@@ -1,18 +1,18 @@
 # Tensei
 
-[Home](../../README.md) · [Install](install.md) · [Writing](writing.md) · [Ledger](ledger.md) · [Reviewing](reviewing.md) · **Tensei** · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
+[Home](../../README.md) · [Install](install.md) · [Commands](commands.md) · [Writing](writing.md) · [Ledger](ledger.md) · [Reviewing](reviewing.md) · **Tensei** · [Your data](your-data.md) · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
 
-> **In short:** Tensei is an optional persona for your everyday conversations
-> with Claude -- every session, not only Daikenja's skills. Answers lead with
-> the finding, stay short unless you ask for depth, and label their parts
-> (Answer, Warning, Report...) so you can skim. `/daikenja:tensei` installs,
-> updates or removes it.
+> **In short:** optional. Makes Claude's everyday answers headline-first and
+> labelled, in every Claude Code session on your computer -- not only
+> Daikenja's. `/daikenja:tensei` installs, updates and removes it, and asks
+> before changing anything.
 
 ## What it changes
 
-Tensei shapes **how Claude talks to you**, never what it writes for others.
-Messages, documents, ledger entries and commit text keep following their own
-rules.
+Tensei shapes **how Claude talks to you**. What it writes for others --
+messages, documents, ledger lines, commit text -- keeps following its own
+rules, with one exception: anything a person will read must make sense without
+the earlier conversation.
 
 - **Headline first, then stop.** The first line carries the finding, complete
   enough to act on. The default answer is that line plus a few sentences; ask
@@ -39,24 +39,24 @@ The full text is [`templates/tensei.md`](../../templates/tensei.md).
 
 ## Install, update, remove
 
-Run `/daikenja:tensei`. It needs no `daikenja.yaml` and no prior
-`setup-user` run.
+Run `/daikenja:tensei`. It needs no other Daikenja setup.
 
-It writes the persona to `~/.claude/daikenja/tensei.md` and adds one import
-line at the end of `~/.claude/CLAUDE.md`, which is what makes it apply to every
-session on the machine. It shows you what it is about to do and asks first.
+**What it changes on your computer.** It saves the persona as `tensei.md` in
+your Daikenja folder (`~/.claude/daikenja/`), and adds one line to the end of
+your personal Claude instructions file, `~/.claude/CLAUDE.md`, so every session
+loads it. It shows you what it is about to do and asks first.
 
 **Your edits are safe.** Unlike your other Daikenja files, Tensei is content
-the plugin keeps revising. Re-running the skill offers the newer shipped
-version, but:
+the plugin keeps improving. Running the skill again offers the newer version,
+but:
 
-- a copy you have not edited can be updated to the shipped one;
+- a copy you have not edited can be updated to the new one;
 - a copy you **have** edited is never overwritten without asking;
 - anything replaced is backed up first, under `~/.claude/backups/`.
 
-**Removing it** backs up the file and your `CLAUDE.md`, deletes the persona,
-and takes out the import line -- but only if the skill added that line itself.
-A line you wrote by hand is left alone.
+**Removing it.** Run `/daikenja:tensei` and ask to remove it. It backs up the
+persona and your `CLAUDE.md`, offers to delete the persona, and takes out the
+line it added -- a line you wrote by hand is left alone.
 
-It runs only when you type the command: a skill that edits the `CLAUDE.md`
-every session reads should never fire on its own.
+It runs only when you type the command: a skill that edits the instructions
+file every session reads should never start on its own.

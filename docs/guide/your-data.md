@@ -1,84 +1,111 @@
-# Where your data lives
+# Your data
 
-[Home](../../README.md) · [Install](install.md) · [Writing](writing.md) · [Ledger](ledger.md) · [Reviewing](reviewing.md) · [Tensei](tensei.md) · **Your data** · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
+[Home](../../README.md) · [Install](install.md) · [Commands](commands.md) · [Writing](writing.md) · [Ledger](ledger.md) · [Reviewing](reviewing.md) · [Tensei](tensei.md) · **Your data** · [Slack bot](slack-bot.md) · [FAQ](faq.md) · [Why](why.md)
 
-> **In short:** your personal files live in `~/.claude/daikenja/` on your
-> machine, or in a `daikenja` folder in your own Google Drive if you opt in.
-> A project's ledger lives in the project and is shared with whoever can read
-> it. Daikenja has no server, sends nothing, and writes nothing without your
-> approval.
+> **In short:** Daikenja has no server of its own. It keeps plain files: your
+> personal ones in your home folder (or your own Google Drive, if you opt in),
+> and a project's ledger in the project, shared with whoever can read the
+> project. What a skill reads is processed by Claude, as in any Claude Code
+> session. It never sends a message or posts anything for you.
 
-[![Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary and Tensei, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project.](../diagrams/where-data-lives.svg)](../diagrams/where-data-lives.svg)
+[![Three places Daikenja keeps files. Your machine: settings, persona notes, writing style, glossary, Tensei and backups, private to you. Your Google Drive, only if you opt in: persona notes or writing style. The project: the ledger and project card, shared with everyone who can read the project. Anything a skill reads is also processed by Claude.](../diagrams/where-data-lives.svg)](../diagrams/where-data-lives.svg)
+
+## What leaves your machine
+
+- **To Claude (Anthropic).** Daikenja runs inside Claude Code. Whatever a skill
+  reads -- a thread you paste, a document, your persona notes, the ledger --
+  becomes part of your Claude Code conversation and is processed by Claude,
+  under your own Claude account's terms and your organization's settings.
+  Daikenja cannot change those. `preflight` also hands the draft and persona
+  notes to its reviewers, which are further Claude calls in the same session.
+- **To Google**, only if you keep persona notes or your writing style in
+  Google Drive. They are then stored by Google under your account and your
+  organization's Drive policy.
+- **To Slack or other tools you connected**, only as reads: a skill fetches a
+  thread or page through a connector you set up in Claude Code, with your own
+  access.
+- **Nothing to the plugin author.** There is no Daikenja server, account or
+  telemetry.
+
+It never sends a message or posts anything for you. The one exception is the
+optional [Slack bot](slack-bot.md), a separate program you run yourself, which
+posts as its own Slack app.
 
 ## Who can see what
 
 | File | Who can read it |
 |---|---|
-| Your settings, persona notes, writing style, glossary | **Only you**, on your machine -- or your own Google Drive, if you moved persona notes or writing style there |
-| A project's ledger and project card | **Everyone who can read the project.** In a git repository, that is everyone with access to the repository |
+| Your settings, persona notes, writing style, glossary | **You**, on your machine -- or in your own Google Drive, if you moved persona notes or writing style there, with whoever you share that folder with |
+| A project's ledger and project card | **Everyone who can read the project.** In a git repository, everyone with access to it -- the whole world, if the repository is public |
 
-**Persona notes are about real colleagues, and they stay yours.** They are
-never written into a ledger or a project. Keep them local, or in your own
-Drive, and write them as you would want them read if they were ever seen.
+**Persona notes are about real colleagues.** They are never written into a
+ledger or a project. Keep them factual, write them as you would want them
+read, and check whether your organization treats notes about colleagues as
+personal data.
 
-**The ledger is shared by design.** Its entries name owners by handle and
-record what was decided. Write a ledger line the way you would write a commit
-message: for the whole team.
+**Before you log something, remember the ledger is shared.** Its lines name
+owners by handle and record what was decided. Write a line the way you would
+write a commit message, for the whole team. Daikenja marks superseded lines
+rather than deleting them, and in a git repository every line stays in the
+history. If the repository is public or broadly shared and the decisions are
+not, point the project's ledger at a private location with
+`/daikenja:setup-project`.
 
-**What reaches the model.** Daikenja runs inside Claude Code. When a skill
-reads a thread, a document or one of your files, that content becomes part of
-your Claude Code conversation, handled like anything else you show Claude.
-Daikenja itself has no server and adds no destination of its own.
+## When it asks first
+
+- **The ledger, the project card and your settings change only on your yes.**
+  Every ledger line goes through `project-log`, which shows the exact lines
+  first; `meeting-review`, `setup-project` and `project-sources` only propose.
+  `project-catchup` asks before moving your checkpoint.
+- **Two personal files are the exception:**
+  - `remember-persona` adds a note for someone new as soon as you describe
+    them, and tells you after (it asks first if you described them alongside
+    something you pasted). Changes to anything you wrote yourself wait for
+    your yes.
+  - `learn-voice` rewrites your writing style in one go, after saving a dated
+    backup of the old one.
+- **`tensei`** asks before writing its file or changing your `CLAUDE.md`.
 
 ## Every file, and who writes it
 
-Nothing personal is stored in this repository, and nothing personal should ever
-be written into the installed plugin directory -- plugin directories are managed
-and get overwritten on update.
+`~` is your home folder: `C:\Users\<you>` on Windows, `/Users/<you>` on a Mac.
+The `.claude` folder in it is hidden by default; you can also ask Claude to
+open any of these files for you.
 
 | What | Where | Written by |
 |---|---|---|
-| Profile, per-project settings, checkpoints | `~/.claude/daikenja/daikenja.yaml` | `setup-user` for your profile, `setup-project` for a project's entry, and `project-catchup` for the `last_checkpoint` key only |
-| Your notes on the people you write to | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` for people you describe to it |
-| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice`, which backs up the file before replacing it |
-| Your domain glossary -- one line per term you have had to explain | `~/.claude/daikenja/glossary.md` | you, plus any skill that glosses a term you defined for it, one dated line at a time |
-| The Tensei persona, if you installed it | `~/.claude/daikenja/tensei.md`, plus one import line in `~/.claude/CLAUDE.md` | `tensei` |
-| A project's decision ledger | `<project root>/.daikenja/ledger.md`, or wherever that project's `ledger:` key points -- including outside the project. For a project spanning several directories the root is the first one registered | `project-log` only |
-| A project's card | beside the ledger, as `project.md` | `setup-project`, when you accept it |
+| Your settings: profile, registered projects, checkpoints | `~/.claude/daikenja/daikenja.yaml` (a plain-text settings file) | `setup-user`, `setup-project`; `project-catchup` for the checkpoint only |
+| Your notes on the people you write to | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` |
+| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` |
+| Backups of your writing style, and what `learn-voice` noticed but kept out | `~/.claude/daikenja/writing-style.*.md`, dated | `learn-voice` |
+| Your domain glossary | `~/.claude/daikenja/glossary.md` | you; `setup-user` creates the blank file |
+| The Tensei persona, if you installed it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |
+| Tensei backups | `~/.claude/backups/tensei-<timestamp>/` | `tensei` |
+| A project's ledger | `.daikenja/ledger.md` in the project's folder by default -- see note | `project-log` only |
+| A project's card | `project.md` beside the ledger | `setup-project`, when you accept it |
+| The Slack bot's settings and log, if you run it | `~/.claude/daikenja/bot.yaml`, plus a log file wherever you point `--log-file` | you, and the bot |
 
-The plugin ships blank starting points in `templates/`. Those get copied out to
-your directories; the copies are the live files.
+**Ledger location note.** A project registered with `setup-project` can point
+its ledger anywhere, including outside the project. For a project spanning
+several folders, the ledger is in the first folder registered.
 
-## Two rules every skill follows
-
-- **One writer for the ledger.** Only `project-log` writes ledger content.
-  `project-catchup` writes one setting, `last_checkpoint`, and never touches the
-  ledger. `setup-project` and `meeting-review` propose entries, and every line
-  still goes through `project-log` for your approval. Every other skill only
-  reads.
-- **You approve first.** A skill proposes, you confirm, then it writes.
+Backups are kept until you delete them. Nothing personal is stored in the
+plugin's own folder, which is replaced on every update.
 
 ## Google Drive, if you want it
 
-**Local files are the default, and Google Drive is opt-in.** If you want your
-persona notes or your writing style reachable from another machine, either one
-can live in Google Drive instead. `setup-user` offers this once, works fine
-without it, and never asks you to sign up for anything. Drive is reached through
-Google's own connector, under your own account, so nothing goes through the
-plugin author. The two settings are independent: keeping persona notes local
-while sharing a writing style is a normal setup. The ledger does not move -- it
-stays in the project.
+**Local files are the default; Google Drive is opt-in.**
 
-Everything Daikenja puts in Drive goes in **one `daikenja` folder** it creates
-for you, mirroring `~/.claude/daikenja/` on your machine. Nothing is left loose
-at the top level of your Drive.
-
-Two things to know before you choose Drive:
-
-- **`setup-user` has to create the file.** The connector only shows Claude the
-  files it created itself, so a document already in your Drive cannot be
-  pointed at, however you share it.
-- **A Drive file Daikenja cannot read stops the skill** rather than quietly
-  carrying on. An unreadable file and an empty one look identical from here,
-  and the alternative is drafting in the default voice while you think your
-  own style was applied.
+- **What can go there:** persona notes, your writing style, or both -- each is
+  your own choice. The ledger never moves; it stays with the project.
+- **How:** `setup-user` offers it once. It reaches Drive through Google's
+  connector in Claude Code, under your own Google account, and works fine
+  without it.
+- **One folder.** Everything goes in one `daikenja` folder it creates,
+  mirroring `~/.claude/daikenja/`. Nothing is left loose in your Drive.
+- **`setup-user` has to create the file.** The connector only shows Claude
+  files it created itself, so a document already in your Drive cannot be used,
+  however you share it.
+- **An unreadable Drive file stops the skill** rather than quietly carrying on:
+  an unreadable file and an empty one look identical, and the alternative is
+  drafting in the default voice while you think your own style was applied.

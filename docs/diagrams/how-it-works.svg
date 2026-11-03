@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="title desc" aria-label="The Daikenja loop in four steps. Read: you paste a thread and Daikenja asks what only you know. Draft: it writes the reply and can challenge it before you send. Record: it proposes ledger lines and waits for your yes. Come back: weeks later it tells you what changed.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="title desc" aria-label="The Daikenja loop in four steps. Read: you paste a thread and Daikenja asks what only you know. Draft: it writes the reply and can challenge it before you send. Record: it proposes ledger lines and waits for your yes. Come back: weeks later you type a command and it tells you what changed.">
   <title id="title">How Daikenja works</title>
-  <desc id="desc">The Daikenja loop in four steps. Read: you paste a thread and Daikenja asks what only you know. Draft: it writes the reply and can challenge it before you send. Record: it proposes ledger lines and waits for your yes. Come back: weeks later it tells you what changed.</desc>
+  <desc id="desc">The Daikenja loop in four steps. Read: you paste a thread and Daikenja asks what only you know. Draft: it writes the reply and can challenge it before you send. Record: it proposes ledger lines and waits for your yes. Come back: weeks later you type a command and it tells you what changed.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#4B5563"/>
@@ -58,8 +58,8 @@
     <text class="body" x="694" y="182">two things.</text>
 
     <rect x="935" y="108" width="225" height="96" rx="10" fill="#FFFFFF" stroke="#93B4E8" stroke-width="1.5"/>
-    <text class="body" x="949" y="136">Three weeks later:</text>
-    <text class="body" x="949" y="160">"What did I miss?"</text>
+    <text class="body" x="949" y="136">Three weeks later,</text>
+    <text class="body" x="949" y="160">you type the command.</text>
   </g>
 
   <!-- cards: DAIKENJA DOES -->
@@ -105,9 +105,9 @@
     <text class="code" x="694" y="468">.daikenja/ledger.md</text>
 
     <rect x="935" y="392" width="225" height="116" rx="10" fill="#FFFFFF" stroke="#86C49A" stroke-width="1.5"/>
-    <text class="body" x="949" y="420">What was decided,</text>
-    <text class="body" x="949" y="444">what is still open,</text>
-    <text class="body" x="949" y="466">and who owes it.</text>
+    <text class="body" x="949" y="420">What was decided or</text>
+    <text class="body" x="949" y="444">opened while you were</text>
+    <text class="body" x="949" y="466">away, and who owns it.</text>
   </g>
 
   <!-- flow arrows between steps, in the DOES lane -->
@@ -115,5 +115,5 @@
   <line x1="652" y1="298" x2="676" y2="298" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
   <line x1="907" y1="298" x2="931" y2="298" stroke="#4B5563" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
 
-  <text class="note" x="600" y="562" text-anchor="middle">Nothing is sent, posted or written without your yes.</text>
+  <text class="note" x="600" y="562" text-anchor="middle">Nothing is sent or posted for you. Ledger lines are written only on your yes.</text>
 </svg>
