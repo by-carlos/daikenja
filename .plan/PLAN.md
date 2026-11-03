@@ -316,11 +316,12 @@ outcomes are defined in the `staged-rollout` skill's
 | S7 Slack bot reports unreadable project data | `stage-7-bot.md` | S5 | direct | inline | opus | medium | auto | 1–2h |
 | S8 Migration from the old ledger | `stage-8-migration.md` | S6 | direct | inline | opus | high | auto | 2–4h |
 | S9 User guide, README and retiring ledger-format.md | `stage-9-user-docs.md` | S2, S3, S4, S5, S6, S7, S8 | direct | inline | opus | medium | auto | 2–3.5h |
-| SF Plan review | `stage-f-review.md` | S9 | direct | inline | opus | high | auto | 0.5–1h |
+| S10 Fix: align the migration batch exemption | `stage-10-fix-migration-exemption.md` | S9 | direct | inline | opus | medium | auto | 0.5–1h |
+| SF Plan review | `stage-f-review.md` | S9, S10 | direct | inline | opus | high | auto | 0.5–1h |
 
 Plan flags: `merge: auto` · `plan-dir: delete`
 
-Plan estimate: summed 16–31h · elapsed 10.5–20h
+Plan estimate: summed 16.5–32h · elapsed 11–21h
 
 This table is the **single authoritative home** for every stage's `depends` /
 `mode` / `exec` / `model` / `effort` / `gate` / `estimate`, and the **plan
