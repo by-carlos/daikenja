@@ -188,7 +188,7 @@ When unsure, leave it out.
 Exactly this. Nothing else. This shape satisfies `response-format.md`: the
 answer -- the message itself -- leads, and a clean run adds nothing around it.
 The Comment, when present, follows that contract: itemised over narrated,
-entries named topic-first with the ID in parentheses, `profile.tone` scaling
+entries named topic-first with their location in parentheses, `profile.tone` scaling
 how far it explains itself within the cap below.
 
 ```

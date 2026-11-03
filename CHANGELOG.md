@@ -69,6 +69,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The reply-naming rule's heading no longer promises an ID.** In
+  `docs/response-format.md`, "Entries are named topic-first, ID in
+  parentheses" is now "Entries are named topic-first, location in
+  parentheses", matching the rule's body, which has said since the ledger
+  replacement that entries carry no IDs. The skills and docs that cite the
+  heading follow it.
 - **The Tensei guide page now describes all of Tensei.** The "without"
   example is a realistic long prose answer, with the right check buried in
   the middle and the downtime risk after the commands, instead of a tidy

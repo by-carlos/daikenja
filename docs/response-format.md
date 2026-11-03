@@ -3,7 +3,7 @@
 Depends-on (reverse index -- hand-maintained, checked against SKILL.md
 headings by tests/check-invariants.py):
 - § The answer comes first -- project-sources "Step 4: report", self-review "Step 0: read the shared docs"
-- § Entries are named topic-first, ID in parentheses -- preflight "Step 3: cycle 0 -- the substance checks", project-catchup "Step 4: report the delta", project-decisions "Step 6: show the result", project-gaps "Step 4: report", project-summary "Step 3: build the overview", project-sources "Step 4: report"
+- § Entries are named topic-first, location in parentheses -- preflight "Step 3: cycle 0 -- the substance checks", project-catchup "Step 4: report the delta", project-decisions "Step 6: show the result", project-gaps "Step 4: report", project-summary "Step 3: build the overview", project-sources "Step 4: report"
 - § A clean result is one line -- project-sources "Step 0: read the contracts", judgement "Step 5: report"
 - § A user-side conversational layer -- judgement "The discipline is this skill's own"
 - § The second person belongs to conversation -- judgement "Step 5: report", thread "Step 2: summarize it", thread "Form `message`: a summary that leaves the session", preflight "Step 3: cycle 0 -- the substance checks"
@@ -114,7 +114,7 @@ line. Paragraphs that weave several findings into connected prose are the
 failure this rule removes, not a style choice. Ordering and caps stay whatever
 the skill's own rules say.
 
-## Entries are named topic-first, ID in parentheses
+## Entries are named topic-first, location in parentheses
 
 Ledger entries carry no IDs: a decision is found by its area and its words,
 an open item by its words. When a reply names one, lead with what it is about,

@@ -56,7 +56,7 @@ exactly as if it sat in that `SKILL.md`; no other skill reads them.
   `config-resolution.md` § Voice and writing style.
 - [`response-format.md`](response-format.md) -- how a skill reports to the
   user in the conversation: answer first, findings itemised, entries named
-  topic-first with the ID in parentheses, `profile.tone` scaling narration,
+  topic-first with their location in parentheses, `profile.tone` scaling narration,
   and a one-line report for a clean result.
 - [`substance-checks.md`](substance-checks.md) -- the six checks a request has
   to pass, shared by `compose` and `preflight`.

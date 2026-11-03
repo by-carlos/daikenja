@@ -94,7 +94,7 @@ Read these before doing anything. Do not work from memory of them.
   report shape "implements `response-format.md`" as a whole, and the
   contract's own scope says a skill "implements it; it never redefines it" --
   every rule in the file governs this skill's replies, not only
-  § Entries are named topic-first, ID in parentheses, the one heading Step 3
+  § Entries are named topic-first, location in parentheses, the one heading Step 3
   cites by name.
 
 One more, read only when the run actually needs it:
