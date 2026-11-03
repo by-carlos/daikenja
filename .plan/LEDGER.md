@@ -22,7 +22,7 @@ protocol, finish protocol).
 | S5 Judgement, thread, meeting-review and other readers | done | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | done | yes | 2026-11-03 | Registration is git-only, home asked and written first, seed via project-log; skill 23203→23144 bytes |
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
-| S8 Migration from the old ledger | todo | — | — | — |
+| S8 Migration from the old ledger | doing | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | todo | — | — | — |
 | SF Plan review | todo | — | — | — |
 
@@ -770,7 +770,293 @@ Actuals: 2026-11-03T07:58:35.395Z → 2026-11-03T08:06:49.659Z · 8 min · token
 Artifacts check: match
 
 ### S8 Migration from the old ledger
-_(empty)_
+
+As built -- what S9 and SF can assume of the migration:
+
+- **`docs/ledger-migration.md`** (233 lines, no `ledger-format` citation) is
+  the procedure, self-contained: which entries need migration (a `ledger:`
+  key, no paths, an old `.daikenja/ledger.md` -- also beside an `open.md`, the
+  resume case -- or a timestamp `last_checkpoint`), the old grammar it reads
+  (three-split, the two tails, the five body markers, supersession chains to
+  the end, tail authoritative), what moves where, the no-folder target check,
+  the proposal and the write order.
+- **Backup = the old ledger renamed, beside itself**: copied first (step 2),
+  original removed last (step 6, after `cmp`), so a failed run leaves the old
+  ledger in place and can be repeated; an identical backup of the same day is
+  reused. Name is `<stem>.<YYYY-MM-DD>.bak.md`: `ledger.<date>.bak.md` for
+  `ledger.md`, `q4-planning.<date>.bak.md` for a no-folder project's
+  `ledgers/q4-planning.md`, so two projects in one ledgers folder never
+  collide. **Deviation from Acceptance's literal wording** for the pathless
+  walk -- flagged for SF; D-11 itself names only the default case.
+- **Approved whole, never in tranches**, as a `project-log via setup-project`
+  batch naming its targets by absolute path; the user may drop or edit
+  entries (dropped ones stay in the backup). The config edit, card move,
+  backup and `git init` are shown in the same proposal; `setup-project`
+  performs them after the yes, `project-log` writes the two files.
+- **Decision rewrite:** rule + why + revisit + source; `Imposed.` folds into
+  the why; date, owner, `Approximate date.`, `Supersedes` dropped; revisit
+  asked once for all when missing. **Open items:** `Blocked by <id>.` naming a
+  migrating item -> `Blocked by: <words>.`; naming a resolved item, a decision
+  or nothing -> dropped and said; `Contradicts` -> always a question, never
+  carried. Malformed tails (` -> superseded/resolved` not matching a form) and
+  unparsable lines are questions / "Could not read", never guessed.
+- **`setup-project`** v3 -> v4: Step 1 accepts a key argument (the only way to
+  reach a no-folder project); Step 2's needs-migration paragraph now routes to
+  new **Step 2a: migrate an old ledger**; failure table and "does not do"
+  reworded. 23144 -> 24537 bytes (v0.12.0 baseline 23187). **D-20 holds**:
+  the skill-size check passes, detail lives in the doc.
+- **`setup-user`** v7 -> v8: "Proposing the upgrade" lists each project that
+  needs migration with `/daikenja:setup-project <key>`, proposes no edit for
+  the config keys, stamps the version as usual. 21845 -> 22747 bytes (v0.12.0 baseline 21290).
+- **D-22 holds**; its revisit case (no registered root) is handled by asking
+  with no suggestion. `rev-parse` runs on the nearest existing folder, since
+  the target usually does not exist yet.
+- `docs/upgrading.md` `## [Unreleased]`: new five-part section "Your old
+  ledger migrates to `DECISIONS.md` and `open.md`" plus the bot operator
+  sequence (update plugin, `setup-user` + migrate, pull bot checkout,
+  restart, `--check`); S1's section now says setup-user does it *through*
+  setup-project. `CHANGELOG.md` `### Changed` entry (D-14: S8 writes its own).
+
+Acceptance (run in `../daikenja-s8`):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=$(git merge-base HEAD origin/feat/292-replace-ledger-decisions-md-open) HEAD_SHA=$(git rev-parse HEAD) python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+$ grep -n "ledger-format" docs/ledger-migration.md
+(exit 1, no output)
+```
+
+Walks, in a scratch folder (`C:/` -> `<scratch>/C`, `~` -> `<scratch>/home`),
+each input copied out of `tests/fixtures/ledger-migration.md`, each git repo
+`git init`-ed, steps run in the procedure's order (backup copy, the two
+files, config edit, card move, `cmp` then remove). Every resulting ledger file
+was compared with the fixture's expected block (template comment masked):
+all MATCH.
+
+**Input A (atlas, synthetic ledger).** Reading: D-005 and D-002 carry
+`superseded by` tails (chain D-002 -> D-005 -> D-007), D-004 carries the
+malformed `-> superseded D-008`, and Open items has one unparsable line
+(`- [ ] 2026-08-18 -- @gobta -- Book the cutover war room.`). Result:
+
+```
+$ find . -path ./.git -prune -o -type f -print | sort
+./.daikenja/ledger.2026-11-03.bak.md
+./.daikenja/open.md
+./.daikenja/project.md
+./DECISIONS.md
+$ git status --short
+ D .daikenja/ledger.md
+?? .daikenja/ledger.2026-11-03.bak.md
+?? .daikenja/open.md
+?? DECISIONS.md
+$ cat ~/.claude/daikenja/daikenja.yaml
+projects:
+  atlas:
+    path: C:/GitHub/atlas
+$ grep -n "Cut over on a weekday evening" DECISIONS.md      # superseded D-002
+(exit 1, no output)
+$ grep -n "Cut over on a weekday evening" .daikenja/ledger.2026-11-03.bak.md
+11:- 2026-08-08 -- D-002 -- @rimuru -- Cut over on a weekday evening. [thread](https://example.com/t/4417) -> superseded by D-005
+$ grep -c "Saturday, not a weekday" DECISIONS.md            # superseded D-005
+0
+```
+
+`DECISIONS.md`:
+
+```markdown
+<!-- decisions-format: 1 -->
+# Decisions
+
+Decisions in force. Read the area that covers a path before changing it; add
+or edit an entry in the same pull request when a change settles something
+future work must respect.
+
+<!-- template comment, byte-identical to templates/ -->
+
+## Migration
+
+Paths: `.`
+
+- **Cut over on a Sunday morning, not a Saturday.** — the data team's
+  Saturday batch overlaps the window. Revisit: if the cutover date moves.
+  Source: https://example.com/atlas/runbook
+- **Every service writes to the shared audit log.** — imposed by the platform
+  programme's architecture board. Revisit: never.
+- **Keep the legacy read replica online for 30 days after cutover.** —
+  rollback reads from the replica. Revisit: if finance rejects the replica
+  cost.
+- **Freeze schema changes from 2026-08-20 until cutover completes.** — two
+  teams have pending migrations and both agreed to hold. Revisit: if the
+  cutover date moves.
+- **Atlas replaces the legacy store, with no dual-write period.** — running
+  two stores doubles the reconciliation work. Revisit: never.
+```
+
+`.daikenja/open.md`:
+
+```markdown
+<!-- daikenja-open-format: 1 -->
+# atlas open items
+
+<!-- template comment, byte-identical to templates/ -->
+
+## Open items
+
+- 2026-08-19 -- @benimaru -- Blocked by: who signs off audit-log exemptions. Confirm whether the gateway can be exempted from the shared audit log, which DECISIONS.md makes binding.
+- 2026-08-18 -- @gobta -- Book the cutover war room.
+- 2026-08-16 -- @unassigned -- Find out who signs off audit-log exemptions.
+- 2026-08-13 -- @gobta -- Confirm the 30-day replica cost with finance. [budget sheet](https://example.com/atlas/budget)
+- 2026-08-11 -- @shion -- Write the rollback runbook and dry-run it once.
+  The dry run needs a full-size dataset.
+
+## Context links
+
+- Runbook -- https://example.com/atlas/runbook
+- Legacy store schema -- ./docs/legacy-schema.md
+
+## Sources
+
+- Platform standards page -- https://example.com/wiki/standards
+  modified: 2026-08-10T09:12Z
+  read: 2026-08-11
+  covers: the mandatory controls and which services they bind.
+```
+
+**Input B1 (q4-planning, no folder; default target).**
+
+```
+config before:  q4-planning: {paths: [], ledger: ~/.claude/daikenja/ledgers/q4-planning.md, last_checkpoint: 2026-09-10T08:00Z}
+nearest existing: C/GitHub
+$ git -C C:/GitHub rev-parse --show-toplevel
+fatal: not a git repository (or any of the parent directories): .git   (exit 128 -> new folder + git init)
+config after:
+  q4-planning:
+    paths:
+      - C:/GitHub/q4-planning
+$ ls ~/.claude/daikenja/ledgers
+q4-planning.2026-11-03.bak.md
+$ (in C:/GitHub/q4-planning) find . -path ./.git -prune -o -type f -print | sort; ls -d .git
+./.daikenja/open.md
+./.daikenja/project.md        <- moved from ledgers/q4-planning.project.md
+./DECISIONS.md
+.git
+$ grep -c "closes at the end of October" DECISIONS.md      # superseded D-001
+0
+```
+
+`DECISIONS.md`:
+
+```markdown
+<!-- decisions-format: 1 -->
+# Decisions
+
+Decisions in force. Read the area that covers a path before changing it; add
+or edit an entry in the same pull request when a change settles something
+future work must respect.
+
+<!-- template comment, byte-identical to templates/ -->
+
+## Planning
+
+Paths: `.`
+
+- **Planning closes on 2026-10-15, not at the end of October.** — finance
+  locks budgets on the 20th. Revisit: if finance moves its lock date.
+```
+
+`.daikenja/open.md`:
+
+```markdown
+<!-- daikenja-open-format: 1 -->
+# q4-planning open items
+
+<!-- template comment, byte-identical to templates/ -->
+
+## Open items
+
+- 2026-09-05 -- @benimaru -- Collect the platform team's headcount ask.
+
+## Context links
+
+- Planning space -- https://example.com/wiki/q4-planning
+
+## Sources
+```
+
+The approval line is the fixture's Walk B1 step 3 text (content moves from a
+private folder into a repository).
+
+**Input B2 (suggested target inside a repository).**
+
+```
+suggested: C/Work/notes/q4-planning  nearest existing: C/Work/notes
+$ git -C C:/Work/notes rev-parse --show-toplevel   -> C:/Work/notes (exit 0)
+-> names the repository and asks; nothing proposed or written
+$ ls -A C:/Work/notes
+.git
+harbor-notes
+```
+
+On "use it", the same private-folder line opens the proposal, naming
+`C:/Work/notes`.
+
+**Input C (quill, ledger and card at a non-default location).**
+
+```
+config before:  quill: {path: C:/GitHub/quill, ledger: docs/records/quill-ledger.md}
+config after:
+  quill:
+    path: C:/GitHub/quill
+$ find . -path ./.git -prune -o -type f -print | sort
+./.daikenja/open.md
+./.daikenja/project.md                         <- moved from docs/records/quill-ledger.project.md
+./DECISIONS.md
+./docs/records/quill-ledger.2026-11-03.bak.md   <- old ledger renamed beside itself; nothing stranded
+```
+
+**Input D (lantern, existing `DECISIONS.md`).**
+
+```
+$ diff DECISIONS.before DECISIONS.md          # only additions
+13a14,20
+> 
+> ## API
+> 
+> Paths: `src/api/`
+> 
+> - **Every endpoint is versioned in the path, never by header.** — clients
+>   cache by URL. Revisit: if a gateway takes over versioning.
+$ grep -n "Releases are cut from tags only" DECISIONS.md
+12:- **Releases are cut from tags only, never from a branch.** — a branch build
+$ find . -path ./.git -prune -o -type f -print | sort
+./.daikenja/ledger.2026-11-03.bak.md
+./DECISIONS.md
+```
+
+D-001 (tag-only) is a duplicate of the Release entry and is not added; no
+`open.md`, since nothing moves into it.
+
+Follow-ups (not this stage's):
+
+- **S9 / an issue:** `project-log-reference.md` § A batch handed over by
+  another skill exempts the migration batch from "the unmigrated-ledger
+  refusal" only; `ledger-migration.md` § The proposal also exempts it from
+  the `paths: []` stop (`project-log` Step 2 items 2 and 4), since the batch
+  names its targets by absolute path. One sentence there would align them.
+- **S9:** `config-writers.md` -- the card row says no skill moves a card, and
+  `daikenja.yaml`'s projects row does not mention the migration's edit
+  (dropping `ledger:` / a timestamp `last_checkpoint`) or the backup rename.
+  `config-resolution.md` § Legacy keys says "the migration in `setup-user`";
+  it runs in `setup-project` now, reached from `setup-user`.
+- **S9:** user guide pages (`docs/guide/`) for the migration and the
+  `setup-project <key>` argument.
+- **SF:** the pathless backup name (`<key>.<date>.bak.md`, not
+  `ledger.<date>.bak.md`) -- accept or amend D-11.
+
+Actuals: not recorded -- cloud session, `scripts/effortlog.py` (plugin) not available. Session 2026-11-03.
+Artifacts check: match (by hand, `git diff --name-only` against the plan branch -- every path is in `## Artifacts`; `scripts/artifacts_check.py` not available in this cloud session)
 
 ### S9 User guide, README and retiring ledger-format.md
 _(empty)_

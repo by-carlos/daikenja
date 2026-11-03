@@ -1,7 +1,7 @@
 # setup-user upgrade branch -- configuration fixtures
 
 <!--
-Fixture: five synthetic `daikenja.yaml` files plus the walks each one is for.
+Fixture: six synthetic `daikenja.yaml` files plus the walks each one is for.
 Everything here is invented -- invented projects, invented people,
 `example.com` links. Nothing is read at runtime.
 
@@ -17,7 +17,7 @@ There is no test runner. Walk `setup-user` by hand against each configuration
 and compare against the expected result stated under it.
 -->
 
-Depends on: setup-user "Step 2: the upgrade branch", setup-user "Proposing the upgrade", config-versioning.md "The mismatch notice"
+Depends on: setup-user "Step 2: the upgrade branch", setup-user "Proposing the upgrade", config-versioning.md "The mismatch notice", ledger-migration.md "Which projects need migration"
 
 ## Config A -- no version key
 
@@ -195,3 +195,59 @@ and the next run on the newer machine would then see a false gap and offer to
 
 **The failure this catches:** stamping unconditionally on every run. That is the
 obvious reading of "written on every run" and it is wrong in exactly this case.
+
+## Config F -- old ledgers waiting to migrate
+
+Its own assumptions, unlike A to E: the installed version reads `0.13.0`, and
+`docs/upgrading.md`'s top section is `## [0.13.0]`, promoted from the
+`## [Unreleased]` notes that moved the ledger to `DECISIONS.md` and `open.md`
+-- the config section and the ledger-migration section.
+
+```yaml
+daikenja_version: 0.12.0
+
+profile:
+  name: rimuru
+  tone: standard
+  writing_style: ./writing-style.md
+  personas: ./personas.md
+
+projects:
+  atlas:
+    path: C:/GitHub/atlas
+    last_checkpoint: 2026-08-20T09:12Z
+  q4-planning:
+    paths: []
+    ledger: ~/.claude/daikenja/ledgers/q4-planning.md
+  lantern:
+    path: C:/GitHub/lantern
+```
+
+`C:/GitHub/atlas/.daikenja/ledger.md` exists with no `open.md` beside it.
+`C:/GitHub/lantern` has a `DECISIONS.md` and an `open.md`, and no old ledger.
+
+**Expected walk of `setup-user`.**
+
+1. Step 2 selects `0.13.0` and both of its change notes, oldest first.
+2. Neither is proposed as an edit here. The run lists the projects that need
+   migration, per `ledger-migration.md` § Which projects need migration, with
+   the command for each, and nothing else about them:
+
+   ```
+   Two projects still keep the old single-file ledger. Migrate each when you are
+   ready -- it shows everything before writing:
+   - atlas -- /daikenja:setup-project atlas
+   - q4-planning (no folder yet) -- /daikenja:setup-project q4-planning
+   ```
+
+   `lantern` is not listed: it already has `open.md` and no old ledger.
+3. On approval, `daikenja_version` is stamped `0.13.0`. **`projects:` is not
+   touched**: atlas keeps its timestamp `last_checkpoint`, q4-planning keeps
+   `paths: []` and its `ledger:` key. Those go in each project's own migration.
+4. Afterwards, every skill that reaches atlas or q4-planning still says it
+   needs migration, until `setup-project` migrates it.
+
+**The failure this catches:** `setup-user` removing the `ledger:` key or
+`paths: []` itself, which leaves the config naming no ledger while the old file
+still holds the only copy of the project's record -- or migrating a ledger
+itself, when `project-log` is the only writer of ledger content.

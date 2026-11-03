@@ -101,6 +101,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ledger:` key, a project with no paths, or an old ledger at
   `.daikenja/ledger.md` with no `open.md` beside it is reported as needing
   migration, pointing at `/daikenja:setup-user`. See `docs/upgrading.md`.
+- **An old ledger migrates to `DECISIONS.md` and `open.md` on your
+  approval.** `/daikenja:setup-project` migrates one project at a time:
+  decisions still in force become `DECISIONS.md` entries, with an imposed
+  decision saying who imposed it; open items, context links and sources move
+  to `.daikenja/open.md`; superseded decisions, resolved items and the
+  Changelog are left out. Nothing is written until you approve the whole
+  migration, which also edits the project's `daikenja.yaml` entry and moves a
+  project card kept beside the old ledger. The old ledger is kept, renamed to
+  `ledger.<YYYY-MM-DD>.bak.md` beside itself. An existing `DECISIONS.md` is
+  added to, never replaced. A project with no folder moves into a git
+  repository you choose, a new folder with `git init` by default, and you are
+  told the content leaves a private folder. `/daikenja:setup-user` lists the
+  projects that need it, with the command for each. See `docs/upgrading.md`,
+  including the update order for a Slack bot install.
 
 ### Removed
 
