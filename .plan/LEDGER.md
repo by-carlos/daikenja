@@ -16,7 +16,7 @@ protocol, finish protocol).
 |---|---|---|---|---|
 | S0 Format specs and file templates | done | yes | 2026-11-03 | Shared spec copied byte-identical; open-format.md (199 lines) and both templates landed |
 | S1 Config, resolution and reading contracts | done | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
-| S2 project-log writes both files | todo | — | — | — |
+| S2 project-log writes both files | doing | yes | 2026-11-03 | project-log writes DECISIONS.md and open.md in one batch; D-4/D-21 refusals; skill 28% smaller |
 | S3 Catchup and decisions read git history | todo | — | — | — |
 | S4 Gaps, summary, list and sources skills | done | yes | 2026-11-03 | Four skills read DECISIONS.md/open.md; two-repo sources fixture walked |
 | S5 Judgement, thread, meeting-review and other readers | todo | — | — | — |
@@ -183,7 +183,115 @@ Actuals: 2026-11-03T07:14:30.948Z → 2026-11-03T07:25:43.776Z · 11 min · toke
 Artifacts check: outside: docs/ledger-format.md, skills/project-list/SKILL.md, skills/project-log/SKILL.md, skills/setup-project/SKILL.md
 
 ### S2 project-log writes both files
-_(empty)_
+
+As built -- what S3 to S9 can assume of `project-log`'s output:
+
+- **One batch, grouped by file.** The proposal shows every line verbatim under
+  the absolute path of the file it lands in (`+` added, `-` deleted, an edit
+  both); "Not kept", "New owner handles" and "Questions before I write" blocks
+  follow. No IDs, no Changelog line, no markers except `Blocked by:` on open
+  items. Closing an item deletes its line.
+- **Same-turn dictated path kept**, narrowed: the dictation is the approval of
+  a batch of at most about three entries. A decision qualifies only when the
+  rule, why and revisit condition are all in the user's words and its file and
+  area exist; scaffolding a file or proposing a new area always proposes.
+  Assumption, not a frozen decision: #292's "proposes entries in a batch, and
+  the user approves them" is read as allowing a dictation to be that approval.
+- **Decision entries** follow `decisions-format.md` § Shape with its em dash.
+  `Source:` is written only when the material names one, never invented. Why
+  and revisit are asked for when missing. The keep rule filters decisions from
+  interpreted material ("Not kept" block); a dictated decision was kept by the
+  user.
+- **Placement:** single repository is automatic; in a multi-repository project
+  a decision goes to the repository whose code it constrains, project-wide ones
+  to home, and an unclear one is a question (#292 option 6). Area by `Paths:`,
+  a new area proposed when none covers.
+- **Owners** only on open items; the handle check reads `open.md` owners, then
+  `personas.md`.
+- **Refusals:** newer version in any file the batch would write refuses the
+  whole batch (D-4); `.daikenja/ledger.md` at home with no `open.md` refuses to
+  scaffold or write (D-21), except the migration's own batch -- **D-21 amended**
+  for S8. A named key: no match stops, `paths: []` gets the needs-migration
+  line, any other match is refused as before (walk 3d unchanged; key writes
+  could now be allowed since files sit at fixed paths -- not done, left for a
+  later issue).
+- **Other skills' batches** (`project-log-reference.md` § A batch handed over by
+  another skill): `setup-project`'s seed, the migration and `meeting-review`
+  go through every check; an existing `DECISIONS.md` is extended, never
+  overwritten; large batches may be approved in tranches.
+- **Never commits** (D-6); Step 8 says "Not committed".
+- `SKILL.md` 27494 -> 19676 bytes (baseline at v0.12.0: 27460).
+
+No `docs/upgrading.md` note and no changelog entry: nothing on disk changes
+beyond S1's note; S9 writes this stage's changelog entry (D-14).
+
+Acceptance (run in `../daikenja-s2`, re-run after merging S4's landing into
+the stage branch):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ BASE_SHA=<origin plan branch> HEAD_SHA=<HEAD> python3 tests/check-skill-size.py
+check-skill-size: no file crossed the size trigger.
+```
+
+After the S4 merge, `ledger-relationships.md` Walk 2 was aligned to S4's
+gaps report shape (header suffix, block annotation on an indented line, the
+`reading.md` § Notices line for a closed blocker) -- which also settles S4's
+follow-up on that fixture.
+
+Hand walk, `tests/fixtures/dictated-log-requests.md` (today 2026-09-15):
+
+- Scenario 1: dictated decision with why and revisit -> same turn, written
+  under `DECISIONS.md` § Dashboard, no `Source:`, no owner, "Not committed".
+- Scenario 2: open item, no owner -> `@unassigned`, same turn, `open.md`.
+- Scenario 3: duplicate of the Rollout entry -> propose, quoting it by words.
+- Scenario 4 (the batch naming both files): the pasted thread yields one
+  proposal with `C:/GitHub/beacon/DECISIONS.md` (+ canary-hold entry in
+  Rollout) and `C:/GitHub/beacon/.daikenja/open.md` (- the runbook item), and
+  one questions block (revisit condition; source or context link, and its URL).
+- Scenario 5 (`<!-- decisions-format: 2 -->`): Step 4 reads the version line
+  before Step 5, the batch writes `DECISIONS.md`, so the whole batch is refused
+  -- the open item too -- with the plugin-update line citing
+  `${CLAUDE_PLUGIN_ROOT}/docs/open-format.md`. Nothing written.
+- Scenario 6 (existing plan-staged-rollout `DECISIONS.md`, no `.daikenja/`):
+  Step 2 finds no legacy ledger; Step 3 adopts `DECISIONS.md` (entry appended
+  to its Release area, title/intro/`ADRs:` line/existing entry untouched) and
+  scaffolds only `open.md` from the template inside the same approval; the
+  restated tag-only rule is a duplicate, not re-added.
+- Scenario 7 (old `.daikenja/ledger.md`, no `open.md`; with and without a
+  `DECISIONS.md`): Step 2 item 4 stops with
+  `The ledger at C:/GitHub/beacon/.daikenja/ledger.md needs migration -- run /daikenja:setup-user.`
+  before Step 3 or Step 5 -- nothing scaffolded, nothing written, same-turn
+  path never reached.
+
+`ledger-relationships.md` and `owner-handles.md` were walked the same way; the
+walk caught that owner-handles Walk 8 (a decision into a fixture with no
+`DECISIONS.md`) must propose rather than write in the same turn, and that a
+named `paths: []` key should get the migration line rather than the generic
+refusal -- both fixed (`ddf3667`).
+
+Follow-ups (not this stage's):
+- `tests/README.md` still describes `dictated-log-requests.md` as four
+  scenarios against `sample-ledger.md`, and `owner-handles.md` /
+  `ledger-relationships.md` in old-format terms -- S9 (D-14 keeps
+  `tests/README.md` for stages that add or remove a fixture).
+- `sample-thread.md`, `sample-thread-followup.md` and `malformed-ledger.md`
+  cite `project-log` headings that still exist but walk old-format output --
+  S3 owns `malformed-ledger.md`; the two thread fixtures are S5's or S9's.
+- `ledger-relationships.md` Walks 1-2 pin `project-decisions` and
+  `project-gaps` behaviour (imposed origin from the why clause; gaps report
+  without IDs, `Blocked by:` naming an item no longer open). S3 and S4 should
+  check their rewrites against it and repoint its `Depends on:` if their step
+  headings move.
+- `meeting-review` and `setup-project` still describe `project-log via <skill>`
+  with a Changelog writer field -- S5 and S6.
+- Allowing `project-log <key>` from outside the project now that files sit at
+  fixed paths -- would change `project-resolution.md` walk 3d; an issue if
+  wanted.
+
+Actuals: 2026-11-03T07:32:41.930Z → 2026-11-03T07:44:44.380Z · 12 min · tokens in=90 out=56579 cache_read=7410517 cache_write=177190 · subagents=0
+Artifacts check: match
 
 ### S3 Catchup and decisions read git history
 _(empty)_
