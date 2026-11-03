@@ -28,43 +28,43 @@ citations and invariant check (e) that S2 to S8 still rely on.
 
 ## Steps
 
-- [ ] `README.md`: remove the pathless claims and say plainly that projects
+- [x] `README.md`: remove the pathless claims and say plainly that projects
   without a folder are gone (D-15); keep it a landing page.
-- [ ] `docs/guide/ledger.md`, `your-data.md`, `install.md`, `faq.md`, `commands.md`,
+- [x] `docs/guide/ledger.md`, `your-data.md`, `install.md`, `faq.md`, `commands.md`,
   `why.md`, `slack-bot.md`, `reviewing.md` and `writing.md`: describe the new
   files, where they live, that `project-log` never commits (D-6), how catchup uses
   git, the migration, and the version warning (D-4). The word "ledger" stays
   (D-7). `slack-bot.md` also carries the operator sequence after an upgrade:
   update the plugin, run `setup-user`, pull the bot checkout, restart the bot,
   run `--check` (the bot's Python loads at startup, the skills update at once).
-- [ ] `docs/diagrams/how-it-works.svg` and `docs/diagrams/where-data-lives.svg`:
+- [x] `docs/diagrams/how-it-works.svg` and `docs/diagrams/where-data-lives.svg`:
   redraw for the new file locations.
-- [ ] Follow `CONTRIBUTING.md` § User documentation for page conventions.
-- [ ] Write the `CHANGELOG.md` `## [Unreleased]` entry set for S0, S2–S7 and
+- [x] Follow `CONTRIBUTING.md` § User documentation for page conventions.
+- [x] Write the `CHANGELOG.md` `## [Unreleased]` entry set for S0, S2–S7 and
   this stage, from their ledger notes (D-14); S1 and S8 wrote their own with
   their upgrade notes. Say plainly that pathless projects are gone (D-15).
-- [ ] Run `python3 tests/check-invariants.py` and fix anything it flags,
+- [x] Run `python3 tests/check-invariants.py` and fix anything it flags,
   including its link check (D-16).
 
 Last steps, in this order, once the guide pages no longer link the old spec:
 
-- [ ] Delete `docs/ledger-format.md` and `templates/ledger.md` (S6 left the
+- [x] Delete `docs/ledger-format.md` and `templates/ledger.md` (S6 left the
   template in place because the old spec still links it).
-- [ ] De-link what still points at them: `docs/upgrading.md` (the 0.3.0 section,
+- [x] De-link what still points at them: `docs/upgrading.md` (the 0.3.0 section,
   as plain code text, since that note is released history), `docs/README.md` and
   `AGENTS.md`.
-- [ ] `tests/check-invariants.py`: remove or replace check (e) (the backfill
+- [x] `tests/check-invariants.py`: remove or replace check (e) (the backfill
   replay). A mechanical check worth keeping is that `docs/decisions-format.md`
   starts with its version line and `templates/open.md` starts with its own;
   update the docstring either way.
-- [ ] `tests/check-reference-drift.py`: update the docstring example that names
+- [x] `tests/check-reference-drift.py`: update the docstring example that names
   the old file.
-- [ ] Remove orphaned fixtures (for example `ledger-backfill.md`) and their lines
+- [x] Remove orphaned fixtures (for example `ledger-backfill.md`) and their lines
   in `tests/README.md`.
-- [ ] `CONTRIBUTING.md` and the repository `CLAUDE.md`: the "Ledger format" bullet
+- [x] `CONTRIBUTING.md` and the repository `CLAUDE.md`: the "Ledger format" bullet
   now points at `docs/decisions-format.md` and `docs/open-format.md`, and the
   frozen-grammar rule covers the version line and the item line.
-- [ ] Run `python3 tests/check-invariants.py` (D-16).
+- [x] Run `python3 tests/check-invariants.py` (D-16).
 
 <!-- Checkboxes are the resume mechanism: a session that stops mid-stage marks
 the row `doing`, ticks the boxes it finished, and writes a handoff note in the

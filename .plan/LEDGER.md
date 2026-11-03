@@ -23,7 +23,7 @@ protocol, finish protocol).
 | S6 setup-project registers git-backed projects only | done | yes | 2026-11-03 | Registration is git-only, home asked and written first, seed via project-log; skill 23203→23144 bytes |
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
 | S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
-| S9 User guide, README and retiring ledger-format.md | todo | — | — | — |
+| S9 User guide, README and retiring ledger-format.md | doing | yes | 2026-11-03 | Guide, README, diagrams and changelog describe the new ledger; ledger-format.md, its template and fixture retired |
 | SF Plan review | todo | — | — | — |
 
 ## Notes
@@ -1059,7 +1059,125 @@ Actuals: not recorded -- cloud session, `scripts/effortlog.py` (plugin) not avai
 Artifacts check: match (by hand, `git diff --name-only` against the plan branch -- every path is in `## Artifacts`; `scripts/artifacts_check.py` not available in this cloud session)
 
 ### S9 User guide, README and retiring ledger-format.md
-_(empty)_
+
+As built:
+
+- **Guide and README.** `docs/guide/ledger.md` rewritten around the two files:
+  what each holds (with an example of each), where they live (every
+  repository's `DECISIONS.md`, `open.md` in home), adoption of an existing
+  `DECISIONS.md`, `project-log` never commits (D-6), catchup from git with the
+  unresolvable-SHA first run and "not committed yet", the two notices
+  (needs migration, newer format -- D-4), "Projects without a folder are gone"
+  (D-15), § Moving from the old ledger, card at `.daikenja/project.md`. Other
+  pages link to that page rather than restating it. `install.md` § A project
+  with no folder became **§ A project that is not code** (the `git init` and
+  new-folder offers); the anchor changed and every inbound link was moved.
+  `faq.md` gains "Where did my project with no folder go?" and "I logged
+  something, but my colleagues cannot see it". `commands.md`: `project-log`
+  takes no name; `setup-project <name>` migrates. `slack-bot.md` gains the
+  fixed unreadable-ledger line (S7 follow-up), the "reads files, never git"
+  note, and **§ After a Daikenja update** with the five-step operator sequence
+  (F12). "Ledger" kept throughout (D-7). README: two files plus git, a
+  `DECISIONS.md` example replacing the old ID line, and the D-15 sentence.
+- **Diagrams.** `how-it-works.svg` (Record card names both files; catchup reads
+  git; footer says you commit) and `where-data-lives.svg` (project column is
+  the repository: `DECISIONS.md`, `.daikenja/open.md`, card). Both rendered
+  with Playwright and checked for overflow; `<desc>`/`aria-label` updated and
+  the README and `your-data.md` alt text kept identical to them.
+- **Changelog (D-14).** Entries for S0 and S7 under Added; S2, S3 (catchup and
+  decisions), S4, S5, S6 and this stage under Changed; the spec/template
+  retirement under Removed. S1's Removed entry already says plainly that
+  pathless projects are gone (D-15); S6's entry repeats it in user words.
+- **Retirement.** Deleted `docs/ledger-format.md`, `templates/ledger.md` and
+  `tests/fixtures/ledger-backfill.md` (the only fixture depending on the old
+  spec). Check (e) is now **format version lines**: both specs and both
+  templates start with their version line and each template matches its spec;
+  negative-tested (version 2 in `templates/open.md`, and a removed line 1) --
+  both fail as expected. `upgrading.md` 0.3.0 note now names the file as plain
+  code text. `docs/README.md` lists `decisions-format.md`, `open-format.md`
+  and `ledger-migration.md` (S0/S1 follow-up). CONTRIBUTING, `CLAUDE.md` and
+  `AGENTS.md`: the frozen grammar is each file's version line and the
+  `open.md` item line (` -- `, two-split bound); `decisions-format.md` is
+  changed upstream, then copied.
+- **`tests/README.md`** (a fixture was removed, so D-14 allows the edit):
+  check (e) description, the `Depends on:` example, and the stale descriptions
+  of `owner-handles.md`, `ledger-relationships.md`, `dictated-log-requests.md`,
+  `sources-ledger.md`, `project-card.md` and `project-resolution.md` now match
+  what those fixtures hold (S2 and S4 follow-ups).
+
+**Outside Artifacts** (both forced by the deletion's link check and the
+acceptance grep): `docs/future-work.md` -- § The ledger rewritten from body
+markers to `Blocked by:` by words (S1 follow-up), and the `project-log` fork
+paragraph points at the two new specs; `templates/README.md` -- the
+`ledger.md` bullet removed.
+
+Acceptance (run in `../daikenja-s9`, plan branch `03f8df1` unchanged since
+the stage branched, so no sibling re-sync):
+
+```
+$ python3 tests/check-invariants.py
+All invariant checks passed.
+$ git grep -nE "pathless|ledgers/" -- README.md docs/guide
+(exit 1, no output)
+$ test ! -e docs/ledger-format.md && echo gone
+gone
+$ wc -l docs/decisions-format.md docs/open-format.md
+  161 docs/decisions-format.md
+  199 docs/open-format.md
+$ git grep -n "ledger-format.md" -- . ":!.plan" ":!CHANGELOG.md" ":!docs/upgrading.md"
+(exit 1, no output)
+$ test ! -e templates/ledger.md && echo gone
+gone
+$ (cd bot && python -m pytest tests -q)
+477 passed, 11 subtests passed in 0.86s
+```
+
+Done check 5, exactly as `PLAN.md` writes it -- every hit outside
+`CHANGELOG.md` and `docs/upgrading.md` history is D-21 legacy handling (the
+rule, or a test/fixture exercising it):
+
+```
+$ git grep -nE "pathless|paths: \[\]|daikenja/ledgers" -- . ":!.plan" ":!docs/ledger-migration.md" ":!tests/fixtures/ledger-migration.md" ":!tests/fixtures/setup-user-upgrade.md"
+CHANGELOG.md:196,200,1045,1051,1076,1344,1345,1349,1356       (history; S1's Removed entry)
+bot/tests/test_main.py:118            "  atlas:\n    paths: []\n"  (S7's needs-migration test input)
+docs/config-resolution.md:191         D-21 § Legacy keys and unmigrated ledgers
+docs/project-log-reference.md:231     D-21 failure row: paths: [] -> needs migration
+docs/upgrading.md:49,78,82,94,261,534,535,558,580   (Unreleased note + released history)
+skills/project-gaps/SKILL.md:126      D-21 failure row
+skills/project-list/SKILL.md:80,209   D-21 reporting
+skills/project-log/SKILL.md:106       D-21 refusal
+skills/project-sources/SKILL.md:153   D-21 failure row
+skills/project-summary/SKILL.md:149   D-21 failure row
+tests/fixtures/ledger-location.md:113,114,129          Config D: legacy no-paths entry -> needs migration
+tests/fixtures/project-resolution.md:52,53,63,100,116,121,132,135   Walks 3-3c: legacy entry -> needs migration
+```
+
+`tests/README.md` no longer hits: its two descriptions that did were stale and
+were reworded. The two fixtures' walk headings still say "a pathless project"
+for the legacy entry they test; left as fixture content, not a claim -- SF
+may want them renamed.
+
+Follow-ups (not this stage's -- for SF to route):
+
+- **S5's rename**, assigned to S9 but outside its Artifacts and touching eight
+  skills: `response-format.md` § "Entries are named topic-first, ID in
+  parentheses" -> drop "ID in parentheses", with its reverse index, the citing
+  skills' `Depends-on` lines, `docs/README.md:52` and
+  `skills/compose/SKILL.md:191`. Not done here: it changes skill files and
+  `check-skill-size` baselines, which this docs stage does not own.
+- **S8's doc gaps**, outside Artifacts: `config-writers.md` card row ("no skill
+  moves a card") and `daikenja.yaml` projects row (the migration's edit and
+  backup rename); `config-resolution.md` § Legacy keys still says "the
+  migration in `setup-user`" (it runs in `setup-project`, reached from
+  `setup-user`); `project-log-reference.md` § A batch handed over by another
+  skill exempts the migration batch from the unmigrated-ledger refusal only,
+  while `ledger-migration.md` also exempts it from the `paths: []` stop.
+- S3: `config-writers.md`'s reverse index does not list `project-catchup`.
+- `tests/fixtures/project-resolution.md` intro says "ten walks"; it has
+  twelve `## Walk` headings (3b-3d) -- predates this stage.
+
+Actuals: not recorded -- cloud session, `scripts/effortlog.py` (plugin) not available. Session 2026-11-03.
+Artifacts check: outside: docs/future-work.md, templates/README.md (by hand, `git diff --name-only` against the plan branch; `scripts/artifacts_check.py` not available in this cloud session)
 
 <!-- One ### S<N> block per stage. Templates for the states you'll hit:
 
