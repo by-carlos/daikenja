@@ -15,7 +15,7 @@ protocol, finish protocol).
 | Stage | Status | Verified | Date | Result |
 |---|---|---|---|---|
 | S0 Format specs and file templates | done | yes | 2026-11-03 | Shared spec copied byte-identical; open-format.md (199 lines) and both templates landed |
-| S1 Config, resolution and reading contracts | doing | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
+| S1 Config, resolution and reading contracts | done | yes | 2026-11-03 | Config, resolution, reading and card contracts moved to DECISIONS.md/open.md; D-21 amended |
 | S2 project-log writes both files | todo | — | — | — |
 | S3 Catchup and decisions read git history | todo | — | — | — |
 | S4 Gaps, summary, list and sources skills | todo | — | — | — |
