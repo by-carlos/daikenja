@@ -15,8 +15,7 @@ still open comes out. The ledger write goes through `project-log`.
 ## Hard rules
 
 **Never write the ledger.** `project-log` is the only skill that writes ledger
-content. This one classifies and hands over. The Changelog then records the
-writer as `project-log via meeting-review`.
+content -- `DECISIONS.md` and `open.md`. This one classifies and hands over.
 
 **Never promote a suggestion to a decision.** A meeting is full of half-formed
 ideas. Something is settled when it was closed out loud and nobody objected.
@@ -111,10 +110,13 @@ they say it is a real open question.
 When you cannot tell, ask. One line, one question. Do not resolve the ambiguity
 yourself and do not log both readings.
 
-Where these land in the ledger: decisions go to the Decisions section, action
-items and open questions both go to Open items. `project-log` owns the line
-shape, the IDs and the dates. See `${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md`
-if you need the detail, and never format entries yourself.
+Where these land in the ledger: a decision becomes a `DECISIONS.md` entry --
+the rule now in force and why, per
+`${CLAUDE_PLUGIN_ROOT}/docs/decisions-format.md` § Shape -- and action items
+and open questions both become `open.md` open items with an owner and a date
+raised, per `${CLAUDE_PLUGIN_ROOT}/docs/open-format.md` § Section: Open items.
+Neither carries an ID or a marker. `project-log` owns the exact lines, the
+area and the file; never format entries yourself.
 
 ## Step 4: attribute
 
@@ -123,10 +125,10 @@ already recorded a handle for that person, it is derived from the speaker label
 in the transcript (`Priya Nair` becomes `@priya`).
 
 - A person who accepted a task owns it.
-- A decision is owned by whoever closed it out loud, per Step 3's test for
-  what counts as a decision -- the same person the Step 5 template's
-  `<who closed it>` field names, and what `ledger-format.md`'s Section:
-  Decisions calls `<owner>`.
+- A decision is attributed to whoever closed it out loud, per Step 3's test
+  for what counts as a decision -- the person the Step 5 template's
+  `<who closed it>` field names. A `DECISIONS.md` entry has no owner field,
+  so this attribution stays in the report and the handoff.
 - What the user says is theirs is theirs. Use the first token of `profile.name`
   from `~/.claude/daikenja/daikenja.yaml`.
 - Nobody identifiable means `@unassigned`.
@@ -191,7 +193,7 @@ Meeting: <what it was, when, and roughly how long or how many turns>
 Speakers: <labels as they appear, normalized>
 
 Decisions
-1. <what was settled> -- <who closed it> ("<short quote>")
+1. <the rule now in force> -- <why, if it was said> -- <who closed it> ("<short quote>")
 
 Action items
 1. <the task> -- @owner, due <YYYY-MM-DD or "no date given"> ("<short quote>")
@@ -234,21 +236,22 @@ above. It shows the exact lines and waits for your approval before anything
 is written.
 ```
 
-On a go-ahead, run `/daikenja:project-log` and give it the classified entries,
-their owners, their anchors, and the meeting's own date. Establish that date
+On a go-ahead, run `/daikenja:project-log` and give it the classified entries
+in those shapes -- each decision as its rule and why, each open item with its
+owner -- their anchors, and the meeting's own date. Establish that date
 from whatever the material itself states -- a header line, an invite subject,
 a timestamp on the opening turn -- never from today's date and never by asking
 the user to recall it. When nothing in the material states one, say so
 explicitly in the handoff instead of omitting it: `project-log` treats an
 absent meeting date as unestablished, not as "log today", and asks for it or
 records it as approximate per its own rules. From there `project-log` does its
-own job -- resolving the project and the ledger, allocating IDs, checking for
-duplicates, showing the exact lines, waiting for approval, and writing. The
-Changelog writer is `project-log via meeting-review`.
+own job -- resolving the project and its files, choosing the area,
+checking for duplicates and for an entry the decision replaces, showing the
+exact lines, waiting for approval, and writing. Git holds the history.
 
-Do not duplicate any of that here. Do not resolve the ledger path, do not
-allocate IDs, do not format entry lines, and do not ask for approval on
-`project-log`'s behalf. If the project is unregistered or the ledger does not
+Do not duplicate any of that here. Do not resolve the files, do not pick an
+area, do not format entry lines, and do not ask for approval on
+`project-log`'s behalf. If the project is unregistered or its files do not
 exist yet, `project-log` handles it.
 
 If the user declines, write nothing and say nothing was written. The report

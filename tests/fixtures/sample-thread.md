@@ -11,7 +11,7 @@ something the project is tracked from or whose staleness matters, so it
 resolves as a context link, not a source.
 
 Starting ledger: none -- this is harbor's first log, so `project-log` scaffolds
-one. `@diablo` is the only owner any entry gets (the rollback question and the
+`DECISIONS.md` and `.daikenja/open.md`. `@diablo` is the only owner any entry gets (the rollback question and the
 comms task are both unassigned, and the runbook link carries no owner field),
 so with no `personas.md` configured the proposal's `New owner handles:` block
 names only `@diablo`, noting no personas.md is configured.

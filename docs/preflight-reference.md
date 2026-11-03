@@ -149,10 +149,12 @@ survived, because it did not.
 | Step 9 routed someone and `remember-persona` offered the entry rather than writing it | Report it as the `Not learned:` line and finish. Never wait for the answer, and never write the entry from here. |
 | `daikenja.yaml` absent | Not fatal. Continue on the defaults; "already answered" falls back to whatever thread was pasted. |
 | `daikenja.yaml` malformed | **Stop.** Name the first line that does not parse, per `config-resolution.md`. |
-| No ledger at the resolved path | Not fatal. Report "already answered" as not checked and continue. |
+| None of the project's ledger files exists | Not fatal. Report "already answered" as not checked and continue. |
+| The project needs migration, per `reading.md` § Step B | Not fatal. Give its one notice line, report "already answered" as not checked, and continue. |
+| A ledger file carries a newer format version | Read it anyway, with its one warning per `open-format.md` § Version line. |
 | Check 4 fails because the message carries several asks at once | Split or label them directly in Step 7, like any other wording fix. Report it in `Applied:`, never in `Needs you`. |
 | Check 4 fails because there is no specific ask at all | Content gap. The sender has to say what they want; nothing in the draft supplies it. |
-| Check 6 finds a pre-existing answer | Report it topic-first with its ID in `Already answered:`, and ask only whether to defer. Never add it to `Needs you`, and never count it toward the verdict's fact count. |
+| Check 6 finds a pre-existing answer | Report it topic-first with its repository in `Already answered:`, and ask only whether to defer. Never add it to `Needs you`, and never count it toward the verdict's fact count. |
 | More addressees than persona slots | Direct beats cc'd. Name who was dropped. |
 | Goal cannot be determined from the input | Ask the one question in Step 2. Do not guess. |
 | The user asks for the message to be sent | Decline. This skill has no send action. |
@@ -164,7 +166,8 @@ survived, because it did not.
   verdict and a handoff to `/daikenja:compose`.
 - It does not write `personas.md`. It routes through
   `/daikenja:remember-persona`, which owns every content write to that file.
-- It does not write the ledger. It reads one for check 6 and nothing more.
+- It does not write the ledger. It reads `DECISIONS.md` and `open.md` for
+  check 6 and nothing more.
 - It does not invent a reviewer. The roster in `docs/reviewer-personas.md` is
   fixed and changes only by pull request.
 - It does not run more than two cycles.

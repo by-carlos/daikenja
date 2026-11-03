@@ -55,7 +55,7 @@ they have an entry. See Step 1 § Where the description came from.
 **Scaffold, never hand-build.** If the personas file does not exist when this
 skill has an entry to write, copy `${CLAUDE_PLUGIN_ROOT}/templates/personas.md`
 verbatim and write the entry into the copy, the same way `project-log`
-scaffolds a missing ledger. `setup-user`'s create-if-absent rule is untouched:
+scaffolds a missing `open.md`. `setup-user`'s create-if-absent rule is untouched:
 it still copies the same template on its own run, and copying the template
 twice is idempotent. What changes is that this skill no longer stops and waits
 for `setup-user` to have run first.
@@ -256,7 +256,8 @@ can attribute a transcript's speaker to the handle already recorded for them
 rather than deriving a new one, and so `/daikenja:project-log` can tell a
 genuinely new colleague apart from a second spelling of one already recorded --
 see
-`${CLAUDE_PLUGIN_ROOT}/docs/ledger-format.md` § Who an owner handle refers to.
+`${CLAUDE_PLUGIN_ROOT}/docs/open-format.md` § Section: Open items, on what an
+owner handle refers to.
 
 **Never derive an identifier.** `@priya` does not follow from "Priya Nair", an
 address does not follow from a name, and a chat ID follows from nothing. Write

@@ -145,11 +145,12 @@ For check 6, **already answered**, only check material this skill can actually
 see:
 
 - A pasted thread or conversation, if one was given alongside the draft.
-- The project's ledger, if a project is configured and a ledger is found
-  (`~/.claude/daikenja/daikenja.yaml`, resolved per `docs/config-resolution.md` §
-  Resolution order; `.daikenja/ledger.md` if unconfigured). Read it the way
-  `docs/reading.md` § Step A-C describes, for lookup only -- this skill never
-  writes to it.
+- The project's ledger -- every `DECISIONS.md` of the project and its
+  `open.md` -- if any of them is found (`~/.claude/daikenja/daikenja.yaml`,
+  resolved per `docs/config-resolution.md` § Resolution order; `DECISIONS.md`
+  and `.daikenja/open.md` under the current directory if unconfigured). Read
+  it the way `docs/reading.md` § Step A-C describes, for lookup only -- this
+  skill never writes to it.
 
 If neither is available, say so plainly rather than implying a broader check
 happened: "Already answered: not checked -- no thread or ledger was available
@@ -176,8 +177,9 @@ and 6 fail in ways the other four cannot.
   the questions list.
 - **Check 6, already answered**, fails by finding an answer, not by missing
   one -- the opposite of every check above. Report the pre-existing answer,
-  named topic-first with its decision ID in parentheses when it comes from
-  the ledger (`docs/response-format.md` § Entries are named topic-first), and
+  named topic-first with the repository whose `DECISIONS.md` holds it in
+  parentheses when it comes from the ledger (`docs/response-format.md` §
+  Entries are named topic-first), and
   ask only whether the draft should defer to it. That is a question about
   which way to resolve a known answer, not a fact gap, and it is reported
   as such rather than folded into the questions list as an unstated fact.
@@ -498,7 +500,7 @@ director), S (named in the draft)
 
 Reviewed: dispatched, each reviewer reading cold.
 Applied: 4 wording fixes across 2 cycles.
-Already answered: the events-table schema freeze (D-003) says hold off until
+Already answered: the events-table schema freeze (atlas-api) says hold off until
 the rollout completes. Defer to it?
 Conflict: R needs the rollback detail kept and M needs this under ten lines.
 No fix serves both -- this may want to be two messages.
@@ -509,8 +511,8 @@ The verdict line is `ready to send` or `needs <n> facts from you before it
 goes`. Nothing else.
 
 **`Already answered:` reports a check-6 hit, not a content gap.** Name the
-pre-existing answer topic-first with its ID in parentheses when it comes from
-the ledger, state what it settled, and ask only whether the draft should
+pre-existing answer topic-first with its repository in parentheses when it
+comes from the ledger, state what it settled, and ask only whether the draft should
 defer to it. It never joins the `Needs you` list and never counts toward the
 verdict's fact count -- the sender is not missing a fact, they are being
 asked which way to resolve one they already have. One line per hit, reported

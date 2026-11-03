@@ -8,8 +8,8 @@ headings by tests/check-invariants.py):
 - § A user-side conversational layer -- judgement "The discipline is this skill's own"
 - § The second person belongs to conversation -- judgement "Step 5: report", thread "Step 2: summarize it", thread "Form `message`: a summary that leaves the session", preflight "Step 3: cycle 0 -- the substance checks"
 
-How a skill reports to the user in the conversation. `ledger-format.md` fixes
-what the record file looks like, `voice.md` fixes how a drafted message reads,
+How a skill reports to the user in the conversation. `decisions-format.md`
+and `open-format.md` fix what the ledger files look like, `voice.md` fixes how a drafted message reads,
 and this file fixes the third surface: the reply the user actually gets back
 from a skill. Every skill's output step cites this contract and follows it. A
 skill implements it; it never redefines it.
@@ -25,7 +25,8 @@ This contract governs the conversational reply -- reports, verdicts,
 confirmations, notices. It does not govern:
 
 - **File content.** What goes in a ledger or any other file the plugin writes
-  follows that file's own grammar (`ledger-format.md`, the templates). A reply
+  follows that file's own grammar (`decisions-format.md`, `open-format.md`,
+  the templates). A reply
   that quotes existing file lines, or proposes lines to write, shows them in
   file grammar exactly as they are or will be on disk -- proposing a write
   means showing the real bytes.
@@ -115,26 +116,23 @@ the skill's own rules say.
 
 ## Entries are named topic-first, ID in parentheses
 
-When a reply names an entry that carries an ID -- a decision, an open item --
-lead with what the entry is about and put the ID in parentheses after it:
+Ledger entries carry no IDs: a decision is found by its area and its words,
+an open item by its words. When a reply names one, lead with what it is about,
+and put where it lives in parentheses after it -- the repository whose
+`DECISIONS.md` holds a decision, `open item` for a line of `open.md`:
 
-- `the cutover-day decision (D-005)` -- yes
-- `D-005` -- no
+- `the cutover-day decision (harbor)` -- yes
+- `the on-call question (open item)` -- yes
+- `D-005` -- no: a code means nothing outside its own file
 
-An ID never opens a line or a sentence in a reply. The reason is the audience:
-a user running several projects reads many of these reports, and `O-020`
-carries no meaning outside its own file, while "who is on call during the
-cutover" carries it everywhere. The ID stays, in parentheses, because it is
-how the user addresses the entry when they act on it.
+The reason is the audience: a user running several projects reads many of
+these reports, and "who is on call during the cutover" carries its meaning
+everywhere. The parentheses say which file to open when the user acts on it;
+the words are how they name the entry to `project-log`.
 
-Two boundaries:
-
-- **The file keeps its own grammar.** Ledger lines on disk stay ID-first per
-  `ledger-format.md`. This rule governs the reply only -- including report
-  lists that mirror ledger content, which reorder to topic-first even though
-  the file does not.
-- **A bulk range names extent, not an entry.** "Seeded D-001 to D-011" counts
-  what was written; it references no single entry and stays a range.
+**The file keeps its own grammar.** Lines quoted or proposed from disk stay
+exactly as `decisions-format.md` and `open-format.md` write them. This rule
+governs the reply only.
 
 ## `profile.tone` scales the narration
 
