@@ -184,7 +184,8 @@ repository that is not reachable is never the reason a run stops.
 ### Legacy keys and unmigrated ledgers
 
 Configuration and files written before this layout are recognised, never acted
-on: the migration in `setup-user` is the one place they change.
+on: the migration in `setup-project`, reached from `setup-user`, is the one
+place they change.
 
 - **A leftover `ledger:` key** is ignored. The run says so in one line naming
   the key and `/daikenja:setup-user`, then continues with the fixed paths above.

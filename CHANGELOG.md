@@ -129,6 +129,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   told the content leaves a private folder. `/daikenja:setup-user` lists the
   projects that need it, with the command for each. See `docs/upgrading.md`,
   including the update order for a Slack bot install.
+- **A project with no folder now migrates all the way through.** `project-log`
+  no longer stops the migration's own write for an entry with no paths yet.
 - **`project-log` writes `DECISIONS.md` and `open.md` in one approved
   batch.** The proposal shows every line it would add, change or delete,
   grouped under the absolute path of the file it lands in. A decision is the
