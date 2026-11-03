@@ -218,9 +218,15 @@ phrase such as "catch me up" does not fire them on its own.
   back as a separate "what to watch" report, saved to a dated file so the next
   run can show what moved. Run it whenever you have more
   samples, not only at setup.
-- `/daikenja:tensei` -- installs, updates or removes the Tensei conversational
-  persona (`~/.claude/daikenja/tensei.md`) and the line that imports it from
-  `~/.claude/CLAUDE.md`. Unlike the other setup files, this one is maintained
+- `/daikenja:tensei` -- installs, updates or removes Tensei, the Daikenja way
+  of working (`~/.claude/daikenja/tensei.md`), and the line that imports it
+  from `~/.claude/CLAUDE.md`. It covers how answers are shaped (headline
+  first, pushback on a wrong premise, certainty stated), how a design is
+  recommended (every option ranked, each reason marked verified or assumed),
+  and working practice (an explicit yes before anything others can see,
+  reading caps, when to hand work to a subagent). It shows what will change
+  and asks once whether to adopt it; that answer is recorded only on your
+  machine. Unlike the other setup files, this one is maintained
   content the plugin revises: a copy you have not edited by hand can be updated
   to the shipped version, a copy you have edited is never overwritten without
   asking, and anything replaced is backed up first. Needs no `daikenja.yaml`
