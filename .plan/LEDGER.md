@@ -654,6 +654,9 @@ $ git grep -nE "pathless|paths: \[\]|daikenja/ledgers" -- skills/setup-project t
 (exit 1, no output)
 ```
 
+Re-run after merging S3 (#314) into the stage branch: same output; S3 touched
+no S6 file.
+
 Hand walks, `tests/fixtures/setup-project-seed.md` (rewritten: six walks):
 
 - **Code repository (Walk A).** `C:/GitHub/quill-gateway` is a repo root, no
