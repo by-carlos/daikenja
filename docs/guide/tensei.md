@@ -11,79 +11,77 @@
 
 ## The difference, side by side
 
-The same question, asked twice. Both answers are illustrations written for
-this page, not captured sessions; the first is a deliberately familiar shape:
-long, confident, one plan.
+The same request, made twice. Both answers are illustrations written for this
+page, not captured sessions; the first is a deliberately familiar shape:
+long, confident, one plan -- and it keeps growing.
 
-> *Our dashboard has got slow. Should I put Redis in front of Postgres?*
+> *Our website has got slow. Let's move it to a bigger server.*
 
 <details>
-<summary><b>Without Tensei</b> -- long, certain, one plan, no questions (click to expand)</summary>
+<summary><b>Without Tensei</b> -- long, certain, escalating, no questions (click to expand)</summary>
 
-> Great question! Adding a Redis cache in front of PostgreSQL is an excellent
-> way to speed up a slow dashboard. Redis is an in-memory data store, so reads
-> are dramatically faster than hitting the database every time.
+> Great idea! Moving to a bigger server is a solid way to speed up your site
+> and prepare for growth. Here's a step-by-step plan:
 >
-> Here's a step-by-step plan:
+> 1. **Choose a larger machine** -- for example, go from 2 CPUs and 4 GB of
+>    memory to 8 CPUs and 32 GB.
+> 2. **Snapshot the current server** so you can roll back.
+> 3. **Create the new server** from the snapshot and test it.
+> 4. **Point your domain at the new server** and wait for DNS to update.
+> 5. **Shut down the old one** once traffic has moved.
 >
-> 1. **Install Redis** with Docker: `docker run -d -p 6379:6379 redis:7`.
-> 2. **Add a client library**, such as `redis-py` for Python.
-> 3. **Wrap your dashboard queries** in a cache-aside pattern: check Redis
->    first, and on a miss, query Postgres and store the result with a TTL.
-> 4. **Choose TTLs** -- 60 to 300 seconds works well for most dashboards.
-> 5. **Handle invalidation** by deleting keys when the underlying data
->    changes.
-> 6. **Monitor your hit rate** with `INFO stats`.
+> For future scale, you should also put a **load balancer** in front of two
+> or more servers, so traffic is shared and one failure does not take the
+> site down. And as you grow, consider moving to **Kubernetes**, so the site
+> scales up and down automatically:
 >
-> ```python
-> def get_dashboard_data(user_id):
->     key = f"dashboard:{user_id}"
->     cached = r.get(key)
->     if cached:
->         return json.loads(cached)
->     data = run_dashboard_query(user_id)
->     r.setex(key, 300, json.dumps(data))
->     return data
+> ```yaml
+> apiVersion: autoscaling/v2
+> kind: HorizontalPodAutoscaler
+> spec:
+>   minReplicas: 2
+>   maxReplicas: 10
 > ```
 >
-> With this in place, your dashboard should load significantly faster, and
-> you'll reduce the load on your database as well. Let me know if you'd like
-> help with any of these steps!
+> With this in place, your website will be much faster and ready for any
+> amount of traffic. Want me to start the migration?
 
 </details>
 
 <details open>
-<summary><b>With Tensei</b> -- finding first, premise checked, options ranked</summary>
+<summary><b>With Tensei</b> -- risk labelled, premise checked, options ranked</summary>
 
-> ℹ️ **Notice:** measure before you cache. A slow dashboard is usually one
-> slow query, and a cache hides that query instead of fixing it.
+> ⚠️ **Warning:** **RISKY** -- moving a live site risks downtime, and the move
+> may not fix the slowness. It waits for your yes.
 >
-> 💬 **Answer:** not yet. Run `EXPLAIN ANALYZE` on the dashboard's slowest
-> query first. If it shows a sequential scan on a large table, an index is
-> likely the whole fix -- *likely*, not certain: I have not seen your schema.
-> Then choose:
+> ℹ️ **Notice:** check before you move. A slow site is usually heavy images,
+> one slow page or a slow database query -- a bigger server would likely not
+> fix those, and costs more every month.
 >
-> 1. **Index the slow query** -- cheapest, no new service to run.
->    *Assumed* until the query plan confirms it.
-> 2. **A materialized view, refreshed every few minutes** -- fits if the data
->    can be a few minutes old. *Assumed.*
-> 3. **Redis in front of Postgres** -- adds a service to run, cache
->    invalidation, and stale-data bugs. Worth it only if the index and the
->    view both fall short. *Assumed.*
+> 💬 **Answer:** two quick checks first: run a free speed test on the slowest
+> page, and look at the server's CPU and memory use. Then, best first:
 >
-> Constraints: Postgres stays the store (a fixed fact); how fresh the
-> dashboard must be is unknown, and probably a setting someone picked rather
-> than a requirement.
+> 1. **Shrink the images** -- cheapest. *Assumed* until the test confirms it.
+> 2. **Fix the one slow page or query.** *Assumed.*
+> 3. **Add caching** (ready-made copies of pages) **or a CDN** (copies served
+>    from closer to each visitor). *Assumed.*
+> 4. **Move to a bigger server** -- helps only if the server runs flat out.
+>    *Assumed -- unverified.*
 >
-> ❓ **Query:** if the index is not enough, how fresh does the dashboard need
-> to be? That decides between the view and Redis.
+> Constraints: the budget is a setting you control; that the site is one
+> server you can resize is assumed.
+>
+> ❓ **Query:** slow all the time, or only at busy hours? Busy hours points at
+> the server.
 
 </details>
 
-What changed: the premise was checked before the how-to; the answer says what
-is certain and what is assumed; the option you asked about is still on the
-list, ranked against the alternatives; and the one question that decides
-between the last two comes last.
+What changed: the risk is labelled before anything else; the request was
+checked before it was followed; each option says whether it is checked or
+assumed, and the constraints are named; the move you asked for is still on
+the list, ranked against cheaper fixes; and the one question that separates a
+page problem from a server problem comes last. (In a real session that
+question comes as buttons.) Nothing escalated to Kubernetes.
 
 ## What it changes
 
