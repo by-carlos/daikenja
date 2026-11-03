@@ -22,7 +22,7 @@ protocol, finish protocol).
 | S5 Judgement, thread, meeting-review and other readers | done | yes | 2026-11-03 | Readers moved to DECISIONS.md/open.md; DAIKENJA-PROJECT-DATA-UNREADABLE token for S7 |
 | S6 setup-project registers git-backed projects only | done | yes | 2026-11-03 | Registration is git-only, home asked and written first, seed via project-log; skill 23203→23144 bytes |
 | S7 Slack bot reports unreadable project data | done | yes | 2026-11-03 | Bot posts one fixed line on the unreadable token; --check names unreadable projects |
-| S8 Migration from the old ledger | doing | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
+| S8 Migration from the old ledger | done | yes | 2026-11-03 | setup-project Step 2a runs docs/ledger-migration.md; four fixture inputs walked, all match |
 | S9 User guide, README and retiring ledger-format.md | todo | — | — | — |
 | SF Plan review | todo | — | — | — |
 
