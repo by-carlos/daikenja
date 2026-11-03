@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **The README is now a landing page, and the detail moved into a user
+  guide.** The README says what Daikenja is, who it is for, how to install
+  and try it, and where to read next. The detail lives in
+  [`docs/guide/`](docs/guide/), one page per task: install, commands,
+  writing, the ledger, reviewing, Tensei, your data, the Slack bot, an FAQ
+  and why. The Tensei page opens with the same question answered without
+  and with Tensei. Two diagrams show the read, draft, record loop and where
+  files live. The data page now says plainly that what a skill reads is
+  processed by Claude, and which writes do not wait for your yes
+  (`remember-persona` for a new person, and `learn-voice`). The ledger
+  skills are documented as working without `setup-project`, as they always
+  have. The contracts in `docs/` did not move. CI now fails on a relative
+  Markdown link that does not resolve.
+
 ## [0.13.0] - 2026-11-03
 
 **Codename:** wow!
@@ -27,18 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **The README is now a landing page, and the detail moved into a user
-  guide.** The README says what Daikenja is, who it is for, how to install
-  and try it, and where to read next. The detail lives in
-  [`docs/guide/`](docs/guide/), one page per task: install, commands,
-  writing, the ledger, reviewing, Tensei, your data, the Slack bot, an FAQ
-  and why. Two diagrams show the read, draft, record loop and where files
-  live. The data page now says plainly that what a skill reads is processed
-  by Claude, and which writes do not wait for your yes (`remember-persona`
-  for a new person, and `learn-voice`). The ledger skills are documented as
-  working without `setup-project`, as they always have. The contracts in
-  `docs/` did not move. CI now fails on a relative Markdown link that does
-  not resolve.
 - **Installing Tensei is now a single acknowledgement.** `/daikenja:tensei`
   shows five to eight plain lines on what the agent will do differently,
   built from the shipped file, then asks "Adopt this way of working?". The
