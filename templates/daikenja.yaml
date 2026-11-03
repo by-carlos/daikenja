@@ -67,30 +67,19 @@ projects: {}
 #
 # projects:
 #   atlas-migration:
-#     path: C:/GitHub/atlas          # absolute
-#     ledger: .daikenja/ledger.md     # optional, pointer -- relative to the root
-#                                     # (default) or absolute, e.g. for a project
-#                                     # with no directory of its own: see
-#                                     # docs/config-resolution.md, Resolving `ledger`.
-#     last_checkpoint:               # written by `project-catchup`, leave empty
+#     path: C:/GitHub/atlas          # absolute, a git repository
+#     last_checkpoint:               # written by `project-catchup`, leave empty:
+#                                    # one `<path>: <commit SHA>` line per repository
 #     stale_after_days: 30           # optional, overrides the profile value
 #     norms_doc:                     # optional, overrides the profile value
 #
-# A project spanning several directories. Any of them resolves to this one
-# project. The FIRST path is the root -- it is where the ledger lives -- so put
-# the repository you think of as the main one at the top, and do not reorder the
-# list afterwards:
+# A project spanning several repositories. Any of them resolves to this one
+# project, and each keeps its own DECISIONS.md. The FIRST path is the home
+# repository -- it is where .daikenja/open.md lives -- so put the repository you
+# think of as the main one at the top, and do not reorder the list afterwards:
 #
 #   platform-programme:
 #     paths:
-#       - C:/GitHub/platform-api     # the root: the ledger lives here
+#       - C:/GitHub/platform-api     # home: .daikenja/open.md lives here
 #       - C:/GitHub/platform-web
 #       - C:/GitHub/platform-infra
-#
-# A project with no directory at all -- a programme that lives in a wiki, a
-# tracker and a chat space. It is reachable only by name. Having no root, a
-# relative ledger has nothing to be relative to, so give it an absolute one:
-#
-#   q4-planning:
-#     paths: []
-#     ledger: C:/Users/you/.claude/daikenja/ledgers/q4-planning.md

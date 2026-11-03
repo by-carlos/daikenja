@@ -13,38 +13,29 @@ it. Neither says what the project covers, which channels and repositories
 belong to it, or who is on it -- and without that, a thread, a report or a
 conversation can only be checked against a project the user has already named
 or is already standing in. The card is that missing surface: one short file
-per project, beside the ledger, that a skill can match content against.
+per project, beside its `open.md`, that a skill can match content against.
 
 Three things it is not. It is not registry content -- `daikenja.yaml` stays a
 file of pointers and short settings, per `config-schema.md` § Field notes, and
-a paragraph of scope does not belong in it. It is not ledger content -- the
-ledger's grammar in `ledger-format.md` is a frozen parsing contract, and a
-card does not add a section to it. And it is not a second decision log --
+a paragraph of scope does not belong in it. It is not ledger content --
+`DECISIONS.md` and `open.md` each have their own format contract, and a card
+does not add a section to either. And it is not a second decision log --
 nothing dated, nothing with an ID, nothing that changes when a decision lands
 belongs here.
 
 ## Location
 
-**The card sits in the ledger's directory, and its name is derived from the
-ledger's.** There is no `card:` key in `daikenja.yaml` and no separate
-resolution: whatever `config-resolution.md` § Finding the ledger resolves the
-ledger path to, the card is beside it.
+**The card is `.daikenja/project.md` in the home repository**, beside
+`open.md`. There is no `card:` key in `daikenja.yaml` and no separate
+resolution: whatever `config-resolution.md` § Finding `DECISIONS.md` and
+`open.md` resolves as home, the card is `<home>/.daikenja/project.md`. A project
+spanning several repositories has one card, in the first one, as it has one
+`open.md`.
 
-| The resolved ledger | The card |
-|---|---|
-| `<dir>/ledger.md` -- the default name, wherever the directory is | `<dir>/project.md` |
-| `<dir>/<name>.md` -- any other file name | `<dir>/<name>.project.md` |
-
-So a project with the default ledger keeps its card at
-`.daikenja/project.md`, and a pathless project whose absolute `ledger:` is
-`~/.claude/daikenja/ledgers/q4-planning.md` keeps its card at
-`~/.claude/daikenja/ledgers/q4-planning.project.md`. Two projects sharing one
-ledgers directory therefore never share a card, which is why the second rule
-exists at all.
-
-A project with no ledger location -- no paths and no absolute `ledger:` --
-has no card location either. The skills report that per
-`config-resolution.md` § Failure behavior, and nothing here changes it.
+A project that needs migration -- no paths, or an unmigrated ledger -- has no
+card location until it is migrated; the migration moves a card kept beside an
+old ledger elsewhere. The skills report that per
+`config-resolution.md` § Legacy keys and unmigrated ledgers.
 
 **The card is optional.** A project without one resolves, reads and logs
 exactly as before. What it loses is content matching: a project with no card
@@ -118,9 +109,9 @@ decisive one: the same people sit on several projects.
 
 ## Reading a card
 
-A skill that has resolved a ledger path per `reading.md` § Step B resolves the
-card path from it by the table above and reads the file if it exists. It is
-one extra read on the same directory; no config lookup and no second
+A skill that has resolved the ledger files per `reading.md` § Step B reads
+`<home>/.daikenja/project.md` if it exists. It is one extra read in the
+directory that already holds `open.md`; no config lookup and no second
 resolution.
 
 - **Card exists.** Parse it per the reading rules. Where the skill shows it,
@@ -151,11 +142,12 @@ all can use it on its own.
 
 **It is a scan over every registered project's card**, shaped like
 `project-list` § Step 2: walk the `projects:` entries in file order, resolve
-each entry's ledger path per `config-resolution.md` § Finding the ledger and
-its card path per § Location above, and read every card that exists. There is
+each entry's home per `config-resolution.md` § Finding `DECISIONS.md` and
+`open.md` and its card path per § Location above, and read every card that
+exists. There is
 no index file to maintain, and nothing is cached between runs -- the cards are
 few and short, and a stale index would be a worse failure than a slow scan.
-An entry with no card, or no ledger location, is simply not a candidate; the
+An entry with no card, or one that needs migration, is simply not a candidate; the
 report names it so the user knows why it could not match.
 
 Then match the content against the cards, in this order, and stop at the

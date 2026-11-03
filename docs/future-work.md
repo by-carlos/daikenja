@@ -13,23 +13,17 @@ anywhere else.
 
 ## Projects
 
-**A project with no directory needs an absolute `ledger:`, and nothing enforces
-that it has one.** `paths: []` makes a project addressable by name from
-anywhere, which is what a programme spanning a wiki, a tracker and a chat space
-needs; an absolute `ledger:` is what gives its record a location once there is
-no root to be relative to. The two keys are independent, so a pathless entry
-written without one resolves as a project and then fails at the ledger. Every
-skill reports which of the two is missing rather than guessing a location, and
-`setup-project` offers the key when it registers such a project -- but a
-hand-edited file can still hold the half-configured shape.
+**Every project lives in a git repository.** A programme that exists only in a
+wiki, a tracker and a chat space has no folder of its own to register, so it
+needs a repository created for its ledger before Daikenja can track it. Git is
+what keeps the ledger's history, so there is no file-only mode.
 
-**A project has exactly one ledger, in its first path** unless `ledger:` says
-otherwise. For a project spanning three repositories that means the decisions
-of all three live in the first one by default, and the other two carry
-nothing. Reordering `paths` afterwards repoints the
-ledger at a different file, which is why `setup-project` appends and never
-reorders. There is no way to split one project's ledger across its
-directories, and no way to merge two ledgers into one project.
+**A project has exactly one `open.md`, in its first path.** Decisions sit in
+each repository's own `DECISIONS.md`, but open items, context links and sources
+live only in the home repository. Reordering `paths` afterwards moves where
+`open.md` is looked for, which is why `setup-project` appends and never
+reorders. There is no way to split one project's open items across its
+repositories, and no way to merge two projects into one.
 
 **A project without a card cannot be found by content.** Resolving a project
 from a thread or a report, per `project-card.md` § Resolving a project by

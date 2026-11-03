@@ -105,7 +105,7 @@ Follow `config-resolution.md` § Resolution order exactly. In short:
      as a one-element list -- normalized and longest prefix wins across all of
      them. An entry with no paths is skipped; it is reachable only by key.
 3. Resolve the ledger: the matched project's `ledger:` key if it has one --
-   relative or absolute, per `config-resolution.md` § Resolving `ledger` -- and
+   relative or absolute, per `config-resolution.md` § Legacy keys and unmigrated ledgers -- and
    that resolved path is authoritative. Otherwise `.daikenja/ledger.md` under
    the project root. **The root is the first path in the entry**, not the path
    that matched -- a project spanning three repositories has one ledger, in the
@@ -113,7 +113,7 @@ Follow `config-resolution.md` § Resolution order exactly. In short:
    `ledger:` can resolve for it: a relative or absent `ledger:` on a pathless
    entry is a config error, not a missing default -- stop, name the key, and
    say it has no path and no absolute ledger, per `config-resolution.md` §
-   Finding the ledger.
+   Finding `DECISIONS.md` and `open.md`.
 4. Check the version marker and emit the one-line notice if it applies, per
    `config-versioning.md` § Version marker and upgrades. It never blocks a write,
    and this skill never migrates anything -- `/daikenja:setup-user` does that.

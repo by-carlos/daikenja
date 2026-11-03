@@ -26,7 +26,8 @@ Read these before doing anything. Do not work from memory of them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-schema.md` -- § Schema and § Field notes.
   The shapes a `projects:` entry may take are what this skill reports back.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- § Finding the project,
-  § Finding the ledger and § Resolving `ledger`. This skill reports what that
+  § Finding `DECISIONS.md` and `open.md` and § Legacy keys and unmigrated
+  ledgers. This skill reports what that
   document defines; it does not define anything itself.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-versioning.md` -- the version-marker notice
   this skill emits and never acts on.
@@ -83,7 +84,7 @@ nothing more:
 3. **Its ledger path** -- the `ledger:` key resolved per its pointer form,
    relative or absolute, otherwise `.daikenja/ledger.md` under the project
    root. The root is the **first** path in the entry, per
-   `config-resolution.md` § Finding the ledger. An entry with no paths has no
+   `config-resolution.md` § Finding `DECISIONS.md` and `open.md`. An entry with no paths has no
    root, so only an **absolute** `ledger:` gives it a path at all; where there
    is neither, say there is no location rather than inventing one.
 4. **Whether that ledger file exists.**

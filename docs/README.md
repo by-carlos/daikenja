@@ -35,8 +35,8 @@ exactly as if it sat in that `SKILL.md`; no other skill reads them.
   something already on their disk. One section per version that needs action,
   newest first, written by the change and promoted by the release. Written for
   the user as well as for `setup-user`'s upgrade branch.
-- [`project-card.md`](project-card.md) -- the per-project card beside the
-  ledger: what a project is about, which channels, repositories and trackers
+- [`project-card.md`](project-card.md) -- the per-project card beside
+  `open.md`: what a project is about, which channels, repositories and trackers
   it owns, who is on it; where the file sits, how it is read, and the third
   project-resolution route -- by content, across every registered card.
 - [`reading.md`](reading.md) -- the shared read mechanism for `project-catchup`,
