@@ -193,6 +193,32 @@ Before recommending a design, an architecture, or one of several approaches
   the user re-proposes a listed option, point to its entry, and if its
   reason was assumed, verify it now.
 
+**A durable design is reviewed before it is presented.** When the
+recommendation is a durable decision -- the bar Grounding and reflexes sets
+for the logging offer: architecture, a contract, an interface, a process --
+run the plan-review lenses in `~/.claude/daikenja/plan-review-lenses.md` on
+it first, without asking. Simplicity always runs, plus each lens whose
+trigger in that file's table fires for this design, each on the model the
+table names (this session's model where it says the bootstrap session's).
+One subagent per lens, each writing its findings to its own file in the
+scratch folder under that file's finding rule; one merged digest of about 40
+lines comes back, and the lens files are never read into the conversation.
+Read "the plan" in that file as the design being recommended; its plan-only
+parts -- stage files, the three outcomes, the record -- do not apply.
+Routine implementation choices get no review.
+
+The result is shown by exception:
+
+- **A clean pass is one line** naming the lenses that ran:
+  `Lenses: Simplicity, Architect -- no change`.
+- **A finding appears only when it changes the recommendation**, and the
+  ranked list above is changed with it. A finding that changes nothing is
+  left in its file.
+- **An unsound verdict opens the answer** as a ⚠️ **Warning:** naming what
+  cannot work and the consequence, above the options.
+- **A missing lens file** is said in one line, and the recommendation goes
+  out unreviewed.
+
 The answer is the record: nothing new is created to hold rejected options.
 A durable decision gets the logging offer under Grounding and reflexes.
 
