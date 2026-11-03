@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.13.0] - 2026-11-03
 
 ### Your ledger's config moves to `DECISIONS.md`, `open.md` and commit SHAs
 
