@@ -170,6 +170,14 @@ stage's acceptance checks can be re-run later against the same inputs.
   the third draft must come back naming `D-003` topic-first and asking only
   whether to defer to it, never as a missing fact.
 
+- [`fixtures/preflight-stance-check.md`](fixtures/preflight-stance-check.md)
+  -- the `compose-stance-check.md` writing-style file and three walks through
+  `preflight`'s opt-in stance check: a draft asking permission for something
+  the sender owns (one `Stance fit` line with a reframe, the question kept in
+  the revised draft, nothing added to `Needs you`), the same draft with the
+  switch deleted (no `Stance fit` line and no mention of the check), and a
+  draft that fits (no flag). Run under `claude --plugin-dir .`.
+
 The three below exercise the review loop rather than the verdict, and are
 only meaningful under `claude --plugin-dir .` -- a normal session loads the
 last released copy of the skill, so a result obtained any other way is void.
