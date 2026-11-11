@@ -75,7 +75,7 @@ open any of these files for you.
 |---|---|---|
 | Your settings: who you are, registered projects, checkpoints (one commit per repository) | `~/.claude/daikenja/daikenja.yaml` (a plain-text settings file) | `setup-user`, `setup-project`; `project-catchup` for the checkpoint only |
 | Your notes on the people you write to | `~/.claude/daikenja/personas.md`, or `daikenja/personas.md` in your Google Drive | you, plus `remember-persona` |
-| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice` |
+| How you write | `~/.claude/daikenja/writing-style.md`, or `daikenja/writing-style.md` in your Google Drive | you, plus `learn-voice`; `setup-user` appends the stance-check lines, only on your yes |
 | Backups of your writing style, and what `learn-voice` noticed but kept out | `~/.claude/daikenja/writing-style.*.md`, dated | `learn-voice` |
 | Your domain glossary -- a reference you keep by hand; no skill reads or writes it | `~/.claude/daikenja/glossary.md` | you; `setup-user` creates the blank file |
 | Tensei, if you adopted it | `~/.claude/daikenja/tensei.md` and `.tensei-manifest.json`, plus one line in `~/.claude/CLAUDE.md` | `tensei` |

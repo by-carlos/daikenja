@@ -72,8 +72,10 @@ what you own, or if your `writing-style.md` already has lines about stance
 
   Moving a stance line into the two role lines is optional; it is what lets
   the check use it.
-- **Can `setup-user` make it for you?** Yes. Re-run `/daikenja:setup-user`:
-  it asks whether you want the check and, on a yes, appends the switch and
+- **Can `setup-user` make it for you?** Not as an upgrade edit: nothing has
+  to change, so the upgrade proposal only reports this note and declining the
+  check never holds the upgrade back. The opt-in is a separate question in
+  the same run of `/daikenja:setup-user`: on a yes, it appends the switch and
   the section with your two lines to a local `writing-style.md`. It does not
   move or delete your existing stance lines; do that by hand. For a Google
   Drive file it shows the lines to paste.
