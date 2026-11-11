@@ -79,8 +79,8 @@ Ask when:
 - The audience is unclear and it changes the wording (peer, manager, leadership,
   engineers, external).
 - The goal is unclear (are they informing, requesting, or announcing a decision?
-  the intent block's `Goal` field or an inline goal line answers this when
-  there is one, so do not ask).
+  the intent block's `Goal` field answers this when there is one, and so does
+  an inline goal line: with one, do not ask).
 
 Otherwise, proceed.
 
@@ -222,8 +222,8 @@ them. This is not the midpoint of a firmer/softer pair -- it is the message,
 written once, at the right force for what the source actually said.
 
 With an inline goal, write toward it: lead with the part of the ask the goal
-is about, and drop what pulls the reader away from it. The ask itself stays
-the draft's.
+is about. The ask itself stays the draft's, and nothing is cut that
+`rewrite-rules.md` would not already let you cut.
 
 ## Humor
 
