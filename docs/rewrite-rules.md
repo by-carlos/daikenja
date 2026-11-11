@@ -83,6 +83,20 @@ reported as unhonorable per the section below, and the source wording stands
 unchanged. This holds for any voice rule that collides this way, not only the
 absolute-dates one.
 
+## Stance prose in the writing style flags, never edits
+
+The stance-kept rule above outranks anything a user's `writing-style.md` says
+about stance -- in any section of that file, not only `## Role and stance`. A
+line such as "I write as a senior engineer: I state decisions, I do not ask
+for them" describes the user. It never licenses a rewrite that turns a
+question into a decision, an apology into a statement, or the reverse.
+
+What such a line may do is trigger a flag. Where a consumer runs a stance
+check (`compose` Step 6c, only when the user has opted in), a stance that does
+not fit what the file says the user owns is named in the report with a
+suggested reframe, and the draft's stance is left as it was. The user decides;
+the rewrite does not.
+
 ## How a violation is reported
 
 A rule that would have to be broken to satisfy some other goal is never

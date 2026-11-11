@@ -148,6 +148,17 @@ stage's acceptance checks can be re-run later against the same inputs.
   cutover and the two people in it, and never describe the block as pasted
   or state that a channel is unknown.
 
+### `compose`
+
+- [`fixtures/compose-stance-check.md`](fixtures/compose-stance-check.md) -- a
+  writing-style file carrying the `stance-check: on` switch and a
+  `## Role and stance` section, and eight walks over it: one draft per stance
+  case (each flagged in `Comment` with a reframe, the stance unchanged), one
+  that fits (no flag), the first draft again with the switch deleted (output
+  unchanged from before the check existed), one with an inline goal (both
+  `goal fit` and `stance fit` flagged), and a `learn-voice` run that must
+  carry the switch and the section across byte for byte.
+
 ### `preflight`
 
 - [`fixtures/sample-drafts-preflight.md`](fixtures/sample-drafts-preflight.md)

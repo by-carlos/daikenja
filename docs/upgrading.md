@@ -41,6 +41,47 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### `writing-style.md` can switch on a stance check
+
+Affects you only if you want `compose` to check each message's stance against
+what you own, or if your `writing-style.md` already has lines about stance
+(for example a note on writing in a senior register).
+
+- **What changed on disk:** nothing. Daikenja now reads two new things in
+  `writing-style.md`: a line reading exactly `stance-check: on`, and a
+  `## Role and stance` section of two lines. Together they turn on `compose`'s
+  stance check. Separately, stance lines anywhere in the file are now ranked
+  below the rule that keeps your stance: they never change a message.
+- **If you do nothing:** the check stays off and `compose` writes exactly as
+  before. An existing stance line does not turn the check on by itself.
+- **The edit:**
+
+  ```
+  before:  ## Tone
+           I write as the team lead: I state decisions, I do not ask for them.
+  after:   stance-check: on
+
+           ## Tone
+
+           ## Role and stance
+           - What I own or decide: the team's sprint scope and on-call rota.
+           - What is usually the reader's to decide: budget and hiring.
+  ```
+
+  Moving a stance line into the two role lines is optional; it is what lets
+  the check use it.
+- **Can `setup-user` make it for you?** Not as an upgrade edit: nothing has
+  to change, so the upgrade proposal only reports this note and declining the
+  check never holds the upgrade back. The opt-in is a separate question in
+  the same run of `/daikenja:setup-user`: on a yes, it appends the switch and
+  the section with your two lines to a local `writing-style.md`. It does not
+  move or delete your existing stance lines; do that by hand. For a Google
+  Drive file it shows the lines to paste.
+- **Reversible?** Yes. Delete the switch line to turn the check off; the
+  section on its own does nothing.
+
 ## [0.13.1] - 2026-11-04
 
 ### Your ledger's config moves to `DECISIONS.md`, `open.md` and commit SHAs

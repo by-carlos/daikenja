@@ -20,6 +20,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ask. With no goal line, behaviour is unchanged
   (`skills/compose/SKILL.md`, `docs/substance-checks.md`,
   `docs/guide/writing.md`) (#332).
+- **`compose` can check a message's stance against your role, if you opt
+  in.** A line `stance-check: on` and a `## Role and stance` section (what you
+  own or decide, what is usually the reader's) in `writing-style.md` turn on a
+  new Step 6c. It flags four mismatches in `Comment` with a suggested reframe:
+  asking permission for something you own, deciding what is the reader's,
+  apologising for a fault you do not hold, and complaining where an
+  expectation fits. The stance is never rewritten. `setup-user` asks the
+  opt-in question and appends the lines on a yes; `learn-voice` carries them
+  across every rewrite. Off by default, and nothing changes without the
+  switch (`skills/compose/SKILL.md`, `skills/setup-user/SKILL.md`,
+  `skills/learn-voice/SKILL.md`, `templates/writing-style.md`,
+  `docs/config-resolution.md`, `docs/config-writers.md`,
+  `docs/guide/writing.md`) (#331).
+
+### Changed
+
+- **Stance prose in `writing-style.md` may trigger a flag, never an edit.**
+  `docs/rewrite-rules.md` now ranks the stance-kept rule above anything a
+  user's writing style says about stance, in any section, and
+  `docs/config-resolution.md` § Voice and writing style states the same
+  ranking (#331).
 
 ## [0.13.1] - 2026-11-04
 

@@ -3,7 +3,7 @@ name: learn-voice
 description: Derives your writing-style.md from writing samples you supply, backing up whatever the file held first. It records style rules only, never facts about people or projects.
 metadata:
   owner: Carlos
-  version: 1
+  version: 2
   writes: whatever profile.writing_style resolves to (default ~/.claude/daikenja/writing-style.md), after backing up its previous content beside it; plus a dated writing-style.watch.<YYYY-MM-DD>.md report in the same local directory (~/.claude/daikenja/ for a Drive pointer)
 disable-model-invocation: true
 ---
@@ -36,8 +36,11 @@ are where the two differ; everything else is the same work on the same prose.
 `setup-user` Step 5 states a rule that this skill deliberately does not share:
 *"Already there. Leave it alone... Never inspect or overwrite user prose."* That
 rule is load-bearing for `setup-user` being safe to re-run, and **it is
-unchanged**. `setup-user` still tests only whether the file exists, still copies
-the blank template on absence, and still never opens it.
+unchanged**. `setup-user` still tests only whether the file exists and still
+copies the blank template on absence. Its one look inside is the stance-check
+opt-in: it searches for the switch line and, on the user's yes, appends the
+switch and a `## Role and stance` section. This skill carries both across
+(Step 7).
 
 This skill carries a different, explicit contract instead, and the difference is
 paid for by a backup:
@@ -65,6 +68,13 @@ scratch or draft file, never a second copy under another name, and never an
 edit to
 `daikenja.yaml` to point at something temporary. If the resolved path cannot be
 written, the run stops and the derived content stays in the conversation.
+
+**The stance-check lines survive every rewrite.** The switch line
+`stance-check: on` and the `## Role and stance` section
+(`config-resolution.md` § Voice and writing style) are the user's settings,
+not style. They are never derived from samples, and when the current file
+carries them they go into the new file verbatim. Dropping them would switch
+`compose`'s stance check off without a word. See Step 7.
 
 **Only the user's own writing.** Every sample has to be writing the user states
 they wrote themselves. Where authorship in a pasted thread cannot be separated,
@@ -215,6 +225,10 @@ one (`## Humor` and `## How I disagree` are the usual candidates):
 ## Tone
 ```
 
+**Never derive a `## Role and stance` section or the `stance-check: on`
+line.** What the user owns is not something samples show, and the switch is
+theirs to set. Step 7 carries an existing pair across; this step adds neither.
+
 **Never add a heading for the watch material** -- no `## Habits to watch`, and
 no section under any other name carrying the same content. Observations about
 habits the user may want to change belong in the Step 8 "what to watch" block,
@@ -339,6 +353,13 @@ does not, so the user knows what to pull back by hand.
 
 ## Step 7: write
 
+**First, carry the stance-check lines across.** If the content Step 5 read
+has the switch line `stance-check: on` or a `## Role and stance` section,
+copy each into the derived file exactly as it stands, byte for byte: the
+switch line above the first `##` heading, the section after the last
+template heading and before the provenance line. Never reword, merge or drop
+either one. A Drive file is the same.
+
 **Local file.** Write the derived file, in full, to the resolved path. Create
 the parent directory if it is missing. Read it back and confirm it matches
 what was derived, byte for byte. Nothing else on disk is touched.
@@ -386,6 +407,13 @@ the new one does not, so the user knows what to pull back by hand:
 ```
 Previous file backed up to ~/.claude/daikenja/writing-style.2026-09-08.bak.md.
 It had three sections this one does not: Meetings, Humor, Slack-only.
+```
+
+When Step 7 carried the stance-check lines across, say so on its own line, so
+the user knows the check is still on:
+
+```
+Carried across unchanged: the stance-check switch and your Role and stance section.
 ```
 
 **Then the "what to watch" report**, as its own labelled block. It carries the

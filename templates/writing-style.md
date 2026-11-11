@@ -11,7 +11,16 @@ the plugin -- it is yours, and it stays on your machine.
 not start from a blank page, `/daikenja:learn-voice` works out how you write
 from writing samples you supply and proposes the whole file. It shows you the
 complete content first, diffs it against anything already here, and writes only
-what you approve. Nothing else edits this file.
+what you approve. Nothing else edits this file, apart from the stance-check
+lines below.
+
+**Optional: a stance check.** Add a line reading `stance-check: on` and a
+`## Role and stance` section with two lines -- what you own or decide, and
+what is usually the reader's to decide -- and `/daikenja:compose` flags a
+message whose stance does not fit, such as asking permission for something you
+own, with a suggested reframe. It never changes the message.
+`/daikenja:setup-user` can add these for you, and `/daikenja:learn-voice`
+keeps them when it rewrites the file.
 
 **This layers on top of the Daikenja default voice, it does not replace it.**
 The default applies except where you say otherwise, so you only need to write

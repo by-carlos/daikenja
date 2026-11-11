@@ -55,6 +55,28 @@ neither option, or no date -- it says so beside the message and leaves the
 gap for you to fill, because the goal never changes the ask or adds a fact you
 did not give it. Without a goal line, nothing changes.
 
+**Check your stance against your role (opt-in).** `compose` keeps your stance
+exactly as you wrote it. Switch this on and it also tells you when that stance
+does not fit what you own: asking permission for your own work, deciding
+something that is the reader's, apologising for someone else's fault, or
+complaining where an expectation would do. Each one comes back beside the
+message with a suggested reframe; the message itself is never changed, so the
+choice stays yours. `/daikenja:setup-user` asks whether you want it and writes
+two lines to your `writing-style.md` -- what you own, and what is usually the
+reader's to decide. You can also add them by hand:
+
+```markdown
+stance-check: on
+
+## Role and stance
+
+- What I own or decide: the release schedule, the team's on-call rota.
+- What is usually the reader's to decide: budget, hiring.
+```
+
+Nothing else in your writing style turns the check on, and nothing you write
+about stance there ever changes a message: at most it causes a flag.
+
 ## Challenge a draft before it goes out: `preflight`
 
 `/daikenja:preflight` is for the message you cannot afford to get wrong:
@@ -88,6 +110,8 @@ supply.
 - It records style, never facts about people or projects.
 - It backs up your current `writing-style.md` to a dated copy, then writes the
   whole file **without a preview** -- the backup is your undo.
+- It keeps your stance-check switch and `## Role and stance` section exactly
+  as they were.
 - What it noticed but kept out of the file comes back as a separate "what to
   watch" report, saved so the next run can show what moved.
 
