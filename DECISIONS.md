@@ -64,6 +64,19 @@ Paths: `docs/ledger-migration.md`, `skills/setup-project/`, `skills/setup-user/`
   repository, with `git init`; a target inside a repository is asked about.**
   — private notes never land in a repository unannounced. Revisit: never. Source: #292
 
+## Stance and the writing style
+
+Paths: `skills/compose/`, `docs/rewrite-rules.md`, `docs/config-resolution.md`
+
+- **Stance prose in `writing-style.md` triggers flags, never edits; the
+  stance-kept rule outranks it, in any section of the file.** — the sender
+  keeps their position and decides on any reframe. Revisit: never. Source: #331
+- **The stance check is opt-in through a `stance-check: on` line in
+  `writing-style.md`, with role facts in its `## Role and stance` section; no
+  `daikenja.yaml` key.** — the switch travels with the prose wherever the
+  pointer resolves. Revisit: if a second setting needs the same switch.
+  Source: #331
+
 ## Slack bot
 
 Paths: `bot/`

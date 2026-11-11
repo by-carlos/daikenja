@@ -274,6 +274,43 @@ the file itself is **not part of this contract**. It belongs to `compose`, its
 main consumer. This document fixes only the layering rule and the fact that the
 two tiers exist, so that `compose` does not have to invent either.
 
+**Stance prose triggers flags, never edits.** Whatever a user's prose says
+about stance -- in any section, under any heading -- does not change the
+stance of a message. The stance-kept rule in
+[`rewrite-rules.md`](rewrite-rules.md) § Stance prose in the writing style
+flags, never edits outranks it. Such a line may at most cause a flag, and only
+where the stance check below is switched on.
+
+**The stance check: one switch, two role lines.** The prose may carry an
+opt-in for `compose`'s role-aligned stance check (its Step 6c). It is two
+things, both plain text in the same file:
+
+- **The switch** is a line reading exactly `stance-check: on`, on its own and
+  outside a code block, anywhere in the file. Absent means off. Nothing else
+  turns the check on: a section that merely talks about stance, such as a
+  "senior register" note, is not the switch.
+- **The role facts** are a `## Role and stance` section of two free-text
+  lines, in the user's own words:
+
+  ```markdown
+  stance-check: on
+
+  ## Role and stance
+
+  - What I own or decide: the release schedule, the team's on-call rota.
+  - What is usually the reader's to decide: budget, hiring, other teams' roadmaps.
+  ```
+
+  The switch with no section, or a section with neither line filled in, runs
+  the check against nothing: `compose` says so in one `Comment` line instead
+  of guessing a role.
+
+No key in `daikenja.yaml` selects the check; the file is the only place it
+lives, so it travels with the prose wherever the `writing_style` pointer
+resolves. `setup-user` offers it, `learn-voice` carries it across a rewrite
+verbatim, and [`config-writers.md`](config-writers.md) § Who writes what names
+both writes.
+
 **Voice-only mode.** Layering is the default, and it is the right default for
 anything that goes out under the user's name. A skill may instead declare one
 of its outputs **voice-only**: `voice.md` applies in full, both tiers as

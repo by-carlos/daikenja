@@ -3,8 +3,8 @@ name: setup-user
 description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona, writing-style and glossary files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
-  version: 8
-  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), ~/.claude/daikenja/glossary.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
+  version: 9
+  writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), the stance-check switch line and a ## Role and stance section appended to a local writing-style.md only on the user's yes, ~/.claude/daikenja/glossary.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
 
@@ -13,7 +13,9 @@ disable-model-invocation: true
 The skill every other Daikenja skill assumes has already run. It writes
 `daikenja.yaml`, nothing else -- `personas.md`, `writing-style.md` and
 `glossary.md` get a blank starting copy if the user has none, and this skill
-never writes a word of their content afterwards.
+never writes a word of their content afterwards. The one addition is the
+stance-check opt-in in Step 5: on the user's yes, it appends a switch line and
+the two role lines they dictate to `writing-style.md`, and nothing else.
 
 **This is the once-per-person half of setup, and only that.** Everything with a
 per-project lifetime -- registering a directory under `projects:`, that
@@ -229,13 +231,53 @@ For each of `personas.md`, `writing-style.md` and `glossary.md`:
 - **Already there.** Leave it alone. Say so in one line ("writing-style.md
   already exists, not touched") and move on. This holds even if the existing
   file is still the untouched template -- existence is the only test, per the
-  stage contract. Never inspect or overwrite user prose.
+  stage contract. Never inspect or overwrite user prose. The stance-check
+  step below is the one exception, and a narrow one: it looks for one switch
+  line, and appends only on the user's yes.
 
 `glossary.md` differs from the other two in one way: it is not a pointer in
 `daikenja.yaml` and has no Google Drive form. It always lives at
 `~/.claude/daikenja/glossary.md`. It is manual-only: no skill reads or writes
 it after this step, so the user keeps it by hand. The Drive offer below is for
 the two pointer files only.
+
+### The stance check, opt-in
+
+`compose` can check each message's stance against what the user owns -- a
+permission request for their own work, a decision that is the reader's -- and
+flag a mismatch with a suggested reframe. It is off unless the user's
+`writing-style.md` carries the switch and role lines defined in
+`docs/config-resolution.md` § Voice and writing style. Look for the switch
+line `stance-check: on` in the file `writing_style` resolves to; that one line
+is all this step reads.
+
+- **The switch is already there.** Say nothing; the user already chose.
+- **Otherwise, ask once:**
+
+  ```
+  Do you want each message's stance checked against what you own? When it is
+  on, compose flags a message that asks permission for something you own, or
+  decides something that is the reader's, and suggests a reframe. It never
+  changes the message.
+  ```
+
+  No, or no answer: nothing is written, and the question is not repeated this
+  run. Yes: ask for the two role lines in their words -- what they own or
+  decide, and what is usually the reader's to decide -- then:
+
+  - **The file was copied from the template in this run.** Append the switch
+    and the section to it, with the user's two lines as given.
+  - **The file already existed.** Show the exact lines to be appended, then
+    append them on a yes. Nothing above them is read, moved or changed. On a
+    no, the lines stay in the conversation for the user to add by hand.
+  - **`writing_style` is a `drive:` pointer.** Do not write: a Drive edit
+    replaces the whole file, which is `learn-voice`'s job, with its backup.
+    Show the lines and say to paste them into the file.
+
+  Read the file back after an append and confirm the switch line is there.
+
+`learn-voice` carries both across every rewrite of the file, so a later run of
+it does not switch the check off.
 
 ### Offering Google Drive, without ever requiring it
 
@@ -303,7 +345,9 @@ Then, for each key the user chose:
 3. **Create the file** with the shipped template
    (`${CLAUDE_PLUGIN_ROOT}/templates/<name>`) as its content, **inside the
    `daikenja` folder**, with conversion to Google document types disabled, per
-   the contract.
+   the contract. For `writing-style.md`, when this run appended the
+   stance-check lines to the local copy, the Drive file gets the template plus
+   those same lines, so moving to Drive does not switch the check off.
 4. **Read it back** with the connector's file-download tool and confirm the
    content arrived. Never the natural-language extraction tool, per
    `docs/config-drive.md`.
@@ -381,7 +425,8 @@ user takes them.
 ## Re-running this skill
 
 Safe at any time. It never overwrites `personas.md`, `writing-style.md` or
-`glossary.md` once they exist, never touches `projects:` at all, and only edits the `profile:` keys
+`glossary.md` once they exist -- the stance-check lines in Step 5 are an
+append the user approves, never a rewrite -- never touches `projects:` at all, and only edits the `profile:` keys
 the user answers in Step 4 -- everything else already in `daikenja.yaml` is left
 as it was found.
 
