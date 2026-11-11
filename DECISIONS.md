@@ -66,7 +66,7 @@ Paths: `docs/ledger-migration.md`, `skills/setup-project/`, `skills/setup-user/`
 
 ## Stance and the writing style
 
-Paths: `skills/compose/`, `docs/rewrite-rules.md`, `docs/config-resolution.md`
+Paths: `skills/compose/`, `skills/preflight/`, `docs/stance-check.md`, `docs/rewrite-rules.md`, `docs/config-resolution.md`
 
 - **Stance prose in `writing-style.md` triggers flags, never edits; the
   stance-kept rule outranks it, in any section of the file.** — the sender
@@ -76,6 +76,15 @@ Paths: `skills/compose/`, `docs/rewrite-rules.md`, `docs/config-resolution.md`
   `daikenja.yaml` key.** — the switch travels with the prose wherever the
   pointer resolves. Revisit: if a second setting needs the same switch.
   Source: #331
+- **`compose` and `preflight` both run the stance check, from one shared
+  `docs/stance-check.md`; neither restates the four cases.** — one set of
+  cases cannot drift between the rewrite and the review, as with
+  `substance-checks.md`. Revisit: if a third consumer needs different cases.
+  Source: #335
+- **In `preflight` the stance check is reported only, never fixed in the
+  rewrite and never put to a reviewer.** — the stance is the sender's call,
+  and a reviewer that saw the flag would anchor on it. Revisit: never.
+  Source: #335
 
 ## Slack bot
 

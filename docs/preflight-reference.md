@@ -155,6 +155,8 @@ survived, because it did not.
 | Check 4 fails because the message carries several asks at once | Split or label them directly in Step 7, like any other wording fix. Report it in `Applied:`, never in `Needs you`. |
 | Check 4 fails because there is no specific ask at all | Content gap. The sender has to say what they want; nothing in the draft supplies it. |
 | Check 6 finds a pre-existing answer | Report it topic-first with its repository in `Already answered:`, and ask only whether to defer. Never add it to `Needs you`, and never count it toward the verdict's fact count. |
+| The stance check is on and a stance does not fit the role lines | One `Stance fit` line per match, with its reframe. Never edit the draft toward it, never add it to `Needs you`, never count it toward the verdict. |
+| The stance check is on but the role lines are missing or empty | One `Stance fit` line saying so and naming `## Role and stance` as where they go. Never guess a role. |
 | More addressees than persona slots | Direct beats cc'd. Name who was dropped. |
 | Goal cannot be determined from the input | Ask the one question in Step 2. Do not guess. |
 | The user asks for the message to be sent | Decline. This skill has no send action. |
@@ -170,6 +172,8 @@ survived, because it did not.
   check 6 and nothing more.
 - It does not invent a reviewer. The roster in `docs/reviewer-personas.md` is
   fixed and changes only by pull request.
+- It does not change a stance to fit the user's role. Step 3b flags a
+  mismatch with a reframe, and the stance stays the user's.
 - It does not run more than two cycles.
 - It does not let cycle 2 close a finding the rewrite never touched.
 - It does not let anyone change which model a reviewer runs on. The tiers live

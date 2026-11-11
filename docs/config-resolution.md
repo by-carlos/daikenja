@@ -282,7 +282,9 @@ flags, never edits outranks it. Such a line may at most cause a flag, and only
 where the stance check below is switched on.
 
 **The stance check: one switch, two role lines.** The prose may carry an
-opt-in for `compose`'s role-aligned stance check (its Step 6c). It is two
+opt-in for the role-aligned stance check in
+[`stance-check.md`](stance-check.md), which `compose` and `preflight` run. It
+is two
 things, both plain text in the same file:
 
 - **The switch** is a line reading exactly `stance-check: on`, on its own and
@@ -302,8 +304,8 @@ things, both plain text in the same file:
   ```
 
   The switch with no section, or a section with neither line filled in, runs
-  the check against nothing: `compose` says so in one `Comment` line instead
-  of guessing a role.
+  the check against nothing: the consumer says so in one line instead of
+  guessing a role.
 
 No key in `daikenja.yaml` selects the check; the file is the only place it
 lives, so it travels with the prose wherever the `writing_style` pointer

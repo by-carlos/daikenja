@@ -45,17 +45,17 @@ Everything here is written to be done by hand if you would rather.
 
 ### `writing-style.md` can switch on a stance check
 
-Affects you only if you want `compose` to check each message's stance against
+Affects you only if you want `compose` and `preflight` to check each message's stance against
 what you own, or if your `writing-style.md` already has lines about stance
 (for example a note on writing in a senior register).
 
 - **What changed on disk:** nothing. Daikenja now reads two new things in
   `writing-style.md`: a line reading exactly `stance-check: on`, and a
-  `## Role and stance` section of two lines. Together they turn on `compose`'s
-  stance check. Separately, stance lines anywhere in the file are now ranked
+  `## Role and stance` section of two lines. Together they turn on the stance
+  check in `compose` and `preflight`. Separately, stance lines anywhere in the file are now ranked
   below the rule that keeps your stance: they never change a message.
-- **If you do nothing:** the check stays off and `compose` writes exactly as
-  before. An existing stance line does not turn the check on by itself.
+- **If you do nothing:** the check stays off, `compose` writes exactly as
+  before and `preflight` reports exactly as before. An existing stance line does not turn the check on by itself.
 - **The edit:**
 
   ```

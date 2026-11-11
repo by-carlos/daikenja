@@ -75,7 +75,8 @@ stance-check: on
 ```
 
 Nothing else in your writing style turns the check on, and nothing you write
-about stance there ever changes a message: at most it causes a flag.
+about stance there ever changes a message: at most it causes a flag. The same
+switch turns the check on in `preflight` too.
 
 ## Challenge a draft before it goes out: `preflight`
 
@@ -93,6 +94,11 @@ about stance there ever changes a message: at most it causes a flag.
 3. **Rewrite.** It fixes the wording problems they raise.
 4. **Re-check.** The reviewers look once more at what changed, then you get
    the revised draft plus the facts only you can supply.
+
+If you switched on the stance check (see `compose` above), the report also has
+a `Stance fit` line for each place your stance does not fit what you own, with
+a suggested reframe. The revised draft keeps your stance; you decide whether
+to change it.
 
 **It changes wording, never content.** If a fix would need a fact the draft
 does not have, it asks you instead of inventing one. The reviewers and their

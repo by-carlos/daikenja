@@ -3,7 +3,7 @@ name: preflight
 description: Challenges a draft before it goes out and hands back a revised version plus the facts only you can supply -- the six substance checks, then a set of reviewer personas whose wording problems it fixes. Never sends anything.
 metadata:
   owner: Carlos
-  version: 9
+  version: 10
   pairs-with: compose
 disable-model-invocation: true
 ---
@@ -97,8 +97,10 @@ Read these before doing anything. Do not work from memory of them.
   § Entries are named topic-first, location in parentheses, the one heading Step 3
   cites by name.
 
-One more, read only when the run actually needs it:
-`${CLAUDE_PLUGIN_ROOT}/docs/preflight-reference.md`, which holds this skill's
+Two more, read only when the run actually needs them.
+`${CLAUDE_PLUGIN_ROOT}/docs/stance-check.md` is read by Step 3b, and only when
+the user's writing style switches the stance check on.
+`${CLAUDE_PLUGIN_ROOT}/docs/preflight-reference.md` holds this skill's
 own branch-only sections -- a re-run, an unresolvable recipient conflict, a
 person described inline, a run without dispatch, the failure cases, and what
 this skill does not do. Every rule there binds exactly as if it sat here, and
@@ -132,9 +134,9 @@ or decide something, or just informing them?"
 
 - **A request.** Run cycle 0, then the loop.
 - **Not a request** (announcement, FYI, status update). **Skip cycle 0 and go
-  straight to the loop.** The substance checks do not apply, and say so in one
-  line -- but an announcement can still be too long, land badly, or read as
-  blame, and those are exactly what the reviewers catch.
+  straight to Step 3b, then the loop.** The substance checks do not apply, and
+  say so in one line -- but an announcement can still be too long, land badly,
+  or read as blame, and those are exactly what the reviewers catch.
 
 ## Step 3: cycle 0 -- the substance checks
 
@@ -183,6 +185,31 @@ and 6 fail in ways the other four cannot.
   ask only whether the draft should defer to it. That is a question about
   which way to resolve a known answer, not a fact gap, and it is reported
   as such rather than folded into the questions list as an unstated fact.
+
+## Step 3b: stance fit (opt-in)
+
+Skip this step, and say nothing about it, unless the `writing_style` prose
+carries the switch line `stance-check: on`. Read the prose here the way Step 7
+reads it (`config-resolution.md` § Resolving `writing_style` and `personas`)
+and keep it for Step 7. A pointer that does not resolve skips this step
+silently: its notice, or its stop, stays where Step 7 already gives it. With
+no switch, the run and its report are exactly what they would be without this
+step.
+
+With the switch on, read `docs/stance-check.md` and run its check on the
+**draft as the user gave it**, whatever Step 2 found the goal to be. A run with
+no draft -- a description only, per Step 1 -- has nothing to check and skips
+this step.
+
+Hold each entry for Step 10's `Stance fit` line, and do nothing else with it:
+
+- **It is not a wording fix.** Step 7 never edits toward the reframe, and the
+  revised draft keeps the stance the user gave it.
+- **It is not a content gap.** It never joins `Needs you` and never counts
+  toward the verdict.
+- **It never reaches a reviewer.** No brief carries it, per
+  `reviewer-personas.md` § What every reviewer is told, and a reviewer's
+  finding is never matched against it.
 
 ## Step 4: select the reviewers
 
@@ -395,7 +422,8 @@ place that has read `docs/rewrite-rules.md`, `docs/voice.md` and the user's own
 writing style.
 
 - Apply `docs/rewrite-rules.md` in full. The ask, the stance, the confidence
-  level, the owners, the timing and how blocking it is all survive untouched.
+  level, the owners, the timing and how blocking it is all survive untouched
+  -- including a stance Step 3b flagged, whose reframe stays in the report.
 - Apply `docs/voice.md`, layered under the user's `writing_style` prose if the
   pointer resolves -- that prose reaches the file's `## Defaults` tier only, and
   a line contradicting a `## Fixed` rule is not applied
@@ -504,6 +532,9 @@ Already answered: the events-table schema freeze (atlas-api) says hold off until
 the rollout completes. Defer to it?
 Conflict: R needs the rollback detail kept and M needs this under ten lines.
 No fix serves both -- this may want to be two messages.
+Stance fit (opening line) -- you own the migration schedule, but the draft
+asks permission to move it. Reframe: 'I am moving the migration to Thursday.
+Tell me if that blocks you.'
 Learned: added S to ~/.claude/daikenja/personas.md.
 ```
 
@@ -518,6 +549,14 @@ verdict's fact count -- the sender is not missing a fact, they are being
 asked which way to resolve one they already have. One line per hit, reported
 alongside `Conflict:` for the same reason that line is: it is something only
 the user can settle, but it is not an unstated fact.
+
+**`Stance fit` reports a Step 3b entry, and appears only when the stance
+check is switched on and found something.** One line per entry, in
+`docs/stance-check.md` § How a match is reported's format, at every `tone`.
+Like `Already answered:` and `Conflict:`, it is something only the user can
+settle: it never joins `Needs you`, never counts toward the verdict, and the
+revised draft above it keeps the stance as given. On the clean path below it
+is one of the evidence lines, and the verdict is unchanged.
 
 **`Learned:` has a counterpart that says nothing was written.** Where Step 9
 routed someone and `remember-persona` offered the entry instead of writing it,

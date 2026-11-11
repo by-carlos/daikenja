@@ -91,8 +91,9 @@ line such as "I write as a senior engineer: I state decisions, I do not ask
 for them" describes the user. It never licenses a rewrite that turns a
 question into a decision, an apology into a statement, or the reverse.
 
-What such a line may do is trigger a flag. Where a consumer runs a stance
-check (`compose` Step 6c, only when the user has opted in), a stance that does
+What such a line may do is trigger a flag. Where a consumer runs the stance
+check in [`stance-check.md`](stance-check.md) (`compose` Step 6c and
+`preflight` Step 3b, only when the user has opted in), a stance that does
 not fit what the file says the user owns is named in the report with a
 suggested reframe, and the draft's stance is left as it was. The user decides;
 the rewrite does not.
