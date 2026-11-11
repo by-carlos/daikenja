@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`compose` takes an inline goal with a pasted draft.** Add a line
+  `-- goal: <what the message is for>` after the draft and `compose` uses it
+  instead of asking whether you are informing, requesting or announcing a
+  decision. The free-text goal is read as one of the four types the `thread`
+  intent block already uses (inform, request, state a decision, push back),
+  and the message is written toward it. When the pasted draft would not
+  achieve the goal, `Comment` flags it in the style of the substance checks
+  and the draft is still written; the goal never adds content or moves the
+  ask. With no goal line, behaviour is unchanged
+  (`skills/compose/SKILL.md`, `docs/substance-checks.md`,
+  `docs/guide/writing.md`) (#332).
+
 ## [0.13.1] - 2026-11-04
 
 **Codename:** wow!

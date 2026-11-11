@@ -3,7 +3,7 @@ name: compose
 description: Rewrites or writes a message so it stays clear, professional and easy to read for all audiences without changing the ask, stance or confidence level.
 metadata:
   owner: Carlos
-  version: 8
+  version: 9
   pairs-with: thread
 disable-model-invocation: true
 ---
@@ -34,9 +34,32 @@ Read these before doing anything. Do not work from memory of them.
 
 ## Input forms
 
-This skill accepts two kinds of input.
+This skill accepts three kinds of input.
 
 **A pasted draft.** The normal case. Rewrite it.
+
+**A pasted draft with an inline goal.** The draft, then a line that starts
+`-- goal:` (any case) and holds the goal in the user's own words, for example
+`-- goal: get a decision on A or B by Friday`. The last such marker counts:
+everything before it is the draft, everything after it is the goal. Text after
+the marker that states no outcome for the reader ("make it shorter") is a
+style note, not a goal: apply it where `rewrite-rules.md` allows and treat the
+input as a plain pasted draft. Map a goal onto the same four types the
+`thread` intent block's `Goal` uses:
+
+| The goal asks the reader to... | Type |
+|---|---|
+| do, decide, answer or choose something | `request` |
+| take note of a decision already made | `state a decision` |
+| reconsider or disagree with a position | `push back` |
+| just know something | `inform` |
+
+A goal that fits more than one row takes `request` when it asks the reader for
+any action. The type decides one thing: whether Step 6 runs, and Step 6 never
+blocks the draft.
+
+On an intent block, the block's own `Goal` is the goal and an inline goal line
+is not read. With no goal line, nothing in this skill changes.
 
 **An intent block from the `thread` skill.** There is no draft here, only a
 thread and a stated position. Write the message from the intent block. The
@@ -56,7 +79,8 @@ Ask when:
 - The audience is unclear and it changes the wording (peer, manager, leadership,
   engineers, external).
 - The goal is unclear (are they informing, requesting, or announcing a decision?
-  the intent block's `Goal` field answers this when there is one).
+  the intent block's `Goal` field or an inline goal line answers this when
+  there is one, so do not ask).
 
 Otherwise, proceed.
 
@@ -156,8 +180,8 @@ stops the run there, per Step 5. Never write the personas prose from here.
 
 ## Step 6: substance pre-flight (requests only)
 
-If the goal is `request` (from the intent block's `Goal`, or from what Step 1
-established for a pasted draft), run the six checks in
+If the goal is `request` (from the intent block's `Goal`, from an inline goal
+line, or from what Step 1 established for a pasted draft), run the six checks in
 `docs/substance-checks.md` silently.
 
 - **All pass.** Say nothing about it.
@@ -168,6 +192,27 @@ established for a pasted draft), run the six checks in
 
 For any other goal, skip this step.
 
+## Step 6b: goal fit (inline goal only)
+
+Skip this step unless the input carried an inline goal line. Silently check the
+**pasted draft** (not your rewrite) against the goal: could the reader do what
+the goal says from this draft alone? It fails when:
+
+- the draft has no ask, or an ask that differs from the goal's outcome;
+- the goal names something the draft never states (the options, the deadline,
+  the owner);
+- the goal would need a firmer or softer stance than the draft takes.
+
+- **It fits.** Say nothing about it.
+- **It does not.** Still draft the message, and name each gap in `Comment`
+  like a failed substance check: topic first (`goal fit`), the location of the
+  gap in parentheses, one line on what is missing. Example: "Comment: goal fit
+  (closing paragraph) -- the goal is a decision on A or B by Friday, but the
+  draft names neither option and no date. Worth adding before you send."
+
+The goal never adds content or moves the ask, the stance or the timing: those
+stay the draft's (`rewrite-rules.md`), and a gap is flagged, not filled.
+
 ## Step 7: write one balanced message
 
 Write a single version of the message. Balanced means: the ask is early and
@@ -175,6 +220,10 @@ impossible to miss, hedging that adds nothing is gone, and the reader's stated
 constraints are acknowledged where the source material already acknowledged
 them. This is not the midpoint of a firmer/softer pair -- it is the message,
 written once, at the right force for what the source actually said.
+
+With an inline goal, write toward it: lead with the part of the ask the goal
+is about, and drop what pulls the reader away from it. The ask itself stays
+the draft's.
 
 ## Humor
 
@@ -202,6 +251,7 @@ Want this firmer or softer instead?
 Include a **Comment** only when one of these applies. Keep it under 150 words:
 
 - A substance check failed (Step 6).
+- The draft does not serve its inline goal (Step 6b).
 - A persona was learned (Step 5). One line, reporting the write after the fact.
 - The meaning could still be misread because context is missing.
 - There is HR, legal, security or escalation risk. If the source material

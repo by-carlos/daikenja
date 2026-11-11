@@ -40,6 +40,21 @@ For a request, it also runs the six
 [substance checks](#challenge-a-draft-before-it-goes-out-preflight) and names
 any that fail beside the draft. It never holds the draft back.
 
+**Say what the message is for.** Paste your draft, then add a line that starts
+`-- goal:` and say what you want in your own words:
+
+```
+/daikenja:compose <your draft>
+-- goal: get a decision on A or B by Friday
+```
+
+With a goal, `compose` does not stop to ask whether you are informing,
+requesting or announcing a decision. It works that out from your words and
+writes toward the goal. If your draft would not get you there -- it names
+neither option, or no date -- it says so beside the message and leaves the
+gap for you to fill, because the goal never changes the ask or adds a fact you
+did not give it. Without a goal line, nothing changes.
+
 ## Challenge a draft before it goes out: `preflight`
 
 `/daikenja:preflight` is for the message you cannot afford to get wrong:
