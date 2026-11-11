@@ -245,8 +245,8 @@ the two pointer files only.
 
 `compose` and `preflight` can check each message's stance against what the
 user owns -- a permission request for their own work, a decision that is the
-reader's -- and flag a mismatch with a suggested reframe. It is off unless the user's
-`writing-style.md` carries the switch and role lines defined in
+reader's -- and flag a mismatch with a suggested reframe. It is off unless the
+user's `writing-style.md` carries the switch and role lines defined in
 `docs/config-resolution.md` § Voice and writing style. Look for the switch
 line `stance-check: on` in the file `writing_style` resolves to; that one line
 is all this step reads.

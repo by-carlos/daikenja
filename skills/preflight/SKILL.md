@@ -132,7 +132,7 @@ someone to do, decide, or answer something. If the goal is obvious from the
 input, use it. Otherwise ask one short question: "Is this asking someone to do
 or decide something, or just informing them?"
 
-- **A request.** Run cycle 0, then the loop.
+- **A request.** Run cycle 0 and Step 3b, then the loop.
 - **Not a request** (announcement, FYI, status update). **Skip cycle 0 and go
   straight to Step 3b, then the loop.** The substance checks do not apply, and
   say so in one line -- but an announcement can still be too long, land badly,
