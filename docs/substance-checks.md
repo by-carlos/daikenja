@@ -27,9 +27,10 @@ or a plain FYI, and running them there produces nagging, not signal. For any
 other `Goal`, skip straight past this document.
 
 `Goal` comes from the intent block when the input is one (see
-`skills/thread/SKILL.md`), or from asking the user directly when the input is a
-pasted draft and the goal is not obvious (see `skills/compose/SKILL.md` Step
-1).
+`skills/thread/SKILL.md`), from an inline goal line on a pasted draft (see
+`skills/compose/SKILL.md` § Input forms), or from asking the user directly when
+the input is a pasted draft with no goal line and the goal is not obvious (see
+`skills/compose/SKILL.md` Step 1).
 
 ## The six checks
 
