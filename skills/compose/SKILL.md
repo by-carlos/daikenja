@@ -3,7 +3,7 @@ name: compose
 description: Rewrites or writes a message so it stays clear, professional and easy to read for all audiences without changing the ask, stance or confidence level.
 metadata:
   owner: Carlos
-  version: 10
+  version: 11
   pairs-with: thread
 disable-model-invocation: true
 ---
@@ -24,6 +24,8 @@ Read these before doing anything. Do not work from memory of them.
   rewrite. This skill applies them; it does not restate them.
 - `${CLAUDE_PLUGIN_ROOT}/docs/substance-checks.md` -- the six substance checks
   this skill runs as a silent pre-flight when the goal is a request.
+- `${CLAUDE_PLUGIN_ROOT}/docs/stance-check.md` -- the opt-in stance check
+  Step 6c runs when the user's writing style switches it on.
 - `${CLAUDE_PLUGIN_ROOT}/docs/config-resolution.md` -- how `writing_style` and
   `personas` resolve, and the failure-behavior table.
 - `${CLAUDE_PLUGIN_ROOT}/docs/response-format.md` -- how the reply to the user
@@ -215,46 +217,24 @@ stay the draft's (`rewrite-rules.md`), and a gap is flagged, not filled.
 
 ## Step 6c: stance fit (opt-in)
 
-Skip this step unless the `writing_style` prose Step 4 read carries the switch
-line `stance-check: on`, per `config-resolution.md` § Voice and writing style.
-No switch, no check, and nothing is said about it: the output is exactly what
-it would be without this step. A stance-like section with no switch does not
-turn it on.
+Run the stance check in `docs/stance-check.md` silently, exactly as that
+document's § When the check runs and § The four cases say. It runs only when
+the `writing_style` prose Step 4 read carries the switch line
+`stance-check: on`; with no switch, nothing is said about it and the output is
+exactly what it would be without this step. With the switch on, it runs on
+every draft whatever the goal type, against the **pasted draft** (not your
+rewrite; on an intent block, its `Position` and `Ask`).
 
-With the switch on, it runs on every draft, whatever the goal type. Read the
-two lines of the file's `## Role and stance` section -- what the user owns or
-decides, and what is usually the reader's -- and silently check the **pasted
-draft** (not your rewrite; on an intent block, its `Position` and `Ask`) for
-four cases:
-
-- **Asking permission for something the sender owns.** "Is it OK if I move the
-  release to Thursday?" from the person who owns the release schedule.
-- **Deciding or directing what is the reader's.** "We are cutting the budget
-  line" sent to the person who owns the budget.
-- **Apologising for a fault the sender does not hold.** "Sorry the vendor's
-  API was down" when the outage was the vendor's.
-- **Complaining where an expectation fits.** "Nobody ever updates the ticket"
-  where "Please update the ticket when the status changes" states the
-  expectation.
-
-Ownership comes from the role lines only, never from the thread or from what
-the draft implies. A case the role lines do not settle is not flagged. With an
-inline goal, read it as extra input: a goal that asks the reader to decide
-confirms the decision is theirs. It never overrides the role lines.
+With an inline goal, read it as extra input: a goal that asks the reader to
+decide confirms the decision is theirs. It never overrides the role lines.
 
 - **It fits.** Say nothing about it.
-- **A case matches.** Still draft the message with the stance exactly as
-  given (`rewrite-rules.md` § Stance prose in the writing style flags, never
-  edits). Name each match in `Comment` in Step 6b's format: topic first
-  (`stance fit`), the location in parentheses, one line on the mismatch, and
-  one suggested reframe. Example: "Comment: stance fit (opening line) -- you
-  own the release schedule, but the draft asks permission to move it.
-  Reframe: 'I am moving the release to Thursday. Tell me if that blocks
-  you.'" The reframe uses only what the draft already says; a date, owner or
-  deadline it does not state stays out.
-- **The switch is on but the role lines are missing or empty.** One `Comment`
-  line saying the stance check is on with no role lines to check against,
-  and naming `## Role and stance` in the writing-style file as where they go.
+- **A case matches, or the role lines are missing.** Still draft the message
+  with the stance exactly as given. Name each entry in `Comment` per that
+  document's § How a match is reported, which is Step 6b's format. Example:
+  "Comment: stance fit (opening line) -- you own the release schedule, but
+  the draft asks permission to move it. Reframe: 'I am moving the release to
+  Thursday. Tell me if that blocks you.'"
 
 The reframe is a suggestion in `Comment` only. It never reaches the message,
 and Step 8's firmer or softer versions keep the draft's stance too.

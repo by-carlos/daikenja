@@ -60,6 +60,9 @@ exactly as if it sat in that `SKILL.md`; no other skill reads them.
   and a one-line report for a clean result.
 - [`substance-checks.md`](substance-checks.md) -- the six checks a request has
   to pass, shared by `compose` and `preflight`.
+- [`stance-check.md`](stance-check.md) -- the opt-in check that a message's
+  stance fits the sender's role, shared by `compose` and `preflight`. It
+  flags a mismatch and never edits the stance.
 - [`rewrite-rules.md`](rewrite-rules.md) -- the rules that bound any rewrite
   of a user's message. Applied by `compose` and by `preflight`.
 - [`reviewer-personas.md`](reviewer-personas.md) -- the reviewer archetypes

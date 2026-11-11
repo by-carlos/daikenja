@@ -33,8 +33,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `skills/learn-voice/SKILL.md`, `templates/writing-style.md`,
   `docs/config-resolution.md`, `docs/config-writers.md`,
   `docs/guide/writing.md`) (#331).
+- **`preflight` runs the same opt-in stance check.** With `stance-check: on`
+  in `writing-style.md`, a new Step 3b checks the draft as given for the four
+  cases and reports each match as a `Stance fit` line with a suggested
+  reframe. It is never a wording fix, never a question in `Needs you`, never
+  counted toward the verdict, and never shown to a reviewer; the revised
+  draft keeps your stance. Without the switch, `preflight`'s output is
+  unchanged (`skills/preflight/SKILL.md`, `docs/preflight-reference.md`,
+  `docs/reviewer-personas.md`, `docs/guide/writing.md`; `setup-user`'s opt-in
+  question and `learn-voice`'s note now name both skills) (#335).
 
 ### Changed
+
+- **The four stance cases live in one shared `docs/stance-check.md`.**
+  `compose` Step 6c now points there instead of restating them, the same way
+  both skills share `docs/substance-checks.md`; its behaviour is unchanged
+  (`skills/compose/SKILL.md`, `docs/rewrite-rules.md`,
+  `docs/config-resolution.md`) (#335).
 
 - **Stance prose in `writing-style.md` may trigger a flag, never an edit.**
   `docs/rewrite-rules.md` now ranks the stance-kept rule above anything a

@@ -52,8 +52,8 @@ Which reviewers run, and how many, is `preflight`'s decision. See
 
 A dispatched reviewer sees **the draft and its own brief, and nothing else**.
 Not the other reviewers, not what they found, and not the substance-check
-verdict that ran before it -- showing that anchors the reviewer onto ground
-already covered.
+verdict or the stance check that ran before it -- showing that anchors the
+reviewer onto ground already covered.
 
 Every reviewer is bound by the same five rules, whatever its lens:
 

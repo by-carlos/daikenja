@@ -3,7 +3,7 @@ name: setup-user
 description: 'One-time and re-runnable personal setup for Daikenja: creates your configuration, captures your profile, seeds the persona, writing-style and glossary files, and applies any pending version upgrade.'
 metadata:
   owner: Carlos
-  version: 9
+  version: 10
   writes: ~/.claude/daikenja/daikenja.yaml -- the profile block, daikenja_version, and any upgrade edits the user approves, ~/.claude/daikenja/personas.md (if absent), ~/.claude/daikenja/writing-style.md (if absent), the stance-check switch line and a ## Role and stance section appended to a local writing-style.md only on the user's yes, ~/.claude/daikenja/glossary.md (if absent), a daikenja folder in Google Drive and a file in it for either of those two only if the user asks
 disable-model-invocation: true
 ---
@@ -243,10 +243,10 @@ the two pointer files only.
 
 ### The stance check, opt-in
 
-`compose` can check each message's stance against what the user owns -- a
-permission request for their own work, a decision that is the reader's -- and
-flag a mismatch with a suggested reframe. It is off unless the user's
-`writing-style.md` carries the switch and role lines defined in
+`compose` and `preflight` can check each message's stance against what the
+user owns -- a permission request for their own work, a decision that is the
+reader's -- and flag a mismatch with a suggested reframe. It is off unless the
+user's `writing-style.md` carries the switch and role lines defined in
 `docs/config-resolution.md` § Voice and writing style. Look for the switch
 line `stance-check: on` in the file `writing_style` resolves to; that one line
 is all this step reads.
@@ -256,9 +256,9 @@ is all this step reads.
 
   ```
   Do you want each message's stance checked against what you own? When it is
-  on, compose flags a message that asks permission for something you own, or
-  decides something that is the reader's, and suggests a reframe. It never
-  changes the message.
+  on, compose and preflight flag a message that asks permission for something
+  you own, or decides something that is the reader's, and suggest a reframe.
+  They never change the message.
   ```
 
   No, or no answer: nothing is written, and the question is not repeated this

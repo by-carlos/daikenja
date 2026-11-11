@@ -3,7 +3,7 @@ name: learn-voice
 description: Derives your writing-style.md from writing samples you supply, backing up whatever the file held first. It records style rules only, never facts about people or projects.
 metadata:
   owner: Carlos
-  version: 2
+  version: 3
   writes: whatever profile.writing_style resolves to (default ~/.claude/daikenja/writing-style.md), after backing up its previous content beside it; plus a dated writing-style.watch.<YYYY-MM-DD>.md report in the same local directory (~/.claude/daikenja/ for a Drive pointer)
 disable-model-invocation: true
 ---
@@ -74,7 +74,7 @@ written, the run stops and the derived content stays in the conversation.
 (`config-resolution.md` § Voice and writing style) are the user's settings,
 not style. They are never derived from samples, and when the current file
 carries them they go into the new file verbatim. Dropping them would switch
-`compose`'s stance check off without a word. See Step 7.
+the stance check off in `compose` and `preflight` without a word. See Step 7.
 
 **Only the user's own writing.** Every sample has to be writing the user states
 they wrote themselves. Where authorship in a pasted thread cannot be separated,
