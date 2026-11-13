@@ -36,6 +36,10 @@
     and tests/README.md) points at a file or directory that exists. The fragment
     after `#` is not checked, and fenced code blocks are skipped. A page moved
     or renamed without its inbound links is the failure this catches.
+(k) templates/personas.md starts with the line `<!-- daikenja:private -->`.
+    It is the marker a git guard keys on to keep persona notes out of a
+    commit, and every file setup-user and remember-persona scaffold copies
+    this template, so a template that loses the line ships unmarked files.
 
 Check (b), the em dash / en dash scan, is intentionally not implemented: the
 rule it would enforce was removed (issue #2), so there is nothing left to
@@ -76,6 +80,8 @@ VERSION_LINE_FILES = (
     ("docs/open-format.md", "templates/open.md",
      re.compile(r"^<!-- daikenja-open-format: (\d+) -->$")),
 )
+PRIVATE_MARKER = "<!-- daikenja:private -->"
+PRIVATE_MARKER_TEMPLATES = ("templates/personas.md",)
 FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
 FIXTURES_README = REPO_ROOT / "tests" / "README.md"
 
@@ -280,6 +286,17 @@ def check_format_version_lines():
             )
 
 
+def check_private_marker_templates():
+    for name in PRIVATE_MARKER_TEMPLATES:
+        path = REPO_ROOT / name
+        if not path.exists():
+            fail("k: private marker", name, "file is missing")
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        if not lines or lines[0] != PRIVATE_MARKER:
+            fail("k: private marker", name, f"line 1 is not exactly {PRIVATE_MARKER}")
+
+
 def check_fixture_dependencies():
     if not FIXTURES_DIR.is_dir():
         fail("h: fixture dependencies", str(FIXTURES_DIR), "directory is missing")
@@ -480,6 +497,7 @@ def main():
     check_skill_frontmatter()
     check_upgrading_headings()
     check_format_version_lines()
+    check_private_marker_templates()
     check_fixture_inventory()
     check_fixture_dependencies()
     check_reference_dependencies()

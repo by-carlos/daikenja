@@ -68,6 +68,15 @@ resolve, write nothing, say so, and keep the entry in the conversation so the
 user can retry once the file is reachable. Never fall back to the local default:
 that would split the user's notes across two stores without telling them.
 
+**The private marker stays the first line.** The file's first line is exactly
+`<!-- daikenja:private -->`, as in the shipped template. It marks the file as
+private notes on real people, so a git guard can refuse to commit it. When this
+skill writes the file -- an append, an approved change, a Drive replacement --
+and line 1 is not that marker, it adds the marker as a new line 1 in the same
+write and says so in one line of the report. That is the only change it makes
+unasked to content already in the file, and it never runs on a turn that writes
+nothing.
+
 **Never write the personas file from any other skill.** A skill that needs an
 entry recorded runs this one.
 
@@ -201,6 +210,9 @@ appending a second section for someone who already has one.
 sections underneath it. If it is, leave it exactly as it is. It is the format
 hint for whoever opens the file next, and removing it is not this skill's call.
 Mention it once in the report.
+
+**Note whether line 1 is `<!-- daikenja:private -->`.** If it is not, the write
+in Step 5 adds it, per the hard rule.
 
 Read nothing else out of the file and change nothing you were not asked to.
 
@@ -341,7 +353,9 @@ already never reformats a local file, and a whole-file replace makes that rule
 load-bearing rather than merely polite.
 
 Write it without asking. Touch nothing else -- no reordering, no reformatting,
-no tidying, and no normalizing a line a human wrote by hand.
+no tidying, and no normalizing a line a human wrote by hand. The one addition is
+the private marker as line 1 when Step 3 found it missing, in the same write,
+locally and in Drive alike.
 
 **Existing entry, and the user said something new about them.** Do not write.
 Show the exact addition and the exact line it would sit after, and wait:
@@ -390,6 +404,10 @@ S to it.
   **How to write to them.** Short. Lead with the ask.
 ```
 
+When the write also added the missing private marker, one more line follows
+the report: `Also added <!-- daikenja:private --> as line 1, which marks the
+file as private.`
+
 When this skill ran inside another skill's work, that report is one line in the
 caller's own output rather than a block of its own -- `Learned: added S to
 ~/.claude/daikenja/personas.md.` The user can open the file to see the entry.
@@ -433,14 +451,16 @@ missing thing is the task itself.
 | The description is evaluative ("he is useless") | Record the behaviour underneath it if the user stated one, and say in one line what you wrote instead. If there is no behaviour under it, write nothing and ask what they do. |
 | The person already has an entry | Propose, never write silently. See Step 5. |
 | The file still holds the shipped template placeholder | Leave it alone. Append below it and note it once in the report. |
+| Line 1 is not `<!-- daikenja:private -->` | Add it as line 1 in the same write as the entry, and say so in one line. Nothing is written for the marker alone on a turn that writes no entry. |
 | The user asks for an entry to be deleted | Show the exact section and wait for approval, like any other change to existing content. |
 
 ## What this skill does not do
 
 - It does not read `personas.md` on anyone's behalf. The skills that need a
   persona read it themselves.
-- It does not inspect or overwrite `personas.md` when the file already exists.
-  Scaffolding only happens on absence, the same test `setup-user` uses, and
+- It does not overwrite `personas.md` when the file already exists, and the
+  only unasked change to existing content is restoring the private marker on
+  line 1. Scaffolding only happens on absence, the same test `setup-user` uses, and
   `setup-user`'s own create-if-absent rule is untouched by this skill.
 - It does not write `daikenja.yaml`. `/daikenja:setup-user` owns the `profile:`
   block, `/daikenja:setup-project` owns a project's `projects:` entry, and

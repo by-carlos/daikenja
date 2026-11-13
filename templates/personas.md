@@ -1,3 +1,4 @@
+<!-- daikenja:private -->
 # Personas
 
 The people and audiences you write to. Daikenja reads this when it composes or
@@ -39,6 +40,12 @@ costs nothing except those two.
 **It can hold contact details, so keep the file where private notes belong.**
 This was already your own prose about real colleagues; chat IDs and email
 addresses make it worth thinking about before you sync or share it anywhere.
+
+**Keep the first line.** `<!-- daikenja:private -->` marks this file, and
+anything Daikenja derives from it, as private notes that should not reach a
+repository or a shared folder. A git guard that looks for the line can refuse
+to commit a file that carries it. `/daikenja:remember-persona` puts it back the
+next time it writes here if it has gone missing.
 
 Delete everything below this line once you have written your own.
 

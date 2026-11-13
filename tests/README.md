@@ -11,7 +11,8 @@ stage's acceptance checks can be re-run later against the same inputs.
   version headings are well-formed, newest-first and each named in
   `CHANGELOG.md` too; `docs/decisions-format.md` and `docs/open-format.md`,
   and their templates `templates/DECISIONS.md` and `templates/open.md`, start
-  with their format-version lines, each template at its spec's version; this
+  with their format-version lines, each template at its spec's version;
+  `templates/personas.md` starts with `<!-- daikenja:private -->`; this
   directory's own index agrees with
   what's on disk -- every file under `fixtures/` is named in this README and
   vice versa; every fixture's `Depends on:` line names a real doc/skill

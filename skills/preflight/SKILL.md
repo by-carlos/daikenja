@@ -290,6 +290,12 @@ would anchor it onto ground already covered.
 Isolation is the point. A reviewer that can see another reviewer's critique
 defers to it, and the second opinion stops being one.
 
+**Each brief gives a scratch-folder output path and requires
+`<!-- daikenja:private -->` as the output's first line**, per
+`docs/reviewer-personas.md` § How a brief is assembled. Read the findings back
+from those files. Never write a reviewer's output, or anything quoting it, to
+the working folder.
+
 **Dispatch each reviewer on the model tier its archetype carries**, from
 `docs/reviewer-personas.md` § What each reviewer runs on. Pass the tier as the
 subagent's model at dispatch, as the family alias that table gives -- `haiku`,
