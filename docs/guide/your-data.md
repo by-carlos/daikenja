@@ -42,6 +42,15 @@ posts as its own Slack app.
 you would want them read, and check whether your organization treats notes
 about colleagues as personal data.
 
+**Anything built from persona notes stays private too.** The persona file's
+first line is `<!-- daikenja:private -->`, and `remember-persona` puts it back
+if it goes missing. `preflight`'s reviewer findings, and anything
+[Tensei](tensei.md) has Claude write from your persona notes (a role-play
+review, a reply plan built around how someone will react, a digest quoting
+either), go only to the session's scratch folder with that same first line,
+never to your working folder or a repository. A git hook that refuses files
+carrying the line can then keep them out of a commit.
+
 **Before you log something, remember a project's ledger is shared.** Write an
 entry the way you would write a commit message, for the whole team. A replaced
 decision or a closed item disappears from the file but stays in the git history
@@ -59,7 +68,8 @@ enters the history.
   - `remember-persona` adds a note for someone new as soon as you describe
     them, and tells you after (it asks first if you described them alongside
     something you pasted). Changes to anything you wrote yourself wait for
-    your yes.
+    your yes. The one unasked change is restoring the private marker on line
+    1, made only alongside a note it is writing anyway, and reported.
   - `learn-voice` rewrites your writing style in one go, after saving a dated
     backup of the old one.
 - **`tensei`** asks once, "Adopt this way of working?", before writing its

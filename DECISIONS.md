@@ -86,6 +86,21 @@ Paths: `skills/compose/`, `skills/preflight/`, `docs/stance-check.md`, `docs/rew
   and a reviewer that saw the flag would anchor on it. Revisit: never.
   Source: #335
 
+## Persona notes and what is derived from them
+
+Paths: `templates/personas.md`, `skills/remember-persona/`, `docs/reviewer-personas.md`, `skills/preflight/`, `templates/tensei.md`
+
+- **Anything derived from `personas.md` is written only to the session's
+  scratch folder, and its first line is `<!-- daikenja:private -->`; that
+  includes every `preflight` reviewer's output.** — persona-derived files
+  predict real colleagues' reactions and once nearly landed in a repository
+  about to be shared with the team; the marker lets a git guard refuse them.
+  Revisit: never. Source: #339
+- **`personas.md` starts with the same marker, and `remember-persona` restores
+  it only alongside a write it is already making.** — the template covers new
+  files; existing files are fixed without an unasked write of their own.
+  Revisit: if a second skill gains write access to the file. Source: #339
+
 ## Skill invocation
 
 Paths: `skills/compose/`, `docs/guide/commands.md`

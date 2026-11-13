@@ -41,6 +41,37 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
+## [Unreleased]
+
+### `personas.md` and persona-derived output carry a private marker
+
+Affects you if you keep a `personas.md` file or have Tensei installed.
+
+- **What changed on disk:** nothing yet. The shipped `personas.md` template now
+  starts with the line `<!-- daikenja:private -->`, and the shipped Tensei
+  keeps anything derived from persona notes in the session's scratch folder,
+  with the same first line.
+- **If you do nothing:** the next time `remember-persona` writes to your
+  `personas.md`, it adds the marker as line 1 in the same write and tells you.
+  Until then the file has no marker, so a git hook that looks for the line
+  cannot recognise it. Your installed Tensei keeps its old wording until you
+  update it.
+- **The edit:**
+
+  ```
+  before:  # Personas
+  after:   <!-- daikenja:private -->
+           # Personas
+  ```
+
+  For Tensei, run `/daikenja:tensei`, which shows the change and asks once
+  before updating.
+- **Can `setup-user` make it for you?** No. `setup-user` never edits an
+  existing `personas.md`. Add the line by hand, or let `remember-persona` add it
+  on its next write. Tensei is updated by `/daikenja:tensei`.
+- **Reversible?** Yes. Delete the line; `remember-persona` adds it back on its
+  next write.
+
 ## [0.13.2] - 2026-11-13
 
 ### `writing-style.md` can switch on a stance check

@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Anything derived from persona notes stays in the scratch folder, marked
+  private.** Tensei's working practice now says that a role-play review, a
+  reply plan built around a person's predicted reaction, or a digest quoting
+  either is written only to the session's scratch folder, never the working
+  folder or a repository, and that its first line is
+  `<!-- daikenja:private -->`. The "long output goes to a file" rule points at
+  this exception. Every `preflight` reviewer brief now names a scratch-folder
+  output path and requires the same first line, and `preflight` reads the
+  findings back from those files.
+- **`personas.md` starts with `<!-- daikenja:private -->`.** The shipped
+  template carries it, so `setup-user` and `remember-persona` scaffold it.
+  When `remember-persona` writes to a file whose first line is not the marker,
+  it adds the marker in the same write and says so. A git hook that refuses
+  files carrying the line can then keep persona notes out of a commit.
+
 ## [0.13.2] - 2026-11-13
 
 ### Added

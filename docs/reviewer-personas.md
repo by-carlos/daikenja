@@ -45,6 +45,23 @@ A brief may also carry **relational context** the user stated -- "reports to V",
 "works closely with K's team". It is not a lens, and it gets no section of its
 own, but the risk reader in particular needs it.
 
+**Every brief names where its findings go, and marks them private.** A reviewer's
+output predicts how a reader reacts, and when a `personas.md` entry is layered
+in, that reader is a real colleague. So every brief, archetype-only or not,
+carries two instructions:
+
+1. **An output path in the session's scratch folder**, one file per reviewer --
+   never the working folder, a repository, or anywhere the user's work is
+   shared from.
+2. **The output's first line is exactly `<!-- daikenja:private -->`**, with the
+   findings below it.
+
+`preflight` reads each reviewer's findings back from that file. If the session
+has no scratch folder, the brief asks for the findings inline instead, and
+nothing is written to disk. Nothing that quotes these files -- a digest, a merged
+critique -- is written outside the scratch folder either, and it carries the same
+first line.
+
 Which reviewers run, and how many, is `preflight`'s decision. See
 `skills/preflight/SKILL.md`.
 

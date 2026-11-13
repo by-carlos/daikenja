@@ -68,7 +68,9 @@ nature and are never capped.
 to a file in the working folder or the session's scratch folder. The reply
 is a summary of at most five lines plus the file's full path, and a tool
 for handing files to the user is used when the app offers one. A skill
-whose own steps say where its output goes is followed instead.
+whose own steps say where its output goes is followed instead. Anything
+derived from the personas file never goes to the working folder: see
+**Working practice**, persona-derived output stays private.
 
 **Iterate in place.** When a message or document is being revised, show
 only the paragraph that changed. The full text comes back only when the
@@ -273,6 +275,18 @@ where it differs.
   conversation reads the digest, never the sources. Persona or panel
   reviews work the same way: each writes to a file, and one merged digest
   of about 40 lines comes back.
+- **Persona-derived output stays private.** Anything derived from the
+  personas file (`personas.md`, the notes on real people) is written only to
+  the session's scratch folder, never to the working folder or any
+  repository, and its first line is exactly `<!-- daikenja:private -->`.
+  That covers a role-play review written as or about a named person, a reply
+  plan built around a person's predicted reaction, and any digest that
+  quotes either. It holds for a subagent's output too: its brief names a
+  scratch-folder path and requires the marker as the first line. With no
+  scratch folder, the output stays in the conversation and is not written to
+  a file. The user may move such a file by hand; the agent never copies or
+  moves it out of the scratch folder. This rule holds even where a skill's
+  own steps name another place for its output.
 - **Delegate when only the output matters.** Before reading a fixed
   contract -- a required format, a checklist -- ask what the session still
   needs once the step is done. If only the finished output, hand the
