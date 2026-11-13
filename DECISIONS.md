@@ -95,11 +95,11 @@ Paths: `templates/personas.md`, `skills/remember-persona/`, `docs/reviewer-perso
   includes every `preflight` reviewer's output.** — persona-derived files
   predict real colleagues' reactions and once nearly landed in a repository
   about to be shared with the team; the marker lets a git guard refuse them.
-  Revisit: never. Source: PR_PENDING
+  Revisit: never. Source: #339
 - **`personas.md` starts with the same marker, and `remember-persona` restores
   it only alongside a write it is already making.** — the template covers new
   files; existing files are fixed without an unasked write of their own.
-  Revisit: if a second skill gains write access to the file. Source: PR_PENDING
+  Revisit: if a second skill gains write access to the file. Source: #339
 
 ## Skill invocation
 
