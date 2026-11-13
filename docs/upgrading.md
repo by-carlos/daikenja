@@ -41,7 +41,7 @@ Everything here is written to be done by hand if you would rather.
   promoted by the same release step and checked against each other. They are not
   links.
 
-## [Unreleased]
+## [0.13.2] - 2026-11-13
 
 ### `writing-style.md` can switch on a stance check
 
