@@ -59,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The skill body now states that `compose` never posts or sends anything:
   it returns the draft, and posting stays with the caller after the user's
   explicit yes (`skills/compose/SKILL.md`, `docs/guide/writing.md`,
-  `docs/guide/commands.md`, `docs/guide/faq.md`, `docs/guide/install.md`).
+  `docs/guide/commands.md`, `docs/guide/faq.md`, `docs/guide/install.md`) (#337).
 
 - **The four stance cases live in one shared `docs/stance-check.md`.**
   `compose` Step 6c now points there instead of restating them, the same way

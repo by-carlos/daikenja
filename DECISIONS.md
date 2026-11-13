@@ -95,11 +95,10 @@ Paths: `skills/compose/`, `docs/guide/commands.md`
   send for the user.** — Claude drafting a message to post must be able to run
   it without a retyped slash command; a one-sentence description keeps the
   listing cost low and stray phrases out. Revisit: if it fires on asks that
-  were not about a message. Source: by-carlos/daikenja PR (this change)
+  were not about a message. Source: #337
 - **`compose` never posts or sends; posting stays with the caller, after the
   user's explicit yes to the final text.** — a model-invoked draft must not
-  become a send path. Revisit: never. Source: by-carlos/daikenja PR (this
-  change)
+  become a send path. Revisit: never. Source: #337
 
 ## Slack bot
 
