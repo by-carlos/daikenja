@@ -156,7 +156,7 @@ information written out to apply by hand, newest version first.
 
 *Advanced -- skip this unless it happens to you.*
 
-Typing `/daikenja:<skill>` always works. Six skills can also start from plain
+Typing `/daikenja:<skill>` always works. Seven skills can also start from plain
 words ([which ones](commands.md)), but only while Claude Code has room to read
 their descriptions. With many plugins installed on a smaller-context model, it
 falls back to skill names only, and plain words stop starting them.
@@ -164,7 +164,7 @@ falls back to skill names only, and plain words stop starting them.
 The fix is the `skillListingBudgetFraction` setting in your Claude Code
 `settings.json`, which gives skill descriptions more room; `0.03` was enough
 for a full Daikenja install on a 200K-context model when this was measured. On
-a 1M-context model nothing is cut. Daikenja's own six descriptions are well
+a 1M-context model nothing is cut. Daikenja's own seven descriptions are well
 under Claude Code's default budget, so the setting matters only when other
 plugins fill the rest.
 Background: [by-carlos/daikenja#199](https://github.com/by-carlos/daikenja/issues/199).

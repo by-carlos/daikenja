@@ -21,7 +21,7 @@ updating, start a new session. [Where it runs](install.md#where-it-runs)
 ### I asked in plain words and nothing happened.
 
 Most commands run only when you type them: `/daikenja:project-catchup`, not
-"catch me up". [Commands](commands.md) shows the six that also answer to plain
+"catch me up". [Commands](commands.md) shows the seven that also answer to plain
 words, and [why that can stop working](install.md#when-plain-words-do-not-start-a-skill).
 
 ### Do I have to re-run setup after an update?

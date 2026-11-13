@@ -45,6 +45,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`compose` starts from plain words again, on a narrow trigger.** This
+  supersedes the `compose` part of the earlier "Eight deliberate-command
+  skills now run only on their slash command" entry; the other seven stay
+  slash-only. With the skill hidden from the model, Claude could not run it
+  when drafting a message it would post for the user, so every draft had to
+  be retyped as `/daikenja:compose`. Both reasons for the earlier change still
+  hold, and each has an answer. Token cost: the description is one sentence
+  of 249 characters, against about 5.1K for the eight trigger blocks that
+  were removed. Stray firing: the description names explicit triggers only
+  -- "compose", "run compose on", "polish this message", or a request to
+  draft a message Claude will post or send (Slack, email, a Jira comment).
+  The skill body now states that `compose` never posts or sends anything:
+  it returns the draft, and posting stays with the caller after the user's
+  explicit yes (`skills/compose/SKILL.md`, `docs/guide/writing.md`,
+  `docs/guide/commands.md`, `docs/guide/faq.md`, `docs/guide/install.md`) (#337).
+
 - **The four stance cases live in one shared `docs/stance-check.md`.**
   `compose` Step 6c now points there instead of restating them, the same way
   both skills share `docs/substance-checks.md`; its behaviour is unchanged
