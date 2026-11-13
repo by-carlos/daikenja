@@ -285,7 +285,8 @@ where it differs.
   scratch-folder path and requires the marker as the first line. With no
   scratch folder, the output stays in the conversation and is not written to
   a file. The user may move such a file by hand; the agent never copies or
-  moves it out of the scratch folder.
+  moves it out of the scratch folder. This rule holds even where a skill's
+  own steps name another place for its output.
 - **Delegate when only the output matters.** Before reading a fixed
   contract -- a required format, a checklist -- ask what the session still
   needs once the step is done. If only the finished output, hand the

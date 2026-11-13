@@ -455,7 +455,8 @@ nobody touched.
 
 **Re-dispatch only the reviewers that raised something in cycle 1**, each on the
 same model tier it ran on then, against the revised draft. They read the
-revision and say whether each problem is still there.
+revision and say whether each problem is still there. Each brief carries the
+same scratch-folder output path rule and private first line as Step 5.
 
 - New wording findings are adjudicated and applied the same way.
 - New content findings join the questions list.
