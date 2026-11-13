@@ -6,7 +6,7 @@
 > ask for it in plain words. Typing the command always works: type `/` in the
 > message box and pick from the list.
 
-Six skills also start when you describe what you want; the rest run only when
+Seven skills also start when you describe what you want; the rest run only when
 you type them. "Plain words" below shows a phrase that works; a dash means
 type the command. When plain words stop working, see
 [Install § When plain words do not start a skill](install.md#when-plain-words-do-not-start-a-skill).
@@ -16,7 +16,7 @@ type the command. When plain words stop working, see
 | To... | Command | Plain words |
 |---|---|---|
 | Understand a thread before replying | `/daikenja:thread` | "help me answer this" |
-| Draft or rewrite a message | `/daikenja:compose` | -- |
+| Draft or rewrite a message | `/daikenja:compose` | "polish this message" |
 | Challenge a draft before sending | `/daikenja:preflight` | -- |
 | Remember how a colleague reads | `/daikenja:remember-persona` | "remember that S challenges every claim" |
 | Learn your writing style from samples | `/daikenja:learn-voice` | -- |

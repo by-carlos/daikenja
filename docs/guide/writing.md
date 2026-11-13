@@ -40,6 +40,12 @@ For a request, it also runs the six
 [substance checks](#challenge-a-draft-before-it-goes-out-preflight) and names
 any that fail beside the draft. It never holds the draft back.
 
+**It also starts from plain words, on a narrow trigger:** say "compose", "run
+compose on this" or "polish this message", or ask Claude to draft a message it
+will post or send for you (Slack, email, a Jira comment). `compose` never posts
+or sends anything itself. It hands back the draft, and Claude posts only after
+you say yes to the final text.
+
 **Say what the message is for.** Paste your draft, then add a line that starts
 `-- goal:` and say what you want in your own words:
 

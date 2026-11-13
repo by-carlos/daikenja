@@ -1,11 +1,10 @@
 ---
 name: compose
-description: Rewrites or writes a message so it stays clear, professional and easy to read for all audiences without changing the ask, stance or confidence level.
+description: 'Drafts or rewrites a work message without changing its ask or stance; use only when the user says "compose", "run compose on" or "polish this message", or asks Claude to draft a message Claude will post or send for them (Slack, email, Jira comment).'
 metadata:
   owner: Carlos
-  version: 11
+  version: 12
   pairs-with: thread
-disable-model-invocation: true
 ---
 
 # Message compose
@@ -13,6 +12,12 @@ disable-model-invocation: true
 Rewrite or draft a work message so it keeps the exact intent and lands well
 with a multilingual audience. Default channel is a chat app (Slack) unless the
 user says otherwise.
+
+**Compose never posts or sends anything.** It returns the draft and stops.
+When Claude runs it to draft a message it will post or send for the user (a
+Slack message, an email, a Jira comment), posting stays with Claude as the
+caller, and only after the user gives an explicit yes to the final text. A
+draft from this skill is never that yes.
 
 ## Step 0: read the shared docs
 

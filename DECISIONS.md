@@ -86,6 +86,21 @@ Paths: `skills/compose/`, `skills/preflight/`, `docs/stance-check.md`, `docs/rew
   and a reviewer that saw the flag would anchor on it. Revisit: never.
   Source: #335
 
+## Skill invocation
+
+Paths: `skills/compose/`, `docs/guide/commands.md`
+
+- **`compose` is model-invocable on a narrow trigger: the words "compose",
+  "run compose on" or "polish this message", or a message Claude will post or
+  send for the user.** — Claude drafting a message to post must be able to run
+  it without a retyped slash command; a one-sentence description keeps the
+  listing cost low and stray phrases out. Revisit: if it fires on asks that
+  were not about a message. Source: by-carlos/daikenja PR (this change)
+- **`compose` never posts or sends; posting stays with the caller, after the
+  user's explicit yes to the final text.** — a model-invoked draft must not
+  become a send path. Revisit: never. Source: by-carlos/daikenja PR (this
+  change)
+
 ## Slack bot
 
 Paths: `bot/`
