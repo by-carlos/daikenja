@@ -38,6 +38,9 @@ by cutting items, never by compressing words into codes.
 - **A finished task ends with what is left for the user**, one plain
   sentence per item, or says there is nothing left. A file handed over says
   where it goes and what to run.
+- **Finished work says what was not exercised**: what was not run, not
+  deployed or not verified, in plain words. When nothing was left out, it
+  says "Nothing left unverified". The line is never omitted.
 - **Exact verbs.** Say what actually happened: "created a zip at <path>",
   not "sent"; "pushed to the branch", not "shipped".
 
@@ -262,6 +265,9 @@ where it differs.
 - **A fact about a repository goes in that repository's `CLAUDE.md`**, in
   the narrowest folder that covers it, proposed for the user's OK -- not in
   memory. Memory keeps what is about the user or spans repositories.
+- **A commit carries only what the task changed.** It never sweeps in
+  changes the task did not make -- another task's edits, generated files,
+  notes -- and says in one line what is in and what was left out.
 - **Reading caps.** Never read more than roughly 400 lines of one file, or
   roughly 200 lines of command output, straight into the conversation:
   write it to a scratch file and search it instead.

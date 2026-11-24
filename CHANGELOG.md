@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Two working-practice rules in Tensei.** Finished work now says what was
+  not exercised -- not run, not deployed or not verified -- and reads "Nothing
+  left unverified" when nothing was left out; the line is never omitted. A
+  commit carries only what the task changed and says in one line what is in
+  and what was left out. `docs/guide/tensei.md` describes both.
+
 ## [0.14.0] - 2026-11-13
 
 ### Changed
